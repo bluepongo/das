@@ -1091,10 +1091,10 @@ func (de *DefaultEngine) checkCacheMissRatio() error {
 	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		rate(mysql_global_status_innodb_pages_read{instance=~"%s"}[5m]) or 
-		irate(mysql_global_status_innodb_pages_read{instance=~"%s"}[5m])/
-		rate(mysql_global_status_innodb_buffer_pool_read_requests{instance=~"%s"}[5m]) or 
-		irate(mysql_global_status_innodb_buffer_pool_read_requests{instance=~"%s"}[5m])
+		clamp_max(avg by (service_name) (rate(mysql_global_status_innodb_pages_read{instance=~"%s"}[5m]) or 
+		irate(mysql_global_status_innodb_pages_read{instance=~"%s"}[5m])) / 
+		avg by (service_name) (rate(mysql_global_status_innodb_buffer_pool_read_requests{instance=~"%s"}[5m]) or 
+		irate(mysql_global_status_innodb_buffer_pool_read_requests{instance=~"%s"}[5m])), 1)
 	`, serviceName, serviceName, serviceName, serviceName)
 	case 2:
 		query = fmt.Sprintf(`
