@@ -635,6 +635,8 @@ func (de *DefaultEngine) checkCPUUsage() error {
 		(avg_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[20s]) or
 		avg_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[5m]))),100)))
 	`, serviceName, serviceName, serviceName, serviceName)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid)
 	}
 	log.Debugf("healthcheck Repository.checkCPUUsage() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
@@ -728,6 +730,8 @@ func (de *DefaultEngine) checkIOUtil() error {
 		(max_over_time(rdsosmetrics_diskIO_util{device=~"(sda|sdb|sdc|sr0)",node_name=~"%s"}[5m]) or 
 		max_over_time(rdsosmetrics_diskIO_util{device=~"(sda|sdb|sdc|sr0)",node_name=~"%s"}[5m]))/100)
 	`, serviceName, serviceName, serviceName, serviceName)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
 	log.Debugf("healthcheck Repository.checkIOUtil() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
@@ -822,6 +826,8 @@ func (de *DefaultEngine) checkDiskCapacityUsage() error {
 		(max_over_time(node_filesystem_size_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]) or 
 		max_over_time(node_filesystem_size_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]))))
 	`, serviceName, serviceName, serviceName, serviceName)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
 	log.Debugf("healthcheck Repository.checkDiskCapacityUsage() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
@@ -915,6 +921,8 @@ func (de *DefaultEngine) checkConnectionUsage() error {
 		max_over_time(mysql_global_status_max_used_connections{service_name=~"%s"}[5m])) / avg by (service_name) 
 		(mysql_global_variables_max_connections{service_name=~"%s"})),1)
 	`, serviceName, serviceName, serviceName)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
 	log.Debugf("healthcheck Repository.checkConnectionUsage() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
@@ -1007,6 +1015,8 @@ func (de *DefaultEngine) checkActiveSessionNum() error {
 		avg by (service_name) (avg_over_time(mysql_global_status_threads_running{service_name=~"%s"}[5m]) or 
 		avg_over_time(mysql_global_status_threads_running{service_name=~"%s"}[5m]))
 	`, serviceName, serviceName)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
 	log.Debugf("healthcheck Repository.checkActiveSessionNum() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
@@ -1103,6 +1113,8 @@ func (de *DefaultEngine) checkCacheMissRatio() error {
 		(rate(mysql_global_status_innodb_buffer_pool_read_requests{service_name=~"%s"}[5m]) or 
 		irate(mysql_global_status_innodb_buffer_pool_read_requests{service_name=~"%s"}[5m])))
 	`, serviceName, serviceName, serviceName, serviceName)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
 	log.Debugf("healthcheck Repository.checkCacheMissRatio() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
@@ -1323,7 +1335,7 @@ func (de *DefaultEngine) checkSlowQuery() error {
 		`
 		result, err = de.monitorClickhouseConn.Execute(sql, serviceName, de.operationInfo.StartTime, de.operationInfo.EndTime, slowQueryRowsExaminedConfig.LowWatermark)
 	default:
-		return errors.New(fmt.Sprintf("pmm version should be 1 or 2, %d is not valid", pmmVersion))
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, pmmVersion)
 	}
 	if err != nil {
 		return err
