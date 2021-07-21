@@ -52,9 +52,9 @@ type Result interface {
 	// GetCacheHitRatioScore returns the cache miss ratio score
 	GetCacheMissRatioScore() int
 	// GetCacheHitRatioData returns the cache miss ratio data
-	GetCacheMissRatioData() float64
+	GetCacheMissRatioData() string
 	// GetCacheMissRatioHigh returns the high cache miss ratio data
-	GetCacheMissRatioHigh() float64
+	GetCacheMissRatioHigh() string
 	// GetTableSizeScore returns the table size score
 	GetTableSizeScore() int
 	// GetTableSizeData returns the table size data
