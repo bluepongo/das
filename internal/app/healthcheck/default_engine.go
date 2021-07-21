@@ -1098,13 +1098,11 @@ func (de *DefaultEngine) checkCacheMissRatio() error {
 	`, serviceName, serviceName, serviceName, serviceName)
 	case 2:
 		query = fmt.Sprintf(`
-		clamp_max((1 - avg by (service_name)(rate(mysql_global_status_table_open_cache_hits{service_name=~"%s"}[5m]) or 
-		irate(mysql_global_status_table_open_cache_hits{service_name=~"%s"}[5m]))/
-		avg by (service_name)((rate(mysql_global_status_table_open_cache_hits{service_name=~"%s"}[5m]) or 
-		irate(mysql_global_status_table_open_cache_hits{service_name=~"%s"}[5m]))+
-		(rate(mysql_global_status_table_open_cache_misses{service_name=~"%s"}[5m]) or 
-		irate(mysql_global_status_table_open_cache_misses{service_name=~"%s"}[5m])))),1)
-	`, serviceName, serviceName, serviceName, serviceName, serviceName, serviceName)
+		avg by (service_name) ((rate(mysql_global_status_innodb_buffer_pool_reads{service_name=~"%s"}[5m]) or
+		irate(mysql_global_status_innodb_buffer_pool_reads{service_name=~"%s"}[5m])) / 
+		(rate(mysql_global_status_innodb_buffer_pool_read_requests{service_name=~"%s"}[5m]) or 
+		irate(mysql_global_status_innodb_buffer_pool_read_requests{service_name=~"%s"}[5m])))
+	`, serviceName, serviceName, serviceName, serviceName)
 	}
 	log.Debugf("healthcheck Repository.checkCacheMissRatio() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
