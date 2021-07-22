@@ -622,18 +622,17 @@ func (de *DefaultEngine) checkCPUUsage() error {
 	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		sum(((avg by (mode) ( (clamp_max(rate(node_cpu{instance=~"%s",mode!="idle"}[$interval]),1)) 
-		or (clamp_max(irate(node_cpu{instance=~"%s",mode!="idle"}[5m]),1)) ))*100 or 
-		(avg_over_time(node_cpu_average{instance=~"%s", mode!="total", mode!="idle"}[$interval]) or 
-		avg_over_time(node_cpu_average{instance=~"%s", mode!="total", mode!="idle"}[5m]))))
+		clamp_max(((avg by (mode) ( (clamp_max(rate(node_cpu{instance=~"%s",mode!="idle"}[5m]),1)) or 
+		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle"}[5m]),1)) ))*100 or 
+		(max_over_time(node_cpu_average{instance=~"%s", mode!="total", mode!="idle"}[5m]) or 
+		max_over_time(node_cpu_average{instance=~"%s", mode!="total", mode!="idle"}[5m]))),100)
 	`, serviceName, serviceName, serviceName, serviceName)
 	case 2:
 		query = fmt.Sprintf(`
-		sum(avg by (node_name,mode) (clamp_max(((avg by (mode,node_name) ((
-		clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[20s]),1)) or
+		clamp_max(avg by (node_name,mode) ((avg by (mode) ( (clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[5m]),1)) or
 		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[5m]),1)) ))*100 or
-		(avg_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[20s]) or
-		avg_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[5m]))),100)))
+		(max_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[5m]) or
+		max_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[5m]))),100)
 	`, serviceName, serviceName, serviceName, serviceName)
 	default:
 		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid)
@@ -720,7 +719,7 @@ func (de *DefaultEngine) checkIOUtil() error {
 	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		rate(node_disk_io_time_ms{device=~"(sda|sdb|sdc|sr0)", instance=~"%s"}[$interval])/1000 or 
+		rate(node_disk_io_time_ms{device=~"(sda|sdb|sdc|sr0)", instance=~"%s"}[5m])/1000 or 
 		irate(node_disk_io_time_ms{device=~"(sda|sdb|sdc|sr0)", instance=~"%s"}[5m])/1000
 	`, serviceName, serviceName)
 	case 2:
@@ -816,8 +815,8 @@ func (de *DefaultEngine) checkDiskCapacityUsage() error {
 	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		node_filesystem_size{instance=~"%s",mountpoint="/", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"} 
-		- node_filesystem_free{instance=~"%s",mountpoint="/", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}
+		1 - node_filesystem_free{instance=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"} / 
+		node_filesystem_size{instance=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}
 	`, serviceName, serviceName)
 	case 2:
 		query = fmt.Sprintf(`
@@ -912,7 +911,7 @@ func (de *DefaultEngine) checkConnectionUsage() error {
 	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		max(max_over_time(mysql_global_status_threads_connected{instance=~"%s"}[$interval]) or 
+		max(max_over_time(mysql_global_status_threads_connected{instance=~"%s"}[5m]) or 
 		mysql_global_status_threads_connected{instance=~"%s"} )
 	`, serviceName, serviceName)
 	case 2:
@@ -1007,7 +1006,7 @@ func (de *DefaultEngine) checkActiveSessionNum() error {
 	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[$interval]) or 
+		avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[5m]) or 
 		avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[5m])
 	`, serviceName, serviceName)
 	case 2:
