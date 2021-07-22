@@ -16,6 +16,7 @@ import (
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
 	"github.com/romberli/go-util/constant"
+	"github.com/romberli/go-util/linux"
 	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/go-util/middleware/clickhouse"
 	"github.com/romberli/go-util/middleware/mysql"
@@ -808,6 +809,38 @@ func (de *DefaultEngine) checkIOUtil() error {
 // checkDiskCapacityUsage checks disk capacity usage
 func (de *DefaultEngine) checkDiskCapacityUsage() error {
 	// get data
+	var sql string
+	mysqlVersion := de.getMySQLVersion()
+	if mysqlVersion < 5.7 {
+		sql = `select variable_name, variable_value
+		from information_schema.global_variables
+		where variable_name='datadir' or variable_name='log_bin_basename';`
+	} else {
+		sql = `select variable_name, variable_value
+		from performance_schema.global_variables
+		where variable_name='datadir' or variable_name='log_bin_basename';`
+	}
+	log.Debugf("healthcheck Repository.checkDBConfig() sql: \n%s\n", sql)
+
+	r, err := de.result.Execute(sql)
+	if err != nil {
+		return err
+	}
+	globalVariables := make([]*GlobalVariable, r.RowNumber())
+	for i := range globalVariables {
+		globalVariables[i] = NewEmptyGlobalVariable()
+	}
+	// map to struct
+	err = r.MapToStructSlice(globalVariables, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return err
+	}
+	root := "/"
+	datadirDefaultPath := globalVariables[0].VariableValue
+	binlogdirDefaultPath := globalVariables[1].VariableValue
+
+	datadir, err := linux.FindMountPoint(datadirDefaultPath)
+	binlogdir, err := linux.FindMountPoint(binlogdirDefaultPath)
 	serviceName := de.operationInfo.MySQLServer.GetServiceName()
 
 	var query string
@@ -815,17 +848,18 @@ func (de *DefaultEngine) checkDiskCapacityUsage() error {
 	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		1 - node_filesystem_free{instance=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"} / 
-		node_filesystem_size{instance=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}
-	`, serviceName, serviceName)
+		1 - node_filesystem_free{instance=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"} / 
+		node_filesystem_size{instance=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}
+	`, serviceName, root, datadir, binlogdir, serviceName, root, datadir, binlogdir)
 	case 2:
 		query = fmt.Sprintf(`
-		avg by (node_name,mountpoint) (1 - (max_over_time(node_filesystem_free_bytes{node_name=~"%s", 
+		avg by (node_name,mountpoint) (1 - (max_over_time(node_filesystem_free_bytes{node_name=~"%s", mountpoint=~"%s|%s|%s",
 		fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]) or 
-		max_over_time(node_filesystem_free_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m])) / 
-		(max_over_time(node_filesystem_size_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]) or
-		max_over_time(node_filesystem_size_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m])))
-	`, serviceName, serviceName, serviceName, serviceName)
+		max_over_time(node_filesystem_free_bytes{node_name=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m])) / 
+		(max_over_time(node_filesystem_size_bytes{node_name=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]) or
+		max_over_time(node_filesystem_size_bytes{node_name=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m])))
+	`, serviceName, root, datadir, binlogdir, serviceName, root, datadir, binlogdir,
+			serviceName, root, datadir, binlogdir, serviceName, root, datadir, binlogdir)
 	default:
 		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
