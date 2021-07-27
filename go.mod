@@ -11,7 +11,7 @@ replace (
 require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/asaskevich/govalidator v0.0.0-20200819183940-29e1ff8eb0bb
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.2
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/jinzhu/now v1.1.2
 	github.com/romberli/go-util v0.3.9-0.20210721090012-5f4bebf5fddb
