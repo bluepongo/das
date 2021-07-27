@@ -39,8 +39,8 @@ const (
 	defaultResultAverageActiveSessionNumData  = ""
 	defaultResultAverageActiveSessionNumHigh  = ""
 	defaultResultCacheMissRatioScore          = 1
-	defaultResultCacheMissRatioData           = 1.00
-	defaultResultCacheMissRatioHigh           = 1.00
+	defaultResultCacheMissRatioData           = ""
+	defaultResultCacheMissRatioHigh           = ""
 	defaultResultTableSizeScore               = 1
 	defaultResultTableSizeData                = ""
 	defaultResultTableSizeHigh                = ""

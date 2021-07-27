@@ -16,6 +16,7 @@ import (
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
 	"github.com/romberli/go-util/constant"
+	"github.com/romberli/go-util/linux"
 	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/go-util/middleware/clickhouse"
 	"github.com/romberli/go-util/middleware/mysql"
@@ -622,18 +623,17 @@ func (de *DefaultEngine) checkCPUUsage() error {
 	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		sum(((avg by (mode) ( (clamp_max(rate(node_cpu{instance=~"%s",mode!="idle"}[$interval]),1)) 
-		or (clamp_max(irate(node_cpu{instance=~"%s",mode!="idle"}[5m]),1)) ))*100 or 
-		(avg_over_time(node_cpu_average{instance=~"%s", mode!="total", mode!="idle"}[$interval]) or 
-		avg_over_time(node_cpu_average{instance=~"%s", mode!="total", mode!="idle"}[5m]))))
+		clamp_max(((avg by (mode) ( (clamp_max(rate(node_cpu{instance=~"%s",mode!="idle"}[5m]),1)) or 
+		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle"}[5m]),1)) ))*100 or 
+		(max_over_time(node_cpu_average{instance=~"%s", mode!="total", mode!="idle"}[5m]) or 
+		max_over_time(node_cpu_average{instance=~"%s", mode!="total", mode!="idle"}[5m]))),100)
 	`, serviceName, serviceName, serviceName, serviceName)
 	case 2:
 		query = fmt.Sprintf(`
-		sum(avg by (node_name,mode) (clamp_max(((avg by (mode,node_name) ((
-		clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[20s]),1)) or
+		clamp_max(avg by (node_name,mode) ((avg by (mode) ( (clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[5m]),1)) or
 		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[5m]),1)) ))*100 or
-		(avg_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[20s]) or
-		avg_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[5m]))),100)))
+		(max_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[5m]) or
+		max_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[5m]))),100)
 	`, serviceName, serviceName, serviceName, serviceName)
 	default:
 		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid)
@@ -720,7 +720,7 @@ func (de *DefaultEngine) checkIOUtil() error {
 	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		rate(node_disk_io_time_ms{device=~"(sda|sdb|sdc|sr0)", instance=~"%s"}[$interval])/1000 or 
+		rate(node_disk_io_time_ms{device=~"(sda|sdb|sdc|sr0)", instance=~"%s"}[5m])/1000 or 
 		irate(node_disk_io_time_ms{device=~"(sda|sdb|sdc|sr0)", instance=~"%s"}[5m])/1000
 	`, serviceName, serviceName)
 	case 2:
@@ -809,6 +809,38 @@ func (de *DefaultEngine) checkIOUtil() error {
 // checkDiskCapacityUsage checks disk capacity usage
 func (de *DefaultEngine) checkDiskCapacityUsage() error {
 	// get data
+	var sql string
+	mysqlVersion := de.getMySQLVersion()
+	if mysqlVersion < 5.7 {
+		sql = `select variable_name, variable_value
+		from information_schema.global_variables
+		where variable_name='datadir' or variable_name='log_bin_basename';`
+	} else {
+		sql = `select variable_name, variable_value
+		from performance_schema.global_variables
+		where variable_name='datadir' or variable_name='log_bin_basename';`
+	}
+	log.Debugf("healthcheck Repository.checkDBConfig() sql: \n%s\n", sql)
+
+	r, err := de.result.Execute(sql)
+	if err != nil {
+		return err
+	}
+	globalVariables := make([]*GlobalVariable, r.RowNumber())
+	for i := range globalVariables {
+		globalVariables[i] = NewEmptyGlobalVariable()
+	}
+	// map to struct
+	err = r.MapToStructSlice(globalVariables, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return err
+	}
+	root := "/"
+	datadirDefaultPath := globalVariables[0].VariableValue
+	binlogdirDefaultPath := globalVariables[1].VariableValue
+
+	datadir, err := linux.FindMountPoint(datadirDefaultPath)
+	binlogdir, err := linux.FindMountPoint(binlogdirDefaultPath)
 	serviceName := de.operationInfo.MySQLServer.GetServiceName()
 
 	var query string
@@ -816,16 +848,18 @@ func (de *DefaultEngine) checkDiskCapacityUsage() error {
 	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		node_filesystem_size{instance=~"%s",mountpoint="/", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"} 
-		- node_filesystem_free{instance=~"%s",mountpoint="/", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}
-	`, serviceName, serviceName)
+		1 - node_filesystem_free{instance=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"} / 
+		node_filesystem_size{instance=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}
+	`, serviceName, root, datadir, binlogdir, serviceName, root, datadir, binlogdir)
 	case 2:
 		query = fmt.Sprintf(`
-		sum(avg by (node_name,mountpoint) (1 - (max_over_time(node_filesystem_free_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]) or 
-		max_over_time(node_filesystem_free_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]))  
-		(max_over_time(node_filesystem_size_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]) or 
-		max_over_time(node_filesystem_size_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]))))
-	`, serviceName, serviceName, serviceName, serviceName)
+		avg by (node_name,mountpoint) (1 - (max_over_time(node_filesystem_free_bytes{node_name=~"%s", mountpoint=~"%s|%s|%s",
+		fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]) or 
+		max_over_time(node_filesystem_free_bytes{node_name=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m])) / 
+		(max_over_time(node_filesystem_size_bytes{node_name=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]) or
+		max_over_time(node_filesystem_size_bytes{node_name=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m])))
+	`, serviceName, root, datadir, binlogdir, serviceName, root, datadir, binlogdir,
+			serviceName, root, datadir, binlogdir, serviceName, root, datadir, binlogdir)
 	default:
 		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
@@ -912,7 +946,7 @@ func (de *DefaultEngine) checkConnectionUsage() error {
 	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		max(max_over_time(mysql_global_status_threads_connected{instance=~"%s"}[$interval]) or 
+		max(max_over_time(mysql_global_status_threads_connected{instance=~"%s"}[5m]) or 
 		mysql_global_status_threads_connected{instance=~"%s"} )
 	`, serviceName, serviceName)
 	case 2:
@@ -1007,7 +1041,7 @@ func (de *DefaultEngine) checkActiveSessionNum() error {
 	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[$interval]) or 
+		avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[5m]) or 
 		avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[5m])
 	`, serviceName, serviceName)
 	case 2:

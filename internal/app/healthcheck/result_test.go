@@ -40,8 +40,8 @@ const (
 	resultAverageActiveSessionNumData  = "average active session num data"
 	resultAverageActiveSessionNumHigh  = "average active session num high"
 	resultCacheMissRatioScore          = 80
-	resultCacheMissRatioData           = 0.8
-	resultCacheMissRatioHigh           = 0.8
+	resultCacheMissRatioData           = "cache miss ratio data"
+	resultCacheMissRatioHigh           = "cache miss ratio high"
 	resultTableSizeScore               = 80
 	resultTableSizeData                = "table size data"
 	resultTableSizeHigh                = "table size high"
