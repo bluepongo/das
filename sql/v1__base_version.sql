@@ -35,7 +35,7 @@ CREATE TABLE `t_meta_db_info` (
   `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
   `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx01_db_name_cluster_id_cluster_type` (`db_name`, `cluster_id`, `cluster_type`)
+  UNIQUE KEY `idx01_db_name_cluster_id_cluster_type_env_id` (`db_name`, `cluster_id`, `cluster_type`, `env_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '数据库信息表';
 
 CREATE TABLE `t_meta_env_info` (
@@ -57,7 +57,7 @@ CREATE TABLE `t_meta_middleware_cluster_info` (
   `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
   `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx01_cluster_name` (`cluster_name`),
+  UNIQUE KEY `idx01_cluster_name_env_id` (`cluster_name`, `env_id`)
   KEY `idx02_owner_id` (`owner_id`),
   KEY `idx03_env_id` (`env_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '中间件集群信息表';
@@ -106,7 +106,7 @@ CREATE TABLE `t_meta_mysql_cluster_info` (
   `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
   `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx01_cluster_name` (`cluster_name`),
+  UNIQUE KEY `idx01_cluster_name_env_id` (`cluster_name`, `env_id`)
   KEY `idx03_monitor_system_id` (`monitor_system_id`),
   KEY `idx04_owner_id` (`owner_id`),
   key `idx05_env_id` (`env_id`)
