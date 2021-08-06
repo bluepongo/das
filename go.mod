@@ -4,7 +4,6 @@ go 1.16
 
 replace (
 	github.com/ClickHouse/clickhouse-go v1.4.3 => github.com/romberli/clickhouse-go v1.4.4-0.20210422094559-b05fc8c4dbe9
-	github.com/go-mysql-org/go-mysql v1.1.2 => github.com/romberli/go-mysql v1.1.3-0.20210425112236-f28342fcf6bc
 	github.com/spf13/pflag v1.0.5 => github.com/romberli/pflag v1.0.6-alpha
 )
 
@@ -14,7 +13,7 @@ require (
 	github.com/gin-gonic/gin v1.7.2
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/jinzhu/now v1.1.2
-	github.com/romberli/go-util v0.3.9-0.20210721090012-5f4bebf5fddb
+	github.com/romberli/go-util v0.3.10
 	github.com/romberli/log v1.0.20
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/cobra v1.1.1
