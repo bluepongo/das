@@ -54,6 +54,10 @@ func (r *Repository) GetAll(startTime, endTime time.Time) ([]query.Query, error)
 	return nil, nil
 }
 
+func (r *Repository) GetByMySQLServerID(mysqlServerID int, startTime, endTime time.Time, limit, offset int) ([]query.Query, error) {
+	return nil, nil
+}
+
 func (r *Repository) GetByDBID(dbID int, startTime, endTime time.Time, limit, offset int) ([]query.Query, error) {
 	return nil, nil
 }

@@ -17,8 +17,17 @@ const (
 // @Summary get all slow queries
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/query [get]
+// @Router /api/v1/query/all [get]
 func GetAll(c *gin.Context) {
+
+}
+
+// @Tags query
+// @Summary get slow queries by mysql server id
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": []}"
+// @Router /api/v1/query/server/:mysqlServerID [get]
+func GetByMySQLServerID(c *gin.Context) {
 
 }
 

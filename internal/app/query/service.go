@@ -25,6 +25,10 @@ func (s *Service) GetAll() error {
 	return nil
 }
 
+func (s *Service) GetByMySQLServerID() error {
+	return nil
+}
+
 func (s *Service) GetByDBID() error {
 	return nil
 }
