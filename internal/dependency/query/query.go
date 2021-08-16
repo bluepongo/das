@@ -20,7 +20,6 @@ type Query interface {
 type Repository interface {
 	Execute(command string, args ...interface{}) (middleware.Result, error)
 	Transaction() (middleware.Transaction, error)
-	GetAll(startTime, endTime time.Time) ([]Query, error)
 	GetByMySQLServerID(mysqlServerID int, startTime, endTime time.Time, limit, offset int) ([]Query, error)
 	GetByDBID(dbID int, startTime, endTime time.Time, limit, offset int) ([]Query, error)
 	GetByID(id, dbID int, startTime, endTime time.Time) (Query, error)
@@ -28,7 +27,6 @@ type Repository interface {
 
 type Service interface {
 	GetQueries() []Query
-	GetAll() error
 	GetByMySQLServerID() error
 	GetByDBID() error
 	GetByID() error

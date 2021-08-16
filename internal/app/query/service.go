@@ -21,10 +21,6 @@ func (s *Service) GetQueries() []query.Query {
 	return s.Queries
 }
 
-func (s *Service) GetAll() error {
-	return nil
-}
-
 func (s *Service) GetByMySQLServerID() error {
 	return nil
 }

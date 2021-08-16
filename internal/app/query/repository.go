@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/romberli/das/global"
+	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/go-util/middleware/clickhouse"
@@ -50,10 +51,6 @@ func (r *Repository) Transaction() (middleware.Transaction, error) {
 	return r.Database.Transaction()
 }
 
-func (r *Repository) GetAll(startTime, endTime time.Time) ([]query.Query, error) {
-	return nil, nil
-}
-
 func (r *Repository) GetByMySQLServerID(mysqlServerID int, startTime, endTime time.Time, limit, offset int) ([]query.Query, error) {
 	return nil, nil
 }
@@ -63,5 +60,13 @@ func (r *Repository) GetByDBID(dbID int, startTime, endTime time.Time, limit, of
 }
 
 func (r *Repository) GetByID(id, dbID int, startTime, endTime time.Time) (query.Query, error) {
+	return nil, nil
+}
+
+func (r *Repository) getMonitorSystemByDBID(dbID int) (metadata.MonitorSystem, error) {
+	return nil, nil
+}
+
+func (r *Repository) getMonitorSystemByMySQLServerID(mysqlServerID int) (metadata.MonitorSystem, error) {
 	return nil, nil
 }
