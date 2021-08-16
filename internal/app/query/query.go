@@ -1,5 +1,11 @@
 package query
 
+import (
+	"github.com/romberli/das/internal/dependency/query"
+)
+
+var _ query.Query = (*Query)(nil)
+
 type Query struct {
 	SQLID           string  `middleware:"sql_id" json:"sql_id"`
 	Fingerprint     string  `middleware:"fingerprint" json:"fingerprint"`

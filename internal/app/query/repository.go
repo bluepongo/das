@@ -11,6 +11,8 @@ import (
 	"github.com/romberli/log"
 )
 
+var _ query.Repository = (*Repository)(nil)
+
 type Repository struct {
 	Database              middleware.Pool
 	monitorClickhouseConn *clickhouse.Conn

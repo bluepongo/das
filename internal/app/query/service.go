@@ -4,6 +4,8 @@ import (
 	"github.com/romberli/das/internal/dependency/query"
 )
 
+var _ query.Service = (*Service)(nil)
+
 type Service struct {
 	Config  *Config
 	Queries []query.Query
