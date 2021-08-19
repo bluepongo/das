@@ -14,7 +14,7 @@ import (
 
 var _ metadata.MySQLServerRepo = (*MySQLServerRepo)(nil)
 
-// MySQLServerRepo implements Repository interface
+// MySQLServerRepo implements dependency.MySQLServerRepo interface
 type MySQLServerRepo struct {
 	Database middleware.Pool
 }
@@ -29,7 +29,7 @@ func NewMySQLServerRepoWithGlobal() *MySQLServerRepo {
 	return NewMySQLServerRepo(global.DASMySQLPool)
 }
 
-// Execute implements dependency.Repository interface,
+// Execute implements dependency.MySQLServerRepo interface,
 // it executes command with arguments on database
 func (msr *MySQLServerRepo) Execute(command string, args ...interface{}) (middleware.Result, error) {
 	conn, err := msr.Database.Get()

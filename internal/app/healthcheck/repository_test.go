@@ -60,7 +60,7 @@ const (
 
 var repository = initRepository()
 
-func initRepository() *Repository {
+func initRepository() *DASRepo {
 	pool, err := mysql.NewPoolWithDefault(dbAddr, dbDBName, dbDBUser, dbDBPass)
 	log.Infof("pool: %v, error: %v", pool, err)
 	if err != nil {
@@ -68,7 +68,7 @@ func initRepository() *Repository {
 		return nil
 	}
 
-	return NewRepository(pool)
+	return NewDASRepo(pool)
 }
 
 func createResult() error {

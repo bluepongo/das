@@ -21,7 +21,7 @@ const (
 
 var _ metadata.MySQLClusterRepo = (*MySQLClusterRepo)(nil)
 
-// MySQLClusterRepo implements Repository interface
+// MySQLClusterRepo implements dependency.MySQLClusterRepo interface
 type MySQLClusterRepo struct {
 	Database middleware.Pool
 }

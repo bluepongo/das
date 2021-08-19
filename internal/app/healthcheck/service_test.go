@@ -85,8 +85,8 @@ func createService() (*Service, error) {
 		return nil, err
 	}
 	return &Service{
-		Repository: repository,
-		Result:     result,
+		DASRepo: repository,
+		Result:  result,
 	}, nil
 }
 

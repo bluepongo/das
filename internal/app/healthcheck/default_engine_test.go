@@ -50,14 +50,14 @@ const (
 var defaultEngineConfigRepo = initDefaultEngineConfigRepo()
 var mysqlServerRepo = initMySQLServerRepo()
 
-func initDefaultEngineConfigRepo() *Repository {
+func initDefaultEngineConfigRepo() *DASRepo {
 	pool, err := mysql.NewPoolWithDefault(defaultEngineConfigAddr, defaultEngineConfigDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
 	if err != nil {
 		log.Error(common.CombineMessageWithError("initMiddlewareClusterRepo() failed", err))
 		return nil
 	}
 
-	return NewRepository(pool)
+	return NewDASRepo(pool)
 }
 
 func initMySQLServerRepo() *metadata.MySQLServerRepo {

@@ -28,7 +28,7 @@ func NewMiddlewareServerRepoWithGlobal() *MiddlewareServerRepo {
 	return NewMiddlewareServerRepo(global.DASMySQLPool)
 }
 
-// Execute implements dependency.Repository interface,
+// Execute implements dependency.MiddlewareServerRepo interface,
 // it executes command with arguments on database
 func (msr *MiddlewareServerRepo) Execute(command string, args ...interface{}) (middleware.Result, error) {
 	conn, err := msr.Database.Get()

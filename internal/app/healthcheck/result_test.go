@@ -52,13 +52,13 @@ const (
 	resultDelFlag                      = 0
 )
 
-func rInitRepository() *Repository {
+func rInitRepository() *DASRepo {
 	pool, err := mysql.NewPoolWithDefault(resultDBAddress, resultDBName, resultDBUser, resultDBPass)
 	if err != nil {
 		log.Error(common.CombineMessageWithError("initRepository() failed", err))
 		return nil
 	}
-	return NewRepository(pool)
+	return NewDASRepo(pool)
 }
 
 var rRepo = rInitRepository()
@@ -70,8 +70,8 @@ func rCreateService() (*Service, error) {
 		return nil, err
 	}
 	return &Service{
-		Repository: rRepo,
-		Result:     result,
+		DASRepo: rRepo,
+		Result:  result,
 	}, nil
 }
 

@@ -199,7 +199,7 @@ type SlowQuery struct {
 
 // DefaultEngine work for health check module
 type DefaultEngine struct {
-	healthcheck.Repository
+	healthcheck.DASRepo
 	operationInfo         *OperationInfo
 	applicationMySQLConn  *mysql.Conn
 	monitorPrometheusConn *prometheus.Conn
@@ -210,10 +210,10 @@ type DefaultEngine struct {
 }
 
 // NewDefaultEngine returns a new *DefaultEngine
-func NewDefaultEngine(repo healthcheck.Repository, operationInfo *OperationInfo, applicationMySQLConn *mysql.Conn,
+func NewDefaultEngine(repo healthcheck.DASRepo, operationInfo *OperationInfo, applicationMySQLConn *mysql.Conn,
 	monitorPrometheusConn *prometheus.Conn, monitorClickhouseConn *clickhouse.Conn, monitorMySQLConn *mysql.Conn) *DefaultEngine {
 	return &DefaultEngine{
-		Repository:            repo,
+		DASRepo:               repo,
 		operationInfo:         operationInfo,
 		applicationMySQLConn:  applicationMySQLConn,
 		monitorPrometheusConn: monitorPrometheusConn,
@@ -272,7 +272,7 @@ func (de *DefaultEngine) Run() {
 	if err != nil {
 		log.Error(message.NewMessage(msghc.ErrHealthcheckDefaultEngineRun, err.Error()).Error())
 		// update status
-		updateErr := de.Repository.UpdateOperationStatus(de.operationInfo.OperationID, defaultFailedStatus, err.Error())
+		updateErr := de.DASRepo.UpdateOperationStatus(de.operationInfo.OperationID, defaultFailedStatus, err.Error())
 		if updateErr != nil {
 			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 		}
@@ -280,7 +280,7 @@ func (de *DefaultEngine) Run() {
 
 	// update operation status
 	msg := fmt.Sprintf("healthcheck completed successfully. engine: default, operation_id: %d", de.operationInfo.OperationID)
-	updateErr := de.Repository.UpdateOperationStatus(de.operationInfo.OperationID, defaultSuccessStatus, msg)
+	updateErr := de.DASRepo.UpdateOperationStatus(de.operationInfo.OperationID, defaultSuccessStatus, msg)
 	if updateErr != nil {
 		log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 	}
@@ -288,6 +288,8 @@ func (de *DefaultEngine) Run() {
 
 // run runs healthcheck
 func (de *DefaultEngine) run() error {
+	// init MonitorRepo
+
 	// pre run
 	err := de.preRun()
 	if err != nil {
@@ -382,8 +384,8 @@ func (de *DefaultEngine) loadEngineConfig() error {
 		from t_hc_default_engine_config
 		where del_flag = 0;
 	`
-	log.Debugf("healthcheck Repository.loadEngineConfig() sql: \n%s\n", sql)
-	result, err := de.Repository.Execute(sql)
+	log.Debugf("healthcheck DASRepo.loadEngineConfig() sql: \n%s\n", sql)
+	result, err := de.DASRepo.Execute(sql)
 	if err != nil {
 		return nil
 	}
@@ -422,7 +424,7 @@ func (de *DefaultEngine) checkDBConfig() error {
 		sql = `select variable_name, variable_value
 		from performance_schema.global_variables;`
 	}
-	log.Debugf("healthcheck Repository.checkDBConfig() sql: \n%s\n", sql)
+	log.Debugf("healthcheck DASRepo.checkDBConfig() sql: \n%s\n", sql)
 
 	result, err := de.result.Execute(sql)
 	if err != nil {
@@ -638,7 +640,7 @@ func (de *DefaultEngine) checkCPUUsage() error {
 	default:
 		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid)
 	}
-	log.Debugf("healthcheck Repository.checkCPUUsage() query: \n%s\n", query)
+	log.Debugf("healthcheck DASRepo.checkCPUUsage() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
 	if err != nil {
 		return err
@@ -733,7 +735,7 @@ func (de *DefaultEngine) checkIOUtil() error {
 	default:
 		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
-	log.Debugf("healthcheck Repository.checkIOUtil() query: \n%s\n", query)
+	log.Debugf("healthcheck DASRepo.checkIOUtil() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
 	if err != nil {
 		return err
@@ -820,7 +822,7 @@ func (de *DefaultEngine) checkDiskCapacityUsage() error {
 		from performance_schema.global_variables
 		where variable_name='datadir' or variable_name='log_bin_basename';`
 	}
-	log.Debugf("healthcheck Repository.checkDBConfig() sql: \n%s\n", sql)
+	log.Debugf("healthcheck DASRepo.checkDBConfig() sql: \n%s\n", sql)
 
 	r, err := de.result.Execute(sql)
 	if err != nil {
@@ -863,7 +865,7 @@ func (de *DefaultEngine) checkDiskCapacityUsage() error {
 	default:
 		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
-	log.Debugf("healthcheck Repository.checkDiskCapacityUsage() query: \n%s\n", query)
+	log.Debugf("healthcheck DASRepo.checkDiskCapacityUsage() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
 	if err != nil {
 		return err
@@ -958,7 +960,7 @@ func (de *DefaultEngine) checkConnectionUsage() error {
 	default:
 		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
-	log.Debugf("healthcheck Repository.checkConnectionUsage() query: \n%s\n", query)
+	log.Debugf("healthcheck DASRepo.checkConnectionUsage() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
 	if err != nil {
 		return err
@@ -1052,7 +1054,7 @@ func (de *DefaultEngine) checkActiveSessionNum() error {
 	default:
 		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
-	log.Debugf("healthcheck Repository.checkActiveSessionNum() query: \n%s\n", query)
+	log.Debugf("healthcheck DASRepo.checkActiveSessionNum() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
 	if err != nil {
 		return err
@@ -1150,7 +1152,7 @@ func (de *DefaultEngine) checkCacheMissRatio() error {
 	default:
 		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
-	log.Debugf("healthcheck Repository.checkCacheMissRatio() query: \n%s\n", query)
+	log.Debugf("healthcheck DASRepo.checkCacheMissRatio() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
 	if err != nil {
 		return err
@@ -1232,7 +1234,7 @@ func (de *DefaultEngine) checkTableSize() error {
 		as TABLE_SIZE from TABLES
 		where TABLE_TYPE='BASE TABLE';
 	`
-	log.Debugf("healthcheck Repository.checkTableSize() sql: \n%s\n", sql)
+	log.Debugf("healthcheck DASRepo.checkTableSize() sql: \n%s\n", sql)
 	result, err := de.monitorMySQLConn.Execute(sql)
 	if err != nil {
 		return err
@@ -1479,5 +1481,5 @@ func (de *DefaultEngine) summarize() {
 // postRun performs post-run actions, for now, it ony saves healthcheck result to the middleware
 func (de *DefaultEngine) postRun() error {
 	// save result
-	return de.Repository.SaveResult(de.result)
+	return de.DASRepo.SaveResult(de.result)
 }

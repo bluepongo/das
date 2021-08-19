@@ -10,7 +10,7 @@ import (
 
 // Result include all data needed in healthcheck
 type Result struct {
-	healthcheck.Repository
+	healthcheck.DASRepo
 	ID                           int       `middleware:"id" json:"id"`
 	OperationID                  int       `middleware:"operation_id" json:"operation_id"`
 	WeightedAverageScore         int       `middleware:"weighted_average_score" json:"weighted_average_score"`
@@ -48,7 +48,7 @@ type Result struct {
 }
 
 // NewResult returns a new *Result
-func NewResult(repo healthcheck.Repository, operationID int, weightedAverageScore int, dbConfigScore int, dbConfigData string, dbConfigAdvice string,
+func NewResult(repo healthcheck.DASRepo, operationID int, weightedAverageScore int, dbConfigScore int, dbConfigData string, dbConfigAdvice string,
 	cpuUsageScore int, cpuUsageData string, cpuUsageHigh string, ioUtilScore int, ioUtilData string, ioUtilHigh string,
 	diskCapacityUsageScore int, diskCapacityUsageData string, diskCapacityUsageHigh string,
 	connectionUsageScore int, connectionUsageData string, connectionUsageHigh string,
@@ -57,7 +57,7 @@ func NewResult(repo healthcheck.Repository, operationID int, weightedAverageScor
 	tableSizeScore int, tableSizeData string, tableSizeHigh string,
 	slowQueryScore int, slowQueryData string, slowQueryAdvice string) *Result {
 	return &Result{
-		Repository:                   repo,
+		DASRepo:                      repo,
 		OperationID:                  operationID,
 		WeightedAverageScore:         weightedAverageScore,
 		DBConfigScore:                dbConfigScore,
@@ -91,21 +91,21 @@ func NewResult(repo healthcheck.Repository, operationID int, weightedAverageScor
 }
 
 // NewEmptyResultWithRepo return a new Result
-func NewEmptyResultWithRepo(repository healthcheck.Repository) *Result {
-	return &Result{Repository: repository}
+func NewEmptyResultWithRepo(repository healthcheck.DASRepo) *Result {
+	return &Result{DASRepo: repository}
 }
 
 // NewEmptyResultWithGlobal return a new Result
 func NewEmptyResultWithGlobal() *Result {
-	return NewEmptyResultWithRepo(NewRepositoryWithGlobal())
+	return NewEmptyResultWithRepo(NewDASRepoWithGlobal())
 }
 
-// NewResultWithDefault returns a new *Result with default Repository
+// NewResultWithDefault returns a new *Result with default DASRepo
 func NewResultWithDefault(operationID int, weightedAverageScore int, dbConfigScore int,
 	cpuUsageScore int, ioUtilScore int, diskCapacityUsageScore int, connectionUsageScore int,
 	averageActiveSessionNumScore int, cacheMissRatioScore int, tableSizeScore int, slowQueryScore int, accurateReview int) *Result {
 	return &Result{
-		Repository:                   NewRepositoryWithGlobal(),
+		DASRepo:                      NewDASRepoWithGlobal(),
 		OperationID:                  operationID,
 		WeightedAverageScore:         weightedAverageScore,
 		DBConfigScore:                dbConfigScore,

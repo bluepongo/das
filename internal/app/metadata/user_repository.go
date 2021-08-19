@@ -30,7 +30,7 @@ func NewUserRepoWithGlobal() *UserRepo {
 	return NewUserRepo(global.DASMySQLPool)
 }
 
-// Execute implements dependency.Repository interface,
+// Execute implements dependency.UserRepo interface,
 // it executes command with arguments on database
 // Execute executes given command and placeholders on the middleware
 func (ur *UserRepo) Execute(command string, args ...interface{}) (middleware.Result, error) {
@@ -48,7 +48,7 @@ func (ur *UserRepo) Execute(command string, args ...interface{}) (middleware.Res
 	return conn.Execute(command, args...)
 }
 
-// GetByName gets users of given user name from the middleware
+// GetByName gets users of given username from the middleware
 func (ur *UserRepo) GetByName(userName string) ([]metadata.User, error) {
 	sql := `
 	select id, user_name, department_name, employee_id, account_name, email, telephone, mobile, role, del_flag, create_time, last_update_time

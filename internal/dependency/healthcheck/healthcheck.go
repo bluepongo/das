@@ -83,7 +83,7 @@ type Result interface {
 	MarshalJSONWithFields(fields ...string) ([]byte, error)
 }
 
-type Repository interface {
+type DASRepo interface {
 	// Execute executes given command and placeholders on the middleware
 	Execute(command string, args ...interface{}) (middleware.Result, error)
 	// Transaction returns a middleware.Transaction that could execute multiple commands as a transaction
