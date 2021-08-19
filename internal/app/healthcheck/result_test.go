@@ -687,4 +687,4 @@ func TestResult_MarshalJSONWithFields(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 }
 
-// go test ./result_test.go ./result.go ./repository.go ./service.go ./default_engine.go
+// go test ./result_test.go ./result.go ./query.go ./service.go ./default_engine.go

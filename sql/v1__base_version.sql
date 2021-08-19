@@ -57,7 +57,7 @@ CREATE TABLE `t_meta_middleware_cluster_info` (
   `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
   `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx01_cluster_name_env_id` (`cluster_name`, `env_id`)
+  UNIQUE KEY `idx01_cluster_name_env_id` (`cluster_name`, `env_id`),
   KEY `idx02_owner_id` (`owner_id`),
   KEY `idx03_env_id` (`env_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '中间件集群信息表';
@@ -106,7 +106,7 @@ CREATE TABLE `t_meta_mysql_cluster_info` (
   `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
   `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx01_cluster_name_env_id` (`cluster_name`, `env_id`)
+  UNIQUE KEY `idx01_cluster_name_env_id` (`cluster_name`, `env_id`),
   KEY `idx03_monitor_system_id` (`monitor_system_id`),
   KEY `idx04_owner_id` (`owner_id`),
   key `idx05_env_id` (`env_id`)
@@ -239,3 +239,27 @@ CREATE TABLE `t_sa_operation_info` (
   KEY `idx01_db_id_sql_text` (`db_id`, `sql_text`(500)),
   KEY `idx02_create_time` (`create_time`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = 'sql优化操作表';
+
+CREATE TABLE `t_query_operation_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `mysql_cluster_id` int(11) DEFAULT NULL COMMENT '数据库集群ID',
+  `mysql_server_id` int(11) DEFAULT NULL COMMENT '数据库实例ID',
+  `db_id` int(11) DEFAULT NULL COMMENT '数据库ID',
+  `sql_id` varchar(100) DEFAULT NULL COMMENT 'SQL ID',
+  `start_time` datetime(6) NOT NULL COMMENT '查询范围开始时间',
+  `end_time` datetime(6) NOT NULL COMMENT '查询范围结束时间',
+  `limit` int(11) DEFAULT NULL COMMENT '返回行数',
+  `offset` int(11) DEFAULT NULL COMMENT '偏移量',
+  `message` mediumtext DEFAULT NULL COMMENT '执行日志',
+  `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
+  `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
+  `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
+PRIMARY KEY (`id`),
+  KEY `idx01_mysql_cluster_id` (`mysql_cluster_id`),
+  KEY `idx02_mysql_server_id` (`mysql_server_id`),
+  KEY `idx03_db_id` (`db_id`),
+  KEY `idx04_sql_id` (`sql_id`),
+  KEY `idx05_start_time` (`start_time`),
+  KEY `idx06_create_time` (`create_time`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '慢查询操作表';
+

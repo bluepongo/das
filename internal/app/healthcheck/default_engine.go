@@ -1376,7 +1376,6 @@ func (de *DefaultEngine) checkSlowQuery() error {
 	}
 
 	var (
-		slowQueries                      []*SlowQuery
 		topSQLList                       []*SlowQuery
 		slowQueryRowsExaminedHighSum     int
 		slowQueryRowsExaminedHighCount   int
@@ -1384,6 +1383,7 @@ func (de *DefaultEngine) checkSlowQuery() error {
 		slowQueryRowsExaminedMediumCount int
 	)
 
+	slowQueries := make([]*SlowQuery, result.RowNumber())
 	err = result.MapToStructSlice(slowQueries, constant.DefaultMiddlewareTag)
 	if err != nil {
 		return err
