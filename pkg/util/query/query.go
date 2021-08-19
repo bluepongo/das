@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/romberli/das/internal/app/query"
+	"github.com/romberli/das/pkg/message"
+	msgquery "github.com/romberli/das/pkg/message/query"
 	"github.com/romberli/go-util/constant"
 )
 
@@ -57,6 +59,10 @@ func GetConfig(dataMap map[string]string) (*query.Config, error) {
 		}
 
 		config.SetLimit(offset)
+	}
+	// validate config
+	if !config.IsValid() {
+		return nil, message.NewMessage(msgquery.ErrQueryConfigNotValid, config.GetStartTime(), config.GetEndTime(), config.GetLimit())
 	}
 
 	return config, nil

@@ -17,20 +17,19 @@ const (
 	DebugQueryGetByMySQLServerID  = 103002
 	DebugQueryGetByDBID           = 103003
 	DebugQueryGetBySQLID          = 103004
-
 	// info
 	InfoQueryGetByMySQLClusterID = 203001
 	InfoQueryGetByMySQLServerID  = 203002
 	InfoQueryGetByDBID           = 203003
 	InfoQueryGetBySQLID          = 203004
-
 	// error
 	ErrQueryGetByMySQLClusterID = 403001
 	ErrQueryGetByMySQLServerID  = 403002
 	ErrQueryGetByDBID           = 403003
 	ErrQueryGetBySQLID          = 403004
-	ErrQueryMonitorSystemType   = 403005
-	ErrQueryCloseMonitorRepo    = 403006
+	ErrQueryConfigNotValid      = 403005
+	ErrQueryMonitorSystemType   = 403006
+	ErrQueryCloseMonitorRepo    = 403007
 )
 
 func initQueryDebugMessage() {
@@ -52,6 +51,7 @@ func initQueryErrorMessage() {
 	message.Messages[ErrQueryGetByMySQLServerID] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryGetByMySQLServerID, "get by mysql server id failed. mysql_server_id: %d.\n%s")
 	message.Messages[ErrQueryGetByDBID] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryGetByDBID, "get by db id failed. db_id: %d.\n%s")
 	message.Messages[ErrQueryGetBySQLID] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryGetBySQLID, "get by sql id failed. mysql_server_id: %d, sql_id: %s.\n%s")
+	message.Messages[ErrQueryConfigNotValid] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryConfigNotValid, "config is not valid. start_time: %s, end_time: %s, limit: %d")
 	message.Messages[ErrQueryMonitorSystemType] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryMonitorSystemType, "monitor system type version should be either 1 or 2, %d is not valid")
 	message.Messages[ErrQueryCloseMonitorRepo] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCloseMonitorRepo, "close monitor repo failed.\n%s")
 }

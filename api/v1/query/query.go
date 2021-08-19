@@ -62,6 +62,10 @@ func GetByMySQLServerID(c *gin.Context) {
 
 	// get config
 	config, err := util.GetConfig(dataMap)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		return
+	}
 
 	// init service
 	service := query.NewServiceWithDefault(config)

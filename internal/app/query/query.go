@@ -9,6 +9,7 @@ import (
 	"github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/das/pkg/message"
 	msgquery "github.com/romberli/das/pkg/message/query"
+	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware/clickhouse"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
@@ -99,28 +100,23 @@ func (q *Querier) GetByMySQLClusterID(mysqlClusterID int) ([]query.Query, error)
 
 func (q *Querier) GetByMySQLServerID(mysqlServerID int) ([]query.Query, error) {
 	// init monitor repos
-	monitorRepos, err := q.getMonitorRepo(mysqlServerID)
+	monitorRepo, err := q.getMonitorRepo(mysqlServerID)
 	if err != nil {
 		return nil, err
 	}
 	defer func() {
-		err = monitorRepos.Close()
+		err = monitorRepo.Close()
 		if err != nil {
 			log.Error(message.NewMessage(msgquery.ErrQueryCloseMonitorRepo, err.Error()).Error())
 		}
 	}()
 	// get mysql server
-	mysqlServers, err := q.getMySQLServerByID(mysqlServerID)
+	mysqlServer, err := q.getMySQLServerByID(mysqlServerID)
 	if err != nil {
 		return nil, err
 	}
-	// init service names
-	serviceNames := make([]string, len(mysqlServers))
-	for i := range mysqlServers {
-		serviceNames[i] = mysqlServers[i].GetServiceName()
-	}
 
-	return monitorRepos.GetByServiceNames(serviceNames)
+	return monitorRepo.GetByServiceNames([]string{mysqlServer.GetServiceName()})
 }
 
 func (q *Querier) GetByDBID(dbID int) ([]query.Query, error) {
@@ -131,22 +127,18 @@ func (q *Querier) GetBySQLID(mysqlServerID int, sqlID string) ([]query.Query, er
 	return nil, nil
 }
 
-func (q *Querier) getMySQLServerByID(mysqlServerID int) ([]depmeta.MySQLServer, error) {
+func (q *Querier) getMySQLServersByClusterID(mysqlClusterID int) ([]depmeta.MySQLServer, error) {
+	return nil, nil
+}
+
+func (q *Querier) getMySQLServerByID(mysqlServerID int) (depmeta.MySQLServer, error) {
 	service := metadata.NewMySQLServerServiceWithDefault()
 	err := service.GetByID(mysqlServerID)
 	if err != nil {
 		return nil, err
 	}
 
-	return service.GetMySQLServers(), nil
-}
-
-func (q *Querier) getMySQLServersByClusterID(mysqlClusterID int) ([]depmeta.MySQLServer, error) {
-	return nil, nil
-}
-
-func (q *Querier) getMonitorSystemByDBID(dbID int) (depmeta.MonitorSystem, error) {
-	return nil, nil
+	return service.GetMySQLServers()[constant.ZeroInt], nil
 }
 
 func (q *Querier) getMonitorSystemByMySQLClusterID(mysqlClusterID int) (depmeta.MonitorSystem, error) {
@@ -157,21 +149,22 @@ func (q *Querier) getMonitorSystemByMySQLServerID(mysqlServerID int) (depmeta.Mo
 	return nil, nil
 }
 
+func (q *Querier) getMonitorSystemByDBID(dbID int) (depmeta.MonitorSystem, error) {
+	return nil, nil
+}
+
 func (q *Querier) getMonitorRepo(mysqlServerID int) (query.MonitorRepo, error) {
 	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
 	if err != nil {
 		return nil, err
 	}
 
-	var (
-		addr        string
-		monitorRepo query.MonitorRepo
-	)
+	var monitorRepo query.MonitorRepo
 
+	addr := fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNumSlow())
 	switch monitorSystem.GetSystemType() {
 	case 1:
 		// pmm 1.x
-		addr = fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNumSlow())
 		mysqlConn, err := mysql.NewConn(addr, pmmMySQLDBName, q.getMonitorMySQLUser(), q.getMonitorMySQLPass())
 		if err != nil {
 			return nil, err
@@ -179,7 +172,6 @@ func (q *Querier) getMonitorRepo(mysqlServerID int) (query.MonitorRepo, error) {
 		monitorRepo = NewMySQLRepo(q.getConfig(), mysqlConn)
 	case 2:
 		// pmm 2.x
-		addr = fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNumSlow())
 		clickhouseConn, err := clickhouse.NewConnWithDefault(addr, pmmClickhouseDBName, q.getMonitorClickhouseUser(), q.getMonitorClickhousePass())
 		if err != nil {
 			return nil, err
@@ -192,16 +184,6 @@ func (q *Querier) getMonitorRepo(mysqlServerID int) (query.MonitorRepo, error) {
 	return monitorRepo, nil
 }
 
-// getMonitorClickhouseUser returns clickhouse username of monitor system
-func (q *Querier) getMonitorClickhouseUser() string {
-	return viper.GetString(config.DBMonitorClickhouseUserKey)
-}
-
-// getMonitorClickhousePass returns clickhouse password of monitor system
-func (q *Querier) getMonitorClickhousePass() string {
-	return viper.GetString(config.DBMonitorClickhousePassKey)
-}
-
 // getMonitorMySQLUser returns mysql username of monitor system
 func (q *Querier) getMonitorMySQLUser() string {
 	return viper.GetString(config.DBMonitorMySQLUserKey)
@@ -210,4 +192,14 @@ func (q *Querier) getMonitorMySQLUser() string {
 // getMonitorMySQLPass returns mysql password of monitor system
 func (q *Querier) getMonitorMySQLPass() string {
 	return viper.GetString(config.DBMonitorMySQLPassKey)
+}
+
+// getMonitorClickhouseUser returns clickhouse username of monitor system
+func (q *Querier) getMonitorClickhouseUser() string {
+	return viper.GetString(config.DBMonitorClickhouseUserKey)
+}
+
+// getMonitorClickhousePass returns clickhouse password of monitor system
+func (q *Querier) getMonitorClickhousePass() string {
+	return viper.GetString(config.DBMonitorClickhousePassKey)
 }

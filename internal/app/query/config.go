@@ -5,15 +5,12 @@ import (
 )
 
 const (
-	DefaultLimit   = 5
-	DefaultOffset  = 0
-	Week           = 7 * 24 * 3600 * time.Second
-	DefaultOrderBy = OrderByRowsExaminedMaxDesc
+	DefaultLimit  = 5
+	DefaultOffset = 0
+	Week          = 7 * 24 * time.Hour
 
-	OrderByTotalExecTimeDesc OrderType = iota
-	OrderByAvgExecTimeDesc
-	OrderByExecCountDesc
-	OrderByRowsExaminedMaxDesc
+	MaxDuration = 2 * Week
+	MaxLimit    = 100
 )
 
 type OrderType int
@@ -72,4 +69,17 @@ func (c *Config) SetLimit(limit int) {
 
 func (c *Config) SetOffset(offset int) {
 	c.offset = offset
+}
+
+func (c *Config) IsValid() bool {
+	duration := c.GetEndTime().Sub(c.GetStartTime())
+	if duration > MaxDuration {
+		return false
+	}
+
+	if c.GetLimit() > MaxLimit {
+		return false
+	}
+
+	return true
 }
