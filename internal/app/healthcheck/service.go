@@ -28,55 +28,54 @@ const (
 	defaultFailedStatus            = 3
 )
 
-var (
-	defaultStartTime = time.Now().Add(-7 * 24 * time.Hour)
-	defaultEndTime   = time.Now()
-)
-
 var _ healthcheck.Service = (*Service)(nil)
 
+// OperationInfo include info for a operation
 type OperationInfo struct {
-	OperationID int
-	MySQLServer depmeta.MySQLServer
-	StartTime   time.Time
-	EndTime     time.Time
-	Step        time.Duration
+	OperationID   int
+	MySQLServer   depmeta.MySQLServer
+	MonitorSystem depmeta.MonitorSystem
+	StartTime     time.Time
+	EndTime       time.Time
+	Step          time.Duration
 }
 
 // NewOperationInfo returns a new *OperationInfo
-func NewOperationInfo(operationID int, mysqlServer depmeta.MySQLServer, startTime, endTime time.Time, step time.Duration) *OperationInfo {
+func NewOperationInfo(operationID int, mysqlServer depmeta.MySQLServer, MonitorSystem depmeta.MonitorSystem, startTime, endTime time.Time, step time.Duration) *OperationInfo {
 	return &OperationInfo{
-		OperationID: operationID,
-		MySQLServer: mysqlServer,
-		StartTime:   startTime,
-		EndTime:     endTime,
-		Step:        step,
+		OperationID:   operationID,
+		MySQLServer:   mysqlServer,
+		MonitorSystem: MonitorSystem,
+		StartTime:     startTime,
+		EndTime:       endTime,
+		Step:          step,
 	}
 }
 
+// Service of health check
 type Service struct {
-	healthcheck.Repository
+	healthcheck.DASRepo
 	OperationInfo *OperationInfo
 	Engine        healthcheck.Engine
 	Result        healthcheck.Result `json:"result"`
 }
 
 // NewService returns a new *Service
-func NewService(repo healthcheck.Repository) *Service {
+func NewService(repo healthcheck.DASRepo) *Service {
 	return newService(repo)
 }
 
 // NewServiceWithDefault returns a new healthcheck.Service with default repository
 func NewServiceWithDefault() healthcheck.Service {
-	return newService(NewRepositoryWithGlobal())
+	return newService(NewDASRepoWithGlobal())
 
 }
 
 // newService returns a new *Service
-func newService(repo healthcheck.Repository) *Service {
+func newService(repo healthcheck.DASRepo) *Service {
 	return &Service{
-		Repository: repo,
-		Result:     NewEmptyResult(),
+		DASRepo: repo,
+		Result:  NewEmptyResult(),
 	}
 }
 
@@ -89,7 +88,7 @@ func (s *Service) GetResult() healthcheck.Result {
 func (s *Service) GetResultByOperationID(id int) error {
 	var err error
 
-	s.Result, err = s.Repository.GetResultByOperationID(id)
+	s.Result, err = s.DASRepo.GetResultByOperationID(id)
 	if err != nil {
 		return err
 	}
@@ -117,13 +116,13 @@ func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime
 	return s.check(mysqlServerID, startTime, endTime, step)
 }
 
-// check
-
+// check performs healthcheck on the mysql server with given mysql server id,
+// initiating is synchronous, actual running is asynchronous
 func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) error {
 	// init
 	err := s.init(mysqlServerID, startTime, endTime, step)
 	if err != nil {
-		updateErr := s.Repository.UpdateOperationStatus(s.OperationInfo.OperationID, defaultFailedStatus, err.Error())
+		updateErr := s.DASRepo.UpdateOperationStatus(s.OperationInfo.OperationID, defaultFailedStatus, err.Error())
 		if updateErr != nil {
 			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 		}
@@ -139,12 +138,15 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 // init initiates healthcheck operation and engine
 func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step time.Duration) error {
 	// check if operation with the same mysql server id is still running
-	_, err := s.Repository.IsRunning(mysqlServerID)
+	isRunning, err := s.DASRepo.IsRunning(mysqlServerID)
 	if err != nil {
 		return err
 	}
+	if isRunning {
+		return fmt.Errorf("healthcheck of mysql server is still running. mysql server id: %d", mysqlServerID)
+	}
 	// insert operation message
-	id, err := s.Repository.InitOperation(mysqlServerID, startTime, endTime, step)
+	id, err := s.DASRepo.InitOperation(mysqlServerID, startTime, endTime, step)
 	if err != nil {
 		return err
 	}
@@ -209,8 +211,8 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 		return fmt.Errorf("healthcheck: monitor system type should be either 1 or 2, %d is not valid", monitorSystemType)
 	}
 
-	s.OperationInfo = NewOperationInfo(id, mysqlServer, startTime, endTime, step)
-	s.Engine = NewDefaultEngine(s.Repository, s.OperationInfo, applicationMySQLConn, monitorPrometheusConn, monitorClickhouseConn, monitorMySQLConn)
+	s.OperationInfo = NewOperationInfo(id, mysqlServer, monitorSystem, startTime, endTime, step)
+	s.Engine = NewDefaultEngine(s.DASRepo, s.OperationInfo, applicationMySQLConn, monitorPrometheusConn, monitorClickhouseConn, monitorMySQLConn)
 
 	return nil
 }
@@ -257,15 +259,15 @@ func (s *Service) getMonitorMySQLPass() string {
 
 // ReviewAccurate updates accurate review with given operation id
 func (s *Service) ReviewAccurate(id, review int) error {
-	return s.Repository.UpdateAccurateReviewByOperationID(id, review)
+	return s.DASRepo.UpdateAccurateReviewByOperationID(id, review)
 }
 
-// Marshal marshals Service to json bytes
+// MarshalJSON marshals Service to json bytes
 func (s *Service) MarshalJSON() ([]byte, error) {
 	return s.MarshalJSONWithFields(resultStruct)
 }
 
-// MarshalWithFields marshals only specified fields of the Service to json bytes
+// MarshalJSONWithFields marshals only specified fields of the Service to json bytes
 func (s *Service) MarshalJSONWithFields(fields ...string) ([]byte, error) {
 	return common.MarshalStructWithFields(s.Result, fields...)
 }

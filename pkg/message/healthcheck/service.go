@@ -13,21 +13,22 @@ func init() {
 
 const (
 	// debug
-	DebugHealthcheckGetResultByOperationID = 101012
-	DebugHealthcheckCheck                  = 101013
-	DebugHealthcheckCheckByHostInfo        = 101014
-	DebugHealthcheckReviewAccurate         = 101015
+	DebugHealthcheckGetResultByOperationID = 101001
+	DebugHealthcheckCheck                  = 101002
+	DebugHealthcheckCheckByHostInfo        = 101003
+	DebugHealthcheckReviewAccurate         = 101004
 	// info
-	InfoHealthcheckGetResultByOperationID = 201012
-	InfoHealthcheckCheck                  = 201013
-	InfoHealthcheckCheckByHostInfo        = 201014
-	InfoHealthcheckReviewAccurate         = 201015
+	InfoHealthcheckGetResultByOperationID = 201001
+	InfoHealthcheckCheck                  = 201002
+	InfoHealthcheckCheckByHostInfo        = 201003
+	InfoHealthcheckReviewAccurate         = 201004
 	// error
-	ErrHealthcheckDefaultEngineRun       = 401011
-	ErrHealthcheckGetResultByOperationID = 401012
-	ErrHealthcheckCheck                  = 401013
-	ErrHealthcheckCheckByHostInfo        = 401014
-	ErrHealthcheckReviewAccurate         = 401015
+	ErrHealthcheckDefaultEngineRun       = 401013
+	ErrHealthcheckGetResultByOperationID = 401014
+	ErrHealthcheckCheck                  = 401015
+	ErrHealthcheckCheckByHostInfo        = 401016
+	ErrHealthcheckReviewAccurate         = 401017
+	ErrHealthcheckCloseConnection        = 401018
 )
 
 func initServiceDebugMessage() {
@@ -48,16 +49,16 @@ func initServiceDebugMessage() {
 func initServiceInfoMessage() {
 	message.Messages[InfoHealthcheckGetResultByOperationID] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckGetResultByOperationID,
-		"healthcheck: get result by operation id compeleted. operation_id: %d")
+		"healthcheck: get result by operation id completed. operation_id: %d")
 	message.Messages[InfoHealthcheckCheck] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckCheck,
-		"healthcheck: check compeleted. %s")
+		"healthcheck: check completed. %s")
 	message.Messages[InfoHealthcheckCheckByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckCheckByHostInfo,
-		"healthcheck: check by host info compeleted. %s")
+		"healthcheck: check by host info completed. %s")
 	message.Messages[InfoHealthcheckReviewAccurate] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckReviewAccurate,
-		"healthcheck: review accurate compeleted. %s")
+		"healthcheck: review accurate completed. %s")
 }
 
 func initServiceErrorMessage() {
@@ -73,7 +74,8 @@ func initServiceErrorMessage() {
 	message.Messages[ErrHealthcheckCheckByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCheckByHostInfo,
 		"healthcheck: check by host info failed. host info %s")
-	message.Messages[ErrHealthcheckReviewAccurate] = config.NewErrMessage(
-		message.DefaultMessageHeader, ErrHealthcheckReviewAccurate,
-		"healthcheck: review accurate failed.  %s")
+	message.Messages[ErrHealthcheckCloseConnection] = config.NewErrMessage(
+		message.DefaultMessageHeader, ErrHealthcheckCloseConnection,
+		"healthcheck: close middleware connection failed.\n%s")
+
 }

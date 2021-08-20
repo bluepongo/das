@@ -1,7 +1,6 @@
 package healthcheck
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -12,24 +11,30 @@ import (
 	"github.com/romberli/log"
 )
 
-var _ healthcheck.Repository = (*Repository)(nil)
+var _ healthcheck.DASRepo = (*DASRepo)(nil)
 
-type Repository struct {
+// DASRepo for health check
+type DASRepo struct {
 	Database middleware.Pool
 }
 
-// NewRepository returns *Repository with given middleware.Pool
-func NewRepository(db middleware.Pool) *Repository {
-	return &Repository{Database: db}
+// NewDASRepo returns *DASRepo with given middleware.Pool
+func NewDASRepo(db middleware.Pool) *DASRepo {
+	return newDASRepo(db)
 }
 
-// NewRepository returns *Repository with global mysql pool
-func NewRepositoryWithGlobal() *Repository {
-	return NewRepository(global.MySQLPool)
+// NewDASRepoWithGlobal returns *DASRepo with global mysql pool
+func NewDASRepoWithGlobal() *DASRepo {
+	return NewDASRepo(global.DASMySQLPool)
+}
+
+// newDASRepo returns *DASRepo with given middleware.Pool
+func newDASRepo(db middleware.Pool) *DASRepo {
+	return &DASRepo{Database: db}
 }
 
 // Execute executes given command and placeholders on the middleware
-func (r *Repository) Execute(command string, args ...interface{}) (middleware.Result, error) {
+func (r *DASRepo) Execute(command string, args ...interface{}) (middleware.Result, error) {
 	conn, err := r.Database.Get()
 	if err != nil {
 		return nil, err
@@ -37,7 +42,7 @@ func (r *Repository) Execute(command string, args ...interface{}) (middleware.Re
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("healthcheck Repository.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("healthcheck DASRepo.Execute(): close database connection failed.\n%s", err.Error())
 		}
 	}()
 
@@ -45,12 +50,12 @@ func (r *Repository) Execute(command string, args ...interface{}) (middleware.Re
 }
 
 // Transaction returns a middleware.Transaction that could execute multiple commands as a transaction
-func (r *Repository) Transaction() (middleware.Transaction, error) {
+func (r *DASRepo) Transaction() (middleware.Transaction, error) {
 	return r.Database.Transaction()
 }
 
 // GetResultByOperationID gets a Result by the operationID from the middleware
-func (r *Repository) GetResultByOperationID(operationID int) (healthcheck.Result, error) {
+func (r *DASRepo) GetResultByOperationID(operationID int) (healthcheck.Result, error) {
 	sql := `
 		select id, operation_id, weighted_average_score, db_config_score, db_config_data, 
 		db_config_advice, cpu_usage_score, cpu_usage_data, cpu_usage_high, io_util_score,
@@ -65,7 +70,7 @@ func (r *Repository) GetResultByOperationID(operationID int) (healthcheck.Result
 		and operation_id = ? 
 		order by id;
 	`
-	log.Debugf("healthCheck Repository.GetResultByOperationID select sql: \n%s\nplaceholders: %s", sql, operationID)
+	log.Debugf("healthCheck DASRepo.GetResultByOperationID select sql: \n%s\nplaceholders: %s", sql, operationID)
 
 	result, err := r.Execute(sql, operationID)
 	if err != nil {
@@ -73,7 +78,7 @@ func (r *Repository) GetResultByOperationID(operationID int) (healthcheck.Result
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.New(fmt.Sprintf("healthCheck Repository.GetResultByOperationID(): data does not exists, operation_id: %d", operationID))
+		return nil, fmt.Errorf("healthCheck DASRepo.GetResultByOperationID(): data does not exists, operation_id: %d", operationID)
 	case 1:
 		hcInfo := NewEmptyResultWithRepo(r)
 		// map to struct
@@ -84,35 +89,32 @@ func (r *Repository) GetResultByOperationID(operationID int) (healthcheck.Result
 
 		return hcInfo, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("healthCheck Repository.GetResultByOperationID(): duplicate key exists, operation_id: %d", operationID))
+		return nil, fmt.Errorf("healthCheck DASRepo.GetResultByOperationID(): duplicate key exists, operation_id: %d", operationID)
 	}
 }
 
 // IsRunning gets status by the mysqlServerID from the middleware
-func (r *Repository) IsRunning(mysqlServerID int) (bool, error) {
-	sql := `select status from t_hc_operation_info where del_flag = 0 and mysql_server_id = ? order by id desc limit 0,1;`
-	log.Debugf("healthCheck Repository.IsRunning() select sql: \n%s\nplaceholders: %s", sql, mysqlServerID)
+func (r *DASRepo) IsRunning(mysqlServerID int) (bool, error) {
+	sql := `select count(1) from t_hc_operation_info where del_flag = 0 and mysql_server_id = ? and status = 1;`
+	log.Debugf("healthCheck DASRepo.IsRunning() select sql: \n%s\nplaceholders: %s", sql, mysqlServerID)
 
 	result, err := r.Execute(sql, mysqlServerID)
 	if err != nil {
-		return true, err
+		return false, err
 	}
-	resultStatus, _ := result.GetInt(constant.ZeroInt, constant.ZeroInt)
-	if resultStatus == 1 {
-		return true, err
-	}
+	count, _ := result.GetInt(constant.ZeroInt, constant.ZeroInt)
 
-	return false, nil
+	return count != 0, nil
 }
 
 // InitOperation creates a operationInfo in the middleware
-func (r *Repository) InitOperation(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
-	sql := `insert into t_hc_operation_info(mysql_server_id, start_time, end_time, step) values(?, ?, ?, ?);`
-	log.Debugf("healthCheck Repository.InitOperation() insert sql: %s", sql)
-
+func (r *DASRepo) InitOperation(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
 	startTimeStr := startTime.Format(constant.TimeLayoutSecond)
 	endTimeStr := endTime.Format(constant.TimeLayoutSecond)
-	stepInt := int(step)
+	stepInt := int(step.Seconds())
+
+	sql := `insert into t_hc_operation_info(mysql_server_id, start_time, end_time, step) values(?, ?, ?, ?);`
+	log.Debugf("healthCheck DASRepo.InitOperation() insert sql: \n%s\nplaceholders: %s, %s, %s, %s", sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
 
 	_, err := r.Execute(sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
 	if err != nil {
@@ -123,7 +125,7 @@ func (r *Repository) InitOperation(mysqlServerID int, startTime, endTime time.Ti
 		select id from t_hc_operation_info where del_flag = 0 and 
 		mysql_server_id = ? and start_time = ? and end_time = ? and step = ?;
 	`
-	log.Debugf("healthCheck Repository.InitOperation() select sql: %s", sql)
+	log.Debugf("healthCheck DASRepo.InitOperation() select sql: \n%s\nplaceholders: %s, %s, %s, %s", sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
 
 	result, err := r.Execute(sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
 	if err != nil {
@@ -134,16 +136,16 @@ func (r *Repository) InitOperation(mysqlServerID int, startTime, endTime time.Ti
 }
 
 // UpdateOperationStatus updates the status and message by the operationID in the middleware
-func (r *Repository) UpdateOperationStatus(operationID int, status int, message string) error {
+func (r *DASRepo) UpdateOperationStatus(operationID int, status int, message string) error {
 	sql := `update t_hc_operation_info set status = ?, message = ? where id = ?;`
-	log.Debugf("healthCheck Repository.UpdateOperationStatus() update sql: \n%s\nplaceholders: %s", sql, operationID)
+	log.Debugf("healthCheck DASRepo.UpdateOperationStatus() update sql: \n%s\nplaceholders: %s, %s, %s", sql, operationID, status, message)
 	_, err := r.Execute(sql, status, message, operationID)
 
 	return err
 }
 
 // SaveResult saves the result in the middleware
-func (r *Repository) SaveResult(result healthcheck.Result) error {
+func (r *DASRepo) SaveResult(result healthcheck.Result) error {
 	sql := `insert into t_hc_result(operation_id, weighted_average_score, db_config_score, db_config_data, 
 		db_config_advice, cpu_usage_score, cpu_usage_data, cpu_usage_high, io_util_score,
 		io_util_data, io_util_high, disk_capacity_usage_score, disk_capacity_usage_data, 
@@ -154,7 +156,17 @@ func (r *Repository) SaveResult(result healthcheck.Result) error {
 		slow_query_data, slow_query_advice, accurate_review) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
 		?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 	`
-	log.Debugf("healthCheck Repository.SaveResult() insert sql: %s", sql)
+	log.Debugf("healthCheck DASRepo.SaveResult() insert sql: \n%s\nplaceholders: %s, %s, %s, %s, %s, "+
+		"%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
+		sql, result.GetOperationID(), result.GetWeightedAverageScore(), result.GetDBConfigScore(), result.GetDBConfigData(),
+		result.GetDBConfigAdvice(), result.GetCPUUsageScore(), result.GetCPUUsageData(), result.GetCPUUsageHigh(),
+		result.GetIOUtilScore(), result.GetIOUtilData(), result.GetIOUtilHigh(), result.GetDiskCapacityUsageScore(),
+		result.GetDiskCapacityUsageData(), result.GetDiskCapacityUsageHigh(), result.GetConnectionUsageScore(),
+		result.GetConnectionUsageData(), result.GetConnectionUsageHigh(), result.GetAverageActiveSessionNumScore(),
+		result.GetAverageActiveSessionNumData(), result.GetAverageActiveSessionNumHigh(), result.GetCacheMissRatioScore(),
+		result.GetCacheMissRatioData(), result.GetCacheMissRatioHigh(), result.GetTableSizeScore(), result.GetTableSizeData(),
+		result.GetTableSizeHigh(), result.GetSlowQueryScore(), result.GetSlowQueryData(), result.GetSlowQueryAdvice(),
+		result.GetAccurateReview())
 
 	// execute
 	_, err := r.Execute(sql, result.GetOperationID(), result.GetWeightedAverageScore(), result.GetDBConfigScore(),
@@ -171,9 +183,9 @@ func (r *Repository) SaveResult(result healthcheck.Result) error {
 }
 
 // UpdateAccurateReviewByOperationID updates the accurateReview by the operationID in the middleware
-func (r *Repository) UpdateAccurateReviewByOperationID(operationID int, review int) error {
+func (r *DASRepo) UpdateAccurateReviewByOperationID(operationID int, review int) error {
 	sql := `update t_hc_result set accurate_review = ? where operation_id = ?;`
-	log.Debugf("healthCheck Repository.UpdateAccurateReviewByOperationID() update sql: \n%s\nplaceholders: %s", sql, operationID)
+	log.Debugf("healthCheck DASRepo.UpdateAccurateReviewByOperationID() update sql: \n%s\nplaceholders: %s, %s", sql, operationID, review)
 
 	_, err := r.Execute(sql, review, operationID)
 	return err

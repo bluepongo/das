@@ -52,9 +52,9 @@ type Result interface {
 	// GetCacheHitRatioScore returns the cache miss ratio score
 	GetCacheMissRatioScore() int
 	// GetCacheHitRatioData returns the cache miss ratio data
-	GetCacheMissRatioData() float64
+	GetCacheMissRatioData() string
 	// GetCacheMissRatioHigh returns the high cache miss ratio data
-	GetCacheMissRatioHigh() float64
+	GetCacheMissRatioHigh() string
 	// GetTableSizeScore returns the table size score
 	GetTableSizeScore() int
 	// GetTableSizeData returns the table size data
@@ -83,7 +83,7 @@ type Result interface {
 	MarshalJSONWithFields(fields ...string) ([]byte, error)
 }
 
-type Repository interface {
+type DASRepo interface {
 	// Execute executes given command and placeholders on the middleware
 	Execute(command string, args ...interface{}) (middleware.Result, error)
 	// Transaction returns a middleware.Transaction that could execute multiple commands as a transaction

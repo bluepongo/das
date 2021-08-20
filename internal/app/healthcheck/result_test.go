@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	resultDBAddress = "127.0.0.1:3306"
+	resultDBAddress = "192.168.10.210:3306"
 	resultHostIP    = "127.0.0.1"
 	resultPortNum   = 3306
 	resultDBName    = "das"
@@ -40,8 +40,8 @@ const (
 	resultAverageActiveSessionNumData  = "average active session num data"
 	resultAverageActiveSessionNumHigh  = "average active session num high"
 	resultCacheMissRatioScore          = 80
-	resultCacheMissRatioData           = 0.8
-	resultCacheMissRatioHigh           = 0.8
+	resultCacheMissRatioData           = "cache miss ratio data"
+	resultCacheMissRatioHigh           = "cache miss ratio high"
 	resultTableSizeScore               = 80
 	resultTableSizeData                = "table size data"
 	resultTableSizeHigh                = "table size high"
@@ -52,13 +52,13 @@ const (
 	resultDelFlag                      = 0
 )
 
-func rInitRepository() *Repository {
+func rInitRepository() *DASRepo {
 	pool, err := mysql.NewPoolWithDefault(resultDBAddress, resultDBName, resultDBUser, resultDBPass)
 	if err != nil {
 		log.Error(common.CombineMessageWithError("initRepository() failed", err))
 		return nil
 	}
-	return NewRepository(pool)
+	return NewDASRepo(pool)
 }
 
 var rRepo = rInitRepository()
@@ -70,8 +70,8 @@ func rCreateService() (*Service, error) {
 		return nil, err
 	}
 	return &Service{
-		Repository: rRepo,
-		Result:     result,
+		DASRepo: rRepo,
+		Result:  result,
 	}, nil
 }
 
@@ -687,4 +687,4 @@ func TestResult_MarshalJSONWithFields(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 }
 
-// go test ./result_test.go ./result.go ./repository.go ./service.go ./default_engine.go
+// go test ./result_test.go ./result.go ./query.go ./service.go ./default_engine.go

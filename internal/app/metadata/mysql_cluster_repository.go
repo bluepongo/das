@@ -21,7 +21,7 @@ const (
 
 var _ metadata.MySQLClusterRepo = (*MySQLClusterRepo)(nil)
 
-// MySQLClusterRepo implements Repository interface
+// MySQLClusterRepo implements dependency.MySQLClusterRepo interface
 type MySQLClusterRepo struct {
 	Database middleware.Pool
 }
@@ -33,7 +33,7 @@ func NewMySQLClusterRepo(db middleware.Pool) *MySQLClusterRepo {
 
 // NewMySQLClusterRepoWithGlobal returns *MySQLClusterRepo with global mysql pool
 func NewMySQLClusterRepoWithGlobal() *MySQLClusterRepo {
-	return NewMySQLClusterRepo(global.MySQLPool)
+	return NewMySQLClusterRepo(global.DASMySQLPool)
 }
 
 // Execute implements metadata.MySQLClusterRepo interface,

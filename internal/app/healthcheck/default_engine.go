@@ -1,21 +1,23 @@
 package healthcheck
 
 import (
-	"context"
 	"database/sql/driver"
-	"encoding/binary"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"math"
 	"strconv"
+	"strings"
 	"time"
 
-	"github.com/pingcap/errors"
-
+	"github.com/hashicorp/go-multierror"
+	"github.com/romberli/das/internal/app/metadata"
+	"github.com/romberli/das/internal/app/sqladvisor"
 	"github.com/romberli/das/internal/dependency/healthcheck"
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
 	"github.com/romberli/go-util/constant"
+	"github.com/romberli/go-util/linux"
+	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/go-util/middleware/clickhouse"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/go-util/middleware/prometheus"
@@ -26,6 +28,7 @@ const (
 	defaultDBConfigScore                   = 5
 	defaultMinScore                        = 0
 	defaultMaxScore                        = 100.0
+	defaultHundred                         = 100
 	defaultDBConfigItemName                = "db_config"
 	defaultCPUUsageItemName                = "cpu_usage"
 	defaultIOUtilItemName                  = "io_util"
@@ -35,12 +38,13 @@ const (
 	defaultCacheMissRatioItemName          = "cache_miss_ratio"
 	defaultTableRowsItemName               = "table_rows"
 	defaultTableSizeItemName               = "table_size"
-	defaultSlowQueryExecutionTimeItemName  = "slow_query_execution_time"
 	defaultSlowQueryRowsExaminedItemName   = "slow_query_rows_examined"
+	defaultSlowQueryTopSQLNum              = 3
+	defaultClusterType                     = 1
 
 	dbConfigMaxUserConnection         = "max_user_connection"
 	dbConfigLogBin                    = "log_bin"
-	dbConfigBinlogFormat              = "binglog_format"
+	dbConfigBinlogFormat              = "binlog_format"
 	dbConfigBinlogRowImage            = "binlog_row_image"
 	dbConfigSyncBinlog                = "sync_binlog"
 	dbConfigInnodbFlushLogAtTrxCommit = "innodb_flush_log_at_trx_commit"
@@ -52,15 +56,13 @@ const (
 	dbConfigRelayLogInfoRepository    = "relay_log_info_repository"
 	dbConfigReportHost                = "report_host"
 	dbConfigReportPort                = "report_port"
-	dbConfigInnodbBufferPoolSize      = "innodb_buffer_pool_size"
-	dbConfigInnodbBufferPoolChunkSize = "innodb_buffer_pool_chunk_size"
 	dbConfigInnodbFlushMethod         = "innodb_flush_method"
 	dbConfigInnodbMonitorEnable       = "innodb_monitor_enable"
 	dbConfigInnodbPrintAllDeadlocks   = "innodb_print_all_deadlocks"
 	dbConfigSlowQueryLog              = "slow_query_log"
 	dbConfigPerformanceSchema         = "performance_schema"
 
-	dbConfigMaxUserConnectionValid         = "2000"
+	dbConfigMaxUserConnectionValid         = 2000
 	dbConfigLogBinValid                    = "ON"
 	dbConfigBinlogFormatValid              = "ROW"
 	dbConfigBinlogRowImageValid            = "FULL"
@@ -69,7 +71,7 @@ const (
 	dbConfigGtidModeValid                  = "ON"
 	dbConfigEnforceGtidConsistencyValid    = "ON"
 	dbConfigSlaveParallelTypeValid         = "LOGICAL_CLOCK"
-	dbConfigSlaveParallelWorkersValid      = "16"
+	dbConfigSlaveParallelWorkersValid      = 16
 	dbConfigMasterInfoRepositoryValid      = "TABLE"
 	dbConfigRelayLogInfoRepositoryValid    = "TABLE"
 	dbConfigInnodbFlushMethodValid         = "O_DIRECT"
@@ -79,24 +81,28 @@ const (
 	dbConfigPerformanceSchemaValid         = "ON"
 )
 
-func ByteToFloat64(bytes []byte) float64 {
-	bits := binary.LittleEndian.Uint64(bytes)
-
-	return math.Float64frombits(bits)
-}
-
 var _ healthcheck.Engine = (*DefaultEngine)(nil)
 
-type GlobalVariables struct {
+// GlobalVariable encapsulates k-v pairs for global variable
+type GlobalVariable struct {
 	VariableName  string `middleware:"variable_name" json:"variable_name"`
 	VariableValue string `middleware:"variable_value" json:"variable_value"`
 }
 
-// NewEmptyGlobalVariables returns a new *GlobalVariables
-func NewEmptyGlobalVariables() *GlobalVariables {
-	return &GlobalVariables{}
+// NewEmptyGlobalVariable returns a new *GlobalVariables
+func NewEmptyGlobalVariable() *GlobalVariable {
+	return &GlobalVariable{}
 }
 
+// NewGlobalVariable returns a *GlobalVariable
+func NewGlobalVariable(name, value string) *GlobalVariable {
+	return &GlobalVariable{
+		VariableName:  name,
+		VariableValue: value,
+	}
+}
+
+// DefaultItemConfig include all data for a item
 type DefaultItemConfig struct {
 	ID                          int       `middleware:"id" json:"id"`
 	ItemName                    string    `middleware:"item_name" json:"item_name"`
@@ -118,6 +124,7 @@ func NewEmptyDefaultItemConfig() *DefaultItemConfig {
 	return &DefaultItemConfig{}
 }
 
+// DefaultEngineConfig is a map of DefaultItemConfig
 type DefaultEngineConfig map[string]*DefaultItemConfig
 
 // NewEmptyDefaultEngineConfig returns a new empty *DefaultItemConfig
@@ -131,91 +138,93 @@ func (dec DefaultEngineConfig) getItemConfig(item string) *DefaultItemConfig {
 }
 
 // Validate validates if engine configuration is valid
-func (dec DefaultEngineConfig) Validate() bool {
+func (dec DefaultEngineConfig) Validate() error {
 	itemWeightCount := constant.ZeroInt
 	// validate defaultEngineConfig exits items
 	if len(dec) == constant.ZeroInt {
-		log.Errorf("default engine config doesn't have content.")
-		return false
+		return message.NewMessage(msghc.ErrDefaultEngineConfigContent)
 	}
 	for itemName, defaultItemConfig := range dec {
 		// validate item weight
-		if defaultItemConfig.ItemWeight > 100 || defaultItemConfig.ItemWeight < 0 {
-			log.Errorf("item name: %s item weight is invalid.", itemName)
-			return false
+		if defaultItemConfig.ItemWeight > defaultHundred || defaultItemConfig.ItemWeight < constant.ZeroInt {
+			return message.NewMessage(msghc.ErrItemWeightItemInvalid, itemName, defaultItemConfig.ItemWeight)
 		}
 		// validate low watermark
-		if defaultItemConfig.LowWatermark < 0 {
-			log.Errorf("item name: %s low watermark is invalid.", itemName)
-			return false
+		if defaultItemConfig.LowWatermark < constant.ZeroInt {
+			return message.NewMessage(msghc.ErrLowWatermarkItemInvalid, itemName, defaultItemConfig.LowWatermark)
 		}
 		// validate high watermark
-		if defaultItemConfig.HighWatermark <= defaultItemConfig.LowWatermark {
-			log.Errorf("item name: %s high watermark is invalid.", itemName)
-			return false
+		if defaultItemConfig.HighWatermark < defaultItemConfig.LowWatermark {
+			return message.NewMessage(msghc.ErrHighWatermarkItemInvalid, itemName, defaultItemConfig.HighWatermark)
 		}
 		// validate unit
-		if defaultItemConfig.Unit < 0 {
-			log.Errorf("item name: %s unit is invalid.", itemName)
-			return false
+		if defaultItemConfig.Unit < constant.ZeroInt {
+			return message.NewMessage(msghc.ErrUnitItemInvalid, itemName, defaultItemConfig.Unit)
 		}
 		// validate score deduction per unit high
-		if defaultItemConfig.ScoreDeductionPerUnitHigh > 100 || defaultItemConfig.ScoreDeductionPerUnitHigh < 0 || defaultItemConfig.ScoreDeductionPerUnitHigh > defaultItemConfig.MaxScoreDeductionHigh {
-			log.Errorf("item name: %s score deduction per unit high is invalid.", itemName)
-			return false
+		if defaultItemConfig.ScoreDeductionPerUnitHigh > defaultHundred || defaultItemConfig.ScoreDeductionPerUnitHigh < constant.ZeroInt || defaultItemConfig.ScoreDeductionPerUnitHigh > defaultItemConfig.MaxScoreDeductionHigh {
+			return message.NewMessage(msghc.ErrScoreDeductionPerUnitHighItemInvalid, itemName, defaultItemConfig.ScoreDeductionPerUnitHigh)
 		}
 		// validate max score deduction high
-		if defaultItemConfig.MaxScoreDeductionHigh > 100 || defaultItemConfig.MaxScoreDeductionHigh < 0 {
-			log.Errorf("item name: %s max score deduction high is invalid.", itemName)
-			return false
+		if defaultItemConfig.MaxScoreDeductionHigh > defaultHundred || defaultItemConfig.MaxScoreDeductionHigh < constant.ZeroInt {
+			return message.NewMessage(msghc.ErrMaxScoreDeductionHighItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionHigh)
 		}
 		// validate score deduction per unit medium
-		if defaultItemConfig.ScoreDeductionPerUnitMedium > 100 || defaultItemConfig.ScoreDeductionPerUnitMedium < 0 || defaultItemConfig.ScoreDeductionPerUnitMedium > defaultItemConfig.MaxScoreDeductionMedium {
-			log.Errorf("item name: %s score deduction per unit medium is invalid.", itemName)
-			return false
+		if defaultItemConfig.ScoreDeductionPerUnitMedium > defaultHundred || defaultItemConfig.ScoreDeductionPerUnitMedium < constant.ZeroInt || defaultItemConfig.ScoreDeductionPerUnitMedium > defaultItemConfig.MaxScoreDeductionMedium {
+			return message.NewMessage(msghc.ErrScoreDeductionPerUnitMediumItemInvalid, itemName, defaultItemConfig.ScoreDeductionPerUnitMedium)
 		}
 		// validate max score deduction medium
-		if defaultItemConfig.MaxScoreDeductionMedium > 100 || defaultItemConfig.MaxScoreDeductionMedium < 0 {
-			log.Errorf("item name: %s max score deduction medium is invalid.", itemName)
-			return false
+		if defaultItemConfig.MaxScoreDeductionMedium > defaultHundred || defaultItemConfig.MaxScoreDeductionMedium < constant.ZeroInt {
+			return message.NewMessage(msghc.ErrMaxScoreDeductionMediumItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionMedium)
 		}
 		itemWeightCount += defaultItemConfig.ItemWeight
 	}
 	// validate item weigh count is 100
-	if itemWeightCount != 100 {
-		log.Errorf("all items weight weight count is not 100.")
-		return false
+	if itemWeightCount != defaultHundred {
+		return message.NewMessage(msghc.ErrItemWeightPercentInvalid)
 	}
-	return true
+	return nil
 }
 
+type SlowQuery struct {
+	SQLID           string  `middleware:"sql_id" json:"sql_id"`
+	Fingerprint     string  `middleware:"fingerprint" json:"fingerprint"`
+	Example         string  `middleware:"example" json:"example"`
+	DBName          string  `middleware:"db_name" json:"db_name"`
+	ExecCount       int     `middleware:"exec_count" json:"exec_count"`
+	TotalExecTime   float64 `middleware:"total_exec_time" json:"total_exec_time"`
+	AvgExecTime     float64 `middleware:"avg_exec_time" json:"avg_exec_time"`
+	RowsExaminedMax int     `middleware:"rows_examined_max" json:"rows_examined_max"`
+}
+
+// DefaultEngine work for health check module
 type DefaultEngine struct {
-	healthcheck.Repository
+	healthcheck.DASRepo
 	operationInfo         *OperationInfo
-	applicationMysqlConn  *mysql.Conn
+	applicationMySQLConn  *mysql.Conn
 	monitorPrometheusConn *prometheus.Conn
 	monitorClickhouseConn *clickhouse.Conn
-	monitorMysqlConn      *mysql.Conn
+	monitorMySQLConn      *mysql.Conn
 	engineConfig          DefaultEngineConfig
 	result                *Result
 }
 
 // NewDefaultEngine returns a new *DefaultEngine
-func NewDefaultEngine(repo healthcheck.Repository, operationInfo *OperationInfo, applicationMySQLConn *mysql.Conn,
+func NewDefaultEngine(repo healthcheck.DASRepo, operationInfo *OperationInfo, applicationMySQLConn *mysql.Conn,
 	monitorPrometheusConn *prometheus.Conn, monitorClickhouseConn *clickhouse.Conn, monitorMySQLConn *mysql.Conn) *DefaultEngine {
 	return &DefaultEngine{
-		Repository:            repo,
+		DASRepo:               repo,
 		operationInfo:         operationInfo,
-		applicationMysqlConn:  applicationMySQLConn,
+		applicationMySQLConn:  applicationMySQLConn,
 		monitorPrometheusConn: monitorPrometheusConn,
 		monitorClickhouseConn: monitorClickhouseConn,
-		monitorMysqlConn:      monitorMySQLConn,
+		monitorMySQLConn:      monitorMySQLConn,
 		engineConfig:          NewEmptyDefaultEngineConfig(),
 		result:                NewEmptyResult(),
 	}
 }
 
-//
+// NewDefaultItemConfig returns new *DefaultItemConfig
 func NewDefaultItemConfig(itemName string, itemWeight int, lowWatermark float64, highWatermark float64, unit float64,
 	scoreDeductionPerUnitHigh float64, maxScoreDeductionHigh float64, scoreDeductionPerUnitMedium float64, maxScoreDeductionMedium float64) *DefaultItemConfig {
 	return &DefaultItemConfig{
@@ -236,27 +245,34 @@ func (de *DefaultEngine) getItemConfig(item string) *DefaultItemConfig {
 	return de.engineConfig.getItemConfig(item)
 }
 
-func (de *DefaultEngine) getPrometheusVersion() (int, error) {
-	prometheusInfo, err := de.monitorPrometheusConn.API.Buildinfo(context.Background())
-	if err != nil {
-		return 0, err
-	}
-	prometheusVersion, err := strconv.Atoi(prometheusInfo.Version[0:1])
-	if err != nil {
-		return 0, err
-	}
-	return prometheusVersion, nil
+// getPMMVersion return the pmm version
+func (de *DefaultEngine) getPMMVersion() int {
+	return de.operationInfo.MonitorSystem.GetSystemType()
+}
+
+// getMySQLVersion return the mysql version
+func (de *DefaultEngine) getMySQLVersion() float64 {
+	versionSplit := strings.Split(de.operationInfo.MySQLServer.GetVersion(), ".")
+	versionStr := versionSplit[0] + "." + versionSplit[1]
+	version, _ := strconv.ParseFloat(versionStr, 64)
+	return version
 }
 
 // Run runs healthcheck
 func (de *DefaultEngine) Run() {
+	defer func() {
+		err := de.closeConnections()
+		if err != nil {
+			log.Error(message.NewMessage(msghc.ErrHealthcheckCloseConnection, err.Error()).Error())
+		}
+	}()
+
 	// run
 	err := de.run()
-
 	if err != nil {
 		log.Error(message.NewMessage(msghc.ErrHealthcheckDefaultEngineRun, err.Error()).Error())
 		// update status
-		updateErr := de.Repository.UpdateOperationStatus(de.operationInfo.OperationID, defaultFailedStatus, err.Error())
+		updateErr := de.DASRepo.UpdateOperationStatus(de.operationInfo.OperationID, defaultFailedStatus, err.Error())
 		if updateErr != nil {
 			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 		}
@@ -264,7 +280,7 @@ func (de *DefaultEngine) Run() {
 
 	// update operation status
 	msg := fmt.Sprintf("healthcheck completed successfully. engine: default, operation_id: %d", de.operationInfo.OperationID)
-	updateErr := de.Repository.UpdateOperationStatus(de.operationInfo.OperationID, defaultSuccessStatus, msg)
+	updateErr := de.DASRepo.UpdateOperationStatus(de.operationInfo.OperationID, defaultSuccessStatus, msg)
 	if updateErr != nil {
 		log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 	}
@@ -272,6 +288,8 @@ func (de *DefaultEngine) Run() {
 
 // run runs healthcheck
 func (de *DefaultEngine) run() error {
+	// init MonitorRepo
+
 	// pre run
 	err := de.preRun()
 	if err != nil {
@@ -328,6 +346,30 @@ func (de *DefaultEngine) run() error {
 	return de.postRun()
 }
 
+func (de *DefaultEngine) closeConnections() error {
+	merr := &multierror.Error{}
+
+	err := de.applicationMySQLConn.Close()
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	switch de.getPMMVersion() {
+	case 1:
+		err = de.monitorMySQLConn.Close()
+		if err != nil {
+			merr = multierror.Append(merr, err)
+		}
+	case 2:
+		err = de.monitorClickhouseConn.Close()
+		if err != nil {
+			merr = multierror.Append(merr, err)
+		}
+	}
+
+	return merr.ErrorOrNil()
+}
+
 // preRun performs pre-run actions, for now, it only loads engine config
 func (de *DefaultEngine) preRun() error {
 	return de.loadEngineConfig()
@@ -342,8 +384,8 @@ func (de *DefaultEngine) loadEngineConfig() error {
 		from t_hc_default_engine_config
 		where del_flag = 0;
 	`
-	log.Debugf("healcheck Repository.loadEngineConfig() sql: \n%s\nplaceholders: %s", sql)
-	result, err := de.Repository.Execute(sql)
+	log.Debugf("healthcheck DASRepo.loadEngineConfig() sql: \n%s\n", sql)
+	result, err := de.DASRepo.Execute(sql)
 	if err != nil {
 		return nil
 	}
@@ -357,15 +399,15 @@ func (de *DefaultEngine) loadEngineConfig() error {
 	if err != nil {
 		return err
 	}
-	entityList := NewEmptyDefaultEngineConfig()
-	for i := range defaultEngineConfigList {
-		itemName := defaultEngineConfigList[i].ItemName
-		entityList[itemName] = defaultEngineConfigList[i]
+	defaultEngine := NewEmptyDefaultEngineConfig()
+	for _, defaultEngineConfig := range defaultEngineConfigList {
+		itemName := defaultEngineConfig.ItemName
+		defaultEngine[itemName] = defaultEngineConfig
 	}
 	// validate config
-	validate := entityList.Validate()
-	if validate == false {
-		return errors.New("default engine config formant is invalid.")
+	err = defaultEngine.Validate()
+	if err == nil {
+		return message.NewMessage(msghc.ErrDefaultEngineConfigFormatInValid)
 	}
 	return nil
 }
@@ -373,311 +415,232 @@ func (de *DefaultEngine) loadEngineConfig() error {
 // checkDBConfig checks database configuration
 func (de *DefaultEngine) checkDBConfig() error {
 	// load database config
-	sql := `select variable_name, variable_value
-		from global_variables;`
+	var sql string
+	mysqlVersion := de.getMySQLVersion()
+	if mysqlVersion < 5.7 {
+		sql = `select variable_name, variable_value
+		from information_schema.global_variables;`
+	} else {
+		sql = `select variable_name, variable_value
+		from performance_schema.global_variables;`
+	}
+	log.Debugf("healthcheck DASRepo.checkDBConfig() sql: \n%s\n", sql)
+
 	result, err := de.result.Execute(sql)
 	if err != nil {
 		return err
 	}
-	variableList := make([]*GlobalVariables, result.RowNumber())
-	for i := range variableList {
-		variableList[i] = NewEmptyGlobalVariables()
+	globalVariables := make([]*GlobalVariable, result.RowNumber())
+	for i := range globalVariables {
+		globalVariables[i] = NewEmptyGlobalVariable()
 	}
 	// map to struct
-	err = result.MapToStructSlice(variableList, constant.DefaultMiddlewareTag)
+	err = result.MapToStructSlice(globalVariables, constant.DefaultMiddlewareTag)
 	if err != nil {
 		return err
-	}
-	// init entity
-	variableMap := make(map[string]string, result.RowNumber())
-	for i := range variableList {
-		variableName := variableList[i].VariableName
-		variableMap[variableName] = variableList[i].VariableValue
 	}
 
 	dbConfigConfig := de.getItemConfig(defaultDBConfigItemName)
 
 	var (
 		dbConfigCount   int
-		dbConfigInvalid []GlobalVariables
-		dbConfigAdvice  []string
-		advice          string
+		dbConfigInvalid []*GlobalVariable
+		dbConfigAdvice  []*GlobalVariable
 	)
-	// max_user_connection
-	if variableMap[dbConfigMaxUserConnection] != dbConfigMaxUserConnectionValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigMaxUserConnection,
-			variableMap[dbConfigMaxUserConnection],
-		})
-		advice = "It is recommended that " + dbConfigMaxUserConnection + " be set to " + dbConfigMaxUserConnectionValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// log_bin
-	if variableMap[dbConfigLogBin] != dbConfigLogBinValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigLogBin,
-			variableMap[dbConfigLogBin],
-		})
-		advice = "It is recommended that " + dbConfigLogBin + " be set to " + dbConfigLogBinValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// binlog_format
-	if variableMap[dbConfigBinlogFormat] != dbConfigBinlogFormatValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigBinlogFormat,
-			variableMap[dbConfigBinlogFormat],
-		})
-		advice = "It is recommended that " + dbConfigBinlogFormat + " be set to " + dbConfigBinlogFormatValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// binlog_row_image
-	if variableMap[dbConfigBinlogRowImage] != dbConfigBinlogRowImageValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigBinlogRowImage,
-			variableMap[dbConfigBinlogRowImage],
-		})
-		advice = "It is recommended that " + dbConfigBinlogRowImage + " be set to " + dbConfigBinlogRowImageValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// sync_binlog
-	if variableMap[dbConfigSyncBinlog] != dbConfigSyncBinlogValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigSyncBinlog,
-			variableMap[dbConfigSyncBinlog],
-		})
-		advice = "It is recommended that " + dbConfigSyncBinlog + " be set to " + dbConfigSyncBinlogValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// innodb_flush_log_at_trx_commit
-	if variableMap[dbConfigInnodbFlushLogAtTrxCommit] != dbConfigInnodbFlushLogAtTrxCommitValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigInnodbFlushLogAtTrxCommit,
-			variableMap[dbConfigInnodbFlushLogAtTrxCommit],
-		})
-		advice = "It is recommended that " + dbConfigInnodbFlushLogAtTrxCommit + " be set to " + dbConfigInnodbFlushLogAtTrxCommitValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// gtid_mode
-	if variableMap[dbConfigGtidMode] != dbConfigGtidModeValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigGtidMode,
-			variableMap[dbConfigGtidMode],
-		})
-		advice = "It is recommended that " + dbConfigGtidMode + " be set to " + dbConfigGtidModeValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// enforce_gtid_consistency
-	if variableMap[dbConfigEnforceGtidConsistency] != dbConfigEnforceGtidConsistencyValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigEnforceGtidConsistency,
-			variableMap[dbConfigEnforceGtidConsistency],
-		})
-		advice = "It is recommended that " + dbConfigEnforceGtidConsistency + " be set to " + dbConfigEnforceGtidConsistencyValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// slave-parallel-type
-	if variableMap[dbConfigSlaveParallelType] != dbConfigSlaveParallelTypeValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigSlaveParallelType,
-			variableMap[dbConfigSlaveParallelType],
-		})
-		advice = "It is recommended that " + dbConfigSlaveParallelType + " be set to " + dbConfigSlaveParallelTypeValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// slave-parallel-workers
-	if variableMap[dbConfigSlaveParallelWorkers] != dbConfigSlaveParallelWorkersValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigSlaveParallelWorkers,
-			variableMap[dbConfigSlaveParallelWorkers],
-		})
-		advice = "It is recommended that " + dbConfigSlaveParallelWorkers + " be set to " + dbConfigSlaveParallelWorkersValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// master_info_repository
-	if variableMap[dbConfigMasterInfoRepository] != dbConfigMasterInfoRepositoryValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigMasterInfoRepository,
-			variableMap[dbConfigMasterInfoRepository],
-		})
-		advice = "It is recommended that " + dbConfigMasterInfoRepository + " be set to " + dbConfigMasterInfoRepositoryValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// relay_log_info_repository
-	if variableMap[dbConfigRelayLogInfoRepository] != dbConfigRelayLogInfoRepositoryValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigRelayLogInfoRepository,
-			variableMap[dbConfigRelayLogInfoRepository],
-		})
-		advice = "It is recommended that " + dbConfigRelayLogInfoRepository + " be set to " + dbConfigRelayLogInfoRepositoryValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// report_host
-	serverName := de.operationInfo.MySQLServer.GetServerName()
-	if variableMap[dbConfigReportHost] != serverName {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigReportHost,
-			variableMap[dbConfigReportHost],
-		})
-		advice = "It is recommended that " + dbConfigReportHost + " be set to " + serverName + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// report_port
-	portNum := de.operationInfo.MySQLServer.GetPortNum()
-	if variableMap[dbConfigReportPort] != string(portNum) {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigReportPort,
-			variableMap[dbConfigReportPort],
-		})
-		advice = "It is recommended that " + dbConfigReportPort + " be set to " + string(portNum) + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// innodb_buffer_pool_chunk_size
-	innodbBufferPoolSize, _ := strconv.Atoi(variableMap[dbConfigInnodbBufferPoolSize])
-	innodbBufferPoolChunkSize, _ := strconv.Atoi(variableMap[dbConfigInnodbBufferPoolChunkSize])
-	innodbBufferPoolSize = innodbBufferPoolSize / 1024 / 1024
-	flag := 0
-	innodbBufferPoolChunkSizeValid := 0
-	if innodbBufferPoolChunkSize%1048576 != 0 {
-		flag = 1
-		advice = "Integer times " + dbConfigInnodbBufferPoolChunkSize + " advice is set to 128 MB.\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	if innodbBufferPoolSize <= 120 {
-		innodbBufferPoolChunkSizeValid = 128 * 1024 * 1024
-	} else if innodbBufferPoolSize > 120 {
-		innodbBufferPoolChunkSizeValid = 256 * 1024 * 1024
-	}
-	if innodbBufferPoolSize != innodbBufferPoolChunkSizeValid {
-		flag = 1
-		advice = "It is recommended that " + dbConfigInnodbBufferPoolChunkSize + " be set to " + string(innodbBufferPoolChunkSizeValid) + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	if flag == 1 {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigInnodbBufferPoolChunkSize,
-			variableMap[dbConfigInnodbBufferPoolChunkSize],
-		})
+
+	for _, globalVariable := range globalVariables {
+		switch globalVariable.VariableName {
+		// max_user_connection
+		case dbConfigMaxUserConnection:
+			maxUserConnection, _ := strconv.Atoi(globalVariable.VariableValue)
+			if maxUserConnection < dbConfigMaxUserConnectionValid {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigMaxUserConnection, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigMaxUserConnection, strconv.Itoa(dbConfigMaxUserConnectionValid)))
+			}
+		// log_bin
+		case dbConfigLogBin:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigLogBinValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigLogBin, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigLogBin, dbConfigLogBinValid))
+			}
+		// binlog_format
+		case dbConfigBinlogFormat:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigBinlogFormatValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigBinlogFormat, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigBinlogFormat, dbConfigBinlogFormatValid))
+			}
+		// binlog_row_image
+		case dbConfigBinlogRowImage:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigBinlogRowImageValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigBinlogRowImage, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigBinlogRowImage, dbConfigBinlogRowImageValid))
+			}
+		// sync_binlog
+		case dbConfigSyncBinlog:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigSyncBinlogValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigSyncBinlog, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigSyncBinlog, dbConfigSyncBinlogValid))
+			}
+		// innodb_flush_log_at_trx_commit
+		case dbConfigInnodbFlushLogAtTrxCommit:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigInnodbFlushLogAtTrxCommitValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigInnodbFlushLogAtTrxCommit, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigInnodbFlushLogAtTrxCommit, dbConfigInnodbFlushLogAtTrxCommitValid))
+			}
+		// gtid_mode
+		case dbConfigGtidMode:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigGtidModeValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigGtidMode, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigGtidMode, dbConfigGtidModeValid))
+			}
+		// enforce_gtid_consistency
+		case dbConfigEnforceGtidConsistency:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigEnforceGtidConsistencyValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigEnforceGtidConsistency, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigEnforceGtidConsistency, dbConfigEnforceGtidConsistencyValid))
+			}
+		// slave-parallel-type
+		case dbConfigSlaveParallelType:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigSlaveParallelTypeValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigSlaveParallelType, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigSlaveParallelType, dbConfigSlaveParallelTypeValid))
+			}
+		// slave-parallel-workers
+		case dbConfigSlaveParallelWorkers:
+			slaveParallelWorkers, _ := strconv.Atoi(globalVariable.VariableValue)
+			if slaveParallelWorkers < dbConfigSlaveParallelWorkersValid {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigSlaveParallelWorkers, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigSlaveParallelWorkers, strconv.Itoa(dbConfigSlaveParallelWorkersValid)))
+			}
+		// master_info_repository
+		case dbConfigMasterInfoRepository:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigMasterInfoRepositoryValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigMasterInfoRepository, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigMasterInfoRepository, dbConfigMasterInfoRepositoryValid))
+			}
+		// relay_log_info_repository
+		case dbConfigRelayLogInfoRepository:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigRelayLogInfoRepositoryValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigRelayLogInfoRepository, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigRelayLogInfoRepository, dbConfigRelayLogInfoRepositoryValid))
+			}
+		// report_host
+		case dbConfigReportHost:
+			host := de.operationInfo.MySQLServer.GetHostIP()
+			if globalVariable.VariableValue != host {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigReportHost, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigReportHost, host))
+			}
+		// report_port
+		case dbConfigReportPort:
+			portNum := strconv.Itoa(de.operationInfo.MySQLServer.GetPortNum())
+			if globalVariable.VariableValue != portNum {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigReportPort, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigReportPort, portNum))
+			}
+		// innodb_flush_method
+		case dbConfigInnodbFlushMethod:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigInnodbFlushMethodValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigInnodbFlushMethod, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigInnodbFlushMethod, dbConfigInnodbFlushMethodValid))
+			}
+		// innodb_monitor_enable
+		case dbConfigInnodbMonitorEnable:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigInnodbMonitorEnableValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigInnodbMonitorEnable, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigInnodbMonitorEnable, dbConfigInnodbMonitorEnableValid))
+			}
+		// innodb_print_all_deadlocks
+		case dbConfigInnodbPrintAllDeadlocks:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigInnodbPrintAllDeadlocksValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigInnodbPrintAllDeadlocks, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigInnodbPrintAllDeadlocks, dbConfigInnodbPrintAllDeadlocksValid))
+			}
+		// slow_query_log
+		case dbConfigSlowQueryLog:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigSlowQueryLogValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigSlowQueryLog, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigSlowQueryLog, dbConfigSlowQueryLogValid))
+			}
+		// performance_schema
+		case dbConfigPerformanceSchema:
+			if strings.ToUpper(globalVariable.VariableValue) != strings.ToUpper(dbConfigPerformanceSchemaValid) {
+				dbConfigCount++
+				dbConfigInvalid = append(dbConfigInvalid, NewGlobalVariable(dbConfigPerformanceSchema, globalVariable.VariableValue))
+				dbConfigAdvice = append(dbConfigAdvice, NewGlobalVariable(dbConfigPerformanceSchema, dbConfigPerformanceSchemaValid))
+			}
+		}
+		// database config data
+		jsonBytesTotal, err := json.Marshal(dbConfigInvalid)
+		if err != nil {
+			return nil
+		}
+		de.result.DBConfigData = string(jsonBytesTotal)
+		// database config advice
+		jsonBytesAdvice, err := json.Marshal(dbConfigAdvice)
+		if err != nil {
+			return nil
+		}
+		de.result.DBConfigAdvice = string(jsonBytesAdvice)
+		// database config score deduction
+		dbConfigScoreDeduction := float64(dbConfigCount) * dbConfigConfig.ScoreDeductionPerUnitHigh
+		if dbConfigScoreDeduction > dbConfigConfig.MaxScoreDeductionHigh {
+			dbConfigScoreDeduction = dbConfigConfig.MaxScoreDeductionHigh
+		}
+		de.result.DBConfigScore = int(defaultMaxScore - dbConfigScoreDeduction)
+		if de.result.DBConfigScore < constant.ZeroInt {
+			de.result.DBConfigScore = constant.ZeroInt
+		}
+
 	}
 
-	// innodb_flush_method
-	if variableMap[dbConfigInnodbFlushMethod] != dbConfigInnodbFlushMethodValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigInnodbFlushMethod,
-			variableMap[dbConfigInnodbFlushMethod],
-		})
-		advice = "It is recommended that " + dbConfigInnodbFlushMethod + " be set to " + dbConfigInnodbFlushMethodValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// innodb_monitor_enable
-	if variableMap[dbConfigInnodbMonitorEnable] != dbConfigInnodbMonitorEnableValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigInnodbMonitorEnable,
-			variableMap[dbConfigInnodbMonitorEnable],
-		})
-		advice = "It is recommended that " + dbConfigInnodbMonitorEnable + " be set to " + dbConfigInnodbMonitorEnableValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// innodb_print_all_deadlocks
-	if variableMap[dbConfigInnodbPrintAllDeadlocks] != dbConfigInnodbPrintAllDeadlocksValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigInnodbPrintAllDeadlocks,
-			variableMap[dbConfigInnodbPrintAllDeadlocks],
-		})
-		advice = "It is recommended that " + dbConfigInnodbPrintAllDeadlocks + " be set to " + dbConfigInnodbPrintAllDeadlocksValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// slow_query_log
-	if variableMap[dbConfigSlowQueryLog] != dbConfigSlowQueryLogValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigSlowQueryLog,
-			variableMap[dbConfigSlowQueryLog],
-		})
-		advice = "It is recommended that " + dbConfigSlowQueryLog + " be set to " + dbConfigSlowQueryLogValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// performance_schema
-	if variableMap[dbConfigPerformanceSchema] != dbConfigPerformanceSchemaValid {
-		dbConfigCount++
-		dbConfigInvalid = append(dbConfigInvalid, GlobalVariables{
-			dbConfigPerformanceSchema,
-			variableMap[dbConfigPerformanceSchema],
-		})
-		advice = "It is recommended that " + dbConfigPerformanceSchema + " be set to " + dbConfigPerformanceSchemaValid + "." + "\n"
-		dbConfigAdvice = append(dbConfigAdvice, advice)
-	}
-	// database config data
-	jsonBytesTotal, err := json.Marshal(dbConfigInvalid)
-	if err != nil {
-		return nil
-	}
-	de.result.DBConfigData = string(jsonBytesTotal)
-	// database config advice
-	jsonBytesAdvice, err := json.Marshal(dbConfigAdvice)
-	if err != nil {
-		return nil
-	}
-	de.result.DBConfigAdvice = string(jsonBytesAdvice)
-
-	// database config score deduction
-	dbConfigScoreDeduction := float64(dbConfigCount) * dbConfigConfig.ScoreDeductionPerUnitHigh
-	if dbConfigScoreDeduction > dbConfigConfig.MaxScoreDeductionHigh {
-		dbConfigScoreDeduction = dbConfigConfig.MaxScoreDeductionHigh
-	}
-	de.result.DBConfigScore = int(defaultMaxScore - dbConfigScoreDeduction)
-	if de.result.DBConfigScore < constant.ZeroInt {
-		de.result.DBConfigScore = constant.ZeroInt
-	}
 	return nil
 }
 
 // checkCPUUsage checks cpu usage
 func (de *DefaultEngine) checkCPUUsage() error {
 	// get data
-	serverName := de.operationInfo.MySQLServer.GetServerName()
-	portNum := de.operationInfo.MySQLServer.GetPortNum()
-	host := serverName + string(portNum)
-	// get prometheus version
-	prometheusVersion, err := de.getPrometheusVersion()
-	if err != nil {
-		return err
-	}
+	serviceName := de.operationInfo.MySQLServer.GetServiceName()
+
 	var query string
-	switch prometheusVersion {
+
+	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		sum(((avg by (mode) ( (clamp_max(rate(node_cpu{instance=~"%s",mode!="idle"}[$interval]),1)) 
-		or (clamp_max(irate(node_cpu{instance=~"%s",mode!="idle"}[5m]),1)) ))*100 or 
-		(avg_over_time(node_cpu_average{instance=~"%s", mode!="total", mode!="idle"}[$interval]) or 
-		avg_over_time(node_cpu_average{instance=~"%s", mode!="total", mode!="idle"}[5m]))))
-	`, host, host, host, host)
+		clamp_max(((avg by (mode) ( (clamp_max(rate(node_cpu{instance=~"%s",mode!="idle"}[5m]),1)) or 
+		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle"}[5m]),1)) ))*100 or 
+		(max_over_time(node_cpu_average{instance=~"%s", mode!="total", mode!="idle"}[5m]) or 
+		max_over_time(node_cpu_average{instance=~"%s", mode!="total", mode!="idle"}[5m]))),100)
+	`, serviceName, serviceName, serviceName, serviceName)
 	case 2:
 		query = fmt.Sprintf(`
-		sum(avg by (node_name,mode) (clamp_max(((avg by (mode,node_name) ((
-		clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[20s]),1)) or
+		clamp_max(avg by (node_name,mode) ((avg by (mode) ( (clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[5m]),1)) or
 		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[5m]),1)) ))*100 or
-		(avg_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[20s]) or
-		avg_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[5m]))),100)))
-	`, serverName, serverName, serverName, serverName)
+		(max_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[5m]) or
+		max_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[5m]))),100)
+	`, serviceName, serviceName, serviceName, serviceName)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid)
 	}
+	log.Debugf("healthcheck DASRepo.checkCPUUsage() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
 	if err != nil {
 		return err
@@ -753,29 +716,26 @@ func (de *DefaultEngine) checkCPUUsage() error {
 // checkIOUtil check io util
 func (de *DefaultEngine) checkIOUtil() error {
 	// get data
-	serverName := de.operationInfo.MySQLServer.GetServerName()
-	portNum := de.operationInfo.MySQLServer.GetPortNum()
-	host := serverName + string(portNum)
-	// get prometheus version
-	prometheusVersion, err := de.getPrometheusVersion()
-	if err != nil {
-		return err
-	}
+	serviceName := de.operationInfo.MySQLServer.GetServiceName()
 	var query string
-	switch prometheusVersion {
+
+	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		rate(node_disk_io_time_ms{device=~"(sda|sdb|sdc|sr0)", instance=~"%s"}[$interval])/1000 or 
+		rate(node_disk_io_time_ms{device=~"(sda|sdb|sdc|sr0)", instance=~"%s"}[5m])/1000 or 
 		irate(node_disk_io_time_ms{device=~"(sda|sdb|sdc|sr0)", instance=~"%s"}[5m])/1000
-	`, host, host)
+	`, serviceName, serviceName)
 	case 2:
 		query = fmt.Sprintf(`
 		sum by (node_name) (rate(node_disk_io_time_seconds_total{device=~"(sda|sdb|sdc|sr0)",node_name=~"%s"}[5m]) or 
 		irate(node_disk_io_time_seconds_total{device=~"(sda|sdb|sdc|sr0)",node_name=~"%s"}[5m]) or
 		(max_over_time(rdsosmetrics_diskIO_util{device=~"(sda|sdb|sdc|sr0)",node_name=~"%s"}[5m]) or 
 		max_over_time(rdsosmetrics_diskIO_util{device=~"(sda|sdb|sdc|sr0)",node_name=~"%s"}[5m]))/100)
-	`, serverName, serverName, serverName, serverName)
+	`, serviceName, serviceName, serviceName, serviceName)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
+	log.Debugf("healthcheck DASRepo.checkIOUtil() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
 	if err != nil {
 		return err
@@ -851,29 +811,61 @@ func (de *DefaultEngine) checkIOUtil() error {
 // checkDiskCapacityUsage checks disk capacity usage
 func (de *DefaultEngine) checkDiskCapacityUsage() error {
 	// get data
-	serverName := de.operationInfo.MySQLServer.GetServerName()
-	portNum := de.operationInfo.MySQLServer.GetPortNum()
-	host := serverName + string(portNum)
-	// get prometheus version
-	prometheusVersion, err := de.getPrometheusVersion()
+	var sql string
+	mysqlVersion := de.getMySQLVersion()
+	if mysqlVersion < 5.7 {
+		sql = `select variable_name, variable_value
+		from information_schema.global_variables
+		where variable_name='datadir' or variable_name='log_bin_basename';`
+	} else {
+		sql = `select variable_name, variable_value
+		from performance_schema.global_variables
+		where variable_name='datadir' or variable_name='log_bin_basename';`
+	}
+	log.Debugf("healthcheck DASRepo.checkDBConfig() sql: \n%s\n", sql)
+
+	r, err := de.result.Execute(sql)
 	if err != nil {
 		return err
 	}
+	globalVariables := make([]*GlobalVariable, r.RowNumber())
+	for i := range globalVariables {
+		globalVariables[i] = NewEmptyGlobalVariable()
+	}
+	// map to struct
+	err = r.MapToStructSlice(globalVariables, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return err
+	}
+	root := "/"
+	datadirDefaultPath := globalVariables[0].VariableValue
+	binlogdirDefaultPath := globalVariables[1].VariableValue
+
+	datadir, err := linux.FindMountPoint(datadirDefaultPath)
+	binlogdir, err := linux.FindMountPoint(binlogdirDefaultPath)
+	serviceName := de.operationInfo.MySQLServer.GetServiceName()
+
 	var query string
-	switch prometheusVersion {
+
+	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		node_filesystem_size{instance=~"%s",mountpoint="/", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"} 
-		- node_filesystem_free{instance=~"%s",mountpoint="/", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}
-	`, host, host)
+		1 - node_filesystem_free{instance=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"} / 
+		node_filesystem_size{instance=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}
+	`, serviceName, root, datadir, binlogdir, serviceName, root, datadir, binlogdir)
 	case 2:
 		query = fmt.Sprintf(`
-		sum(avg by (node_name,mountpoint) (1 - (max_over_time(node_filesystem_free_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]) or 
-		max_over_time(node_filesystem_free_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]))  
-		(max_over_time(node_filesystem_size_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]) or 
-		max_over_time(node_filesystem_size_bytes{node_name=~"%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]))))
-	`, serverName, serverName, serverName, serverName)
+		avg by (node_name,mountpoint) (1 - (max_over_time(node_filesystem_free_bytes{node_name=~"%s", mountpoint=~"%s|%s|%s",
+		fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]) or 
+		max_over_time(node_filesystem_free_bytes{node_name=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m])) / 
+		(max_over_time(node_filesystem_size_bytes{node_name=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m]) or
+		max_over_time(node_filesystem_size_bytes{node_name=~"%s", mountpoint=~"%s|%s|%s", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m])))
+	`, serviceName, root, datadir, binlogdir, serviceName, root, datadir, binlogdir,
+			serviceName, root, datadir, binlogdir, serviceName, root, datadir, binlogdir)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
+	log.Debugf("healthcheck DASRepo.checkDiskCapacityUsage() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
 	if err != nil {
 		return err
@@ -949,28 +941,26 @@ func (de *DefaultEngine) checkDiskCapacityUsage() error {
 // checkConnectionUsage checks connection usage
 func (de *DefaultEngine) checkConnectionUsage() error {
 	// get data
-	serverName := de.operationInfo.MySQLServer.GetServerName()
-	portNum := de.operationInfo.MySQLServer.GetPortNum()
-	host := serverName + string(portNum)
-	// get prometheus version
-	prometheusVersion, err := de.getPrometheusVersion()
-	if err != nil {
-		return err
-	}
+	serviceName := de.operationInfo.MySQLServer.GetServiceName()
+
 	var query string
-	switch prometheusVersion {
+
+	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		max(max_over_time(mysql_global_status_threads_connected{instance=~"%s"}[$interval]) or 
+		max(max_over_time(mysql_global_status_threads_connected{instance=~"%s"}[5m]) or 
 		mysql_global_status_threads_connected{instance=~"%s"} )
-	`, host, host)
+	`, serviceName, serviceName)
 	case 2:
 		query = fmt.Sprintf(`
 		clamp_max((avg by (service_name) (max_over_time(mysql_global_status_max_used_connections{service_name=~"%s"}[5m]) or 
 		max_over_time(mysql_global_status_max_used_connections{service_name=~"%s"}[5m])) / avg by (service_name) 
 		(mysql_global_variables_max_connections{service_name=~"%s"})),1)
-	`, serverName, serverName, serverName)
+	`, serviceName, serviceName, serviceName)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
+	log.Debugf("healthcheck DASRepo.checkConnectionUsage() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
 	if err != nil {
 		return err
@@ -1022,7 +1012,7 @@ func (de *DefaultEngine) checkConnectionUsage() error {
 	if err != nil {
 		return nil
 	}
-	de.result.CacheMissRatioHigh = ByteToFloat64(jsonBytesHigh)
+	de.result.ConnectionUsageHigh = string(jsonBytesHigh)
 
 	// connection usage high score deduction
 	connectionUsageScoreDeductionHigh := (connectionUsageHighSum/float64(connectionUsageHighCount) - connectionUsageConfig.HighWatermark) / connectionUsageConfig.Unit * connectionUsageConfig.ScoreDeductionPerUnitHigh
@@ -1046,27 +1036,25 @@ func (de *DefaultEngine) checkConnectionUsage() error {
 // checkActiveSessionNum check active session number
 func (de *DefaultEngine) checkActiveSessionNum() error {
 	// get data
-	serverName := de.operationInfo.MySQLServer.GetServerName()
-	portNum := de.operationInfo.MySQLServer.GetPortNum()
-	host := serverName + string(portNum)
-	// get prometheus version
-	prometheusVersion, err := de.getPrometheusVersion()
-	if err != nil {
-		return err
-	}
+	serviceName := de.operationInfo.MySQLServer.GetServiceName()
+
 	var query string
-	switch prometheusVersion {
+
+	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[$interval]) or 
+		avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[5m]) or 
 		avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[5m])
-	`, host, host)
+	`, serviceName, serviceName)
 	case 2:
 		query = fmt.Sprintf(`
 		avg by (service_name) (avg_over_time(mysql_global_status_threads_running{service_name=~"%s"}[5m]) or 
 		avg_over_time(mysql_global_status_threads_running{service_name=~"%s"}[5m]))
-	`, serverName, serverName)
+	`, serviceName, serviceName)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
+	log.Debugf("healthcheck DASRepo.checkActiveSessionNum() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
 	if err != nil {
 		return err
@@ -1142,35 +1130,29 @@ func (de *DefaultEngine) checkActiveSessionNum() error {
 // checkCacheMissRatio checks cache miss ratio
 func (de *DefaultEngine) checkCacheMissRatio() error {
 	// get data
-	serverName := de.operationInfo.MySQLServer.GetServerName()
-	portNum := de.operationInfo.MySQLServer.GetPortNum()
-	host := serverName + string(portNum)
-	// get prometheus version
-	prometheusVersion, err := de.getPrometheusVersion()
-	if err != nil {
-		return err
-	}
+	serviceName := de.operationInfo.MySQLServer.GetServiceName()
+
 	var query string
-	switch prometheusVersion {
+
+	switch de.getPMMVersion() {
 	case 1:
 		query = fmt.Sprintf(`
-		1- (rate(mysql_global_status_table_open_cache_hits{instance=~"%s"}[$interval]) or 
-		irate(mysql_global_status_table_open_cache_hits{instance=~"%s"}[5m]))/
-		((rate(mysql_global_status_table_open_cache_hits{instance=~"%s"}[$interval]) or 
-		irate(mysql_global_status_table_open_cache_hits{instance=~"%s"}[5m]))+
-		(rate(mysql_global_status_table_open_cache_misses{instance=~"%s"}[$interval]) or 
-		irate(mysql_global_status_table_open_cache_misses{instance=~"%s"}[5m])))
-	`, host, host, host, host, host, host)
+		clamp_max(avg by (service_name) (rate(mysql_global_status_innodb_pages_read{instance=~"%s"}[5m]) or 
+		irate(mysql_global_status_innodb_pages_read{instance=~"%s"}[5m])) / 
+		avg by (service_name) (rate(mysql_global_status_innodb_buffer_pool_read_requests{instance=~"%s"}[5m]) or 
+		irate(mysql_global_status_innodb_buffer_pool_read_requests{instance=~"%s"}[5m])), 1)
+	`, serviceName, serviceName, serviceName, serviceName)
 	case 2:
 		query = fmt.Sprintf(`
-		clamp_max((1 - avg by (service_name)(rate(mysql_global_status_table_open_cache_hits{service_name=~"%s"}[5m]) or 
-		irate(mysql_global_status_table_open_cache_hits{service_name=~"%s"}[5m]))/
-		avg by (service_name)((rate(mysql_global_status_table_open_cache_hits{service_name=~"%s"}[5m]) or 
-		irate(mysql_global_status_table_open_cache_hits{service_name=~"%s"}[5m]))+
-		(rate(mysql_global_status_table_open_cache_misses{service_name=~"%s"}[5m]) or 
-		irate(mysql_global_status_table_open_cache_misses{service_name=~"%s"}[5m])))),1)
-	`, serverName, serverName, serverName, serverName, serverName, serverName)
+		avg by (service_name) ((rate(mysql_global_status_innodb_buffer_pool_reads{service_name=~"%s"}[5m]) or
+		irate(mysql_global_status_innodb_buffer_pool_reads{service_name=~"%s"}[5m])) / 
+		(rate(mysql_global_status_innodb_buffer_pool_read_requests{service_name=~"%s"}[5m]) or 
+		irate(mysql_global_status_innodb_buffer_pool_read_requests{service_name=~"%s"}[5m])))
+	`, serviceName, serviceName, serviceName, serviceName)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, de.getPMMVersion())
 	}
+	log.Debugf("healthcheck DASRepo.checkCacheMissRatio() query: \n%s\n", query)
 	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
 	if err != nil {
 		return err
@@ -1216,13 +1198,13 @@ func (de *DefaultEngine) checkCacheMissRatio() error {
 	if err != nil {
 		return nil
 	}
-	de.result.CacheMissRatioData = ByteToFloat64(jsonBytesTotal)
+	de.result.CacheMissRatioData = string(jsonBytesTotal)
 	// cache miss ratio high
 	jsonBytesHigh, err := json.Marshal(cacheMissRatioHigh)
 	if err != nil {
 		return nil
 	}
-	de.result.CacheMissRatioHigh = ByteToFloat64(jsonBytesHigh)
+	de.result.CacheMissRatioHigh = string(jsonBytesHigh)
 
 	// cache miss ratio high score deduction
 	cacheMissRatioScoreDeductionHigh := (cacheMissRatioHighSum/float64(cacheMissRatioHighCount) - cacheMissRatioConfig.HighWatermark) / cacheMissRatioConfig.Unit * cacheMissRatioConfig.ScoreDeductionPerUnitHigh
@@ -1252,7 +1234,8 @@ func (de *DefaultEngine) checkTableSize() error {
 		as TABLE_SIZE from TABLES
 		where TABLE_TYPE='BASE TABLE';
 	`
-	result, err := de.monitorMysqlConn.Execute(sql)
+	log.Debugf("healthcheck DASRepo.checkTableSize() sql: \n%s\n", sql)
+	result, err := de.monitorMySQLConn.Execute(sql)
 	if err != nil {
 		return err
 	}
@@ -1325,147 +1308,154 @@ func (de *DefaultEngine) checkTableSize() error {
 }
 
 // checkSlowQuery checks slow query
-// TODO
 func (de *DefaultEngine) checkSlowQuery() error {
 	// check slow query execution time
-	// get data
-	serverName := de.operationInfo.MySQLServer.GetServerName()
-	query := fmt.Sprintf(`
-		sum(avg by (node_name,mode) (clamp_max(((avg by (mode,node_name) ((
-		clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[20s]),1)) or
-		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[5m]),1)) ))*100 or
-		(avg_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[20s]) or
-		avg_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[5m]))),100)))
-	`, serverName, serverName, serverName, serverName)
-	result, err := de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
-	if err != nil {
-		return err
-	}
-
-	// analyze result
-	length := result.RowNumber()
-	if length == constant.ZeroInt {
-		return nil
-	}
-
-	slowQueryExecutionTimeConfig := de.getItemConfig(defaultSlowQueryExecutionTimeItemName)
-
 	var (
-		slowQueryExecutionTime            float64
-		slowQueryExecutionTimeHighSum     float64
-		slowQueryExecutionTimeHighCount   int
-		slowQueryExecutionTimeMediumSum   float64
-		slowQueryExecutionTimeMediumCount int
-
-		slowQueryExecutionTimeHigh [][]driver.Value
+		sql    string
+		result middleware.Result
+		err    error
 	)
 
-	for i, rowData := range result.Rows.Values {
-		slowQueryExecutionTime, err = result.GetFloat(i, constant.ZeroInt)
-		if err != nil {
-			return err
-		}
-
-		switch {
-		case slowQueryExecutionTime >= slowQueryExecutionTimeConfig.HighWatermark:
-			slowQueryExecutionTimeHigh = append(slowQueryExecutionTimeHigh, rowData)
-			slowQueryExecutionTimeHighSum += slowQueryExecutionTime
-			slowQueryExecutionTimeHighCount++
-		case slowQueryExecutionTime >= slowQueryExecutionTimeConfig.LowWatermark:
-			slowQueryExecutionTimeMediumSum += slowQueryExecutionTime
-			slowQueryExecutionTimeMediumCount++
-		}
-	}
-
-	// slow query execution time high score deduction
-	slowQueryExecutionTimeScoreDeductionHigh := (slowQueryExecutionTimeHighSum/float64(slowQueryExecutionTimeHighCount) - slowQueryExecutionTimeConfig.HighWatermark) / slowQueryExecutionTimeConfig.Unit * slowQueryExecutionTimeConfig.ScoreDeductionPerUnitHigh
-	if slowQueryExecutionTimeScoreDeductionHigh > slowQueryExecutionTimeConfig.MaxScoreDeductionHigh {
-		slowQueryExecutionTimeScoreDeductionHigh = slowQueryExecutionTimeConfig.MaxScoreDeductionHigh
-	}
-	// slow query execution time medium score deduction
-	slowQueryExecutionTimeScoreDeductionMedium := (slowQueryExecutionTimeMediumSum/float64(slowQueryExecutionTimeMediumCount) - slowQueryExecutionTimeConfig.LowWatermark) / slowQueryExecutionTimeConfig.Unit * slowQueryExecutionTimeConfig.ScoreDeductionPerUnitMedium
-	if slowQueryExecutionTimeScoreDeductionMedium > slowQueryExecutionTimeConfig.MaxScoreDeductionMedium {
-		slowQueryExecutionTimeScoreDeductionMedium = slowQueryExecutionTimeConfig.MaxScoreDeductionMedium
-	}
-
-	// check slow query rows examined
-	// TODO
-	query = fmt.Sprintf(`
-		sum(avg by (node_name,mode) (clamp_max(((avg by (mode,node_name) ((
-		clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[20s]),1)) or
-		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle"}[5m]),1)) ))*100 or
-		(avg_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[20s]) or
-		avg_over_time(node_cpu_average{node_name=~"%s", mode!="total", mode!="idle"}[5m]))),100)))
-	`, serverName, serverName, serverName, serverName)
-	result, err = de.monitorPrometheusConn.Execute(query, de.operationInfo.StartTime, de.operationInfo.EndTime, de.operationInfo.Step)
-	if err != nil {
-		return err
-	}
-
-	// analyze result
-	length = result.RowNumber()
-	if length == constant.ZeroInt {
-		return nil
-	}
-
+	serviceName := de.operationInfo.MySQLServer.GetServiceName()
 	slowQueryRowsExaminedConfig := de.getItemConfig(defaultSlowQueryRowsExaminedItemName)
+	pmmVersion := de.getPMMVersion()
+
+	switch pmmVersion {
+	case 1:
+		sql = `
+			select qc.checksum as sql_id,
+				   qc.fingerprint,
+				   qe.query    as example,
+				   qe.db       as db_name,
+				   m.exec_count,
+				   m.total_exec_time,
+				   m.avg_exec_time,
+				   m.rows_examined_max
+			from (
+					 select qcm.query_class_id,
+							sum(qcm.query_count)                                        as exec_count,
+							truncate(sum(qcm.query_time_sum), 2)                        as total_exec_time,
+							truncate(sum(qcm.query_time_sum) / sum(qcm.query_count), 2) as avg_exec_time,
+							qcm.rows_examined_max
+					 from query_class_metrics qcm
+							  inner join instances i on qcm.instance_id = i.instance_id
+					 where i.name = ?
+					   and qcm.start_ts >= ?
+					   and qcm.start_ts < ?
+					   and qcm.rows_examined_max >= ?
+					 group by query_class_id
+					 order by rows_examined_max desc) m
+					 inner join query_examples qe on m.query_class_id = qe.query_class_id
+					 inner join query_classes qc on m.query_class_id = qc.query_class_id
+			;
+		`
+		result, err = de.monitorMySQLConn.Execute(sql, serviceName, de.operationInfo.StartTime, de.operationInfo.EndTime, slowQueryRowsExaminedConfig.LowWatermark)
+	case 2:
+		sql = `
+			select queryid                                                       as sql_id,
+				   fingerprint,
+				   (select example from metrics where queryid = queryid limit 1) as example,
+				   database                                                      as db_name,
+				   sum(num_queries)                                              as exec_count,
+				   truncate(sum(m_query_time_sum), 2)                            as total_exec_time,
+				   truncate(sum(m_query_time_sum) / sum(num_queries), 2)         as avg_exec_time,
+				   max(m_rows_examined_max)                                      as rows_examined_max
+			from metrics
+			where service_type = 'mysql'
+			  and service_name = ?
+			  and period_start >= ?
+			  and period_start < ?
+			  and m_rows_examined_max >= ?
+			group by queryid, fingerprint
+			order by rows_examined_max desc;
+		`
+		result, err = de.monitorClickhouseConn.Execute(sql, serviceName, de.operationInfo.StartTime, de.operationInfo.EndTime, slowQueryRowsExaminedConfig.LowWatermark)
+	default:
+		return message.NewMessage(msghc.ErrPmmVersionFormatInvalid, pmmVersion)
+	}
+	if err != nil {
+		return err
+	}
 
 	var (
-		slowQueryRowsExamined            float64
-		slowQueryRowsExaminedHighSum     float64
+		topSQLList                       []*SlowQuery
+		slowQueryRowsExaminedHighSum     int
 		slowQueryRowsExaminedHighCount   int
-		slowQueryRowsExaminedMediumSum   float64
+		slowQueryRowsExaminedMediumSum   int
 		slowQueryRowsExaminedMediumCount int
-
-		slowQueryRowsExaminedHigh [][]driver.Value
 	)
 
-	for i, rowData := range result.Rows.Values {
-		slowQueryRowsExamined, err = result.GetFloat(i, constant.ZeroInt)
+	slowQueries := make([]*SlowQuery, result.RowNumber())
+	err = result.MapToStructSlice(slowQueries, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return err
+	}
+	// slow query data
+	jsonBytesRowsExamined, err := json.Marshal(slowQueries)
+	if err != nil {
+		return err
+	}
+	de.result.SlowQueryData = string(jsonBytesRowsExamined)
+
+	for i, slowQuery := range slowQueries {
+		if i < defaultSlowQueryTopSQLNum {
+			topSQLList = append(topSQLList, slowQuery)
+		}
+
+		if slowQuery.RowsExaminedMax >= int(slowQueryRowsExaminedConfig.HighWatermark) {
+			// slow query rows examined high
+			slowQueryRowsExaminedHighSum += slowQuery.RowsExaminedMax
+			slowQueryRowsExaminedHighCount++
+			continue
+		}
+		// slow query rows examined medium
+		slowQueryRowsExaminedMediumSum += slowQuery.RowsExaminedMax
+		slowQueryRowsExaminedMediumCount++
+	}
+	// slow query rows examined high score
+	slowQueryRowsExaminedHighScore := (float64(slowQueryRowsExaminedHighSum)/float64(slowQueryRowsExaminedHighCount) - slowQueryRowsExaminedConfig.HighWatermark) / slowQueryRowsExaminedConfig.Unit * slowQueryRowsExaminedConfig.ScoreDeductionPerUnitHigh
+	if slowQueryRowsExaminedHighScore > slowQueryRowsExaminedConfig.MaxScoreDeductionHigh {
+		slowQueryRowsExaminedHighScore = slowQueryRowsExaminedConfig.MaxScoreDeductionHigh
+	}
+	// slow query rows examined medium score
+	slowQueryRowsExaminedMediumScore := (float64(slowQueryRowsExaminedMediumSum)/float64(slowQueryRowsExaminedMediumCount) - slowQueryRowsExaminedConfig.LowWatermark) / slowQueryRowsExaminedConfig.Unit * slowQueryRowsExaminedConfig.ScoreDeductionPerUnitMedium
+	if slowQueryRowsExaminedMediumScore > slowQueryRowsExaminedConfig.MaxScoreDeductionMedium {
+		slowQueryRowsExaminedMediumScore = slowQueryRowsExaminedConfig.MaxScoreDeductionMedium
+	}
+	// slow query score
+	de.result.SlowQueryScore = int(defaultMaxScore - slowQueryRowsExaminedHighScore - slowQueryRowsExaminedMediumScore)
+	if de.result.SlowQueryScore < defaultMinScore {
+		de.result.SlowQueryScore = defaultMinScore
+	}
+
+	// sql tuning
+	clusterID := de.operationInfo.MySQLServer.GetClusterID()
+	// init db service
+	dbService := metadata.NewDBServiceWithDefault()
+	for _, sql := range topSQLList {
+		// get db info
+		err = dbService.GetByNameAndClusterInfo(sql.DBName, clusterID, defaultClusterType)
+		if err != nil {
+			return err
+		}
+		if len(dbService.GetDBs()) == constant.ZeroInt {
+			return errors.New(fmt.Sprintf("could not find db info. db_name: %s, cluster_id: %d, cluster_type: %d",
+				sql.DBName, clusterID, defaultClusterType))
+		}
+		// get db id
+		dbID := dbService.GetDBs()[constant.ZeroInt].Identity()
+		// init sql advisor service
+		advisorService := sqladvisor.NewServiceWithDefault()
+		// get advice
+		advice, err := advisorService.Advise(dbID, sql.Example)
 		if err != nil {
 			return err
 		}
 
-		switch {
-		case slowQueryRowsExamined >= slowQueryRowsExaminedConfig.HighWatermark:
-			slowQueryRowsExaminedHigh = append(slowQueryRowsExaminedHigh, rowData)
-			slowQueryRowsExaminedHighSum += slowQueryRowsExamined
-			slowQueryRowsExaminedHighCount++
-		case slowQueryRowsExamined >= slowQueryRowsExaminedConfig.LowWatermark:
-			slowQueryRowsExaminedMediumSum += slowQueryRowsExamined
-			slowQueryRowsExaminedMediumCount++
-		}
+		de.result.SlowQueryAdvice += advice + constant.CommaString
 	}
 
-	// slow query rows examined data
-	jsonBytesTotal, err := json.Marshal(result.Rows.Values)
-	if err != nil {
-		return nil
-	}
-	de.result.SlowQueryData = string(jsonBytesTotal)
-	// slow query rows examined high
-	jsonBytesHigh, err := json.Marshal(slowQueryRowsExaminedHigh)
-	if err != nil {
-		return nil
-	}
-	de.result.SlowQueryAdvice = string(jsonBytesHigh)
-
-	// slow query rows examined high score deduction
-	slowQueryRowsExaminedScoreDeductionHigh := (slowQueryRowsExaminedHighSum/float64(slowQueryRowsExaminedHighCount) - slowQueryRowsExaminedConfig.HighWatermark) / slowQueryRowsExaminedConfig.Unit * slowQueryRowsExaminedConfig.ScoreDeductionPerUnitHigh
-	if slowQueryRowsExaminedScoreDeductionHigh > slowQueryRowsExaminedConfig.MaxScoreDeductionHigh {
-		slowQueryRowsExaminedScoreDeductionHigh = slowQueryRowsExaminedConfig.MaxScoreDeductionHigh
-	}
-	// slow query rows examined medium score deduction
-	slowQueryRowsExaminedScoreDeductionMedium := (slowQueryRowsExaminedMediumSum/float64(slowQueryRowsExaminedMediumCount) - slowQueryRowsExaminedConfig.LowWatermark) / slowQueryRowsExaminedConfig.Unit * slowQueryRowsExaminedConfig.ScoreDeductionPerUnitMedium
-	if slowQueryRowsExaminedScoreDeductionMedium > slowQueryRowsExaminedConfig.MaxScoreDeductionMedium {
-		slowQueryRowsExaminedScoreDeductionMedium = slowQueryRowsExaminedConfig.MaxScoreDeductionMedium
-	}
-
-	// slow query score
-	de.result.SlowQueryScore = int(defaultMaxScore - slowQueryExecutionTimeScoreDeductionHigh - slowQueryExecutionTimeScoreDeductionMedium - slowQueryRowsExaminedScoreDeductionHigh - slowQueryRowsExaminedScoreDeductionMedium)
-	if de.result.SlowQueryScore < constant.ZeroInt {
-		de.result.SlowQueryScore = constant.ZeroInt
-	}
+	strings.Trim(de.result.SlowQueryAdvice, constant.CommaString)
 
 	return nil
 }
@@ -1480,7 +1470,7 @@ func (de *DefaultEngine) summarize() {
 		de.result.AverageActiveSessionNumScore*de.getItemConfig(defaultAverageActiveSessionNumItemName).ItemWeight +
 		de.result.CacheMissRatioScore*de.getItemConfig(defaultCacheMissRatioItemName).ItemWeight +
 		de.result.TableSizeScore*(de.getItemConfig(defaultTableRowsItemName).ItemWeight+de.getItemConfig(defaultTableSizeItemName).ItemWeight) +
-		de.result.SlowQueryScore*(de.getItemConfig(defaultSlowQueryExecutionTimeItemName).ItemWeight+de.getItemConfig(defaultSlowQueryRowsExaminedItemName).ItemWeight)) /
+		de.result.SlowQueryScore*(de.getItemConfig(defaultSlowQueryRowsExaminedItemName).ItemWeight)) /
 		constant.MaxPercentage
 
 	if de.result.WeightedAverageScore < defaultMinScore {
@@ -1491,5 +1481,5 @@ func (de *DefaultEngine) summarize() {
 // postRun performs post-run actions, for now, it ony saves healthcheck result to the middleware
 func (de *DefaultEngine) postRun() error {
 	// save result
-	return de.Repository.SaveResult(de.result)
+	return de.DASRepo.SaveResult(de.result)
 }

@@ -8,8 +8,9 @@ import (
 	"github.com/romberli/go-util/constant"
 )
 
+// Result include all data needed in healthcheck
 type Result struct {
-	healthcheck.Repository
+	healthcheck.DASRepo
 	ID                           int       `middleware:"id" json:"id"`
 	OperationID                  int       `middleware:"operation_id" json:"operation_id"`
 	WeightedAverageScore         int       `middleware:"weighted_average_score" json:"weighted_average_score"`
@@ -32,8 +33,8 @@ type Result struct {
 	AverageActiveSessionNumData  string    `middleware:"average_active_session_num_data" json:"average_active_session_num_data"`
 	AverageActiveSessionNumHigh  string    `middleware:"average_active_session_num_high" json:"average_active_session_num_high"`
 	CacheMissRatioScore          int       `middleware:"cache_miss_ratio_score" json:"cache_miss_ratio_score"`
-	CacheMissRatioData           float64   `middleware:"cache_miss_ratio_data" json:"cache_miss_ratio_data"`
-	CacheMissRatioHigh           float64   `middleware:"cache_miss_ratio_high" json:"cache_miss_ratio_high"`
+	CacheMissRatioData           string    `middleware:"cache_miss_ratio_data" json:"cache_miss_ratio_data"`
+	CacheMissRatioHigh           string    `middleware:"cache_miss_ratio_high" json:"cache_miss_ratio_high"`
 	TableSizeScore               int       `middleware:"table_size_score" json:"table_size_score"`
 	TableSizeData                string    `middleware:"table_size_data" json:"table_size_data"`
 	TableSizeHigh                string    `middleware:"table_size_high" json:"table_size_high"`
@@ -47,16 +48,16 @@ type Result struct {
 }
 
 // NewResult returns a new *Result
-func NewResult(repo healthcheck.Repository, operationID int, weightedAverageScore int, dbConfigScore int, dbConfigData string, dbConfigAdvice string,
+func NewResult(repo healthcheck.DASRepo, operationID int, weightedAverageScore int, dbConfigScore int, dbConfigData string, dbConfigAdvice string,
 	cpuUsageScore int, cpuUsageData string, cpuUsageHigh string, ioUtilScore int, ioUtilData string, ioUtilHigh string,
 	diskCapacityUsageScore int, diskCapacityUsageData string, diskCapacityUsageHigh string,
 	connectionUsageScore int, connectionUsageData string, connectionUsageHigh string,
 	averageActiveSessionNumScore int, averageActiveSessionNumData string, averageActiveSessionNumHigh string,
-	cacheMissRatioScore int, cacheMissRatioData float64, cacheMissRatioHigh float64,
+	cacheMissRatioScore int, cacheMissRatioData string, cacheMissRatioHigh string,
 	tableSizeScore int, tableSizeData string, tableSizeHigh string,
 	slowQueryScore int, slowQueryData string, slowQueryAdvice string) *Result {
 	return &Result{
-		Repository:                   repo,
+		DASRepo:                      repo,
 		OperationID:                  operationID,
 		WeightedAverageScore:         weightedAverageScore,
 		DBConfigScore:                dbConfigScore,
@@ -90,21 +91,21 @@ func NewResult(repo healthcheck.Repository, operationID int, weightedAverageScor
 }
 
 // NewEmptyResultWithRepo return a new Result
-func NewEmptyResultWithRepo(repository healthcheck.Repository) *Result {
-	return &Result{Repository: repository}
+func NewEmptyResultWithRepo(repository healthcheck.DASRepo) *Result {
+	return &Result{DASRepo: repository}
 }
 
 // NewEmptyResultWithGlobal return a new Result
 func NewEmptyResultWithGlobal() *Result {
-	return NewEmptyResultWithRepo(NewRepositoryWithGlobal())
+	return NewEmptyResultWithRepo(NewDASRepoWithGlobal())
 }
 
-// NewResultWithDefault returns a new *Result with default Repository
+// NewResultWithDefault returns a new *Result with default DASRepo
 func NewResultWithDefault(operationID int, weightedAverageScore int, dbConfigScore int,
 	cpuUsageScore int, ioUtilScore int, diskCapacityUsageScore int, connectionUsageScore int,
 	averageActiveSessionNumScore int, cacheMissRatioScore int, tableSizeScore int, slowQueryScore int, accurateReview int) *Result {
 	return &Result{
-		Repository:                   NewRepositoryWithGlobal(),
+		DASRepo:                      NewDASRepoWithGlobal(),
 		OperationID:                  operationID,
 		WeightedAverageScore:         weightedAverageScore,
 		DBConfigScore:                dbConfigScore,
@@ -126,8 +127,8 @@ func NewResultWithDefault(operationID int, weightedAverageScore int, dbConfigSco
 		AverageActiveSessionNumData:  constant.DefaultRandomString,
 		AverageActiveSessionNumHigh:  constant.DefaultRandomString,
 		CacheMissRatioScore:          cacheMissRatioScore,
-		CacheMissRatioData:           constant.DefaultRandomFloat,
-		CacheMissRatioHigh:           constant.DefaultRandomFloat,
+		CacheMissRatioData:           constant.DefaultRandomString,
+		CacheMissRatioHigh:           constant.DefaultRandomString,
 		TableSizeScore:               tableSizeScore,
 		TableSizeData:                constant.DefaultRandomString,
 		TableSizeHigh:                constant.DefaultRandomString,
@@ -138,7 +139,7 @@ func NewResultWithDefault(operationID int, weightedAverageScore int, dbConfigSco
 	}
 }
 
-// NewEmptyDBInfoWithRepo return a new DBInfo
+// NewEmptyResult return a empty Result
 func NewEmptyResult() *Result {
 	return &Result{}
 }
@@ -254,12 +255,12 @@ func (r *Result) GetCacheMissRatioScore() int {
 }
 
 // GetCacheMissRatioData returns the cacheMissRatioData
-func (r *Result) GetCacheMissRatioData() float64 {
+func (r *Result) GetCacheMissRatioData() string {
 	return r.CacheMissRatioData
 }
 
 // GetCacheMissRatioHigh returns the cacheMissRatioHigh
-func (r *Result) GetCacheMissRatioHigh() float64 {
+func (r *Result) GetCacheMissRatioHigh() string {
 	return r.CacheMissRatioHigh
 }
 

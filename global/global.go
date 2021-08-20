@@ -6,9 +6,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-var MySQLPool *mysql.Pool
+var DASMySQLPool *mysql.Pool
 
-func InitMySQLPool() (err error) {
+func InitDASMySQLPool() (err error) {
 	dbAddr := viper.GetString("db.das.mysql.addr")
 	dbName := viper.GetString("db.das.mysql.name")
 	dbUser := viper.GetString("db.das.mysql.user")
@@ -22,7 +22,7 @@ func InitMySQLPool() (err error) {
 	config := mysql.NewConfig(dbAddr, dbName, dbUser, dbPass)
 	poolConfig := mysql.NewPoolConfigWithConfig(config, maxConnections, initConnections, maxIdleConnections, maxIdleTime, keepAliveInterval)
 	log.Debugf("pool config: %v", poolConfig)
-	MySQLPool, err = mysql.NewPoolWithPoolConfig(poolConfig)
+	DASMySQLPool, err = mysql.NewPoolWithPoolConfig(poolConfig)
 
 	return err
 }
