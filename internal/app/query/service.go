@@ -98,19 +98,16 @@ func (s *Service) GetBySQLID(mysqlServerID int, sqlID string) error {
 
 // Save the query info into DAS repo
 func (s *Service) Save(mysqlClusterID, mysqlServerID, dbID int, sqlID string) error {
-
 	return s.dasRepo.Save(mysqlClusterID, mysqlServerID, dbID, sqlID,
 		s.GetConfig().GetStartTime(), s.GetConfig().endTime, s.GetConfig().GetLimit(), s.GetConfig().GetOffset())
 }
 
 // Marshal marshals Service.Queries to json bytes
 func (s *Service) Marshal() ([]byte, error) {
-
 	return s.MarshalWithFields(queryQueriesStruct)
 }
 
 // MarshalWithFields marshals only specified fields of the Service to json bytes
 func (s *Service) MarshalWithFields(fields ...string) ([]byte, error) {
-
 	return common.MarshalStructWithFields(s, fields...)
 }
