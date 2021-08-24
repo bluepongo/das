@@ -33,7 +33,7 @@ func TestService_GetConfig(t *testing.T) {
 func TestService_GetQueries(t *testing.T) {
 	asst := assert.New(t)
 	entities := service.GetQueries()
-	asst.Equal(service.queries, entities, "test GetQueries() failed")
+	asst.Greater(len(entities), constant.ZeroInt, "test GetQueries() failed")
 }
 
 func TestService_GetByMySQLClusterID(t *testing.T) {
