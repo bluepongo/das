@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/romberli/das/global"
-	appmetadata "github.com/romberli/das/internal/app/metadata"
-	"github.com/romberli/das/internal/dependency/metadata"
+	"github.com/romberli/das/internal/app/metadata"
+	demetadata "github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
@@ -201,45 +201,46 @@ func (r *DASRepo) Transaction() (middleware.Transaction, error) {
 }
 
 // GetMonitorSystemByDBID returns a metadata.MonitorSystem by Database ID
-func (r *DASRepo) GetMonitorSystemByDBID(dbID int) (metadata.MonitorSystem, error) {
-	dbInfo := appmetadata.NewEmptyDBInfoWithGlobal()
-	dbs, err := dbInfo.GetByID(dbID)
+func (r *DASRepo) GetMonitorSystemByDBID(dbID int) (demetadata.MonitorSystem, error) {
+	dbInfo := metadata.NewDBServiceWithDefault()
+	err := dbInfo.GetByID(dbID)
 	if err != nil {
 		return nil, err
 	}
+	dbs := dbInfo.DBs[constant.ZeroInt]
 	clusterID := dbs.GetClusterID()
-
 	return r.GetMonitorSystemByClusterID(clusterID)
 }
 
 // GetMonitorSystemByMySQLServerID returns a metadata.MonitorSystem by mysqlServerID
-func (r *DASRepo) GetMonitorSystemByMySQLServerID(mysqlServerID int) (metadata.MonitorSystem, error) {
-	serverInfo := appmetadata.NewEmptyMiddlewareServerInfoWithGlobal()
-	servers, err := serverInfo.GetByID(mysqlServerID)
+func (r *DASRepo) GetMonitorSystemByMySQLServerID(mysqlServerID int) (demetadata.MonitorSystem, error) {
+	serverInfo := metadata.NewMySQLServerServiceWithDefault()
+	err := serverInfo.GetByID(mysqlServerID)
 	if err != nil {
 		return nil, err
 	}
-	clusterID := servers.GetClusterID()
-
+	ss := serverInfo.MySQLServers[constant.ZeroInt]
+	clusterID := ss.GetClusterID()
 	return r.GetMonitorSystemByClusterID(clusterID)
 }
 
 // GetMonitorSystemByClusterID returns a metadata.MonitorSystem by clusterID
-func (r *DASRepo) GetMonitorSystemByClusterID(clusterID int) (metadata.MonitorSystem, error) {
-
-	clusterInfo := appmetadata.NewEmptyMiddlewareClusterInfoWithGlobal()
-	clusters, err := clusterInfo.GetByID(clusterID)
+func (r *DASRepo) GetMonitorSystemByClusterID(clusterID int) (demetadata.MonitorSystem, error) {
+	clusterInfo := metadata.NewMySQLClusterServiceWithDefault()
+	err := clusterInfo.GetByID(clusterID)
 	if err != nil {
 		return nil, err
 	}
-	envID := clusters.GetEnvID()
+	mcs := clusterInfo.MySQLClusters[constant.ZeroInt]
+	monitorSystemID := mcs.GetMonitorSystemID()
 
-	moniterInfo := appmetadata.NewEmptyMonitorSystemInfoWithGlobal()
-	msi, err := moniterInfo.GetByEnv(envID)
+	monitorSystemInfo := metadata.NewMonitorSystemServiceWithDefault()
+	err = clusterInfo.GetByID(monitorSystemID)
 	if err != nil {
 		return nil, err
 	}
-	return msi[constant.ZeroInt], nil
+	msi := monitorSystemInfo.MonitorSystems[constant.ZeroInt]
+	return msi, nil
 }
 
 // Save save dasInfo into table

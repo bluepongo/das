@@ -179,9 +179,22 @@ func GetByDBID(c *gin.Context) {
 		return
 	}
 
+	// get mysqlServerID
+
+	mysqlServerIDStr, exists := dataMap[mysqlServerIDJSON]
+	if !exists {
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, fmt.Errorf("%s not exists", mysqlClusterIDJSON))
+	}
+
+	mysqlServerID, err := strconv.Atoi(mysqlServerIDStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
+		return
+	}
+
 	// init service
 	service := query.NewServiceWithDefault(config)
-	err = service.GetByDBID(dbID)
+	err = service.GetByDBID(mysqlServerID, dbID) //
 	if err != nil {
 		resp.ResponseNOK(c, msgquery.DebugQueryGetByDBID, dbID, err.Error())
 		return
