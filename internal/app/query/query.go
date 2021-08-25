@@ -23,6 +23,7 @@ const (
 
 var _ query.Query = (*Query)(nil)
 
+// Query include several members of a query
 type Query struct {
 	SQLID           string  `middleware:"sql_id" json:"sql_id"`
 	Fingerprint     string  `middleware:"fingerprint" json:"fingerprint"`
@@ -34,51 +35,63 @@ type Query struct {
 	RowsExaminedMax int     `middleware:"rows_examined_max" json:"rows_examined_max"`
 }
 
+// NewEmptyQuery return *Query
 func NewEmptyQuery() *Query {
 	return &Query{}
 }
 
+// GetSQLID returns the sql identity
 func (q *Query) GetSQLID() string {
 	return q.SQLID
 }
 
+// GetFingerprint returns the fingerprint
 func (q *Query) GetFingerprint() string {
 	return q.Fingerprint
 }
 
+// GetExample returns the example
 func (q *Query) GetExample() string {
 	return q.Example
 }
 
+// GetDBName returns the db name
 func (q *Query) GetDBName() string {
 	return q.DBName
 }
 
+// GetExecCount returns the execution count
 func (q *Query) GetExecCount() int {
 	return q.ExecCount
 }
 
+// GetTotalExecTime returns the total execution time
 func (q *Query) GetTotalExecTime() float64 {
 	return q.TotalExecTime
 }
 
+// GetAvgExecTime returns the average execution timey
 func (q *Query) GetAvgExecTime() float64 {
 	return q.AvgExecTime
 }
 
+// GetRowsExaminedMax returns the maximum row examined
 func (q *Query) GetRowsExaminedMax() int {
 	return q.RowsExaminedMax
 }
 
+// Querier include config of query and connection pool of DAS repo
 type Querier struct {
 	config  *Config
 	dasRepo *DASRepo
 }
 
+// NewQuerier return *Querier
 func NewQuerier(config *Config, dasRepo *DASRepo) *Querier {
 	return newQuerier(config, dasRepo)
 }
 
+// NewQuerierWithGlobal return *Querier with global DASRepo
 func NewQuerierWithGlobal(config *Config) *Querier {
 	return newQuerier(config, NewDASRepoWithGlobal())
 }
@@ -94,13 +107,35 @@ func (q *Querier) getConfig() *Config {
 	return q.config
 }
 
+// GetByMySQLClusterID get queries by mysql cluster id
 func (q *Querier) GetByMySQLClusterID(mysqlClusterID int) ([]query.Query, error) {
-	return nil, nil
+	mysqlServers, err := q.getMySQLServersByClusterID(mysqlClusterID)
+	if err != nil {
+		return nil, err
+	}
+
+	queries := []query.Query{}
+	for _, mysqlServer := range mysqlServers {
+		mysqlServerID := mysqlServer.Identity()
+		// dispatch to GetByMySQLServerID()
+		qs, err := q.GetByMySQLServerID(mysqlServerID)
+		if err != nil {
+			return nil, err
+		}
+		queries = append(queries, qs...)
+	}
+
+	return queries, nil
 }
 
+// GetByMySQLServerID get queries by mysql server id
 func (q *Querier) GetByMySQLServerID(mysqlServerID int) ([]query.Query, error) {
 	// init monitor repos
-	monitorRepo, err := q.getMonitorRepo(mysqlServerID)
+	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
+	if err != nil {
+		return nil, err
+	}
+	monitorRepo, err := q.getMonitorRepo(monitorSystem)
 	if err != nil {
 		return nil, err
 	}
@@ -119,16 +154,72 @@ func (q *Querier) GetByMySQLServerID(mysqlServerID int) ([]query.Query, error) {
 	return monitorRepo.GetByServiceNames([]string{mysqlServer.GetServiceName()})
 }
 
-func (q *Querier) GetByDBID(dbID int) ([]query.Query, error) {
-	return nil, nil
+// GetByDBID get queries by db id
+func (q *Querier) GetByDBID(mysqlServerID int, dbID int) ([]query.Query, error) {
+	// init monitor repos
+	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
+	if err != nil {
+		return nil, err
+	}
+	monitorRepo, err := q.getMonitorRepo(monitorSystem)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		err = monitorRepo.Close()
+		if err != nil {
+			log.Error(message.NewMessage(msgquery.ErrQueryCloseMonitorRepo, err.Error()).Error())
+		}
+	}()
+	// get mysql server
+	mysqlServer, err := q.getMySQLServerByID(mysqlServerID)
+	if err != nil {
+		return nil, err
+	}
+	// get db
+	db, err := q.getDBByID(dbID)
+	if err != nil {
+		return nil, err
+	}
+
+	return monitorRepo.GetByDBName(mysqlServer.GetServiceName(), db.GetDBName())
 }
 
+// GetBySQLID get queries by sql id
 func (q *Querier) GetBySQLID(mysqlServerID int, sqlID string) ([]query.Query, error) {
-	return nil, nil
+	// init monitor repos
+	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
+	if err != nil {
+		return nil, err
+	}
+	monitorRepo, err := q.getMonitorRepo(monitorSystem)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		err = monitorRepo.Close()
+		if err != nil {
+			log.Error(message.NewMessage(msgquery.ErrQueryCloseMonitorRepo, err.Error()).Error())
+		}
+	}()
+	// get mysql server
+	mysqlServer, err := q.getMySQLServerByID(mysqlServerID)
+	if err != nil {
+		return nil, err
+	}
+	queryResult, err := monitorRepo.GetBySQLID(mysqlServer.GetServiceName(), sqlID)
+
+	return []query.Query{queryResult}, err
 }
 
 func (q *Querier) getMySQLServersByClusterID(mysqlClusterID int) ([]depmeta.MySQLServer, error) {
-	return nil, nil
+	service := metadata.NewMySQLServerServiceWithDefault()
+	err := service.GetByClusterID(mysqlClusterID)
+	if err != nil {
+		return nil, err
+	}
+
+	return service.GetMySQLServers(), nil
 }
 
 func (q *Querier) getMySQLServerByID(mysqlServerID int) (depmeta.MySQLServer, error) {
@@ -141,24 +232,47 @@ func (q *Querier) getMySQLServerByID(mysqlServerID int) (depmeta.MySQLServer, er
 	return service.GetMySQLServers()[constant.ZeroInt], nil
 }
 
-func (q *Querier) getMonitorSystemByMySQLClusterID(mysqlClusterID int) (depmeta.MonitorSystem, error) {
-	return nil, nil
-}
-
-func (q *Querier) getMonitorSystemByMySQLServerID(mysqlServerID int) (depmeta.MonitorSystem, error) {
-	return nil, nil
-}
-
-func (q *Querier) getMonitorSystemByDBID(dbID int) (depmeta.MonitorSystem, error) {
-	return nil, nil
-}
-
-func (q *Querier) getMonitorRepo(mysqlServerID int) (query.MonitorRepo, error) {
-	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
+func (q *Querier) getDBByID(dbID int) (depmeta.DB, error) {
+	service := metadata.NewDBServiceWithDefault()
+	err := service.GetByID(dbID)
 	if err != nil {
 		return nil, err
 	}
 
+	return service.GetDBs()[constant.ZeroInt], nil
+}
+
+func (q *Querier) getMonitorSystemByMySQLClusterID(mysqlClusterID int) (depmeta.MonitorSystem, error) {
+	mysqlClusterService := metadata.NewMySQLClusterServiceWithDefault()
+	err := mysqlClusterService.GetByID(mysqlClusterID)
+	if err != nil {
+		return nil, err
+	}
+	mysqlCluster := mysqlClusterService.GetMySQLClusters()[constant.ZeroInt]
+	monitorSystemID := mysqlCluster.GetMonitorSystemID()
+
+	monitorSystemService := metadata.NewMonitorSystemServiceWithDefault()
+	err = monitorSystemService.GetByID(monitorSystemID)
+	if err != nil {
+		return nil, err
+	}
+
+	return monitorSystemService.GetMonitorSystems()[constant.ZeroInt], nil
+}
+
+func (q *Querier) getMonitorSystemByMySQLServerID(mysqlServerID int) (depmeta.MonitorSystem, error) {
+	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
+	err := mysqlServerService.GetByID(mysqlServerID)
+	if err != nil {
+		return nil, err
+	}
+	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
+	mysqlClusterID := mysqlServer.GetClusterID()
+
+	return q.getMonitorSystemByMySQLClusterID(mysqlClusterID)
+}
+
+func (q *Querier) getMonitorRepo(monitorSystem depmeta.MonitorSystem) (query.MonitorRepo, error) {
 	var monitorRepo query.MonitorRepo
 
 	addr := fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNumSlow())
