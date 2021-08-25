@@ -9,6 +9,30 @@ import (
 
 var service = createService()
 
+const (
+	defaultQuerySQLID           = "sql_id"
+	defaultQueryFingerprint     = "fingerprint"
+	defaultQueryExample         = "example"
+	defaultQueryDBName          = "test"
+	defaultQueryExecCount       = 1
+	defaultQueryTotalExecTime   = 3.5
+	defaultQueryAvgExecTime     = 1.5
+	defaultQueryRowsExaminedMax = 10
+)
+
+func initNewQuery() *Query {
+	return &Query{
+		defaultQuerySQLID,
+		defaultQueryFingerprint,
+		defaultQueryExample,
+		defaultQueryDBName,
+		defaultQueryExecCount,
+		defaultQueryTotalExecTime,
+		defaultQueryAvgExecTime,
+		defaultQueryRowsExaminedMax,
+	}
+}
+
 func createService() *Service {
 	return NewServiceWithDefault(NewConfigWithDefault())
 }
@@ -26,48 +50,57 @@ func TestService_All(t *testing.T) {
 
 func TestService_GetConfig(t *testing.T) {
 	asst := assert.New(t)
+
 	limit := service.GetConfig().GetLimit()
 	asst.Equal(DefaultLimit, limit, "test GetConfig() failed")
 }
 
 func TestService_GetQueries(t *testing.T) {
 	asst := assert.New(t)
-	entities := service.GetQueries()
-	asst.Greater(len(entities), constant.ZeroInt, "test GetQueries() failed")
+
+	service.queries = append(service.queries, initNewQuery())
+	sqlID := service.GetQueries()[0].GetSQLID()
+	asst.Equal(defaultQuerySQLID, sqlID, "test GetQueries() failed")
 }
 
 func TestService_GetByMySQLClusterID(t *testing.T) {
 	asst := assert.New(t)
+
 	err := service.GetByMySQLClusterID(constant.DefaultRandomInt)
 	asst.Nil(err, common.CombineMessageWithError("test GetByMySQLClusterID() failed", err))
 }
 
 func TestService_GetByMySQLServerID(t *testing.T) {
 	asst := assert.New(t)
+
 	err := service.GetByMySQLServerID(constant.DefaultRandomInt)
 	asst.Nil(err, common.CombineMessageWithError("test GetByMySQLServerID() failed", err))
 }
 
 func TestService_GetByDBID(t *testing.T) {
 	asst := assert.New(t)
+
 	err := service.GetByDBID(constant.DefaultRandomInt, constant.DefaultRandomInt)
 	asst.Nil(err, common.CombineMessageWithError("test GetByDBID() failed", err))
 }
 
 func TestService_GetBySQLID(t *testing.T) {
 	asst := assert.New(t)
+
 	err := service.GetBySQLID(constant.DefaultRandomInt, constant.DefaultRandomString)
 	asst.Nil(err, common.CombineMessageWithError("test GetBySQLID() failed", err))
 }
 
 func TestService_Marshal(t *testing.T) {
 	asst := assert.New(t)
+
 	_, err := service.Marshal()
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 }
 
 func TestService_MarshalWithFields(t *testing.T) {
 	asst := assert.New(t)
+
 	_, err := service.MarshalWithFields(queryQueriesStruct)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields(fields ...string) failed", err))
 }
