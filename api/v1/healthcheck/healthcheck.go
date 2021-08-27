@@ -207,11 +207,11 @@ func CheckByHostInfo(c *gin.Context) {
 }
 
 // @Tags healthcheck
-// @Summary update accurate review
+// @Summary update accuracy review
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": ""}"
+// @Success 200 {string} string "{"code": 200, "data": "{}"
 // @Router /api/v1/healthcheck/review [post]
-func ReviewAccurate(c *gin.Context) {
+func ReviewAccuracy(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
@@ -236,13 +236,13 @@ func ReviewAccurate(c *gin.Context) {
 	}
 	// init service
 	s := healthcheck.NewServiceWithDefault()
-	// review accurate
-	err = s.ReviewAccurate(operationID, review)
+	// review accuracy
+	err = s.ReviewAccuracy(operationID, review)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckReviewAccurate)
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckReviewAccuracy)
 		return
 	}
-	respMessage := "reviewed accurate"
-	log.Debug(message.NewMessage(msghealth.DebugHealthcheckReviewAccurate, respMessage).Error())
-	resp.ResponseOK(c, respMessage, msghealth.InfoHealthcheckReviewAccurate)
+	respMessage := "reviewed accuracy"
+	log.Debug(message.NewMessage(msghealth.DebugHealthcheckReviewAccuracy, respMessage).Error())
+	resp.ResponseOK(c, respMessage, msghealth.InfoHealthcheckReviewAccuracy)
 }

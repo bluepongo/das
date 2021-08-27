@@ -362,6 +362,7 @@ github.com/hashicorp/go-uuid v0.0.0-20180228145832-27454136f036/go.mod h1:6SBZvO
 github.com/hashicorp/go-uuid v1.0.0/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
 github.com/hashicorp/go-uuid v1.0.1/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
 github.com/hashicorp/go-uuid v1.0.2/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
+github.com/hashicorp/go-version v1.2.0 h1:3vNe/fWF5CBgRIguda1meWhsZHy3m8gCJ5wx+dIzX/E=
 github.com/hashicorp/go-version v1.2.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09ZGVZPK5anwXA=
 github.com/hashicorp/go.net v0.0.1/go.mod h1:hjKkEWcCURg++eb33jQU7oqQcI9XDCnUzHA0oac0k90=
 github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
@@ -671,8 +672,8 @@ github.com/romberli/clickhouse-go v1.4.4-0.20210422094559-b05fc8c4dbe9 h1:UK2Nm3
 github.com/romberli/clickhouse-go v1.4.4-0.20210422094559-b05fc8c4dbe9/go.mod h1:EaI/sW7Azgz9UATzd5ZdZHRUhHgv5+JMS9NSr2smCJI=
 github.com/romberli/dynamic-struct v1.2.1 h1:vle/rxIUl7IgreLScMSg9RhYBjygY/5Hj/OQKliyY90=
 github.com/romberli/dynamic-struct v1.2.1/go.mod h1:Jk2Z0Dm0diV7O4Lg1MfIyJ0kvOxfN+imwZVO5SOUL94=
-github.com/romberli/go-util v0.3.11-0.20210818122345-42806267fb90 h1:+QyssJuDdwbadH/HjtFQedKknEnWv98p9ppci5orsK0=
-github.com/romberli/go-util v0.3.11-0.20210818122345-42806267fb90/go.mod h1:rWlntYYTtBZxF1uyXWDuG5GsQMXzZPHEamMBlmgQGUc=
+github.com/romberli/go-util v0.3.11-0.20210825090826-2e76a7d1d2f2 h1:xMp/yJUwZ0nfzfLgevsSxECKfE0XxA7II4kJjXGLk4E=
+github.com/romberli/go-util v0.3.11-0.20210825090826-2e76a7d1d2f2/go.mod h1:rWlntYYTtBZxF1uyXWDuG5GsQMXzZPHEamMBlmgQGUc=
 github.com/romberli/log v1.0.20 h1:bOlvkGfy6gHS+zGcJhjwq85t9prcXQUJQaLRANoCFVU=
 github.com/romberli/log v1.0.20/go.mod h1:FKhKFdWL5DLD+1LMO/RB4AcO4MUBl1th/pNFjhrmaGc=
 github.com/romberli/pflag v1.0.6-alpha h1:eSC9Fc/QxWpxrj1QbMitsULOGLhSUxxgymfz+XRpfI8=

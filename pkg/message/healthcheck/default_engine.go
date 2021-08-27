@@ -29,7 +29,7 @@ const (
 	ErrMaxScoreDeductionMediumItemInvalid     = 401010
 	ErrItemWeightPercentInvalid               = 401011
 	ErrDefaultEngineConfigFormatInValid       = 401012
-	ErrPmmVersionFormatInvalid                = 401013
+	ErrPmmVersionInvalid                      = 401013
 )
 
 func initDefaultEngineDebugMessage() {
@@ -53,5 +53,5 @@ func initDefaultEngineErrorMessage() {
 	message.Messages[ErrMaxScoreDeductionMediumItemInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrMaxScoreDeductionMediumItemInvalid, "max score deduction medium of %s must be in [1, 100], %f is not valid")
 	message.Messages[ErrItemWeightPercentInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrItemWeightPercentInvalid, "all items weight count is not 100")
 	message.Messages[ErrDefaultEngineConfigFormatInValid] = config.NewErrMessage(message.DefaultMessageHeader, ErrDefaultEngineConfigFormatInValid, "default engine config format is invalid")
-	message.Messages[ErrPmmVersionFormatInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrPmmVersionFormatInvalid, "pmm version should be 1 or 2, %d is not valid")
+	message.Messages[ErrPmmVersionInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrPmmVersionInvalid, "pmm version should be 1 or 2, %d is not valid")
 }

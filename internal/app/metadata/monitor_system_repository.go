@@ -74,7 +74,7 @@ func (msr *MonitorSystemRepo) GetAll() ([]metadata.MonitorSystem, error) {
 	if err != nil {
 		return nil, err
 	}
-	// init []metadata.MonitorSystem
+	// init []metadata.monitorSystem
 	monitorSystemList := make([]metadata.MonitorSystem, result.RowNumber())
 	for i := range monitorSystemList {
 		monitorSystemList[i] = monitorSystemInfoList[i]
@@ -108,7 +108,7 @@ func (msr *MonitorSystemRepo) GetByEnv(envID int) ([]metadata.MonitorSystem, err
 	if err != nil {
 		return nil, err
 	}
-	// init []metadata.MonitorSystem
+	// init []metadata.monitorSystem
 	monitorSystemList := make([]metadata.MonitorSystem, result.RowNumber())
 	for i := range monitorSystemList {
 		monitorSystemList[i] = monitorSystemInfoList[i]

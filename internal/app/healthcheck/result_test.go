@@ -48,7 +48,7 @@ const (
 	resultSlowQueryScore               = 80
 	resultSlowQueryData                = "slow query data"
 	resultSlowQueryAdvice              = "slow query advice"
-	resultAccurateReview               = 0
+	resultAccuracyReview               = 0
 	resultDelFlag                      = 0
 )
 
@@ -112,7 +112,7 @@ func TestResultAll(t *testing.T) {
 	TestResult_GetSlowQueryScore(t)
 	TestResult_GetSlowQueryData(t)
 	TestResult_GetSlowQueryAdvice(t)
-	TestResult_GetAccurateReview(t)
+	TestResult_GetAccuracyReview(t)
 	TestResult_GetDelFlag(t)
 	TestResult_GetCreateTime(t)
 	TestResult_GetLastUpdateTime(t)
@@ -571,19 +571,19 @@ func TestResult_GetSlowQueryAdvice(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test GetSlowQueryAdvice() failed", err))
 }
 
-func TestResult_GetAccurateReview(t *testing.T) {
+func TestResult_GetAccuracyReview(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := rCreateService()
-	asst.Nil(err, common.CombineMessageWithError("test GetAccurateReview() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetAccuracyReview() failed", err))
 	err = service.GetResultByOperationID(resultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetAccurateReview() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetAccuracyReview() failed", err))
 	result := service.GetResult()
-	accurateReview := result.GetAccurateReview()
-	asst.Equal(resultAccurateReview, accurateReview, "test GetAccurateReview() failed")
+	accuracyReview := result.GetAccuracyReview()
+	asst.Equal(resultAccuracyReview, accuracyReview, "test GetAccuracyReview() failed")
 	// delete
 	err = rDeleteHCResultByOperationID(resultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetAccurateReview() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetAccuracyReview() failed", err))
 }
 
 func TestResult_GetDelFlag(t *testing.T) {
@@ -642,7 +642,7 @@ func TestResult_Set(t *testing.T) {
 
 	fields := make(map[string]interface{})
 	fields["ID"] = resultID
-	fields["OperationID"] = resultOperationID
+	fields["operationID"] = resultOperationID
 
 	err = result.Set(fields)
 	asst.Nil(err, common.CombineMessageWithError("test Set() failed", err))
@@ -680,7 +680,7 @@ func TestResult_MarshalJSONWithFields(t *testing.T) {
 	err = service.GetResultByOperationID(resultOperationID)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 	result := service.GetResult()
-	_, err = result.MarshalJSONWithFields("ID", "OperationID", "WeightedAverageScore", "DBConfigScore", "DBConfigData", "DBConfigAdvice", "CPUUsageScore", "CPUUsageData", "CPUUsageHigh", "IOUtilScore", "IOUtilData", "IOUtilHigh", "DiskCapacityUsageScore", "DiskCapacityUsageData", "DiskCapacityUsageHigh", "ConnectionUsageScore", "ConnectionUsageData", "ConnectionUsageHigh", "AverageActiveSessionNumScore", "AverageActiveSessionNumData", "AverageActiveSessionNumHigh", "CacheMissRatioScore", "CacheMissRatioData", "CacheMissRatioHigh", "TableSizeScore", "TableSizeData", "TableSizeHigh", "SlowQueryScore", "SlowQueryData", "SlowQueryAdvice")
+	_, err = result.MarshalJSONWithFields("ID", "operationID", "WeightedAverageScore", "DBConfigScore", "DBConfigData", "DBConfigAdvice", "CPUUsageScore", "CPUUsageData", "CPUUsageHigh", "IOUtilScore", "IOUtilData", "IOUtilHigh", "DiskCapacityUsageScore", "DiskCapacityUsageData", "DiskCapacityUsageHigh", "ConnectionUsageScore", "ConnectionUsageData", "ConnectionUsageHigh", "AverageActiveSessionNumScore", "AverageActiveSessionNumData", "AverageActiveSessionNumHigh", "CacheMissRatioScore", "CacheMissRatioData", "CacheMissRatioHigh", "TableSizeScore", "TableSizeData", "TableSizeHigh", "SlowQueryScore", "SlowQueryData", "SlowQueryAdvice")
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 	// delete
 	err = rDeleteHCResultByOperationID(resultOperationID)

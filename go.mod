@@ -12,8 +12,9 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20200819183940-29e1ff8eb0bb
 	github.com/gin-gonic/gin v1.7.2
 	github.com/hashicorp/go-multierror v1.1.0
+	github.com/hashicorp/go-version v1.2.0
 	github.com/jinzhu/now v1.1.2
-	github.com/romberli/go-util v0.3.11-0.20210818122345-42806267fb90
+	github.com/romberli/go-util v0.3.11-0.20210825090826-2e76a7d1d2f2
 	github.com/romberli/log v1.0.20
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/cobra v1.1.1

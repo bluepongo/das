@@ -62,7 +62,7 @@ func (s *Service) GetBySQLID(mysqlServerID int, sqlID string) error {
 
 func (s *Service) Save(mysqlClusterID, mysqlServerID, dbID int, sqlID string) error {
 	return s.dasRepo.Save(mysqlClusterID, mysqlServerID, dbID, sqlID,
-		s.GetConfig().GetStartTime(), s.GetConfig().endTime, s.GetConfig().GetLimit(), s.GetConfig().GetOffset())
+		s.GetConfig().GetStartTime(), s.GetConfig().GetEndTime(), s.GetConfig().GetLimit(), s.GetConfig().GetOffset())
 }
 
 func (s *Service) Marshal() ([]byte, error) {

@@ -7,7 +7,6 @@ import (
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/internal/dependency/healthcheck"
-	depmeta "github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
 	"github.com/romberli/go-util/common"
@@ -30,28 +29,6 @@ const (
 
 var _ healthcheck.Service = (*Service)(nil)
 
-// OperationInfo include info for a operation
-type OperationInfo struct {
-	OperationID   int
-	MySQLServer   depmeta.MySQLServer
-	MonitorSystem depmeta.MonitorSystem
-	StartTime     time.Time
-	EndTime       time.Time
-	Step          time.Duration
-}
-
-// NewOperationInfo returns a new *OperationInfo
-func NewOperationInfo(operationID int, mysqlServer depmeta.MySQLServer, MonitorSystem depmeta.MonitorSystem, startTime, endTime time.Time, step time.Duration) *OperationInfo {
-	return &OperationInfo{
-		OperationID:   operationID,
-		MySQLServer:   mysqlServer,
-		MonitorSystem: MonitorSystem,
-		StartTime:     startTime,
-		EndTime:       endTime,
-		Step:          step,
-	}
-}
-
 // Service of health check
 type Service struct {
 	healthcheck.DASRepo
@@ -61,7 +38,7 @@ type Service struct {
 }
 
 // NewService returns a new *Service
-func NewService(repo healthcheck.DASRepo) *Service {
+func NewService(repo healthcheck.DASRepo) healthcheck.Service {
 	return newService(repo)
 }
 
@@ -122,7 +99,7 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 	// init
 	err := s.init(mysqlServerID, startTime, endTime, step)
 	if err != nil {
-		updateErr := s.DASRepo.UpdateOperationStatus(s.OperationInfo.OperationID, defaultFailedStatus, err.Error())
+		updateErr := s.DASRepo.UpdateOperationStatus(s.OperationInfo.operationID, defaultFailedStatus, err.Error())
 		if updateErr != nil {
 			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 		}
@@ -217,7 +194,7 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 	return nil
 }
 
-// getApplicationMySQLUser returns application mysql user name
+// getApplicationMySQLUser returns application mysql username
 func (s *Service) getApplicationMySQLUser() string {
 	return viper.GetString(config.DBApplicationMySQLUserKey)
 }
@@ -227,7 +204,7 @@ func (s *Service) getApplicationMySQLPass() string {
 	return viper.GetString(config.DBApplicationMySQLPassKey)
 }
 
-// getMonitorPrometheusUser returns prometheus user name of monitor system
+// getMonitorPrometheusUser returns prometheus username of monitor system
 func (s *Service) getMonitorPrometheusUser() string {
 	return viper.GetString(config.DBMonitorPrometheusUserKey)
 }
@@ -237,7 +214,7 @@ func (s *Service) getMonitorPrometheusPass() string {
 	return viper.GetString(config.DBMonitorPrometheusPassKey)
 }
 
-// getMonitorClickhouseUser returns clickhouse user name of monitor system
+// getMonitorClickhouseUser returns clickhouse username of monitor system
 func (s *Service) getMonitorClickhouseUser() string {
 	return viper.GetString(config.DBMonitorClickhouseUserKey)
 }
@@ -247,7 +224,7 @@ func (s *Service) getMonitorClickhousePass() string {
 	return viper.GetString(config.DBMonitorClickhousePassKey)
 }
 
-// getMonitorMySQLUser returns mysql user name of monitor system
+// getMonitorMySQLUser returns mysql username of monitor system
 func (s *Service) getMonitorMySQLUser() string {
 	return viper.GetString(config.DBMonitorMySQLUserKey)
 }
@@ -257,9 +234,9 @@ func (s *Service) getMonitorMySQLPass() string {
 	return viper.GetString(config.DBMonitorMySQLPassKey)
 }
 
-// ReviewAccurate updates accurate review with given operation id
-func (s *Service) ReviewAccurate(id, review int) error {
-	return s.DASRepo.UpdateAccurateReviewByOperationID(id, review)
+// ReviewAccuracy updates accuracy review with given operation id
+func (s *Service) ReviewAccuracy(id, review int) error {
+	return s.DASRepo.UpdateAccuracyReviewByOperationID(id, review)
 }
 
 // MarshalJSON marshals Service to json bytes
