@@ -151,7 +151,7 @@ func (msi *MonitorSystemInfo) GetLastUpdateTime() time.Time {
 	return msi.LastUpdateTime
 }
 
-// Set sets MonitorSystem with given fields, key is the field name and value is the relevant value of the key
+// Set sets monitorSystem with given fields, key is the field name and value is the relevant value of the key
 func (msi *MonitorSystemInfo) Set(fields map[string]interface{}) error {
 	for fieldName, fieldValue := range fields {
 		err := common.SetValueOfStruct(msi, fieldName, fieldValue)

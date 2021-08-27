@@ -12,6 +12,6 @@ func RegisterHealthcheck(group *gin.RouterGroup) {
 		healthcheckGroup.GET("/result/:operation_id", healthcheck.GetResultByOperationID)
 		healthcheckGroup.POST("/check", healthcheck.Check)
 		healthcheckGroup.POST("/check/host-info", healthcheck.CheckByHostInfo)
-		healthcheckGroup.POST("/review", healthcheck.ReviewAccurate)
+		healthcheckGroup.POST("/review", healthcheck.ReviewAccuracy)
 	}
 }

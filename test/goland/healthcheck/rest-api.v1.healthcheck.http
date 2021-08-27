@@ -25,7 +25,7 @@ Content-Type: application/json
     "step": "10s"
 }
 
-### healthcheck.ReviewAccurate
+### healthcheck.ReviewAccuracy
 POST http://{{baseURL}}/api/v1/healthcheck/review
 Content-Type: application/json
 

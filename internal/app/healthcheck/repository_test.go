@@ -47,15 +47,15 @@ const (
 	defaultResultSlowQueryScore               = 1
 	defaultResultSlowQueryData                = ""
 	defaultResultSlowQueryAdvice              = ""
-	defaultResultAccurateReview               = 0
+	defaultResultAccuracyReview               = 0
 
 	defaultResultMysqlServerID = 1
 	defaultResultStartTime     = "2021-05-01 10:00:00.000000"
 	defaultResultEndTime       = "2021-05-01 13:00:00.000000"
 	defaultResultStep          = 10
 	newResultStatus            = 1
-	AccurateReviewStruct       = "AccurateReview"
-	newResultAccurateReview    = 1
+	accuracyReviewStruct       = "accuracyReview"
+	newResultAccuracyReview    = 1
 )
 
 var repository = initRepository()
@@ -74,7 +74,7 @@ func initRepository() *DASRepo {
 func createResult() error {
 	hcInfo := NewResultWithDefault(defaultResultOperationID, defaultResultWeightedAverageScore, defaultResultDBConfigScore,
 		defaultResultCPUUsageScore, defaultResultIOUtilScore, defaultResultDiskCapacityUsageScore, defaultResultConnectionUsageScore,
-		defaultResultAverageActiveSessionNumScore, defaultResultCacheMissRatioScore, defaultResultTableSizeScore, defaultResultSlowQueryScore, defaultResultAccurateReview)
+		defaultResultAverageActiveSessionNumScore, defaultResultCacheMissRatioScore, defaultResultTableSizeScore, defaultResultSlowQueryScore, defaultResultAccuracyReview)
 	err := repository.SaveResult(hcInfo)
 
 	return err
@@ -99,7 +99,7 @@ func TestRepositoryAll(t *testing.T) {
 	TestRepository_InitOperation(t)
 	TestRepository_UpdateOperationStatus(t)
 	TestRepository_SaveResult(t)
-	TestRepository_UpdateAccurateReviewByOperationID(t)
+	TestRepository_UpdateAccuracyReviewByOperationID(t)
 }
 
 func TestRepository_Execute(t *testing.T) {
@@ -123,7 +123,7 @@ func TestRepository_Transaction(t *testing.T) {
 		connection_usage_high, average_active_session_num_score, average_active_session_num_data,
 		average_active_session_num_high, cache_miss_ratio_score, cache_miss_ratio_data,
 		cache_miss_ratio_high, table_size_score, table_size_data, table_size_high, slow_query_score,
-		slow_query_data, slow_query_advice, accurate_review) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+		slow_query_data, slow_query_advice, accuracy_review) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 	?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 	`
 	tx, err := repository.Transaction()
@@ -138,7 +138,7 @@ func TestRepository_Transaction(t *testing.T) {
 		defaultResultAverageActiveSessionNumScore, defaultResultAverageActiveSessionNumData, defaultResultAverageActiveSessionNumHigh,
 		defaultResultCacheMissRatioScore, defaultResultCacheMissRatioData, defaultResultCacheMissRatioHigh,
 		defaultResultTableSizeScore, defaultResultTableSizeData, defaultResultTableSizeHigh, defaultResultSlowQueryScore,
-		defaultResultSlowQueryData, defaultResultSlowQueryAdvice, defaultResultAccurateReview)
+		defaultResultSlowQueryData, defaultResultSlowQueryAdvice, defaultResultAccuracyReview)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	// check if inserted
 	sql = `select operation_id from t_hc_result where operation_id = ?`
@@ -247,19 +247,19 @@ func TestRepository_SaveResult(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test SaveResult() failed", err))
 }
 
-func TestRepository_UpdateAccurateReviewByOperationID(t *testing.T) {
+func TestRepository_UpdateAccuracyReviewByOperationID(t *testing.T) {
 	asst := assert.New(t)
 
 	err := createResult()
-	asst.Nil(err, common.CombineMessageWithError("test UpdateAccurateReviewByOperationID() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test UpdateAccuracyReviewByOperationID() failed", err))
 	result, err := repository.GetResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test UpdateAccurateReviewByOperationID() failed", err))
-	err = result.Set(map[string]interface{}{AccurateReviewStruct: newResultAccurateReview})
-	asst.Nil(err, common.CombineMessageWithError("test UpdateAccurateReviewByOperationID() failed", err))
-	err = repository.UpdateAccurateReviewByOperationID(result.GetOperationID(), newResultAccurateReview)
-	asst.Nil(err, common.CombineMessageWithError("test UpdateAccurateReviewByOperationID() failed", err))
-	asst.Equal(newResultAccurateReview, result.GetAccurateReview(), "test UpdateAccurateReviewByOperationID() failed")
+	asst.Nil(err, common.CombineMessageWithError("test UpdateAccuracyReviewByOperationID() failed", err))
+	err = result.Set(map[string]interface{}{accuracyReviewStruct: newResultAccuracyReview})
+	asst.Nil(err, common.CombineMessageWithError("test UpdateAccuracyReviewByOperationID() failed", err))
+	err = repository.UpdateAccuracyReviewByOperationID(result.GetOperationID(), newResultAccuracyReview)
+	asst.Nil(err, common.CombineMessageWithError("test UpdateAccuracyReviewByOperationID() failed", err))
+	asst.Equal(newResultAccuracyReview, result.GetAccuracyReview(), "test UpdateAccuracyReviewByOperationID() failed")
 	// delete
 	err = deleteResultByID(result.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test UpdateAccurateReviewByOperationID() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test UpdateAccuracyReviewByOperationID() failed", err))
 }

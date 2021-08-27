@@ -16,18 +16,18 @@ const (
 	DebugHealthcheckGetResultByOperationID = 101001
 	DebugHealthcheckCheck                  = 101002
 	DebugHealthcheckCheckByHostInfo        = 101003
-	DebugHealthcheckReviewAccurate         = 101004
+	DebugHealthcheckReviewAccuracy         = 101004
 	// info
 	InfoHealthcheckGetResultByOperationID = 201001
 	InfoHealthcheckCheck                  = 201002
 	InfoHealthcheckCheckByHostInfo        = 201003
-	InfoHealthcheckReviewAccurate         = 201004
+	InfoHealthcheckReviewAccuracy         = 201004
 	// error
 	ErrHealthcheckDefaultEngineRun       = 401013
 	ErrHealthcheckGetResultByOperationID = 401014
 	ErrHealthcheckCheck                  = 401015
 	ErrHealthcheckCheckByHostInfo        = 401016
-	ErrHealthcheckReviewAccurate         = 401017
+	ErrHealthcheckReviewAccuracy         = 401017
 	ErrHealthcheckCloseConnection        = 401018
 )
 
@@ -41,9 +41,9 @@ func initServiceDebugMessage() {
 	message.Messages[DebugHealthcheckCheckByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader, DebugHealthcheckCheckByHostInfo,
 		"healthcheck: check by host info message: %s")
-	message.Messages[DebugHealthcheckReviewAccurate] = config.NewErrMessage(
-		message.DefaultMessageHeader, DebugHealthcheckReviewAccurate,
-		"healthcheck: review accurate message: %s")
+	message.Messages[DebugHealthcheckReviewAccuracy] = config.NewErrMessage(
+		message.DefaultMessageHeader, DebugHealthcheckReviewAccuracy,
+		"healthcheck: review accuracy message: %s")
 }
 
 func initServiceInfoMessage() {
@@ -56,9 +56,9 @@ func initServiceInfoMessage() {
 	message.Messages[InfoHealthcheckCheckByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckCheckByHostInfo,
 		"healthcheck: check by host info completed. %s")
-	message.Messages[InfoHealthcheckReviewAccurate] = config.NewErrMessage(
-		message.DefaultMessageHeader, InfoHealthcheckReviewAccurate,
-		"healthcheck: review accurate completed. %s")
+	message.Messages[InfoHealthcheckReviewAccuracy] = config.NewErrMessage(
+		message.DefaultMessageHeader, InfoHealthcheckReviewAccuracy,
+		"healthcheck: review accuracy completed. %s")
 }
 
 func initServiceErrorMessage() {

@@ -100,7 +100,7 @@ func TestServiceAll(t *testing.T) {
 	TestService_GetResult(t)
 	TestService_GetResultByOperationID(t)
 	TestService_Check(t)
-	TestService_ReviewAccurate(t)
+	TestService_ReviewAccuracy(t)
 	TestService_MarshalJSON(t)
 	TestService_MarshalJSONWithFields(t)
 }
@@ -185,21 +185,21 @@ func TestService_CheckByHostInfo(t *testing.T) {
 	// asst.Nil(err, common.CombineMessageWithError("test CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration) failed", err))
 }
 
-func TestService_ReviewAccurate(t *testing.T) {
+func TestService_ReviewAccuracy(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := createService()
-	asst.Nil(err, common.CombineMessageWithError("test ReviewAccurate(id, review int) failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test ReviewAccuracy(id, review int) failed", err))
 	review := 2
-	err = service.ReviewAccurate(defaultResultOperationID, review)
-	asst.Nil(err, common.CombineMessageWithError("test ReviewAccurate(id, review int) failed", err))
+	err = service.ReviewAccuracy(defaultResultOperationID, review)
+	asst.Nil(err, common.CombineMessageWithError("test ReviewAccuracy(id, review int) failed", err))
 	err = service.GetResultByOperationID(defaultResultOperationID)
 	result := service.GetResult()
-	reviewed := result.GetAccurateReview()
-	asst.Equal(review, reviewed, common.CombineMessageWithError("test ReviewAccurate(id, review int) failed", err))
+	reviewed := result.GetAccuracyReview()
+	asst.Equal(review, reviewed, common.CombineMessageWithError("test ReviewAccuracy(id, review int) failed", err))
 	// delete
 	err = deleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test ReviewAccurate(id, review int) failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test ReviewAccuracy(id, review int) failed", err))
 }
 
 func TestService_MarshalJSON(t *testing.T) {
@@ -219,7 +219,7 @@ func TestService_MarshalJSONWithFields(t *testing.T) {
 
 	service, err := createService()
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields(fields ...string) failed", err))
-	_, err = service.MarshalJSONWithFields("ID", "OperationID", "WeightedAverageScore", "DBConfigScore", "DBConfigData", "DBConfigAdvice", "CPUUsageScore", "CPUUsageData", "CPUUsageHigh", "IOUtilScore", "IOUtilData", "IOUtilHigh", "DiskCapacityUsageScore", "DiskCapacityUsageData", "DiskCapacityUsageHigh", "ConnectionUsageScore", "ConnectionUsageData", "ConnectionUsageHigh", "AverageActiveSessionNumScore", "AverageActiveSessionNumData", "AverageActiveSessionNumHigh", "CacheMissRatioScore", "CacheMissRatioData", "CacheMissRatioHigh", "TableSizeScore", "TableSizeData", "TableSizeHigh", "SlowQueryScore", "SlowQueryData", "SlowQueryAdvice")
+	_, err = service.MarshalJSONWithFields("ID", "operationID", "WeightedAverageScore", "DBConfigScore", "DBConfigData", "DBConfigAdvice", "CPUUsageScore", "CPUUsageData", "CPUUsageHigh", "IOUtilScore", "IOUtilData", "IOUtilHigh", "DiskCapacityUsageScore", "DiskCapacityUsageData", "DiskCapacityUsageHigh", "ConnectionUsageScore", "ConnectionUsageData", "ConnectionUsageHigh", "AverageActiveSessionNumScore", "AverageActiveSessionNumData", "AverageActiveSessionNumHigh", "CacheMissRatioScore", "CacheMissRatioData", "CacheMissRatioHigh", "TableSizeScore", "TableSizeData", "TableSizeHigh", "SlowQueryScore", "SlowQueryData", "SlowQueryAdvice")
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields(fields ...string) failed", err))
 	// delete
 	err = deleteHCResultByOperationID(defaultResultOperationID)

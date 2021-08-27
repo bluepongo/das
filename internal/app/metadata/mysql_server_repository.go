@@ -76,7 +76,7 @@ func (msr *MySQLServerRepo) GetAll() ([]metadata.MySQLServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	// init []metadata.MySQLServer
+	// init []metadata.mysqlServer
 	mysqlServerList := make([]metadata.MySQLServer, result.RowNumber())
 	for i := range mysqlServerList {
 		mysqlServerList[i] = mysqlServerInfoList[i]

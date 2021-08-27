@@ -1,8 +1,9 @@
 package healthcheck
 
 import (
-	"github.com/romberli/das/internal/dependency/healthcheck"
 	"time"
+
+	"github.com/romberli/das/internal/dependency/healthcheck"
 
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
@@ -41,7 +42,7 @@ type Result struct {
 	SlowQueryScore               int       `middleware:"slow_query_score" json:"slow_query_score"`
 	SlowQueryData                string    `middleware:"slow_query_data" json:"slow_query_data"`
 	SlowQueryAdvice              string    `middleware:"slow_query_advice" json:"slow_query_advice"`
-	AccurateReview               int       `middleware:"accurate_review" json:"accurate_review"`
+	AccuracyReview               int       `middleware:"accuracy_review" json:"accuracy_review"`
 	DelFlag                      int       `middleware:"del_flag" json:"del_flag"`
 	CreateTime                   time.Time `middleware:"create_time" json:"create_time"`
 	LastUpdateTime               time.Time `middleware:"last_update_time" json:"last_update_time"`
@@ -103,7 +104,7 @@ func NewEmptyResultWithGlobal() *Result {
 // NewResultWithDefault returns a new *Result with default DASRepo
 func NewResultWithDefault(operationID int, weightedAverageScore int, dbConfigScore int,
 	cpuUsageScore int, ioUtilScore int, diskCapacityUsageScore int, connectionUsageScore int,
-	averageActiveSessionNumScore int, cacheMissRatioScore int, tableSizeScore int, slowQueryScore int, accurateReview int) *Result {
+	averageActiveSessionNumScore int, cacheMissRatioScore int, tableSizeScore int, slowQueryScore int, accuracyReview int) *Result {
 	return &Result{
 		DASRepo:                      NewDASRepoWithGlobal(),
 		OperationID:                  operationID,
@@ -135,7 +136,7 @@ func NewResultWithDefault(operationID int, weightedAverageScore int, dbConfigSco
 		SlowQueryScore:               slowQueryScore,
 		SlowQueryData:                constant.DefaultRandomString,
 		SlowQueryAdvice:              constant.DefaultRandomString,
-		AccurateReview:               accurateReview,
+		AccuracyReview:               accuracyReview,
 	}
 }
 
@@ -149,154 +150,154 @@ func (r *Result) Identity() int {
 	return r.ID
 }
 
-// GetOperationID returns the operationID
+// GetOperationID returns the OperationID
 func (r *Result) GetOperationID() int {
 	return r.OperationID
 }
 
-// GetWeightedAverageScore returns the weightedAverageScore
+// GetWeightedAverageScore returns the WeightedAverageScore
 func (r *Result) GetWeightedAverageScore() int {
 	return r.WeightedAverageScore
 }
 
-// GetDBConfigScore returns the dbConfigScore
+// GetDBConfigScore returns the DBConfigScore
 func (r *Result) GetDBConfigScore() int {
 	return r.DBConfigScore
 }
 
-// GetDBConfigData returns the dbConfigData
+// GetDBConfigData returns the DBConfigData
 func (r *Result) GetDBConfigData() string {
 	return r.DBConfigData
 }
 
-// GetDBConfigAdvice returns the dbConfigAdvice
+// GetDBConfigAdvice returns the DBConfigAdvice
 func (r *Result) GetDBConfigAdvice() string {
 	return r.DBConfigAdvice
 }
 
-// GetCPUUsageScore returns the cpuUsageScore
+// GetCPUUsageScore returns the CPUUsageScore
 func (r *Result) GetCPUUsageScore() int {
 	return r.CPUUsageScore
 }
 
-// GetCPUUsageData returns the cpuUsageData
+// GetCPUUsageData returns the CPUUsageData
 func (r *Result) GetCPUUsageData() string {
 	return r.CPUUsageData
 }
 
-// GetCPUUsageHigh returns the cpuUsageHigh
+// GetCPUUsageHigh returns the CPUUsageHigh
 func (r *Result) GetCPUUsageHigh() string {
 	return r.CPUUsageHigh
 }
 
-// GetIOUtilScore returns the ioUtilScore
+// GetIOUtilScore returns the IOUtilScore
 func (r *Result) GetIOUtilScore() int {
 	return r.IOUtilScore
 }
 
-// GetIOUtilData returns the ioUtilData
+// GetIOUtilData returns the IOUtilData
 func (r *Result) GetIOUtilData() string {
 	return r.IOUtilData
 }
 
-// GetIOUtilHigh returns the ioUtilHigh
+// GetIOUtilHigh returns the IOUtilHigh
 func (r *Result) GetIOUtilHigh() string {
 	return r.IOUtilHigh
 }
 
-// GetDiskCapacityUsageScore returns the diskCapacityUsageScore
+// GetDiskCapacityUsageScore returns the DiskCapacityUsageScore
 func (r *Result) GetDiskCapacityUsageScore() int {
 	return r.DiskCapacityUsageScore
 }
 
-// GetDiskCapacityUsageData returns the diskCapacityUsageData
+// GetDiskCapacityUsageData returns the DiskCapacityUsageData
 func (r *Result) GetDiskCapacityUsageData() string {
 	return r.DiskCapacityUsageData
 }
 
-// GetDiskCapacityUsageHigh returns the diskCapacityUsageHigh
+// GetDiskCapacityUsageHigh returns the DiskCapacityUsageHigh
 func (r *Result) GetDiskCapacityUsageHigh() string {
 	return r.DiskCapacityUsageHigh
 }
 
-// GetConnectionUsageScore returns the connectionUsageScore
+// GetConnectionUsageScore returns the ConnectionUsageScore
 func (r *Result) GetConnectionUsageScore() int {
 	return r.ConnectionUsageScore
 }
 
-// GetConnectionUsageData returns the connectionUsageData
+// GetConnectionUsageData returns the ConnectionUsageData
 func (r *Result) GetConnectionUsageData() string {
 	return r.ConnectionUsageData
 }
 
-// GetConnectionUsageHigh returns the connectionUsageHigh
+// GetConnectionUsageHigh returns the ConnectionUsageHigh
 func (r *Result) GetConnectionUsageHigh() string {
 	return r.ConnectionUsageHigh
 }
 
-// GetAverageActiveSessionNumScore returns the averageActiveSessionNumScore
+// GetAverageActiveSessionNumScore returns the AverageActiveSessionNumScore
 func (r *Result) GetAverageActiveSessionNumScore() int {
 	return r.AverageActiveSessionNumScore
 }
 
-// GetAverageActiveSessionNumData returns the averageActiveSessionNumData
+// GetAverageActiveSessionNumData returns the AverageActiveSessionNumData
 func (r *Result) GetAverageActiveSessionNumData() string {
 	return r.AverageActiveSessionNumData
 }
 
-// GetAverageActiveSessionNumHigh returns the averageActiveSessionNumHigh
+// GetAverageActiveSessionNumHigh returns the AverageActiveSessionNumHigh
 func (r *Result) GetAverageActiveSessionNumHigh() string {
 	return r.AverageActiveSessionNumHigh
 }
 
-// GetCacheMissRatioScore returns the cacheMissRatioScore
+// GetCacheMissRatioScore returns the CacheMissRatioScore
 func (r *Result) GetCacheMissRatioScore() int {
 	return r.CacheMissRatioScore
 }
 
-// GetCacheMissRatioData returns the cacheMissRatioData
+// GetCacheMissRatioData returns the CacheMissRatioData
 func (r *Result) GetCacheMissRatioData() string {
 	return r.CacheMissRatioData
 }
 
-// GetCacheMissRatioHigh returns the cacheMissRatioHigh
+// GetCacheMissRatioHigh returns the CacheMissRatioHigh
 func (r *Result) GetCacheMissRatioHigh() string {
 	return r.CacheMissRatioHigh
 }
 
-// GetTableSizeScore returns the tableSizeScore
+// GetTableSizeScore returns the TableSizeScore
 func (r *Result) GetTableSizeScore() int {
 	return r.TableSizeScore
 }
 
-// GetTableSizeData returns the tableSizeData
+// GetTableSizeData returns the TableSizeData
 func (r *Result) GetTableSizeData() string {
 	return r.TableSizeData
 }
 
-// GetTableSizeHigh returns the tableSizeHigh
+// GetTableSizeHigh returns the TableSizeHigh
 func (r *Result) GetTableSizeHigh() string {
 	return r.TableSizeHigh
 }
 
-// GetSlowQueryScore returns the slowQueryScore
+// GetSlowQueryScore returns the SlowQueryScore
 func (r *Result) GetSlowQueryScore() int {
 	return r.SlowQueryScore
 }
 
-// GetSlowQueryData returns the slowQueryData
+// GetSlowQueryData returns the SlowQueryData
 func (r *Result) GetSlowQueryData() string {
 	return r.SlowQueryData
 }
 
-// GetSlowQueryAdvice returns the slowQueryAdvice
+// GetSlowQueryAdvice returns the SlowQueryAdvice
 func (r *Result) GetSlowQueryAdvice() string {
 	return r.SlowQueryAdvice
 }
 
-// GetAccurateReview returns the accurateReview
-func (r *Result) GetAccurateReview() int {
-	return r.AccurateReview
+// GetAccuracyReview returns the AccuracyReview
+func (r *Result) GetAccuracyReview() int {
+	return r.AccuracyReview
 }
 
 // GetDelFlag returns the delete flag
