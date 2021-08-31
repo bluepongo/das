@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/romberli/das/internal/dependency/healthcheck"
-	depmeta "github.com/romberli/das/internal/dependency/metadata"
+	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
 	"github.com/romberli/go-util/constant"
@@ -81,15 +81,15 @@ var (
 
 type OperationInfo struct {
 	operationID   int
-	mysqlServer   depmeta.MySQLServer
-	monitorSystem depmeta.MonitorSystem
+	mysqlServer   metadata.MySQLServer
+	monitorSystem metadata.MonitorSystem
 	startTime     time.Time
 	endTime       time.Time
 	step          time.Duration
 }
 
 // NewOperationInfo returns a new *OperationInfo
-func NewOperationInfo(operationID int, mysqlServer depmeta.MySQLServer, MonitorSystem depmeta.MonitorSystem, startTime, endTime time.Time, step time.Duration) *OperationInfo {
+func NewOperationInfo(operationID int, mysqlServer metadata.MySQLServer, MonitorSystem metadata.MonitorSystem, startTime, endTime time.Time, step time.Duration) *OperationInfo {
 	return &OperationInfo{
 		operationID:   operationID,
 		mysqlServer:   mysqlServer,
@@ -104,11 +104,11 @@ func (oi *OperationInfo) GetOperationID() int {
 	return oi.operationID
 }
 
-func (oi *OperationInfo) GetMySQLServer() depmeta.MySQLServer {
+func (oi *OperationInfo) GetMySQLServer() metadata.MySQLServer {
 	return oi.mysqlServer
 }
 
-func (oi *OperationInfo) GetMonitorSystem() depmeta.MonitorSystem {
+func (oi *OperationInfo) GetMonitorSystem() metadata.MonitorSystem {
 	return oi.monitorSystem
 }
 
@@ -413,15 +413,4 @@ func (fs *FileSystem) GetMountPoint() string {
 
 func (fs *FileSystem) GetDevice() string {
 	return fs.Device
-}
-
-type SlowQuery struct {
-	SQLID           string  `middleware:"sql_id" json:"sql_id"`
-	Fingerprint     string  `middleware:"fingerprint" json:"fingerprint"`
-	Example         string  `middleware:"example" json:"example"`
-	DBName          string  `middleware:"db_name" json:"db_name"`
-	ExecCount       int     `middleware:"exec_count" json:"exec_count"`
-	TotalExecTime   float64 `middleware:"total_exec_time" json:"total_exec_time"`
-	AvgExecTime     float64 `middleware:"avg_exec_time" json:"avg_exec_time"`
-	RowsExaminedMax int     `middleware:"rows_examined_max" json:"rows_examined_max"`
 }

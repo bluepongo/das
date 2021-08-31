@@ -3,6 +3,7 @@ package healthcheck
 import (
 	"time"
 
+	depquery "github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/go-util/middleware"
 )
 
@@ -30,8 +31,8 @@ type DASRepo interface {
 type ApplicationMySQLRepo interface {
 	// Close closes the mysql connection
 	Close() error
-	// GetDBConfig gets the database configuration
-	GetDBConfig(configItems []string) ([]Variable, error)
+	// GetVariables gets the database variables by items
+	GetVariables(items []string) ([]Variable, error)
 	// GetMySQLDirs gets the mysql data directory and binlog directory
 	GetMySQLDirs() ([]string, error)
 	// GetTables gets the tables
@@ -40,29 +41,31 @@ type ApplicationMySQLRepo interface {
 
 type PrometheusRepo interface {
 	// GetMountPoint gets the mount points from the prometheus
-	GetFileSystems(serviceName string) ([]FileSystem, error)
+	GetFileSystems() ([]FileSystem, error)
 	// CheckCPUUsage gets the cpu usage
-	GetCPUUsage(serviceName string) ([]PrometheusData, error)
+	GetCPUUsage() ([]PrometheusData, error)
 	// CheckIOUtil gets the io util
-	GetIOUtil(serviceName string, devices []string) ([]PrometheusData, error)
+	GetIOUtil(devices []string) ([]PrometheusData, error)
 	// GetDiskCapacityUsage gets the disk capacity usage
-	GetDiskCapacityUsage(serviceName string, mountPoints []string) ([]PrometheusData, error)
+	GetDiskCapacityUsage(mountPoints []string) ([]PrometheusData, error)
 	// GetConnectionUsage gets the connection usage
-	GetConnectionUsage(serviceName string) ([]PrometheusData, error)
-	// GetActiveSessionNum gets the active session number
-	GetActiveSessionNum(serviceName string) ([]PrometheusData, error)
+	GetConnectionUsage() ([]PrometheusData, error)
+	// GetActiveSessionPercents gets the active session number
+	GetAverageActiveSessionPercents() ([]PrometheusData, error)
 	// GetCacheMissRatio gets the cache miss ratio
-	GetCacheMissRatio(serviceName string) ([]PrometheusData, error)
+	GetCacheMissRatio() ([]PrometheusData, error)
 }
 
 type QueryRepo interface {
 	// Close closes the mysql or clickhouse connection
 	Close() error
 	// GetSlowQuery gets the slow query
-	GetSlowQuery(serviceName string) (middleware.Result, error)
+	GetSlowQuery() ([]depquery.Query, error)
 }
 
 type Service interface {
+	// GetDASRepo returns the das repository
+	GetDASRepo() DASRepo
 	// GetResult returns the result
 	GetResult() Result
 	// GetResultByOperationID gets the result by operation id from the middleware

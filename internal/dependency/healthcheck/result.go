@@ -41,18 +41,24 @@ type Result interface {
 	GetConnectionUsageData() string
 	// GetConnectionUsageHigh returns the high connection usage data
 	GetConnectionUsageHigh() string
-	// GetAverageActiveSessionNumScore returns the average active session number score
-	GetAverageActiveSessionNumScore() int
-	// GetAverageActiveSessionNumData returns the average active session number data
-	GetAverageActiveSessionNumData() string
-	// GetAverageActiveSessionNumHigh returns the high average active session number data
-	GetAverageActiveSessionNumHigh() string
+	// GetAverageActiveSessionPercentsScore returns the average active session number score
+	GetAverageActiveSessionPercentsScore() int
+	// GetAverageActiveSessionPercentsData returns the average active session number data
+	GetAverageActiveSessionPercentsData() string
+	// GetAverageActiveSessionPercentsHigh returns the high average active session number data
+	GetAverageActiveSessionPercentsHigh() string
 	// GetCacheHitRatioScore returns the cache miss ratio score
 	GetCacheMissRatioScore() int
 	// GetCacheHitRatioData returns the cache miss ratio data
 	GetCacheMissRatioData() string
 	// GetCacheMissRatioHigh returns the high cache miss ratio data
 	GetCacheMissRatioHigh() string
+	// GetTableRowsScore returns the table rows score
+	GetTableRowsScore() int
+	// GetTableRowsData returns the table rows data
+	GetTableRowsData() string
+	// GetTableRowsHigh returns the high table rows data
+	GetTableRowsHigh() string
 	// GetTableSizeScore returns the table size score
 	GetTableSizeScore() int
 	// GetTableSizeData returns the table size data

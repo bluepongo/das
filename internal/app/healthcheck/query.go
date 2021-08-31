@@ -2,7 +2,7 @@ package healthcheck
 
 const (
 	// application mysql
-	applicationMySQLDBConfig = `
+	applicationMySQLVariables = `
 		select variable_name, variable_value
 		from %s.global_variables
 		where variable_name in (%s);
@@ -67,31 +67,34 @@ const (
 		max_over_time(node_filesystem_size_bytes{node_name=~"%s", mountpoint=~"(%s)", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}[5m])))
    `
 	PrometheusConnectionUsageV1 = `
-		
-
-		max(max_over_time(mysql_global_status_threads_connected{instance=~"%s"}[5m]) or
-		mysql_global_status_threads_connected{instance=~"%s"} )
+		avg by (instance) (max(max_over_time(mysql_global_status_threads_connected{instance=~"%s"}[20s]) or
+		max_over_time(mysql_global_status_threads_connected{instance=~"%s"}[5m]))) /
+		avg by (instance) (max(max_over_time(mysql_global_variables_max_connections{instance=~"%s"}[20s]) or
+		max_over_time(mysql_global_variables_max_connections{instance=~"%s"}[5m])))
     `
 	PrometheusConnectionUsageV2 = `
-		
-
-		clamp_max((avg by (service_name) (max_over_time(mysql_global_status_max_used_connections{service_name=~"%s"}[5m]) or
-		max_over_time(mysql_global_status_max_used_connections{service_name=~"%s"}[5m])) / avg by (service_name)
-		(mysql_global_variables_max_connections{service_name=~"%s"})),1)
+		avg by (service_name) (max(max_over_time(mysql_global_status_threads_connected{service_name=~"%s"}[20s]) or
+		max_over_time(mysql_global_status_threads_connected{service_name=~"%s"}[5m]))) /
+		avg by (service_name) (max_over_time(mysql_global_variables_max_connections{service_name=~"%s"}[20s]) or
+		max_over_time(mysql_global_variables_max_connections{service_name=~"%s"}[5m]))
     `
-	PrometheusActiveSessionNumV1 = `
-		avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[5m]) or
-		avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[5m])
+	PrometheusAverageActiveSessionPercentsV1 = `
+		avg by (instance) (avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[20s]) or
+		avg_over_time(mysql_global_status_threads_running{instance=~"%s"}[5m]))/
+		avg by (instance) (max_over_time(mysql_global_status_threads_connected{instance=~"%s"}[20s]) or
+		max_over_time(mysql_global_status_threads_connected{instance=~"%s"}[5m]))
     `
-	PrometheusActiveSessionNumV2 = `
-		avg by (service_name) (avg_over_time(mysql_global_status_threads_running{service_name=~"%s"}[5m]) or
-		avg_over_time(mysql_global_status_threads_running{service_name=~"%s"}[5m]))
+	PrometheusAverageActiveSessionPercentsV2 = `
+		avg by (service_name) (avg_over_time(mysql_global_status_threads_running{service_name=~"%s"}[20s]) or
+		avg_over_time(mysql_global_status_threads_running{service_name=~"%s"}[5m]))/
+		avg by (service_name) (max_over_time(mysql_global_status_threads_connected{service_name=~"%s"}[20s]) or
+		max_over_time(mysql_global_status_threads_connected{service_name=~"%s"}[5m]))
     `
 	PrometheusCacheMissRatioV1 = `
-		clamp_max(avg by (service_name) (rate(mysql_global_status_innodb_pages_read{instance=~"%s"}[5m]) or
-		irate(mysql_global_status_innodb_pages_read{instance=~"%s"}[5m])) /
-		avg by (service_name) (rate(mysql_global_status_innodb_buffer_pool_read_requests{instance=~"%s"}[5m]) or
-		irate(mysql_global_status_innodb_buffer_pool_read_requests{instance=~"%s"}[5m])), 1)
+		avg by (instance) ((rate(mysql_global_status_innodb_buffer_pool_reads{instance=~"%s"}[5m]) or
+		irate(mysql_global_status_innodb_buffer_pool_reads{instance=~"%s"}[5m])) /
+		(rate(mysql_global_status_innodb_buffer_pool_read_requests{instance=~"%s"}[5m]) or
+		irate(mysql_global_status_innodb_buffer_pool_read_requests{instance=~"%s"}[5m])))
     `
 	PrometheusCacheMissRatioV2 = `
 		avg by (service_name) ((rate(mysql_global_status_innodb_buffer_pool_reads{service_name=~"%s"}[5m]) or
@@ -100,7 +103,7 @@ const (
 		irate(mysql_global_status_innodb_buffer_pool_read_requests{service_name=~"%s"}[5m])))
     `
 	// query
-	QueryV1 = `
+	MonitorMySQLQuery = `
 		select qc.checksum as sql_id,
 			   qc.fingerprint,
 			   qe.query    as example,
@@ -122,11 +125,12 @@ const (
 				   and qcm.start_ts < ?
 				   and qcm.rows_examined_max >= ?
 				 group by query_class_id
-				 order by rows_examined_max desc) m
+				 order by rows_examined_max desc
+				 limit ?) m
 				 inner join query_examples qe on m.query_class_id = qe.query_class_id
 				 inner join query_classes qc on m.query_class_id = qc.query_class_id;
     `
-	QueryV2 = `
+	MonitorClickhouseQuery = `
 		select queryid                                                       as sql_id,
 			   fingerprint,
 			   (select example from metrics where queryid = queryid limit 1) as example,
@@ -142,6 +146,7 @@ const (
 		  and period_start < ?
 		  and m_rows_examined_max >= ?
 		group by queryid, fingerprint
-		order by rows_examined_max desc;
+		order by rows_examined_max desc
+		limit ?;
     `
 )

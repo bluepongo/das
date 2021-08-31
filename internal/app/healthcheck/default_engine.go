@@ -1,9 +1,7 @@
 package healthcheck
 
 import (
-	"database/sql/driver"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -12,32 +10,31 @@ import (
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/internal/app/sqladvisor"
 	"github.com/romberli/das/internal/dependency/healthcheck"
+	depquery "github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"
-	"github.com/romberli/go-util/middleware"
-	"github.com/romberli/go-util/middleware/result"
 	"github.com/romberli/log"
 )
 
 const (
-	defaultDBConfigScore                   = 5
-	defaultMinScore                        = 0
-	defaultMaxScore                        = 100.0
-	defaultHundred                         = 100
-	defaultDBConfigItemName                = "db_config"
-	defaultCPUUsageItemName                = "cpu_usage"
-	defaultIOUtilItemName                  = "io_util"
-	defaultDiskCapacityUsageItemName       = "disk_capacity_usage"
-	defaultConnectionUsageItemName         = "connection_usage"
-	defaultAverageActiveSessionNumItemName = "average_active_session_num"
-	defaultCacheMissRatioItemName          = "cache_miss_ratio"
-	defaultTableRowsItemName               = "table_rows"
-	defaultTableSizeItemName               = "table_size"
-	defaultSlowQueryRowsExaminedItemName   = "slow_query_rows_examined"
-	defaultSlowQueryTopSQLNum              = 3
-	defaultClusterType                     = 1
+	defaultDBConfigScore                        = 5
+	defaultMinScore                             = 0
+	defaultMaxScore                             = 100.0
+	defaultHundred                              = 100
+	defaultDBConfigItemName                     = "db_config"
+	defaultCPUUsageItemName                     = "cpu_usage"
+	defaultIOUtilItemName                       = "io_util"
+	defaultDiskCapacityUsageItemName            = "disk_capacity_usage"
+	defaultConnectionUsageItemName              = "connection_usage"
+	defaultAverageActiveSessionPercentsItemName = "average_active_session_percents"
+	defaultCacheMissRatioItemName               = "cache_miss_ratio"
+	defaultTableRowsItemName                    = "table_rows"
+	defaultTableSizeItemName                    = "table_size"
+	defaultSlowQueryRowsExaminedItemName        = "slow_query_rows_examined"
+	defaultSlowQueryTopSQLNum                   = 3
+	defaultClusterType                          = 1
 )
 
 var (
@@ -187,12 +184,17 @@ func (de *DefaultEngine) run() error {
 		return err
 	}
 	// check active session number
-	err = de.checkActiveSessionNum()
+	err = de.checkAverageActiveSessionPercents()
 	if err != nil {
 		return err
 	}
 	// check cache miss ratio
 	err = de.checkCacheMissRatio()
+	if err != nil {
+		return err
+	}
+	// check table rows
+	err = de.checkTableRows()
 	if err != nil {
 		return err
 	}
@@ -236,7 +238,7 @@ func (de *DefaultEngine) preRun() error {
 		return err
 	}
 	// get file systems
-	fileSystems, err := de.getPrometheusRepo().GetFileSystems(de.getOperationInfo().GetMySQLServer().GetServiceName())
+	fileSystems, err := de.getPrometheusRepo().GetFileSystems()
 	if err != nil {
 		return err
 	}
@@ -318,7 +320,7 @@ func (de *DefaultEngine) checkDBConfig() error {
 		configItems = append(configItems, item)
 	}
 
-	globalVariables, err := de.getApplicationMySQLRepo().GetDBConfig(configItems)
+	globalVariables, err := de.getApplicationMySQLRepo().GetVariables(configItems)
 	if err != nil {
 		return err
 	}
@@ -386,8 +388,7 @@ func (de *DefaultEngine) checkDBConfig() error {
 // checkCPUUsage checks cpu usage
 func (de *DefaultEngine) checkCPUUsage() error {
 	// get data
-	serviceName := de.getOperationInfo().GetMySQLServer().GetServiceName()
-	datas, err := de.getPrometheusRepo().GetCPUUsage(serviceName)
+	datas, err := de.getPrometheusRepo().GetCPUUsage()
 	if err != nil {
 		return err
 	}
@@ -403,8 +404,7 @@ func (de *DefaultEngine) checkCPUUsage() error {
 // checkIOUtil check io util
 func (de *DefaultEngine) checkIOUtil() error {
 	// get data
-	serviceName := de.getOperationInfo().GetMySQLServer().GetServiceName()
-	datas, err := de.getPrometheusRepo().GetIOUtil(serviceName, de.getDevices())
+	datas, err := de.getPrometheusRepo().GetIOUtil(de.getDevices())
 	if err != nil {
 		return err
 	}
@@ -420,8 +420,7 @@ func (de *DefaultEngine) checkIOUtil() error {
 // checkDiskCapacityUsage checks disk capacity usage
 func (de *DefaultEngine) checkDiskCapacityUsage() error {
 	// get data
-	serviceName := de.getOperationInfo().GetMySQLServer().GetServiceName()
-	datas, err := de.getPrometheusRepo().GetDiskCapacityUsage(serviceName, de.getMountPoints())
+	datas, err := de.getPrometheusRepo().GetDiskCapacityUsage(de.getMountPoints())
 	if err != nil {
 		return err
 	}
@@ -437,8 +436,7 @@ func (de *DefaultEngine) checkDiskCapacityUsage() error {
 // checkConnectionUsage checks connection usage
 func (de *DefaultEngine) checkConnectionUsage() error {
 	// get data
-	serviceName := de.getOperationInfo().GetMySQLServer().GetServiceName()
-	datas, err := de.getPrometheusRepo().GetConnectionUsage(serviceName)
+	datas, err := de.getPrometheusRepo().GetConnectionUsage()
 	if err != nil {
 		return err
 	}
@@ -451,13 +449,15 @@ func (de *DefaultEngine) checkConnectionUsage() error {
 	return nil
 }
 
-// checkActiveSessionNum check active session number
-func (de *DefaultEngine) checkActiveSessionNum() error {
+// checkAverageActiveSessionPercents check active session number
+func (de *DefaultEngine) checkAverageActiveSessionPercents() error {
 	// get data
-	serviceName := de.getOperationInfo().GetMySQLServer().GetServiceName()
-	datas, err := de.getPrometheusRepo().GetActiveSessionNum(serviceName)
+	datas, err := de.getPrometheusRepo().GetAverageActiveSessionPercents()
+	if err != nil {
+		return err
+	}
 	// parse data
-	de.result.AverageActiveSessionNumScore, de.result.AverageActiveSessionNumData, de.result.AverageActiveSessionNumHigh, err = de.parsePrometheusDatas(defaultAverageActiveSessionNumItemName, datas)
+	de.result.AverageActiveSessionPercentsScore, de.result.AverageActiveSessionPercentsData, de.result.AverageActiveSessionPercentsHigh, err = de.parsePrometheusDatas(defaultAverageActiveSessionPercentsItemName, datas)
 	if err != nil {
 		return err
 	}
@@ -468,8 +468,10 @@ func (de *DefaultEngine) checkActiveSessionNum() error {
 // checkCacheMissRatio checks cache miss ratio
 func (de *DefaultEngine) checkCacheMissRatio() error {
 	// get data
-	serviceName := de.getOperationInfo().GetMySQLServer().GetServiceName()
-	datas, err := de.getPrometheusRepo().GetCacheMissRatio(serviceName)
+	datas, err := de.getPrometheusRepo().GetCacheMissRatio()
+	if err != nil {
+		return err
+	}
 	// parse data
 	de.result.CacheMissRatioScore, de.result.CacheMissRatioData, de.result.CacheMissRatioHigh, err = de.parsePrometheusDatas(defaultCacheMissRatioItemName, datas)
 	if err != nil {
@@ -479,81 +481,125 @@ func (de *DefaultEngine) checkCacheMissRatio() error {
 	return nil
 }
 
-// checkTableSize checks table size by checking rows
-func (de *DefaultEngine) checkTableSize() error {
-	// check table rows
-	// get data
-	sql := `
-		select TABLE_SCHEMA,TABLE_NAME,TABLE_ROWS,(DATA_LENGTH+INDEX_LENGTH)/1024/1024/1024
-		as TABLE_SIZE from TABLES
-		where TABLE_TYPE='BASE TABLE';
-	`
-	log.Debugf("healthcheck DASRepo.checkTableSize() sql: \n%s\n", sql)
-	result, err := de.monitorMySQLConn.Execute(sql)
+// checkTableSize checks table rows
+func (de *DefaultEngine) checkTableRows() error {
+	// get tables
+	tables, err := de.getApplicationMySQLRepo().GetLargeTables()
 	if err != nil {
 		return err
-	}
-
-	// analyze result
-	length := result.RowNumber()
-	if length == constant.ZeroInt {
-		return nil
 	}
 
 	tableRowsConfig := de.getItemConfig(defaultTableRowsItemName)
 
 	var (
-		tableRows            float64
-		tableRowsHighSum     float64
+		tableRowsHighSum     int
 		tableRowsHighCount   int
-		tableRowsMediumSum   float64
+		tableRowsMediumSum   int
 		tableRowsMediumCount int
 
-		tableRowsHigh [][]driver.Value
+		tableRowsHigh []healthcheck.Table
 	)
 
-	for i, rowData := range result.Rows.Values {
-		tableRows, err = result.GetFloat(i, constant.ZeroInt)
-		if err != nil {
-			return err
-		}
-
+	for _, table := range tables {
 		switch {
-		case tableRows >= tableRowsConfig.GetHighWatermark():
-			tableRowsHigh = append(tableRowsHigh, rowData)
-			tableRowsHighSum += tableRows
+		case float64(table.GetRows()) >= tableRowsConfig.GetHighWatermark():
+			tableRowsHigh = append(tableRowsHigh, table)
+			tableRowsHighSum += table.GetRows()
 			tableRowsHighCount++
-		case tableRows >= tableRowsConfig.GetLowWatermark():
-			tableRowsMediumSum += tableRows
+		case float64(table.GetRows()) >= tableRowsConfig.GetLowWatermark():
+			tableRowsMediumSum += table.GetRows()
 			tableRowsMediumCount++
 		}
 	}
 
 	// table rows data
-	jsonBytesTotal, err := json.Marshal(result.Rows.Values)
+	jsonBytesTotal, err := json.Marshal(tables)
 	if err != nil {
 		return nil
 	}
-	de.result.TableSizeData = string(jsonBytesTotal)
+	de.result.TableRowsData = string(jsonBytesTotal)
 	// table rows high
 	jsonBytesHigh, err := json.Marshal(tableRowsHigh)
 	if err != nil {
 		return nil
 	}
-	de.result.TableSizeHigh = string(jsonBytesHigh)
+	de.result.TableRowsHigh = string(jsonBytesHigh)
 
 	// table rows high score deduction
-	tableRowsScoreDeductionHigh := (tableRowsHighSum/float64(tableRowsHighCount) - tableRowsConfig.GetHighWatermark()) / tableRowsConfig.GetUnit() * tableRowsConfig.GetScoreDeductionPerUnitHigh()
+	tableRowsScoreDeductionHigh := (float64(tableRowsHighSum)/float64(tableRowsHighCount) - tableRowsConfig.GetHighWatermark()) / tableRowsConfig.GetUnit() * tableRowsConfig.GetScoreDeductionPerUnitHigh()
 	if tableRowsScoreDeductionHigh > tableRowsConfig.GetMaxScoreDeductionHigh() {
 		tableRowsScoreDeductionHigh = tableRowsConfig.GetMaxScoreDeductionHigh()
 	}
 	// table rows medium score deduction
-	tableRowsScoreDeductionMedium := (tableRowsMediumSum/float64(tableRowsMediumCount) - tableRowsConfig.GetLowWatermark()) / tableRowsConfig.GetUnit() * tableRowsConfig.GetScoreDeductionPerUnitMedium()
+	tableRowsScoreDeductionMedium := (float64(tableRowsMediumSum)/float64(tableRowsMediumCount) - tableRowsConfig.GetLowWatermark()) / tableRowsConfig.GetUnit() * tableRowsConfig.GetScoreDeductionPerUnitMedium()
 	if tableRowsScoreDeductionMedium > tableRowsConfig.GetMaxScoreDeductionMedium() {
 		tableRowsScoreDeductionMedium = tableRowsConfig.GetMaxScoreDeductionMedium()
 	}
 	// table rows score
-	de.result.TableSizeScore = int(defaultMaxScore - tableRowsScoreDeductionHigh - tableRowsScoreDeductionMedium)
+	de.result.TableRowsScore = int(defaultMaxScore - tableRowsScoreDeductionHigh - tableRowsScoreDeductionMedium)
+	if de.result.TableRowsScore < constant.ZeroInt {
+		de.result.TableRowsScore = constant.ZeroInt
+	}
+
+	return nil
+}
+
+// checkTableSize checks table sizes
+func (de *DefaultEngine) checkTableSize() error {
+	// get tables
+	tables, err := de.getApplicationMySQLRepo().GetLargeTables()
+	if err != nil {
+		return err
+	}
+
+	tableSizeConfig := de.getItemConfig(defaultTableSizeItemName)
+
+	var (
+		tableSizeHighSum     float64
+		tableSizeHighCount   int
+		tableSizeMediumSum   float64
+		tableSizeMediumCount int
+
+		tableSizeHigh []healthcheck.Table
+	)
+
+	for _, table := range tables {
+		switch {
+		case table.GetSize() >= tableSizeConfig.GetHighWatermark():
+			tableSizeHigh = append(tableSizeHigh, table)
+			tableSizeHighSum += table.GetSize()
+			tableSizeHighCount++
+		case table.GetSize() >= tableSizeConfig.GetLowWatermark():
+			tableSizeMediumSum += table.GetSize()
+			tableSizeMediumCount++
+		}
+	}
+
+	// table size data
+	jsonBytesTotal, err := json.Marshal(tables)
+	if err != nil {
+		return nil
+	}
+	de.result.TableSizeData = string(jsonBytesTotal)
+	// table size high
+	jsonBytesHigh, err := json.Marshal(tableSizeHigh)
+	if err != nil {
+		return nil
+	}
+	de.result.TableSizeHigh = string(jsonBytesHigh)
+
+	// table size high score deduction
+	tableSizeScoreDeductionHigh := (tableSizeHighSum/float64(tableSizeHighCount) - tableSizeConfig.GetHighWatermark()) / tableSizeConfig.GetUnit() * tableSizeConfig.GetScoreDeductionPerUnitHigh()
+	if tableSizeScoreDeductionHigh > tableSizeConfig.GetMaxScoreDeductionHigh() {
+		tableSizeScoreDeductionHigh = tableSizeConfig.GetMaxScoreDeductionHigh()
+	}
+	// table size medium score deduction
+	tableSizeScoreDeductionMedium := (tableSizeMediumSum/float64(tableSizeMediumCount) - tableSizeConfig.GetLowWatermark()) / tableSizeConfig.GetUnit() * tableSizeConfig.GetScoreDeductionPerUnitMedium()
+	if tableSizeScoreDeductionMedium > tableSizeConfig.GetMaxScoreDeductionMedium() {
+		tableSizeScoreDeductionMedium = tableSizeConfig.GetMaxScoreDeductionMedium()
+	}
+	// table size score
+	de.result.TableSizeScore = int(defaultMaxScore - tableSizeScoreDeductionHigh - tableSizeScoreDeductionMedium)
 	if de.result.TableSizeScore < constant.ZeroInt {
 		de.result.TableSizeScore = constant.ZeroInt
 	}
@@ -564,86 +610,18 @@ func (de *DefaultEngine) checkTableSize() error {
 // checkSlowQuery checks slow query
 func (de *DefaultEngine) checkSlowQuery() error {
 	// check slow query execution time
-	var (
-		sql    string
-		result middleware.Result
-		err    error
-	)
-
-	serviceName := de.operationInfo.mysqlServer.GetServiceName()
-	slowQueryRowsExaminedConfig := de.getItemConfig(defaultSlowQueryRowsExaminedItemName)
-	pmmVersion := de.getPMMVersion()
-
-	switch pmmVersion {
-	case 1:
-		sql = `
-			select qc.checksum as sql_id,
-				   qc.fingerprint,
-				   qe.query    as example,
-				   qe.db       as db_name,
-				   m.exec_count,
-				   m.total_exec_time,
-				   m.avg_exec_time,
-				   m.rows_examined_max
-			from (
-					 select qcm.query_class_id,
-							sum(qcm.query_count)                                        as exec_count,
-							truncate(sum(qcm.query_time_sum), 2)                        as total_exec_time,
-							truncate(sum(qcm.query_time_sum) / sum(qcm.query_count), 2) as avg_exec_time,
-							qcm.rows_examined_max
-					 from query_class_metrics qcm
-							  inner join instances i on qcm.instance_id = i.instance_id
-					 where i.name = ?
-					   and qcm.start_ts >= ?
-					   and qcm.start_ts < ?
-					   and qcm.rows_examined_max >= ?
-					 group by query_class_id
-					 order by rows_examined_max desc) m
-					 inner join query_examples qe on m.query_class_id = qe.query_class_id
-					 inner join query_classes qc on m.query_class_id = qc.query_class_id
-			;
-		`
-		result, err = de.monitorMySQLConn.Execute(sql, serviceName, de.operationInfo.startTime, de.operationInfo.endTime, slowQueryRowsExaminedConfig.GetLowWatermark())
-	case 2:
-		sql = `
-			select queryid                                                       as sql_id,
-				   fingerprint,
-				   (select example from metrics where queryid = queryid limit 1) as example,
-				   database                                                      as db_name,
-				   sum(num_queries)                                              as exec_count,
-				   truncate(sum(m_query_time_sum), 2)                            as total_exec_time,
-				   truncate(sum(m_query_time_sum) / sum(num_queries), 2)         as avg_exec_time,
-				   max(m_rows_examined_max)                                      as rows_examined_max
-			from metrics
-			where service_type = 'mysql'
-			  and service_name = ?
-			  and period_start >= ?
-			  and period_start < ?
-			  and m_rows_examined_max >= ?
-			group by queryid, fingerprint
-			order by rows_examined_max desc;
-		`
-		result, err = de.monitorClickhouseConn.Execute(sql, serviceName, de.operationInfo.startTime, de.operationInfo.endTime, slowQueryRowsExaminedConfig.GetLowWatermark())
-	default:
-		return message.NewMessage(msghc.ErrPmmVersionInvalid, pmmVersion)
-	}
+	slowQueries, err := de.getQueryRepo().GetSlowQuery()
 	if err != nil {
 		return err
 	}
 
 	var (
-		topSQLList                       []*SlowQuery
 		slowQueryRowsExaminedHighSum     int
 		slowQueryRowsExaminedHighCount   int
 		slowQueryRowsExaminedMediumSum   int
 		slowQueryRowsExaminedMediumCount int
 	)
 
-	slowQueries := make([]*SlowQuery, result.RowNumber())
-	err = result.MapToStructSlice(slowQueries, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return err
-	}
 	// slow query data
 	jsonBytesRowsExamined, err := json.Marshal(slowQueries)
 	if err != nil {
@@ -651,20 +629,24 @@ func (de *DefaultEngine) checkSlowQuery() error {
 	}
 	de.result.SlowQueryData = string(jsonBytesRowsExamined)
 
+	slowQueryRowsExaminedConfig := de.getItemConfig(defaultSlowQueryRowsExaminedItemName)
+	topSQLList := make([]depquery.Query, defaultSlowQueryTopSQLNum)
+
 	for i, slowQuery := range slowQueries {
 		if i < defaultSlowQueryTopSQLNum {
-			topSQLList = append(topSQLList, slowQuery)
+			topSQLList[i] = slowQuery
 		}
-
-		if slowQuery.RowsExaminedMax >= int(slowQueryRowsExaminedConfig.GetHighWatermark()) {
+		if slowQuery.GetRowsExaminedMax() >= int(slowQueryRowsExaminedConfig.GetHighWatermark()) {
 			// slow query rows examined high
-			slowQueryRowsExaminedHighSum += slowQuery.RowsExaminedMax
+			slowQueryRowsExaminedHighSum += slowQuery.GetRowsExaminedMax()
 			slowQueryRowsExaminedHighCount++
 			continue
 		}
-		// slow query rows examined medium
-		slowQueryRowsExaminedMediumSum += slowQuery.RowsExaminedMax
-		slowQueryRowsExaminedMediumCount++
+		if slowQuery.GetRowsExaminedMax() >= int(slowQueryRowsExaminedConfig.GetLowWatermark()) {
+			// slow query rows examined medium
+			slowQueryRowsExaminedMediumSum += slowQuery.GetRowsExaminedMax()
+			slowQueryRowsExaminedMediumCount++
+		}
 	}
 	// slow query rows examined high score
 	slowQueryRowsExaminedHighScore := (float64(slowQueryRowsExaminedHighSum)/float64(slowQueryRowsExaminedHighCount) - slowQueryRowsExaminedConfig.GetHighWatermark()) / slowQueryRowsExaminedConfig.GetUnit() * slowQueryRowsExaminedConfig.GetScoreDeductionPerUnitHigh()
@@ -687,29 +669,35 @@ func (de *DefaultEngine) checkSlowQuery() error {
 	// init db service
 	dbService := metadata.NewDBServiceWithDefault()
 	for _, sql := range topSQLList {
+		var advice string
+
 		// get db info
-		err = dbService.GetByNameAndClusterInfo(sql.DBName, clusterID, defaultClusterType)
-		if err != nil {
-			return err
-		}
-		if len(dbService.GetDBs()) == constant.ZeroInt {
-			return errors.New(fmt.Sprintf("could not find db info. db_name: %s, cluster_id: %d, cluster_type: %d",
-				sql.DBName, clusterID, defaultClusterType))
-		}
-		// get db id
-		dbID := dbService.GetDBs()[constant.ZeroInt].Identity()
-		// init sql advisor service
-		advisorService := sqladvisor.NewServiceWithDefault()
-		// get advice
-		advice, err := advisorService.Advise(dbID, sql.Example)
-		if err != nil {
-			return err
+		if sql.GetDBName() != constant.EmptyString {
+			err = dbService.GetByNameAndClusterInfo(sql.GetDBName(), clusterID, defaultClusterType)
+			if err != nil {
+				return err
+			}
+			// get db id
+			dbID := dbService.GetDBs()[constant.ZeroInt].Identity()
+			// init sql advisor service
+			advisorService := sqladvisor.NewServiceWithDefault()
+			// get advice
+			advice, err = advisorService.Advise(dbID, sql.GetExample())
+			if err != nil {
+				return err
+			}
+		} else {
+			jsonBytes, err := json.Marshal(sql)
+			if err != nil {
+				return err
+			}
+			advice = string(jsonBytes)
 		}
 
 		de.result.SlowQueryAdvice += advice + constant.CommaString
 	}
 
-	strings.Trim(de.result.SlowQueryAdvice, constant.CommaString)
+	de.result.SlowQueryAdvice = strings.Trim(de.result.SlowQueryAdvice, constant.CommaString)
 
 	return nil
 }
@@ -721,9 +709,10 @@ func (de *DefaultEngine) summarize() {
 		de.result.IOUtilScore*de.getItemConfig(defaultIOUtilItemName).GetItemWeight() +
 		de.result.DiskCapacityUsageScore*de.getItemConfig(defaultDiskCapacityUsageItemName).GetItemWeight() +
 		de.result.ConnectionUsageScore*de.getItemConfig(defaultConnectionUsageItemName).GetItemWeight() +
-		de.result.AverageActiveSessionNumScore*de.getItemConfig(defaultAverageActiveSessionNumItemName).GetItemWeight() +
+		de.result.AverageActiveSessionPercentsScore*de.getItemConfig(defaultAverageActiveSessionPercentsItemName).GetItemWeight() +
 		de.result.CacheMissRatioScore*de.getItemConfig(defaultCacheMissRatioItemName).GetItemWeight() +
-		de.result.TableSizeScore*(de.getItemConfig(defaultTableRowsItemName).GetItemWeight()+de.getItemConfig(defaultTableSizeItemName).GetItemWeight()) +
+		de.result.TableRowsScore*de.getItemConfig(defaultTableRowsItemName).GetItemWeight() +
+		de.result.TableSizeScore*de.getItemConfig(defaultTableSizeItemName).GetItemWeight() +
 		de.result.SlowQueryScore*(de.getItemConfig(defaultSlowQueryRowsExaminedItemName).GetItemWeight())) /
 		constant.MaxPercentage
 

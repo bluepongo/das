@@ -20,7 +20,6 @@ import (
 
 const (
 	resultStruct                   = "Result"
-	defaultStep                    = time.Minute
 	defaultMonitorClickhouseDBName = "pmm"
 	defaultMonitorMySQLDBName      = "pmm"
 	defaultSuccessStatus           = 2
@@ -54,6 +53,16 @@ func newService(repo healthcheck.DASRepo) *Service {
 		DASRepo: repo,
 		Result:  NewEmptyResult(),
 	}
+}
+
+// GetDASRepo returns the das repository
+func (s *Service) GetDASRepo() healthcheck.DASRepo {
+	return s.DASRepo
+}
+
+// GetOperationInfo returns the operation information
+func (s *Service) GetOperationInfo() *OperationInfo {
+	return s.OperationInfo
 }
 
 // GetResult returns the healthcheck result
@@ -123,73 +132,70 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 		return fmt.Errorf("healthcheck of mysql server is still running. mysql server id: %d", mysqlServerID)
 	}
 	// insert operation message
-	id, err := s.DASRepo.InitOperation(mysqlServerID, startTime, endTime, step)
+	operationID, err := s.DASRepo.InitOperation(mysqlServerID, startTime, endTime, step)
 	if err != nil {
 		return err
 	}
-	// get operation info
-	// init application mysql connection
 	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
 	err = mysqlServerService.GetByID(mysqlServerID)
 	if err != nil {
 		return err
 	}
+	// get mysql server
 	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
+	// get monitor system
+	monitorSystem, err := mysqlServer.GetMonitorSystem()
+	// init operation information
+	s.OperationInfo = NewOperationInfo(operationID, mysqlServer, monitorSystem, startTime, endTime, step)
+
+	// init application mysql connection
 	mysqlServerAddr := fmt.Sprintf("%s:%d", mysqlServer.GetHostIP(), mysqlServer.GetPortNum())
 	applicationMySQLConn, err := mysql.NewConn(mysqlServerAddr, constant.EmptyString, s.getApplicationMySQLUser(), s.getApplicationMySQLPass())
 	if err != nil {
 		return err
 	}
-	// get monitor system info
-	monitorSystem, err := mysqlServer.GetMonitorSystem()
+	// init application mysql repository
+	applicationMySQLRepo := NewApplicationMySQLRepo(s.GetOperationInfo(), applicationMySQLConn)
+
+	var (
+		prometheusConfig prometheus.Config
+		queryRepo        healthcheck.QueryRepo
+	)
+
+	prometheusAddr := fmt.Sprintf("%s:%d%s", monitorSystem.GetHostIP(), monitorSystem.GetPortNum(), monitorSystem.GetBaseURL())
+	slowQueryAddr := fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNumSlow())
+
+	switch monitorSystem.GetSystemType() {
+	case 1:
+		// pmm 1.x
+		// init prometheus config
+		prometheusConfig = prometheus.NewConfig(prometheusAddr, prometheus.DefaultRoundTripper)
+		// init mysql connection
+		conn, err := mysql.NewConn(slowQueryAddr, defaultMonitorMySQLDBName, s.getMonitorMySQLUser(), s.getMonitorMySQLPass())
+		if err != nil {
+			return err
+		}
+		queryRepo = NewMySQLQueryRepo(s.GetOperationInfo(), conn)
+	case 2:
+		// pmm 2.x
+		// init prometheus config
+		prometheusConfig = prometheus.NewConfigWithBasicAuth(prometheusAddr, s.getMonitorPrometheusUser(), s.getMonitorPrometheusPass())
+		// init clickhouse connection
+		conn, err := clickhouse.NewConnWithDefault(slowQueryAddr, defaultMonitorClickhouseDBName, s.getMonitorClickhouseUser(), s.getMonitorClickhousePass())
+		if err != nil {
+			return err
+		}
+		queryRepo = NewClickhouseQueryRepo(s.GetOperationInfo(), conn)
+	default:
+		return fmt.Errorf("healthcheck: monitor system type should be either 1 or 2, %d is not valid", monitorSystem.GetSystemType())
+	}
+
+	prometheusConn, err := prometheus.NewConnWithConfig(prometheusConfig)
 	if err != nil {
 		return err
 	}
-
-	var (
-		monitorPrometheusConn *prometheus.Conn
-		monitorClickhouseConn *clickhouse.Conn
-		monitorMySQLConn      *mysql.Conn
-	)
-
-	monitorSystemType := monitorSystem.GetSystemType()
-	switch monitorSystemType {
-	case 1:
-		// pmm 1.x
-		// init prometheus connection
-		prometheusAddr := fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNum())
-		prometheusConfig := prometheus.NewConfig(prometheusAddr, prometheus.DefaultRoundTripper)
-		monitorPrometheusConn, err = prometheus.NewConnWithConfig(prometheusConfig)
-		if err != nil {
-			return err
-		}
-		// init mysql connection
-		mysqlAddr := fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNumSlow())
-		monitorMySQLConn, err = mysql.NewConn(mysqlAddr, defaultMonitorMySQLDBName, s.getMonitorMySQLUser(), s.getMonitorMySQLPass())
-		if err != nil {
-			return err
-		}
-	case 2:
-		// pmm 2.x
-		// init prometheus connection
-		prometheusAddr := fmt.Sprintf("%s:%d%s", monitorSystem.GetHostIP(), monitorSystem.GetPortNum(), monitorSystem.GetBaseURL())
-		prometheusConfig := prometheus.NewConfigWithBasicAuth(prometheusAddr, s.getMonitorPrometheusUser(), s.getMonitorPrometheusPass())
-		monitorPrometheusConn, err = prometheus.NewConnWithConfig(prometheusConfig)
-		if err != nil {
-			return err
-		}
-		// init clickhouse connection
-		clickhouseAddr := fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNumSlow())
-		monitorClickhouseConn, err = clickhouse.NewConnWithDefault(clickhouseAddr, defaultMonitorClickhouseDBName, s.getMonitorClickhouseUser(), s.getMonitorClickhousePass())
-		if err != nil {
-			return err
-		}
-	default:
-		return fmt.Errorf("healthcheck: monitor system type should be either 1 or 2, %d is not valid", monitorSystemType)
-	}
-
-	s.OperationInfo = NewOperationInfo(id, mysqlServer, monitorSystem, startTime, endTime, step)
-	s.Engine = NewDefaultEngine(s.DASRepo, s.OperationInfo, applicationMySQLConn, monitorPrometheusConn, monitorClickhouseConn, monitorMySQLConn)
+	prometheusRepo := NewPrometheusRepo(s.GetOperationInfo(), prometheusConn)
+	s.Engine = NewDefaultEngine(s.GetOperationInfo(), s.GetDASRepo(), applicationMySQLRepo, prometheusRepo, queryRepo)
 
 	return nil
 }
