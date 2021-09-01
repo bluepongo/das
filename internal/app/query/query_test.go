@@ -3,6 +3,10 @@ package query
 import (
 	"testing"
 
+	"github.com/romberli/das/global"
+	"github.com/romberli/go-util/common"
+	"github.com/romberli/go-util/middleware/mysql"
+	"github.com/romberli/log"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,7 +19,32 @@ const (
 	defaultQueryInfoTotalExecTime   = 2.1
 	defaultQueryInfoAvgExecTime     = 3.2
 	defaultQueryInfoRowsExaminedMax = 4
+
+	defaultQuerierMySQLClusterID = 1
+	defaultQuerierMySQLServerID  = 1
+	defaultQuerierDBID           = 1
+	defaultQuerierSQLID          = "1"
 )
+
+func initGlobalMySQLPool() error {
+	dbAddr := dbAddr
+	dbName := dbDBName
+	dbUser := dbDBUser
+	dbPass := dbDBPass
+	maxConnections := mysql.DefaultMaxConnections
+	initConnections := mysql.DefaultInitConnections
+	maxIdleConnections := mysql.DefaultMaxIdleConnections
+	maxIdleTime := mysql.DefaultMaxIdleTime
+	keepAliveInterval := mysql.DefaultKeepAliveInterval
+
+	config := mysql.NewConfig(dbAddr, dbName, dbUser, dbPass)
+	poolConfig := mysql.NewPoolConfigWithConfig(config, maxConnections, initConnections, maxIdleConnections, maxIdleTime, keepAliveInterval)
+	log.Debugf("pool config: %v", poolConfig)
+	var err error
+	global.DASMySQLPool, err = mysql.NewPoolWithPoolConfig(poolConfig)
+
+	return err
+}
 
 func TestQueryAll(t *testing.T) {
 	TestQuery_GetSQLID(t)
@@ -27,10 +56,10 @@ func TestQueryAll(t *testing.T) {
 	TestQuery_GetAvgExecTime(t)
 	TestQuery_GetRowsExaminedMax(t)
 
-	// TestQuerier_GetByMySQLClusterID(t)
-	// TestQuerier_GetByMySQLServerID(t)
-	// TestQuerier_GetByDBID(t)
-	// TestQuerier_GetBySQLID(t)
+	TestQuerier_GetByMySQLClusterID(t)
+	TestQuerier_GetByMySQLServerID(t)
+	TestQuerier_GetByDBID(t)
+	TestQuerier_GetBySQLID(t)
 }
 
 func initNewQueryInfo() *Query {
@@ -95,39 +124,51 @@ func TestQuery_GetRowsExaminedMax(t *testing.T) {
 	asst.Equal(defaultQueryInfoRowsExaminedMax, queryInfo.GetRowsExaminedMax(), "test GetUserName() failed")
 }
 
-// func TestQuerier_GetByMySQLClusterID(t *testing.T) {
-// 	asst := assert.New(t)
-// 	querier := NewQuerierWithGlobal(NewConfigWithDefault())
-// 	queries, err := querier.GetByMySQLClusterID()
-// 	asst.Nil(err, common.CombineMessageWithError("test GetByMySQLClusterID() failed", err))
+func TestQuerier_GetByMySQLClusterID(t *testing.T) {
+	asst := assert.New(t)
 
-// 	asst.Equal()
-// }
-// func TestQuerier_GetByMySQLServerID(t *testing.T) {
-// 	asst := assert.New(t)
-// 	querier := NewQuerierWithGlobal(NewConfigWithDefault())
-// 	queries, err := querier.GetByMySQLServerID()
-// 	asst.Nil(err, common.CombineMessageWithError("test GetByMySQLServerID() failed", err))
+	err := initGlobalMySQLPool()
+	asst.Nil(err, common.CombineMessageWithError("test GetByMySQLClusterID() failed", err))
 
-// 	asst.Equal()
-// }
-// func TestQuerier_GetByDBID(t *testing.T) {
-// 	asst := assert.New(t)
-// 	querier := NewQuerierWithGlobal(NewConfigWithDefault())
-// 	queries, err := querier.GetByDBID()
-// 	asst.Nil(err, common.CombineMessageWithError("test GetByDBID() failed", err))
+	querier := NewQuerierWithGlobal(NewConfigWithDefault())
+	queries, err := querier.GetByMySQLClusterID(defaultQuerierMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetByMySQLClusterID() failed", err))
 
-// 	asst.Equal()
-// }
-// func TestQuerier_GetBySQLID(t *testing.T) {
-// 	asst := assert.New(t)
-// 	querier := NewQuerierWithGlobal(NewConfigWithDefault())
-// 	queries, err := querier.GetBySQLID()
-// 	asst.Nil(err, common.CombineMessageWithError("test GetBySQLID() failed", err))
+	asst.NotZero(len(queries), "test GetByMySQLClusterID() failed")
+}
+func TestQuerier_GetByMySQLServerID(t *testing.T) {
+	asst := assert.New(t)
 
-// 	asst.Equal()
-// }
+	err := initGlobalMySQLPool()
+	asst.Nil(err, common.CombineMessageWithError("test GetByMySQLServerID() failed", err))
 
-// func createQuery() {
-// 	querier := NewQuerierWithGlobal(NewConfigWithDefault())
-// }
+	querier := NewQuerierWithGlobal(NewConfigWithDefault())
+	queries, err := querier.GetByMySQLServerID(defaultQuerierMySQLServerID)
+	asst.Nil(err, common.CombineMessageWithError("test GetByMySQLServerID() failed", err))
+
+	asst.NotZero(len(queries), "test GetByMySQLServerID() failed")
+}
+func TestQuerier_GetByDBID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := initGlobalMySQLPool()
+	asst.Nil(err, common.CombineMessageWithError("test GetByDBID() failed", err))
+
+	querier := NewQuerierWithGlobal(NewConfigWithDefault())
+	queries, err := querier.GetByDBID(defaultQuerierMySQLServerID, defaultQuerierDBID)
+	asst.Nil(err, common.CombineMessageWithError("test GetByDBID() failed", err))
+
+	asst.NotZero(len(queries), "test GetByDBID() failed")
+}
+func TestQuerier_GetBySQLID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := initGlobalMySQLPool()
+	asst.Nil(err, common.CombineMessageWithError("test GetBySQLID() failed", err))
+
+	querier := NewQuerierWithGlobal(NewConfigWithDefault())
+	queries, err := querier.GetBySQLID(defaultQuerierMySQLServerID, defaultQuerierSQLID)
+	asst.Nil(err, common.CombineMessageWithError("test GetBySQLID() failed", err))
+
+	asst.NotZero(len(queries), "test GetBySQLID() failed")
+}
