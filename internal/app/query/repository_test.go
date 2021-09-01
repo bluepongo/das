@@ -9,6 +9,14 @@ import (
 )
 
 const (
+	// modify the connection information
+	dbAddr   = "192.168.10.220:3306"
+	dbDBName = "das"
+	dbDBUser = "root"
+	dbDBPass = "root"
+)
+
+const (
 	testServiceName = "test"
 	testDbName      = "test"
 	testSQLID       = "0"
