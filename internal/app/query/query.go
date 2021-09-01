@@ -114,7 +114,7 @@ func (q *Querier) GetByMySQLClusterID(mysqlClusterID int) ([]query.Query, error)
 		return nil, err
 	}
 
-	queries := []query.Query{}
+	var queries []query.Query
 	for _, mysqlServer := range mysqlServers {
 		mysqlServerID := mysqlServer.Identity()
 		// dispatch to GetByMySQLServerID()

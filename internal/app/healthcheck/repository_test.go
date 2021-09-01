@@ -12,42 +12,11 @@ import (
 )
 
 const (
-	// modify these connection information
-	dbAddr   = "192.168.10.210:3306"
+	// modify the connection information
+	dbAddr   = "192.168.10.219:3306"
 	dbDBName = "das"
 	dbDBUser = "root"
 	dbDBPass = "root"
-
-	defaultResultOperationID                  = 1
-	defaultResultWeightedAverageScore         = 1
-	defaultResultDBConfigScore                = 1
-	defaultResultDBConfigData                 = ""
-	defaultResultDBConfigAdvice               = ""
-	defaultResultCPUUsageScore                = 1
-	defaultResultCPUUsageData                 = ""
-	defaultResultCPUUsageHigh                 = ""
-	defaultResultIOUtilScore                  = 1
-	defaultResultIOUtilData                   = ""
-	defaultResultIOUtilHigh                   = ""
-	defaultResultDiskCapacityUsageScore       = 1
-	defaultResultDiskCapacityUsageData        = ""
-	defaultResultDiskCapacityUsageHigh        = ""
-	defaultResultConnectionUsageScore         = 1
-	defaultResultConnectionUsageData          = ""
-	defaultResultConnectionUsageHigh          = ""
-	defaultResultAverageActiveSessionNumScore = 1
-	defaultResultAverageActiveSessionNumData  = ""
-	defaultResultAverageActiveSessionNumHigh  = ""
-	defaultResultCacheMissRatioScore          = 1
-	defaultResultCacheMissRatioData           = ""
-	defaultResultCacheMissRatioHigh           = ""
-	defaultResultTableSizeScore               = 1
-	defaultResultTableSizeData                = ""
-	defaultResultTableSizeHigh                = ""
-	defaultResultSlowQueryScore               = 1
-	defaultResultSlowQueryData                = ""
-	defaultResultSlowQueryAdvice              = ""
-	defaultResultAccuracyReview               = 0
 
 	defaultResultMysqlServerID = 1
 	defaultResultStartTime     = "2021-05-01 10:00:00.000000"
@@ -72,9 +41,11 @@ func initRepository() *DASRepo {
 }
 
 func createResult() error {
-	hcInfo := NewResultWithDefault(defaultResultOperationID, defaultResultWeightedAverageScore, defaultResultDBConfigScore,
-		defaultResultCPUUsageScore, defaultResultIOUtilScore, defaultResultDiskCapacityUsageScore, defaultResultConnectionUsageScore,
-		defaultResultAverageActiveSessionNumScore, defaultResultCacheMissRatioScore, defaultResultTableSizeScore, defaultResultSlowQueryScore, defaultResultAccuracyReview)
+	hcInfo := NewResultWithDefault(defaultResultOperationID, defaultResultWeightedAverageScore,
+		defaultResultDBConfigScore, defaultResultCPUUsageScore, defaultResultIOUtilScore,
+		defaultResultDiskCapacityUsageScore, defaultResultConnectionUsageScore, defaultResultAverageActiveSessionPercentsScore,
+		defaultResultCacheMissRatioScore, defaultResultTableRowsScore, defaultResultTableSizeScore,
+		defaultResultSlowQueryScore, defaultResultAccuracyReview)
 	err := repository.SaveResult(hcInfo)
 
 	return err
@@ -120,8 +91,8 @@ func TestRepository_Transaction(t *testing.T) {
 		db_config_advice, cpu_usage_score, cpu_usage_data, cpu_usage_high, io_util_score,
 		io_util_data, io_util_high, disk_capacity_usage_score, disk_capacity_usage_data,
 		disk_capacity_usage_high, connection_usage_score, connection_usage_data,
-		connection_usage_high, average_active_session_num_score, average_active_session_num_data,
-		average_active_session_num_high, cache_miss_ratio_score, cache_miss_ratio_data,
+		connection_usage_high, average_active_session_percents_score, average_active_session_percents_data,
+		average_active_session_percents_high, cache_miss_ratio_score, cache_miss_ratio_data,
 		cache_miss_ratio_high, table_size_score, table_size_data, table_size_high, slow_query_score,
 		slow_query_data, slow_query_advice, accuracy_review) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 	?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -135,7 +106,7 @@ func TestRepository_Transaction(t *testing.T) {
 		defaultResultCPUUsageHigh, defaultResultIOUtilScore, defaultResultIOUtilData, defaultResultIOUtilHigh,
 		defaultResultDiskCapacityUsageScore, defaultResultDiskCapacityUsageData, defaultResultDiskCapacityUsageHigh,
 		defaultResultConnectionUsageScore, defaultResultConnectionUsageData, defaultResultConnectionUsageHigh,
-		defaultResultAverageActiveSessionNumScore, defaultResultAverageActiveSessionNumData, defaultResultAverageActiveSessionNumHigh,
+		defaultResultAverageActiveSessionPercentsScore, defaultResultAverageActiveSessionPercentsData, defaultResultAverageActiveSessionPercentsHigh,
 		defaultResultCacheMissRatioScore, defaultResultCacheMissRatioData, defaultResultCacheMissRatioHigh,
 		defaultResultTableSizeScore, defaultResultTableSizeData, defaultResultTableSizeHigh, defaultResultSlowQueryScore,
 		defaultResultSlowQueryData, defaultResultSlowQueryAdvice, defaultResultAccuracyReview)

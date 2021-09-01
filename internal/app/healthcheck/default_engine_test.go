@@ -2,13 +2,16 @@ package healthcheck
 
 import (
 	"fmt"
+	"os"
 	"testing"
 	"time"
 
-	"github.com/jinzhu/now"
 	"github.com/romberli/das/internal/app/metadata"
+	"github.com/romberli/das/internal/app/query"
+	"github.com/romberli/das/internal/dependency/healthcheck"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
+	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/go-util/middleware/clickhouse"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/go-util/middleware/prometheus"
@@ -27,47 +30,30 @@ const (
 	applicationMysqlDBUser = "root"
 	applicationMysqlDBPass = "root"
 
-	defaultEngineConfigID                          = 1
-	defaultEngineConfigItemName                    = "test_item"
-	defaultEngineConfigItemWeight                  = 5
-	defaultEngineConfigLowWatermark                = 50.00
-	defaultEngineConfigHighWatermark               = 70.00
-	defaultEngineConfigUnit                        = 10.00
-	defaultEngineConfigScoreDeductionPerUnitHigh   = 20.00
-	defaultEngineConfigMaxScoreDeductionHigh       = 100.00
-	defaultEngineConfigScoreDeductionPerUnitMedium = 10.00
-	defaultEngineConfigMaxScoreDeductionMedium     = 50.00
-	defaultEngineConfigDelFlag                     = 0
-	defaultEngineConfigCreateTimeString            = "2021-01-21 10:00:00.000000"
-	defaultEngineConfigLastUpdateTimeString        = "2021-01-21 13:00:00.000000"
+	defaultMySQLServerID = 1
+	defaultStep          = time.Minute
 
-	serviceID        = 1
-	serviceStartTime = "2021-01-21 10:00:00.000000"
-	serviceEndTime   = "2021-01-21 13:00:00.000000"
-	serviceStep      = 1 * time.Millisecond
+	defaultPrometheusUser = "admin"
+	defaultPrometheusPass = "admin"
 )
 
-var defaultEngineConfigRepo = initDefaultEngineConfigRepo()
-var mysqlServerRepo = initMySQLServerRepo()
+var (
+	dasPool = initDASPool()
+	dasRepo = initDASRepo()
+)
 
-func initDefaultEngineConfigRepo() *DASRepo {
+func initDASPool() middleware.Pool {
 	pool, err := mysql.NewPoolWithDefault(defaultEngineConfigAddr, defaultEngineConfigDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
 	if err != nil {
 		log.Error(common.CombineMessageWithError("initMiddlewareClusterRepo() failed", err))
-		return nil
+		os.Exit(1)
 	}
 
-	return NewDASRepo(pool)
+	return pool
 }
 
-func initMySQLServerRepo() *metadata.MySQLServerRepo {
-	pool, err := mysql.NewPoolWithDefault(defaultEngineConfigAddr, defaultEngineConfigDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
-	if err != nil {
-		log.Error(common.CombineMessageWithError("initMySQLServerRepo() failed", err))
-		return nil
-	}
-
-	return metadata.NewMySQLServerRepo(pool)
+func initDASRepo() *DASRepo {
+	return NewDASRepo(dasPool)
 }
 
 func TestDefaultEngineConfig_Validate(t *testing.T) {
@@ -79,7 +65,7 @@ func TestDefaultEngineConfig_Validate(t *testing.T) {
 		from t_hc_default_engine_config
 		where del_flag = 0;
 	`
-	result, err := defaultEngineConfigRepo.Execute(sql)
+	result, err := dasRepo.Execute(sql)
 	asst.Nil(err, common.CombineMessageWithError("test Validate() failed", err))
 	defaultEngineConfigList := make([]*DefaultItemConfig, result.RowNumber())
 	for i := range defaultEngineConfigList {
@@ -99,28 +85,33 @@ func TestDefaultEngineConfig_Validate(t *testing.T) {
 
 func TestDefaultEngine_Run(t *testing.T) {
 	asst := assert.New(t)
-	now.TimeFormats = append(now.TimeFormats, constant.DefaultTimeLayout)
-	startTime, _ := now.Parse(serviceStartTime)
-	endTime, _ := now.Parse(serviceEndTime)
+	startTime := time.Now().Add(-query.Week)
+	endTime := time.Now()
 
-	id, err := defaultEngineConfigRepo.InitOperation(serviceID, startTime, endTime, serviceStep)
+	id, err := dasRepo.InitOperation(defaultMySQLServerID, startTime, endTime, defaultStep)
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 
-	mysqlServerService := metadata.NewMySQLServerService(mysqlServerRepo)
+	mysqlServerService := metadata.NewMySQLServerService(metadata.NewMySQLServerRepo(dasPool))
 	err = mysqlServerService.GetByID(1)
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
-
-	applicationMySQLConn, err := mysql.NewConn(applicationMysqlAddr, applicationMysqlDBName, applicationMysqlDBUser, applicationMysqlDBPass)
-	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
-
 	monitorSystem, err := mysqlServer.GetMonitorSystem()
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
+
+	operationInfo := NewOperationInfo(id, mysqlServer, monitorSystem, startTime, endTime, defaultStep)
+
+	// init application mysql connection
+	applicationMySQLConn, err := mysql.NewConn(applicationMysqlAddr, applicationMysqlDBName, applicationMysqlDBUser, applicationMysqlDBPass)
+	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
+	// init application mysql repository
+	applicationMySQLRepo := NewApplicationMySQLRepo(operationInfo, applicationMySQLConn)
+
 	var (
-		monitorPrometheusConn *prometheus.Conn
-		monitorClickhouseConn *clickhouse.Conn
-		monitorMySQLConn      *mysql.Conn
+		prometheusConn *prometheus.Conn
+
+		prometheusRepo healthcheck.PrometheusRepo
+		queryRepo      healthcheck.QueryRepo
 	)
 
 	monitorSystemType := monitorSystem.GetSystemType()
@@ -128,30 +119,36 @@ func TestDefaultEngine_Run(t *testing.T) {
 	case 1:
 		// pmm 1.x
 		// init prometheus connection
-		prometheusAddr := fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNum())
+		prometheusAddr := fmt.Sprintf("%s:%d%s", monitorSystem.GetHostIP(), monitorSystem.GetPortNum(), monitorSystem.GetBaseURL())
 		prometheusConfig := prometheus.NewConfig(prometheusAddr, prometheus.DefaultRoundTripper)
-		monitorPrometheusConn, err = prometheus.NewConnWithConfig(prometheusConfig)
+		prometheusConn, err = prometheus.NewConnWithConfig(prometheusConfig)
 		asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
-
+		// init prometheus repository
+		prometheusRepo = NewPrometheusRepo(operationInfo, prometheusConn)
 		// init mysql connection
 		mysqlAddr := fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNumSlow())
-		monitorMySQLConn, err = mysql.NewConn(mysqlAddr, defaultMonitorMySQLDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
+		mysqlConn, err := mysql.NewConn(mysqlAddr, defaultMonitorMySQLDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
 		asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
+		// init query repository
+		queryRepo = NewMySQLQueryRepo(operationInfo, mysqlConn)
 	case 2:
 		// pmm 2.x
 		// init prometheus connection
 		prometheusAddr := fmt.Sprintf("%s:%d%s", monitorSystem.GetHostIP(), monitorSystem.GetPortNum(), monitorSystem.GetBaseURL())
-		prometheusConfig := prometheus.NewConfigWithBasicAuth(prometheusAddr, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
-		monitorPrometheusConn, err = prometheus.NewConnWithConfig(prometheusConfig)
+		prometheusConfig := prometheus.NewConfigWithBasicAuth(prometheusAddr, defaultPrometheusUser, defaultPrometheusPass)
+		prometheusConn, err = prometheus.NewConnWithConfig(prometheusConfig)
 		asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
+		// init prometheus repository
+		prometheusRepo = NewPrometheusRepo(operationInfo, prometheusConn)
 		// init clickhouse connection
 		clickhouseAddr := fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNumSlow())
-		monitorClickhouseConn, err = clickhouse.NewConnWithDefault(clickhouseAddr, defaultMonitorClickhouseDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
+		clickhouseConn, err := clickhouse.NewConnWithDefault(clickhouseAddr, defaultMonitorClickhouseDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
 		asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
-
-		operationInfo := NewOperationInfo(id, mysqlServer, monitorSystem, startTime, endTime, serviceStep)
-		defaultEngine := NewDefaultEngine(defaultEngineConfigRepo, operationInfo, applicationMySQLConn, monitorPrometheusConn, monitorClickhouseConn, monitorMySQLConn)
-		err = defaultEngine.run()
-		asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
+		// init query repository
+		queryRepo = NewClickhouseQueryRepo(operationInfo, clickhouseConn)
 	}
+
+	defaultEngine := NewDefaultEngine(operationInfo, dasRepo, applicationMySQLRepo, prometheusRepo, queryRepo)
+	err = defaultEngine.run()
+	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 }

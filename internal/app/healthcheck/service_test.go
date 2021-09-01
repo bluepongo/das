@@ -68,12 +68,15 @@ func createService() (*Service, error) {
 		defaultResultConnectionUsageScore,
 		defaultResultConnectionUsageData,
 		defaultResultConnectionUsageHigh,
-		defaultResultAverageActiveSessionNumScore,
-		defaultResultAverageActiveSessionNumData,
-		defaultResultAverageActiveSessionNumHigh,
+		defaultResultAverageActiveSessionPercentsScore,
+		defaultResultAverageActiveSessionPercentsData,
+		defaultResultAverageActiveSessionPercentsHigh,
 		defaultResultCacheMissRatioScore,
 		defaultResultCacheMissRatioData,
 		defaultResultCacheMissRatioHigh,
+		defaultResultTableRowsScore,
+		defaultResultTableRowsData,
+		defaultResultTableRowsHigh,
 		defaultResultTableSizeScore,
 		defaultResultTableSizeData,
 		defaultResultTableSizeHigh,
@@ -219,7 +222,7 @@ func TestService_MarshalJSONWithFields(t *testing.T) {
 
 	service, err := createService()
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields(fields ...string) failed", err))
-	_, err = service.MarshalJSONWithFields("ID", "operationID", "WeightedAverageScore", "DBConfigScore", "DBConfigData", "DBConfigAdvice", "CPUUsageScore", "CPUUsageData", "CPUUsageHigh", "IOUtilScore", "IOUtilData", "IOUtilHigh", "DiskCapacityUsageScore", "DiskCapacityUsageData", "DiskCapacityUsageHigh", "ConnectionUsageScore", "ConnectionUsageData", "ConnectionUsageHigh", "AverageActiveSessionNumScore", "AverageActiveSessionNumData", "AverageActiveSessionNumHigh", "CacheMissRatioScore", "CacheMissRatioData", "CacheMissRatioHigh", "TableSizeScore", "TableSizeData", "TableSizeHigh", "SlowQueryScore", "SlowQueryData", "SlowQueryAdvice")
+	_, err = service.MarshalJSONWithFields("ID", "operationID", "WeightedAverageScore", "DBConfigScore", "DBConfigData", "DBConfigAdvice", "CPUUsageScore", "CPUUsageData", "CPUUsageHigh", "IOUtilScore", "IOUtilData", "IOUtilHigh", "DiskCapacityUsageScore", "DiskCapacityUsageData", "DiskCapacityUsageHigh", "ConnectionUsageScore", "ConnectionUsageData", "ConnectionUsageHigh", "AverageActiveSessionPercentsScore", "AverageActiveSessionPercentsData", "AverageActiveSessionPercentsHigh", "CacheMissRatioScore", "CacheMissRatioData", "CacheMissRatioHigh", "TableSizeScore", "TableSizeData", "TableSizeHigh", "SlowQueryScore", "SlowQueryData", "SlowQueryAdvice")
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields(fields ...string) failed", err))
 	// delete
 	err = deleteHCResultByOperationID(defaultResultOperationID)
