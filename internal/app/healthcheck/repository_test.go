@@ -42,7 +42,6 @@ const (
 
 	defaultFileSystemNum     = 3
 	defaultPrometheusDataNum = 61
-	defaultServiceName       = "192-168-10-219:3306"
 )
 
 var (
