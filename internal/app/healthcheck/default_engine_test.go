@@ -108,45 +108,41 @@ func TestDefaultEngine_Run(t *testing.T) {
 	applicationMySQLRepo := NewApplicationMySQLRepo(operationInfo, applicationMySQLConn)
 
 	var (
-		prometheusConn *prometheus.Conn
-
-		prometheusRepo healthcheck.PrometheusRepo
-		queryRepo      healthcheck.QueryRepo
+		prometheusConfig prometheus.Config
+		queryRepo        healthcheck.QueryRepo
 	)
 
-	monitorSystemType := monitorSystem.GetSystemType()
-	switch monitorSystemType {
+	prometheusAddr := fmt.Sprintf("%s:%d%s", monitorSystem.GetHostIP(), monitorSystem.GetPortNum(), monitorSystem.GetBaseURL())
+	queryAddr := fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNumSlow())
+
+	switch monitorSystem.GetSystemType() {
 	case 1:
 		// pmm 1.x
-		// init prometheus connection
-		prometheusAddr := fmt.Sprintf("%s:%d%s", monitorSystem.GetHostIP(), monitorSystem.GetPortNum(), monitorSystem.GetBaseURL())
-		prometheusConfig := prometheus.NewConfig(prometheusAddr, prometheus.DefaultRoundTripper)
-		prometheusConn, err = prometheus.NewConnWithConfig(prometheusConfig)
+		// init prometheus config
+		prometheusConfig = prometheus.NewConfig(prometheusAddr, prometheus.DefaultRoundTripper)
 		asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
-		// init prometheus repository
-		prometheusRepo = NewPrometheusRepo(operationInfo, prometheusConn)
 		// init mysql connection
-		mysqlAddr := fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNumSlow())
-		mysqlConn, err := mysql.NewConn(mysqlAddr, defaultMonitorMySQLDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
+		mysqlConn, err := mysql.NewConn(queryAddr, defaultMonitorMySQLDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
 		asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
-		// init query repository
+		// init mysql query repository
 		queryRepo = NewMySQLQueryRepo(operationInfo, mysqlConn)
 	case 2:
 		// pmm 2.x
-		// init prometheus connection
-		prometheusAddr := fmt.Sprintf("%s:%d%s", monitorSystem.GetHostIP(), monitorSystem.GetPortNum(), monitorSystem.GetBaseURL())
-		prometheusConfig := prometheus.NewConfigWithBasicAuth(prometheusAddr, defaultPrometheusUser, defaultPrometheusPass)
-		prometheusConn, err = prometheus.NewConnWithConfig(prometheusConfig)
+		// init prometheus config
+		prometheusConfig = prometheus.NewConfigWithBasicAuth(prometheusAddr, defaultPrometheusUser, defaultPrometheusPass)
 		asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
-		// init prometheus repository
-		prometheusRepo = NewPrometheusRepo(operationInfo, prometheusConn)
 		// init clickhouse connection
-		clickhouseAddr := fmt.Sprintf("%s:%d", monitorSystem.GetHostIP(), monitorSystem.GetPortNumSlow())
-		clickhouseConn, err := clickhouse.NewConnWithDefault(clickhouseAddr, defaultMonitorClickhouseDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
+		clickhouseConn, err := clickhouse.NewConnWithDefault(queryAddr, defaultMonitorClickhouseDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
 		asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
-		// init query repository
+		// init clickhouse query repository
 		queryRepo = NewClickhouseQueryRepo(operationInfo, clickhouseConn)
 	}
+
+	// init prometheus connection
+	prometheusConn, err := prometheus.NewConnWithConfig(prometheusConfig)
+	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
+	// init prometheus repository
+	prometheusRepo := NewPrometheusRepo(operationInfo, prometheusConn)
 
 	defaultEngine := NewDefaultEngine(operationInfo, dasRepo, applicationMySQLRepo, prometheusRepo, queryRepo)
 	err = defaultEngine.run()
