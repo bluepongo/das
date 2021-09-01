@@ -262,7 +262,6 @@ func TestRepositoryAll(t *testing.T) {
 	TestClickhouseQueryRepo_GetSlowQuery(t)
 	TestClickhouseQueryRepo_getServiceName(t)
 	TestClickhouseQueryRepo_getPMMVersion(t)
-
 }
 
 func TestDASRepo_Execute(t *testing.T) {
