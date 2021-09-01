@@ -2,20 +2,17 @@ package healthcheck
 
 import (
 	"fmt"
-	"os"
 	"testing"
 	"time"
 
+	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/app/metadata"
-	"github.com/romberli/das/internal/app/query"
 	"github.com/romberli/das/internal/dependency/healthcheck"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
-	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/go-util/middleware/clickhouse"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/go-util/middleware/prometheus"
-	"github.com/romberli/log"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,29 +29,7 @@ const (
 
 	defaultMySQLServerID = 1
 	defaultStep          = time.Minute
-
-	defaultPrometheusUser = "admin"
-	defaultPrometheusPass = "admin"
 )
-
-var (
-	dasPool = initDASPool()
-	dasRepo = initDASRepo()
-)
-
-func initDASPool() middleware.Pool {
-	pool, err := mysql.NewPoolWithDefault(defaultEngineConfigAddr, defaultEngineConfigDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
-	if err != nil {
-		log.Error(common.CombineMessageWithError("initMiddlewareClusterRepo() failed", err))
-		os.Exit(1)
-	}
-
-	return pool
-}
-
-func initDASRepo() *DASRepo {
-	return NewDASRepo(dasPool)
-}
 
 func TestDefaultEngineConfig_Validate(t *testing.T) {
 	asst := assert.New(t)
@@ -85,13 +60,13 @@ func TestDefaultEngineConfig_Validate(t *testing.T) {
 
 func TestDefaultEngine_Run(t *testing.T) {
 	asst := assert.New(t)
-	startTime := time.Now().Add(-query.Week)
+	startTime := time.Now().Add(-constant.Week)
 	endTime := time.Now()
 
 	id, err := dasRepo.InitOperation(defaultMySQLServerID, startTime, endTime, defaultStep)
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 
-	mysqlServerService := metadata.NewMySQLServerService(metadata.NewMySQLServerRepo(dasPool))
+	mysqlServerService := metadata.NewMySQLServerService(metadata.NewMySQLServerRepo(global.DASMySQLPool))
 	err = mysqlServerService.GetByID(1)
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
