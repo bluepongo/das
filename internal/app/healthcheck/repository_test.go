@@ -38,7 +38,7 @@ const (
 	newResultAccuracyReview = 1
 
 	defaultVariableName  = "datadir"
-	defaultVariableValue = "/mysqldata/mysql3307/data"
+	defaultVariableValue = "/mysqldata/mysql3306/data"
 
 	defaultFileSystemNum     = 3
 	defaultPrometheusDataNum = 61
