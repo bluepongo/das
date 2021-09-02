@@ -39,7 +39,7 @@ const (
 				   and qcm.start_ts < ?
 				 group by query_class_id
 				 order by rows_examined_max desc
- 				 limit ?, offset ?) m
+ 				 limit ? offset ?) m
 				 inner join query_examples qe on m.query_class_id = qe.query_class_id
 				 inner join query_classes qc on m.query_class_id = qc.query_class_id
 	`
@@ -68,7 +68,7 @@ const (
 				 inner join query_examples qe on m.query_class_id = qe.query_class_id
 				 inner join query_classes qc on m.query_class_id = qc.query_class_id
 		where qe.db = ?
-	    limit ?, offset ?
+	    limit ? offset ?
 	`
 	mysqlQueryWithSQLID = `
 		select qc.checksum as sql_id,
@@ -114,7 +114,7 @@ const (
 		  and period_start < ?
 		group by queryid, fingerprint
 		order by rows_examined_max desc
-		limit ?, offset ?
+		limit ? offset ?
 	`
 	clickhouseQueryWithDBName = `
 		select queryid                                                       as sql_id,
@@ -133,7 +133,7 @@ const (
 		  and period_start < ?
 		group by queryid, fingerprint
 		order by rows_examined_max desc
-		limit ?, offset ?
+		limit ? offset ?
 	`
 	clickhouseQueryWithSQLID = `
 		select queryid                                                       as sql_id,
@@ -169,7 +169,7 @@ func NewDASRepo(db middleware.Pool) *DASRepo {
 	return newDASRepo(db)
 }
 
-// NewDASRepo returns *DASRepo with global mysql pool
+// NewDASRepoWithGlobal returns *DASRepo with global mysql pool
 func NewDASRepoWithGlobal() *DASRepo {
 	return NewDASRepo(global.DASMySQLPool)
 }
@@ -289,7 +289,7 @@ func (mr *MySQLRepo) GetByServiceNames(serviceName []string) ([]query.Query, err
 		return nil, err
 	}
 
-	sql := fmt.Sprintf(clickhouseQueryWithServiceNames, services)
+	sql := fmt.Sprintf(mysqlQueryWithServiceNames, services)
 
 	return mr.execute(sql, mr.getConfig().GetStartTime(), mr.getConfig().GetEndTime(), mr.getConfig().GetLimit(), mr.getConfig().GetOffset())
 }
@@ -306,7 +306,7 @@ func (mr *MySQLRepo) GetByDBName(serviceName, dbName string) ([]query.Query, err
 		return nil, err
 	}
 
-	sql := fmt.Sprintf(clickhouseQueryWithDBName, services)
+	sql := fmt.Sprintf(mysqlQueryWithDBName, services)
 
 	return mr.execute(sql, dbName, mr.getConfig().GetStartTime(), mr.getConfig().GetEndTime(), mr.getConfig().GetLimit(), mr.getConfig().GetOffset())
 }
@@ -323,7 +323,7 @@ func (mr *MySQLRepo) GetBySQLID(serviceName, sqlID string) (query.Query, error) 
 		return nil, err
 	}
 
-	sql := fmt.Sprintf(clickhouseQueryWithDBName, services)
+	sql := fmt.Sprintf(mysqlQueryWithDBName, services)
 
 	querys, err := mr.execute(sql, sqlID, mr.getConfig().GetStartTime(), mr.getConfig().GetEndTime(), mr.getConfig().GetLimit(), mr.getConfig().GetOffset())
 	return querys[constant.ZeroInt], err
