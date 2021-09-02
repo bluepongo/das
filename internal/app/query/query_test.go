@@ -3,10 +3,12 @@ package query
 import (
 	"testing"
 
+	"github.com/romberli/das/config"
 	"github.com/romberli/das/global"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,6 +27,18 @@ const (
 	defaultQuerierDBID           = 1
 	defaultQuerierSQLID          = "1"
 )
+
+func init() {
+	viper.Set(config.DBMonitorMySQLUserKey, config.DefaultDBMonitorMySQLUser)
+	viper.Set(config.DBMonitorMySQLPassKey, config.DefaultDBMonitorMySQLPass)
+
+	// viper.Set(config.DBMonitorClickHouseUserKey, config.DefaultDBMonitorClickHouseUser)
+	// viper.Set(config.DBMonitorClickHousePassKey, config.DefaultDBMonitorClickHousePass)
+
+	if err := initGlobalMySQLPool(); err != nil {
+		panic(err)
+	}
+}
 
 func initGlobalMySQLPool() error {
 	dbAddr := dbAddr
