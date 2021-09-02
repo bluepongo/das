@@ -672,8 +672,8 @@ github.com/romberli/clickhouse-go v1.4.4-0.20210422094559-b05fc8c4dbe9 h1:UK2Nm3
 github.com/romberli/clickhouse-go v1.4.4-0.20210422094559-b05fc8c4dbe9/go.mod h1:EaI/sW7Azgz9UATzd5ZdZHRUhHgv5+JMS9NSr2smCJI=
 github.com/romberli/dynamic-struct v1.2.1 h1:vle/rxIUl7IgreLScMSg9RhYBjygY/5Hj/OQKliyY90=
 github.com/romberli/dynamic-struct v1.2.1/go.mod h1:Jk2Z0Dm0diV7O4Lg1MfIyJ0kvOxfN+imwZVO5SOUL94=
-github.com/romberli/go-util v0.3.11-0.20210901062758-94695e851d83 h1:6LuvBWYFD2t26m54PycwU61pXrt7WScIePdOb/8Crto=
-github.com/romberli/go-util v0.3.11-0.20210901062758-94695e851d83/go.mod h1:rWlntYYTtBZxF1uyXWDuG5GsQMXzZPHEamMBlmgQGUc=
+github.com/romberli/go-util v0.3.11-0.20210902021607-0151405c23da h1:E1aCfR73mvns67lZ3FLflP6/m5mtkygKzHhJFAPWmdw=
+github.com/romberli/go-util v0.3.11-0.20210902021607-0151405c23da/go.mod h1:rWlntYYTtBZxF1uyXWDuG5GsQMXzZPHEamMBlmgQGUc=
 github.com/romberli/log v1.0.20 h1:bOlvkGfy6gHS+zGcJhjwq85t9prcXQUJQaLRANoCFVU=
 github.com/romberli/log v1.0.20/go.mod h1:FKhKFdWL5DLD+1LMO/RB4AcO4MUBl1th/pNFjhrmaGc=
 github.com/romberli/pflag v1.0.6-alpha h1:eSC9Fc/QxWpxrj1QbMitsULOGLhSUxxgymfz+XRpfI8=
