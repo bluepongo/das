@@ -14,7 +14,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/hashicorp/go-version v1.2.0
 	github.com/jinzhu/now v1.1.2
-	github.com/romberli/go-util v0.3.11-0.20210901062758-94695e851d83
+	github.com/romberli/go-util v0.3.11-0.20210902021607-0151405c23da
 	github.com/romberli/log v1.0.20
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/cobra v1.1.1
