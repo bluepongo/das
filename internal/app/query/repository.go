@@ -291,7 +291,12 @@ func (mr *MySQLRepo) GetByServiceNames(serviceName []string) ([]query.Query, err
 
 	sql := fmt.Sprintf(mysqlQueryWithServiceNames, services)
 
-	return mr.execute(sql, mr.getConfig().GetStartTime(), mr.getConfig().GetEndTime(), mr.getConfig().GetLimit(), mr.getConfig().GetOffset())
+	return mr.execute(sql,
+		mr.getConfig().GetStartTime().Format("2006-01-02 15:04:05"),
+		mr.getConfig().GetEndTime().Format("2006-01-02 15:04:05"),
+		mr.getConfig().GetLimit(),
+		mr.getConfig().GetOffset(),
+	)
 }
 
 // GetByDBName returns query.query list by dbName
