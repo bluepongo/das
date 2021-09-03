@@ -11,11 +11,11 @@ SOAR_ARCHIVE_AVAILABLE=true
 
 PCRE_VERSION=8.35
 PCRE_URL=http://downloads.sourceforge.net/project/pcre/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz
-PCRE_PATH=${DATA_PATH}/pcre
+PCRE_PATH=/data/pcre
 
 NGINX_VERSION=1.21.1
 NGINX_URL=http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
-NGINX_PATH=${DATA_PATH}/nginx
+NGINX_PATH=/data/nginx
 
 GO_URL=https://golang.google.cn/dl/go${GO_VERSION}.linux-amd64.tar.gz
 OLD_GOROOT=$GOROOT
@@ -23,6 +23,7 @@ OLD_GOPATH=$GOPATH
 
 SOAR_URL=https://github.com/romberli/soar.git
 # DAS_URL=https://github.com/romberli/das.git
+DAS_PATH=/data/das
 
 
 
@@ -30,8 +31,8 @@ SOAR_URL=https://github.com/romberli/soar.git
 function deployDAS() {
     mkdir -p ${WORK_DIR}/archive
     
-    mkdir -p /data/das/bin
-    mkdir -p /data/das/conf
+    mkdir -p ${DAS_HOME}/bin
+    mkdir -p ${DAS_HOME}/conf
     
     checkInternet
     installDeps
@@ -143,11 +144,12 @@ function installGolang() {
 }
 
 function installSoar() {
-    cd ${WORK_DIR}/archive
-    if [ -d ${WORK_DIR}/archive/soar ]; then
+    cd ${WORK_DIR}/../
+    if [ ! -d ${WORK_DIR}/../soar ]; then
         git clone ${SOAR_URL}
     fi
-    if [ -d ${WORK_DIR}/archive/soar ]; then
+    
+    if [ -d ${WORK_DIR}/../soar ]; then
         cd soar
         make
     else
@@ -156,7 +158,7 @@ function installSoar() {
     fi
     
     # mv das into /data
-    mv ${WORK_DIR}/archive/soar/soar /data/das/bin
+    # mv ${WORK_DIR}/../soar/bin/soar ${DAS_HOME}/bin
 }
 
 function installDAS() {
@@ -172,12 +174,21 @@ function installDAS() {
     fi
     
     # mv das into /data
-    mv ${WORK_DIR}/bin/das /data/das/bin
+    \cp -f ${WORK_DIR}/bin/das ${DAS_HOME}/bin
+    \cp -f ${WORK_DIR}/config/das_default.yaml ${DAS_HOME}/conf
     
     # register to systemd
     chmod 0644 ${WORK_DIR}/archive/das.service
     \cp -f ${WORK_DIR}/archive/das.service /etc/systemd/system/
     systemctl enable das
+    
+    echo "export NGINX_HOME=${NGINX_PATH}" >> /etc/profile
+    echo 'export PATH=$PATH:$NGINX_HOME/sbin/nginx'  >> /etc/profile
+    
+    echo "export DAS_HOME=${DAS_PATH}"  >> /etc/profile
+    echo 'export PATH=$PATH:$DAS_HOME/bin'  >> /etc/profile
+    
+    source /etc/profile
 }
 
 deployDAS

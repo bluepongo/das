@@ -103,24 +103,24 @@ build: fmt
 	@echo "build Success!"
 
 # Installs our project: copies binaries
-install: build
-	@echo "$(CGREEN)Install ...$(CEND)"
-	go install ./...
-	@echo "install Success!"
+# install: build
+# 	@echo "$(CGREEN)Install ...$(CEND)"
+# 	go install ./...
+# 	@echo "install Success!"
 
-.PHONY: release
-release: build
-	@echo "$(CGREEN)Cross platform building for release ...$(CEND)"
-	@mkdir -p release
-	@for GOOS in darwin linux windows; do \
-		for GOARCH in amd64; do \
-			for d in $$(go list -f '{{if (eq .Name "main")}}{{.ImportPath}}{{end}}' ./...); do \
-				b=$$(basename $${d}) ; \
-				echo "Building $${b}.$${GOOS}-$${GOARCH} ..."; \
-				CGO_ENABLED=0 GOOS=$${GOOS} GOARCH=$${GOARCH} go build ${GCFLAGS} ${LDFLAGS} -v -o release/$${b}.$${GOOS}-$${GOARCH} $$d 2>/dev/null ; \
-			done ; \
-		done ;\
-	done
+# .PHONY: release
+# release: build
+# 	@echo "$(CGREEN)Cross platform building for release ...$(CEND)"
+# 	@mkdir -p release
+# 	@for GOOS in darwin linux windows; do \
+# 		for GOARCH in amd64; do \
+# 			for d in $$(go list -f '{{if (eq .Name "main")}}{{.ImportPath}}{{end}}' ./...); do \
+# 				b=$$(basename $${d}) ; \
+# 				echo "Building $${b}.$${GOOS}-$${GOARCH} ..."; \
+# 				CGO_ENABLED=0 GOOS=$${GOOS} GOARCH=$${GOARCH} go build ${GCFLAGS} ${LDFLAGS} -v -o release/$${b}.$${GOOS}-$${GOARCH} $$d 2>/dev/null ; \
+# 			done ; \
+# 		done ;\
+# 	done
 
 # Cleans our projects: deletes binaries
 .PHONY: clean
