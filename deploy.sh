@@ -13,7 +13,7 @@ PCRE_VERSION=8.35
 PCRE_URL=http://downloads.sourceforge.net/project/pcre/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz
 PCRE_PATH=${DATA_PATH}/pcre
 
-PCRE_VERSION=1.21.1
+NGINX_VERSION=1.21.1
 NGINX_URL=http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
 NGINX_PATH=${DATA_PATH}/nginx
 
@@ -64,10 +64,10 @@ function installDeps() {
 function installNginx() {
     cd ${WORK_DIR}/archive
     
-    if [ ! -d pcre-${PCRE_VERSION}.tar.gz ]; then
+    if [ ! -f pcre-${PCRE_VERSION}.tar.gz ]; then
         wget ${PCRE_URL}
     fi
-    if [ ! -d nginx-${NGINX_VERSION}.tar.gz ]; then
+    if [ ! -f nginx-${NGINX_VERSION}.tar.gz ]; then
         wget ${NGINX_URL}
     fi
     
