@@ -25,6 +25,8 @@ log/
 *.log
 
 #other
+archive/*
+release/*
 das.pid
 http-client.env.json
 .vscode/
@@ -33,4 +35,3 @@ das.yaml
 
 note/*
 
-archive/*
