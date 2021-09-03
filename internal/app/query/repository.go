@@ -18,142 +18,163 @@ import (
 
 const (
 	mysqlQueryWithServiceNames = `
-		select qc.checksum as sql_id,
-			   qc.fingerprint,
-			   qe.query    as example,
-			   qe.db       as db_name,
-			   m.exec_count,
-			   m.total_exec_time,
-			   m.avg_exec_time,
-			   m.rows_examined_max
-		from (
-				 select qcm.query_class_id,
-						sum(qcm.query_count)                                        as exec_count,
-						truncate(sum(qcm.query_time_sum), 2)                        as total_exec_time,
-						truncate(sum(qcm.query_time_sum) / sum(qcm.query_count), 2) as avg_exec_time,
-						qcm.rows_examined_max
-				 from query_class_metrics qcm
-						  inner join instances i on qcm.instance_id = i.instance_id
-				 where i.name in (%s)
-				   and qcm.start_ts >= ?
-				   and qcm.start_ts < ?
-				 group by query_class_id
-				 order by rows_examined_max desc
- 				 limit ?, offset ?) m
-				 inner join query_examples qe on m.query_class_id = qe.query_class_id
-				 inner join query_classes qc on m.query_class_id = qc.query_class_id
-	`
+        select qc.checksum as sql_id,
+               qc.fingerprint,
+               qe.query    as example,
+               qe.db       as db_name,
+               m.exec_count,
+               m.total_exec_time,
+               m.avg_exec_time,
+               m.rows_examined_max
+        from (
+                 select qcm.query_class_id,
+                        sum(qcm.query_count)                                        as exec_count,
+                        truncate(sum(qcm.query_time_sum), 2)                        as total_exec_time,
+                        truncate(sum(qcm.query_time_sum) / sum(qcm.query_count), 2) as avg_exec_time,
+                        qcm.rows_examined_max
+                 from query_class_metrics qcm
+                          inner join instances i on qcm.instance_id = i.instance_id
+                 where i.name in (%s)
+                   and qcm.start_ts >= ?
+                   and qcm.start_ts < ?
+                 group by query_class_id
+                 order by rows_examined_max desc
+                  limit ? offset ?) m
+                 inner join query_examples qe on m.query_class_id = qe.query_class_id
+                 inner join query_classes qc on m.query_class_id = qc.query_class_id
+    `
 	mysqlQueryWithDBName = `
-		select qc.checksum as sql_id,
-			   qc.fingerprint,
-			   qe.query    as example,
-			   qe.db       as db_name,
-			   m.exec_count,
-			   m.total_exec_time,
-			   m.avg_exec_time,
-			   m.rows_examined_max
-		from (
-				 select qcm.query_class_id,
-						sum(qcm.query_count)                                        as exec_count,
-						truncate(sum(qcm.query_time_sum), 2)                        as total_exec_time,
-						truncate(sum(qcm.query_time_sum) / sum(qcm.query_count), 2) as avg_exec_time,
-						qcm.rows_examined_max
-				 from query_class_metrics qcm
-						  inner join instances i on qcm.instance_id = i.instance_id
-				 where i.name in (%s)
-				   and qcm.start_ts >= ?
-				   and qcm.start_ts < ?
-				 group by query_class_id
-				 order by rows_examined_max desc) m
-				 inner join query_examples qe on m.query_class_id = qe.query_class_id
-				 inner join query_classes qc on m.query_class_id = qc.query_class_id
-		where qe.db = ?
-	    limit ?, offset ?
-	`
+        select qc.checksum as sql_id,
+               qc.fingerprint,
+               qe.query    as example,
+               qe.db       as db_name,
+               m.exec_count,
+               m.total_exec_time,
+               m.avg_exec_time,
+               m.rows_examined_max
+        from (
+                 select qcm.query_class_id,
+                        sum(qcm.query_count)                                        as exec_count,
+                        truncate(sum(qcm.query_time_sum), 2)                        as total_exec_time,
+                        truncate(sum(qcm.query_time_sum) / sum(qcm.query_count), 2) as avg_exec_time,
+                        qcm.rows_examined_max
+                 from query_class_metrics qcm
+                          inner join instances i on qcm.instance_id = i.instance_id
+                 where i.name in (%s)
+                   and qcm.start_ts >= ?
+                   and qcm.start_ts < ?
+                 group by query_class_id
+                 order by rows_examined_max desc) m
+                 inner join query_examples qe on m.query_class_id = qe.query_class_id
+                 inner join query_classes qc on m.query_class_id = qc.query_class_id
+        where qe.db = ?
+        limit ? offset ?
+    `
 	mysqlQueryWithSQLID = `
-		select qc.checksum as sql_id,
-			   qc.fingerprint,
-			   qe.query    as example,
-			   qe.db       as db_name,
-			   m.exec_count,
-			   m.total_exec_time,
-			   m.avg_exec_time,
-			   m.rows_examined_max
-		from (
-				 select qcm.query_class_id,
-						sum(qcm.query_count)                                        as exec_count,
-						truncate(sum(qcm.query_time_sum), 2)                        as total_exec_time,
-						truncate(sum(qcm.query_time_sum) / sum(qcm.query_count), 2) as avg_exec_time,
-						qcm.rows_examined_max
-				 from query_class_metrics qcm
-						  inner join instances i on qcm.instance_id = i.instance_id
-				 where i.name in (%s)
-				   and qcm.query_class_id in (select query_class_id from query_classes where checksum = ?)
-				   and qcm.start_ts >= ?
-				   and qcm.start_ts < ?
-				 group by query_class_id) m
-				 inner join query_examples qe on m.query_class_id = qe.query_class_id
-				 inner join query_classes qc on m.query_class_id = qc.query_class_id
-		where qc.checksum = ?
+        select qc.checksum as sql_id,
+               qc.fingerprint,
+               qe.query    as example,
+               qe.db       as db_name,
+               m.exec_count,
+               m.total_exec_time,
+               m.avg_exec_time,
+               m.rows_examined_max
+        from (
+                 select qcm.query_class_id,
+                        sum(qcm.query_count)                                        as exec_count,
+                        truncate(sum(qcm.query_time_sum), 2)                        as total_exec_time,
+                        truncate(sum(qcm.query_time_sum) / sum(qcm.query_count), 2) as avg_exec_time,
+                        qcm.rows_examined_max
+                 from query_class_metrics qcm
+                          inner join instances i on qcm.instance_id = i.instance_id
+                 where i.name in (%s)
+                   and qcm.query_class_id in (select query_class_id from query_classes where checksum = ?)
+                   and qcm.start_ts >= ?
+                   and qcm.start_ts < ?
+                 group by query_class_id) m
+                 inner join query_examples qe on m.query_class_id = qe.query_class_id
+                 inner join query_classes qc on m.query_class_id = qc.query_class_id
+        where qc.checksum = ?
         order by qe.query_time desc
         limit 1
-	`
+    `
 	clickhouseQueryWithServiceNames = `
-		select queryid                                                       as sql_id,
-			   fingerprint,
-			   (select example from metrics where queryid = queryid limit 1) as example,
-			   database                                                      as db_name,
-			   sum(num_queries)                                              as exec_count,
-			   truncate(sum(m_query_time_sum), 2)                            as total_exec_time,
-			   truncate(sum(m_query_time_sum) / sum(num_queries), 2)         as avg_exec_time,
-			   max(m_rows_examined_max)                                      as rows_examined_max
-		from metrics
-		where service_type = 'mysql'
-		  and service_name in (%s)
-		  and period_start >= ?
-		  and period_start < ?
-		group by queryid, fingerprint
-		order by rows_examined_max desc
-		limit ?, offset ?
-	`
+    select sm.sql_id,
+    m.fingerprint,
+    m.example,
+    m.db_name,
+    sm.exec_count,
+    sm.total_exec_time,
+    sm.avg_exec_time,
+    sm.rows_examined_max
+
+from (
+      select queryid                                               as sql_id,
+             sum(num_queries)                                      as exec_count,
+             truncate(sum(m_query_time_sum), 2)                    as total_exec_time,
+             truncate(sum(m_query_time_sum) / sum(num_queries), 2) as avg_exec_time,
+             max(m_rows_examined_max)                              as rows_examined_max
+      from metrics
+      where service_type = 'mysql'
+        and service_name in (%s)
+        and period_start >= ?
+        and period_start < ?
+        and m_rows_examined_max >= 1
+      group by queryid
+      order by rows_examined_max desc
+      limit ? offset ? ) sm
+      left join (select queryid          as sql_id,
+                        max(fingerprint) as fingerprint,
+                        max(example)     as example,
+                        max(database)    as db_name
+                 from metrics
+                 where service_type = 'mysql'
+                   and service_name in (%s)
+                   and period_start >= ?
+                   and period_start < ?
+                   and m_rows_examined_max >= 1
+                 group by queryid) m
+                on sm.sql_id = m.sql_id
+;
+    `
 	clickhouseQueryWithDBName = `
-		select queryid                                                       as sql_id,
-			   fingerprint,
-			   (select example from metrics where queryid = queryid limit 1) as example,
-			   database                                                      as db_name,
-			   sum(num_queries)                                              as exec_count,
-			   truncate(sum(m_query_time_sum), 2)                            as total_exec_time,
-			   truncate(sum(m_query_time_sum) / sum(num_queries), 2)         as avg_exec_time,
-			   max(m_rows_examined_max)                                      as rows_examined_max
-		from metrics
-		where service_type = 'mysql'
-		  and service_name in (%s)
-		  and database = ?
-		  and period_start >= ?
-		  and period_start < ?
-		group by queryid, fingerprint
-		order by rows_examined_max desc
-		limit ?, offset ?
-	`
+        select queryid                                                       as sql_id,
+               fingerprint,
+               (select example from metrics where queryid = queryid limit 1) as example,
+               database                                                      as db_name,
+               sum(num_queries)                                              as exec_count,
+               truncate(sum(m_query_time_sum), 2)                            as total_exec_time,
+               truncate(sum(m_query_time_sum) / sum(num_queries), 2)         as avg_exec_time,
+               max(m_rows_examined_max)                                      as rows_examined_max
+        from metrics
+        where service_type = 'mysql'
+          and service_name in (%s)
+          and database = ?
+          and period_start >= ?
+          and period_start < ?
+        group by queryid, fingerprint
+        order by rows_examined_max desc
+        limit ? offset ?
+    `
 	clickhouseQueryWithSQLID = `
-		select queryid                                                       as sql_id,
-			   fingerprint,
-			   (select example from metrics where queryid = queryid limit 1) as example,
-			   database                                                      as db_name,
-			   sum(num_queries)                                              as exec_count,
-			   truncate(sum(m_query_time_sum), 2)                            as total_exec_time,
-			   truncate(sum(m_query_time_sum) / sum(num_queries), 2)         as avg_exec_time,
-			   max(m_rows_examined_max)                                      as rows_examined_max
-		from metrics
-		where service_type = 'mysql'
-		  and service_name in (%s)
-		  and queryid = ?
-		  and period_start >= ?
-		  and period_start < ?
-		group by queryid, fingerprint
-		order by rows_examined_max desc
-		limit ?, offset ?
-	`
+        select queryid                                                       as sql_id,
+               fingerprint,
+               (select example from metrics where queryid = queryid limit 1) as example,
+               database                                                      as db_name,
+               sum(num_queries)                                              as exec_count,
+               truncate(sum(m_query_time_sum), 2)                            as total_exec_time,
+               truncate(sum(m_query_time_sum) / sum(num_queries), 2)         as avg_exec_time,
+               max(m_rows_examined_max)                                      as rows_examined_max
+        from metrics
+        where service_type = 'mysql'
+          and service_name in (%s)
+          and queryid = ?
+          and period_start >= ?
+          and period_start < ?
+        group by queryid, fingerprint
+        order by rows_examined_max desc
+        limit ? offset ?
+    `
 )
 
 var _ query.DASRepo = (*DASRepo)(nil)
@@ -169,7 +190,7 @@ func NewDASRepo(db middleware.Pool) *DASRepo {
 	return newDASRepo(db)
 }
 
-// NewDASRepo returns *DASRepo with global mysql pool
+// NewDASRepoWithGlobal returns *DASRepo with global mysql pool
 func NewDASRepoWithGlobal() *DASRepo {
 	return NewDASRepo(global.DASMySQLPool)
 }
@@ -246,8 +267,8 @@ func (r *DASRepo) GetMonitorSystemByClusterID(clusterID int) (demetadata.Monitor
 // Save save dasInfo into table
 func (r *DASRepo) Save(mysqlClusterID, mysqlServerID, dbID int, sqlID string, startTime, endTime time.Time, limit, offset int) error {
 	sql := `
-		insert into t_query_operation_info(mysql_cluster_id, mysql_server_id, db_id, sql_id, start_time, end_time, limit, offset
-		values(?, ?, ?, ?, ?, ?, ?, ?);
+        insert into t_query_operation_info(mysql_cluster_id, mysql_server_id, db_id, sql_id, start_time, end_time, limit, offset
+        values(?, ?, ?, ?, ?, ?, ?, ?);
     `
 	_, err := r.Execute(sql, mysqlClusterID, mysqlServerID, dbID, sqlID, startTime.Format(constant.DefaultTimeLayout), endTime.Format(constant.DefaultTimeLayout), limit, offset)
 
@@ -289,14 +310,19 @@ func (mr *MySQLRepo) GetByServiceNames(serviceName []string) ([]query.Query, err
 		return nil, err
 	}
 
-	sql := fmt.Sprintf(clickhouseQueryWithServiceNames, services)
+	sql := fmt.Sprintf(mysqlQueryWithServiceNames, services)
 
-	return mr.execute(sql, mr.getConfig().GetStartTime(), mr.getConfig().GetEndTime(), mr.getConfig().GetLimit(), mr.getConfig().GetOffset())
+	return mr.execute(sql,
+		mr.getConfig().GetStartTime().Format("2006-01-02 15:04:05"),
+		mr.getConfig().GetEndTime().Format("2006-01-02 15:04:05"),
+		mr.getConfig().GetLimit(),
+		mr.getConfig().GetOffset(),
+	)
 }
 
 // GetByDBName returns query.query list by dbName
 func (mr *MySQLRepo) GetByDBName(serviceName, dbName string) ([]query.Query, error) {
-	interfaces, err := common.ConvertInterfaceToSliceInterface(serviceName)
+	interfaces, err := common.ConvertInterfaceToSliceInterface([]string{serviceName})
 	if err != nil {
 		return nil, err
 	}
@@ -306,14 +332,19 @@ func (mr *MySQLRepo) GetByDBName(serviceName, dbName string) ([]query.Query, err
 		return nil, err
 	}
 
-	sql := fmt.Sprintf(clickhouseQueryWithDBName, services)
+	sql := fmt.Sprintf(mysqlQueryWithDBName, services)
 
-	return mr.execute(sql, dbName, mr.getConfig().GetStartTime(), mr.getConfig().GetEndTime(), mr.getConfig().GetLimit(), mr.getConfig().GetOffset())
+	return mr.execute(sql,
+		mr.getConfig().GetStartTime().Format("2006-01-02 15:04:05"),
+		mr.getConfig().GetEndTime().Format("2006-01-02 15:04:05"),
+		dbName,
+		mr.getConfig().GetLimit(),
+		mr.getConfig().GetOffset())
 }
 
 // GetBySQLID return query.query by SQL ID
 func (mr *MySQLRepo) GetBySQLID(serviceName, sqlID string) (query.Query, error) {
-	interfaces, err := common.ConvertInterfaceToSliceInterface(serviceName)
+	interfaces, err := common.ConvertInterfaceToSliceInterface([]string{serviceName})
 	if err != nil {
 		return nil, err
 	}
@@ -323,9 +354,17 @@ func (mr *MySQLRepo) GetBySQLID(serviceName, sqlID string) (query.Query, error) 
 		return nil, err
 	}
 
-	sql := fmt.Sprintf(clickhouseQueryWithDBName, services)
+	sql := fmt.Sprintf(mysqlQueryWithSQLID, services)
 
-	querys, err := mr.execute(sql, sqlID, mr.getConfig().GetStartTime(), mr.getConfig().GetEndTime(), mr.getConfig().GetLimit(), mr.getConfig().GetOffset())
+	querys, err := mr.execute(sql,
+		sqlID,
+		mr.getConfig().GetStartTime().Format("2006-01-02 15:04:05"),
+		mr.getConfig().GetEndTime().Format("2006-01-02 15:04:05"),
+		sqlID,
+	)
+	if len(querys) == 0 {
+		return nil, fmt.Errorf("sql(id=%s) in service(name=%s) is not found", sqlID, serviceName)
+	}
 	return querys[constant.ZeroInt], err
 }
 
@@ -385,9 +424,19 @@ func (cr *ClickhouseRepo) GetByServiceNames(serviceNames []string) ([]query.Quer
 		return nil, err
 	}
 
-	sql := fmt.Sprintf(clickhouseQueryWithServiceNames, services)
+	sql := fmt.Sprintf(clickhouseQueryWithServiceNames, services, services)
 
-	return cr.execute(sql, cr.getConfig().GetStartTime(), cr.getConfig().GetEndTime(), cr.getConfig().GetLimit(), cr.getConfig().GetOffset())
+	fmt.Println(sql)
+
+	return cr.execute(
+		sql,
+		cr.getConfig().GetStartTime(),
+		cr.getConfig().GetEndTime(),
+		cr.getConfig().GetLimit(),
+		cr.getConfig().GetOffset(),
+		cr.getConfig().GetStartTime(),
+		cr.getConfig().GetEndTime(),
+	)
 }
 
 // GetByDBName returns query.query list by dbNameS
@@ -404,7 +453,12 @@ func (cr *ClickhouseRepo) GetByDBName(serviceName, dbName string) ([]query.Query
 
 	sql := fmt.Sprintf(clickhouseQueryWithDBName, services)
 
-	return cr.execute(sql, dbName, cr.getConfig().GetStartTime(), cr.getConfig().GetEndTime(), cr.getConfig().GetLimit(), cr.getConfig().GetOffset())
+	return cr.execute(sql,
+		dbName,
+		cr.getConfig().GetStartTime().Format("2006-01-02 15:04:05"),
+		cr.getConfig().GetEndTime().Format("2006-01-02 15:04:05"),
+		cr.getConfig().GetLimit(),
+		cr.getConfig().GetOffset())
 }
 
 // GetBySQLID return query.query by SQL ID
@@ -421,7 +475,12 @@ func (cr *ClickhouseRepo) GetBySQLID(serviceName, sqlID string) (query.Query, er
 
 	sql := fmt.Sprintf(clickhouseQueryWithDBName, services)
 
-	querys, err := cr.execute(sql, sqlID, cr.getConfig().GetStartTime(), cr.getConfig().GetEndTime(), cr.getConfig().GetLimit(), cr.getConfig().GetOffset())
+	querys, err := cr.execute(sql,
+		sqlID,
+		cr.getConfig().GetStartTime().Format("2006-01-02 15:04:05"),
+		cr.getConfig().GetEndTime().Format("2006-01-02 15:04:05"),
+		cr.getConfig().GetLimit(),
+		cr.getConfig().GetOffset())
 	return querys[constant.ZeroInt], err
 }
 

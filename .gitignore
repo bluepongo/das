@@ -32,3 +32,5 @@ http-client.env.json
 das.yaml
 
 note/*
+
+archive/*
