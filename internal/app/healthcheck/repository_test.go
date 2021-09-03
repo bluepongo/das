@@ -120,7 +120,7 @@ func initApplicationMySQLRepo() *ApplicationMySQLRepo {
 func initPrometheusRepo() *PrometheusRepo {
 	var config prometheus.Config
 
-	addr := fmt.Sprintf("%s:%s/%s", operationInfo.GetMonitorSystem().GetHostIP(),
+	addr := fmt.Sprintf("%s:%d/%s", operationInfo.GetMonitorSystem().GetHostIP(),
 		operationInfo.GetMonitorSystem().GetPortNum(), operationInfo.GetMonitorSystem().GetBaseURL())
 	switch operationInfo.GetMonitorSystem().GetSystemType() {
 	case 1:
@@ -141,7 +141,7 @@ func initPrometheusRepo() *PrometheusRepo {
 func initQueryRepo() healthcheck.QueryRepo {
 	var queryRepo healthcheck.QueryRepo
 
-	addr := fmt.Sprintf("%s:%s", operationInfo.GetMonitorSystem().GetHostIP(), operationInfo.GetMonitorSystem().GetPortNumSlow())
+	addr := fmt.Sprintf("%s:%d", operationInfo.GetMonitorSystem().GetHostIP(), operationInfo.GetMonitorSystem().GetPortNumSlow())
 	switch operationInfo.GetMonitorSystem().GetSystemType() {
 	case 1:
 		conn, err := mysql.NewConn(addr, defaultQueryDBName, defaultDBUser, defaultDBPass)
