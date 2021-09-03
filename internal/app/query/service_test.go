@@ -52,7 +52,7 @@ func TestService_GetConfig(t *testing.T) {
 	asst := assert.New(t)
 
 	limit := service.GetConfig().GetLimit()
-	asst.Equal(DefaultLimit, limit, "test GetConfig() failed")
+	asst.Equal(defaultLimit, limit, "test GetConfig() failed")
 }
 
 func TestService_GetQueries(t *testing.T) {
