@@ -27,6 +27,8 @@ SOAR_URL=https://github.com/romberli/soar.git
 
 
 function deployDAS() {
+    mkdir -p ${WORK_DIR}/archive
+    
     mkdir -p /data/das/bin
     mkdir -p /data/das/conf
     
