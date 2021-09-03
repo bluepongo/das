@@ -17,8 +17,6 @@ import (
 )
 
 const (
-	defaultEngineConfigAddr   = "localhost:3306"
-	defaultEngineConfigDBName = "performance_schema"
 	defaultEngineConfigDBUser = "root"
 	defaultEngineConfigDBPass = "root"
 
@@ -31,6 +29,11 @@ const (
 	defaultStep          = time.Minute
 )
 
+func TestDefaultEngineAll(t *testing.T) {
+	TestDefaultEngineConfig_Validate(t)
+	TestDefaultEngine_Run(t)
+}
+
 func TestDefaultEngineConfig_Validate(t *testing.T) {
 	asst := assert.New(t)
 	// load config
@@ -40,7 +43,7 @@ func TestDefaultEngineConfig_Validate(t *testing.T) {
 		from t_hc_default_engine_config
 		where del_flag = 0;
 	`
-	result, err := dasRepo.Execute(sql)
+	result, err := testDASRepo.Execute(sql)
 	asst.Nil(err, common.CombineMessageWithError("test Validate() failed", err))
 	defaultEngineConfigList := make([]*DefaultItemConfig, result.RowNumber())
 	for i := range defaultEngineConfigList {
@@ -63,7 +66,7 @@ func TestDefaultEngine_Run(t *testing.T) {
 	startTime := time.Now().Add(-constant.Week)
 	endTime := time.Now()
 
-	id, err := dasRepo.InitOperation(defaultMySQLServerID, startTime, endTime, defaultStep)
+	id, err := testDASRepo.InitOperation(defaultMySQLServerID, startTime, endTime, defaultStep)
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 
 	mysqlServerService := metadata.NewMySQLServerService(metadata.NewMySQLServerRepo(global.DASMySQLPool))
@@ -77,7 +80,7 @@ func TestDefaultEngine_Run(t *testing.T) {
 	operationInfo := NewOperationInfo(id, mysqlServer, monitorSystem, startTime, endTime, defaultStep)
 
 	// init application mysql connection
-	applicationMySQLConn, err := mysql.NewConn(applicationMysqlAddr, applicationMysqlDBName, applicationMysqlDBUser, applicationMysqlDBPass)
+	applicationMySQLConn, err := mysql.NewConn(fmt.Sprintf("%s:%d", mysqlServer.GetHostIP(), mysqlServer.GetPortNum()), applicationMysqlDBName, applicationMysqlDBUser, applicationMysqlDBPass)
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 	// init application mysql repository
 	applicationMySQLRepo := NewApplicationMySQLRepo(operationInfo, applicationMySQLConn)
@@ -107,7 +110,7 @@ func TestDefaultEngine_Run(t *testing.T) {
 		prometheusConfig = prometheus.NewConfigWithBasicAuth(prometheusAddr, defaultPrometheusUser, defaultPrometheusPass)
 		asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 		// init clickhouse connection
-		clickhouseConn, err := clickhouse.NewConnWithDefault(queryAddr, defaultMonitorClickhouseDBName, defaultEngineConfigDBUser, defaultEngineConfigDBPass)
+		clickhouseConn, err := clickhouse.NewConnWithDefault(queryAddr, defaultMonitorClickhouseDBName, constant.EmptyString, constant.EmptyString)
 		asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 		// init clickhouse query repository
 		queryRepo = NewClickhouseQueryRepo(operationInfo, clickhouseConn)
@@ -119,7 +122,7 @@ func TestDefaultEngine_Run(t *testing.T) {
 	// init prometheus repository
 	prometheusRepo := NewPrometheusRepo(operationInfo, prometheusConn)
 
-	defaultEngine := NewDefaultEngine(operationInfo, dasRepo, applicationMySQLRepo, prometheusRepo, queryRepo)
+	defaultEngine := NewDefaultEngine(operationInfo, testDASRepo, applicationMySQLRepo, prometheusRepo, queryRepo)
 	err = defaultEngine.run()
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 }

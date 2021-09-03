@@ -27,7 +27,7 @@ const (
 )
 
 func createService() (*Service, error) {
-	var result = NewResult(dasRepo,
+	var result = NewResult(testDASRepo,
 		defaultResultOperationID,
 		defaultResultWeightedAverageScore,
 		defaultResultDBConfigScore,
@@ -60,19 +60,19 @@ func createService() (*Service, error) {
 		defaultResultSlowQueryScore,
 		defaultResultSlowQueryData,
 		defaultResultSlowQueryAdvice)
-	err := dasRepo.SaveResult(result)
+	err := testDASRepo.SaveResult(result)
 	if err != nil {
 		return nil, err
 	}
 	return &Service{
-		DASRepo: dasRepo,
+		DASRepo: testDASRepo,
 		Result:  result,
 	}, nil
 }
 
 func deleteHCResultByOperationID(operationID int) error {
 	sql := `delete from t_hc_result where operation_id = ?`
-	_, err := dasRepo.Execute(sql, operationID)
+	_, err := testDASRepo.Execute(sql, operationID)
 	return err
 }
 
