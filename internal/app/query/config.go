@@ -2,15 +2,17 @@ package query
 
 import (
 	"time"
+
+	"github.com/romberli/go-util/constant"
 )
 
 const (
-	DefaultLimit  = 5
-	DefaultOffset = 0
-	Week          = 7 * 24 * time.Hour
+	defaultLimit    = 5
+	defaultOffset   = 0
+	minRowsExamined = 100000
 
-	MaxDuration = 2 * Week
-	MaxLimit    = 100
+	maxDuration = 30 * constant.Day
+	maxLimit    = 100
 )
 
 type OrderType int
@@ -27,7 +29,7 @@ func NewConfig(startTime, endTime time.Time, limit, offset int) *Config {
 }
 
 func NewConfigWithDefault() *Config {
-	return newConfig(time.Now().Add(-Week), time.Now(), DefaultLimit, DefaultOffset)
+	return newConfig(time.Now().Add(-constant.Week), time.Now(), defaultLimit, defaultOffset)
 }
 
 func newConfig(startTime, endTime time.Time, limit, offset int) *Config {
@@ -73,11 +75,11 @@ func (c *Config) SetOffset(offset int) {
 
 func (c *Config) IsValid() bool {
 	duration := c.GetEndTime().Sub(c.GetStartTime())
-	if duration > MaxDuration {
+	if duration > maxDuration {
 		return false
 	}
 
-	if c.GetLimit() > MaxLimit {
+	if c.GetLimit() > maxLimit {
 		return false
 	}
 

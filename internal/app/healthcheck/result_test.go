@@ -502,45 +502,45 @@ func TestResult_GetTableRowsScore(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := rCreateService()
-	asst.Nil(err, common.CombineMessageWithError("test GetTableSizeScore() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetTableRowsScore() failed", err))
 	err = service.GetResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetTableSizeScore() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetTableRowsScore() failed", err))
 	result := service.GetResult()
 	tableRowsScore := result.GetTableRowsScore()
-	asst.Equal(defaultResultTableRowsScore, tableRowsScore, "test GetTableSizeScore() failed")
+	asst.Equal(defaultResultTableRowsScore, tableRowsScore, "test GetTableRowsScore() failed")
 	// delete
 	err = rDeleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetTableSizeScore() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetTableRowsScore() failed", err))
 }
 
 func TestResult_GetTableRowsData(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := rCreateService()
-	asst.Nil(err, common.CombineMessageWithError("test GetTableSizeData() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetTableRowsData() failed", err))
 	err = service.GetResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetTableSizeData() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetTableRowsData() failed", err))
 	result := service.GetResult()
 	tableRowsData := result.GetTableRowsData()
-	asst.Equal(defaultResultTableRowsData, tableRowsData, "test GetTableSizeData() failed")
+	asst.Equal(defaultResultTableRowsData, tableRowsData, "test GetTableRowsData() failed")
 	// delete
 	err = rDeleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetTableSizeData() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetTableRowsData() failed", err))
 }
 
 func TestResult_GetTableRowsHigh(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := rCreateService()
-	asst.Nil(err, common.CombineMessageWithError("test GetTableSizeHigh() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetTableRowsHigh() failed", err))
 	err = service.GetResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetTableSizeHigh() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetTableRowsHigh() failed", err))
 	result := service.GetResult()
 	tableRowsHigh := result.GetTableRowsHigh()
-	asst.Equal(defaultResultTableRowsHigh, tableRowsHigh, "test GetTableSizeHigh() failed")
+	asst.Equal(defaultResultTableRowsHigh, tableRowsHigh, "test GetTableRowsHigh() failed")
 	// delete
 	err = rDeleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetTableSizeHigh() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetTableRowsHigh() failed", err))
 }
 
 func TestResult_GetTableSizeScore(t *testing.T) {

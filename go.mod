@@ -3,7 +3,7 @@ module github.com/romberli/das
 go 1.16
 
 replace (
-	github.com/ClickHouse/clickhouse-go v1.4.3 => github.com/romberli/clickhouse-go v1.4.4-0.20210422094559-b05fc8c4dbe9
+	github.com/ClickHouse/clickhouse-go v1.4.7 => github.com/romberli/clickhouse-go v1.4.4-0.20210902113008-bb38dc6f756d
 	github.com/spf13/pflag v1.0.5 => github.com/romberli/pflag v1.0.6-alpha
 )
 
@@ -14,7 +14,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/hashicorp/go-version v1.2.0
 	github.com/jinzhu/now v1.1.2
-	github.com/romberli/go-util v0.3.11-0.20210825090826-2e76a7d1d2f2
+	github.com/romberli/go-util v0.3.11-0.20210902115345-b4398d4d2d7d
 	github.com/romberli/log v1.0.20
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/cobra v1.1.1

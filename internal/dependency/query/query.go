@@ -54,7 +54,7 @@ type Service interface {
 	// GetByMySQLServerID gets the query slice by the mysql server identity
 	GetByMySQLServerID(mysqlServerID int) error
 	// GetByDBName gets the query slice by the db identity
-	GetByDBID(dbID int) error
+	GetByDBID(mysqlServerID, dbID int) error
 	// GetBySQLID gets the query by the mysql server identity and the sql identity
 	GetBySQLID(mysqlServerID int, sqlID string) error
 	// Marshal marshals Service.Queries to json bytes

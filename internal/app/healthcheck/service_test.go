@@ -4,11 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/now"
-	"github.com/romberli/das/global"
 	"github.com/romberli/go-util/common"
-	"github.com/romberli/go-util/middleware/mysql"
-	"github.com/romberli/log"
+	"github.com/romberli/go-util/constant"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,28 +26,8 @@ const (
 	defaultMySQLServerInfoVersion        = "1.1.1"
 )
 
-func initGlobalMySQLPool() error {
-	dbAddr := dbAddr
-	dbName := dbDBName
-	dbUser := dbDBUser
-	dbPass := dbDBPass
-	maxConnections := mysql.DefaultMaxConnections
-	initConnections := mysql.DefaultInitConnections
-	maxIdleConnections := mysql.DefaultMaxIdleConnections
-	maxIdleTime := mysql.DefaultMaxIdleTime
-	keepAliveInterval := mysql.DefaultKeepAliveInterval
-
-	config := mysql.NewConfig(dbAddr, dbName, dbUser, dbPass)
-	poolConfig := mysql.NewPoolConfigWithConfig(config, maxConnections, initConnections, maxIdleConnections, maxIdleTime, keepAliveInterval)
-	log.Debugf("pool config: %v", poolConfig)
-	var err error
-	global.DASMySQLPool, err = mysql.NewPoolWithPoolConfig(poolConfig)
-
-	return err
-}
-
 func createService() (*Service, error) {
-	var result = NewResult(repository,
+	var result = NewResult(dasRepo,
 		defaultResultOperationID,
 		defaultResultWeightedAverageScore,
 		defaultResultDBConfigScore,
@@ -83,19 +60,19 @@ func createService() (*Service, error) {
 		defaultResultSlowQueryScore,
 		defaultResultSlowQueryData,
 		defaultResultSlowQueryAdvice)
-	err := repository.SaveResult(result)
+	err := dasRepo.SaveResult(result)
 	if err != nil {
 		return nil, err
 	}
 	return &Service{
-		DASRepo: repository,
+		DASRepo: dasRepo,
 		Result:  result,
 	}, nil
 }
 
 func deleteHCResultByOperationID(operationID int) error {
 	sql := `delete from t_hc_result where operation_id = ?`
-	_, err := repository.Execute(sql, operationID)
+	_, err := dasRepo.Execute(sql, operationID)
 	return err
 }
 
@@ -145,7 +122,7 @@ func TestService_Check(t *testing.T) {
 
 	// mss := metadata.NewMySQLServerServiceWithDefault()
 	// err = mss.Create(map[string]interface{}{
-	// 	idStruct:             defaultResultMysqlServerID,
+	// 	idStruct:             defaultMysqlServerID,
 	// 	clusterIDStruct:      defaultMySQLServerInfoClusterID,
 	// 	serverNameStruct:     defaultMySQLServerInfoServerName,
 	// 	hostIPStruct:         defaultMySQLServerInfoHostIP,
@@ -157,11 +134,7 @@ func TestService_Check(t *testing.T) {
 	service, err := createService()
 	asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))
 
-	startTime, _ := now.Parse(defaultResultStartTime)
-	endTime, _ := now.Parse(defaultResultEndTime)
-	step := time.Duration(defaultResultStep) * time.Second
-
-	err = service.Check(defaultResultMysqlServerID, startTime, endTime, step)
+	err = service.Check(defaultMysqlServerID, time.Now().Add(-constant.Week), time.Now(), defaultStep)
 	asst.Nil(err, common.CombineMessageWithError("test Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) failed", err))
 
 	// delete

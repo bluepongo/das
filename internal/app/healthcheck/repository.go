@@ -216,9 +216,10 @@ func (dr *DASRepo) SaveResult(result healthcheck.Result) error {
 		disk_capacity_usage_high, connection_usage_score, connection_usage_data, 
 		connection_usage_high, average_active_session_percents_score, average_active_session_percents_data,
 		average_active_session_percents_high, cache_miss_ratio_score, cache_miss_ratio_data, 
-		cache_miss_ratio_high, table_rows_score, table_rows_data, table_rows_high, table_size_score, table_size_data, table_size_high, slow_query_score,
-		slow_query_data, slow_query_advice, accuracy_review) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-		?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+		cache_miss_ratio_high, table_rows_score, table_rows_data, table_rows_high,
+		table_size_score, table_size_data, table_size_high, slow_query_score,
+		slow_query_data, slow_query_advice, accuracy_review)
+		values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 	`
 	log.Debugf("healthCheck DASRepo.SaveResult() insert sql: \n%s\nplaceholders: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %ss, %s, %s, %s",
 		sql, result.GetOperationID(), result.GetWeightedAverageScore(),
