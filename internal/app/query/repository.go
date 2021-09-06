@@ -279,6 +279,7 @@ func (r *DASRepo) GetMonitorSystemByDBID(dbID int) (demetadata.MonitorSystem, er
 // GetMonitorSystemByMySQLServerID returns a metadata.MonitorSystem by mysqlServerID
 func (r *DASRepo) GetMonitorSystemByMySQLServerID(mysqlServerID int) (demetadata.MonitorSystem, error) {
 	serverInfo := metadata.NewMySQLServerServiceWithDefault()
+	// serverInfo.GetAll()//test
 	err := serverInfo.GetByID(mysqlServerID)
 	if err != nil {
 		return nil, err
@@ -291,6 +292,7 @@ func (r *DASRepo) GetMonitorSystemByMySQLServerID(mysqlServerID int) (demetadata
 // GetMonitorSystemByClusterID returns a metadata.MonitorSystem by clusterID
 func (r *DASRepo) GetMonitorSystemByClusterID(clusterID int) (demetadata.MonitorSystem, error) {
 	clusterInfo := metadata.NewMySQLClusterServiceWithDefault()
+	// clusterInfo.GetAll()//test
 	err := clusterInfo.GetByID(clusterID)
 	if err != nil {
 		return nil, err
@@ -299,7 +301,7 @@ func (r *DASRepo) GetMonitorSystemByClusterID(clusterID int) (demetadata.Monitor
 	monitorSystemID := mcs.GetMonitorSystemID()
 
 	monitorSystemInfo := metadata.NewMonitorSystemServiceWithDefault()
-	err = clusterInfo.GetByID(monitorSystemID)
+	err = monitorSystemInfo.GetByID(monitorSystemID)
 	if err != nil {
 		return nil, err
 	}
