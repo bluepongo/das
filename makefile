@@ -19,7 +19,7 @@ VERSION_COMPILE := $(shell date +"%F %T %z") by $(shell go version)
 VERSION_BRANCH  := $(shell git rev-parse --abbrev-ref HEAD)
 VERSION_GIT_DIRTY := $(shell git diff --no-ext-diff 2>/dev/null | wc -l | awk '{print $1}')
 VERSION_DEV_PATH:= $(shell pwd)
-LDFLAGS=-ldflags="-s -w -X 'github.com/XiaoMi/soar/common.Version=$(VERSION_VERSION)' -X 'github.com/XiaoMi/soar/common.Compile=$(VERSION_COMPILE)' -X 'github.com/XiaoMi/soar/common.Branch=$(VERSION_BRANCH)' -X 'github.com/XiaoMi/soar/common.GitDirty=$(VERSION_GIT_DIRTY)' -X 'github.com/XiaoMi/soar/common.DevPath=$(VERSION_DEV_PATH)'"
+# LDFLAGS=-ldflags="-s -w -X 'github.com/XiaoMi/soar/common.Version=$(VERSION_VERSION)' -X 'github.com/XiaoMi/soar/common.Compile=$(VERSION_COMPILE)' -X 'github.com/XiaoMi/soar/common.Branch=$(VERSION_BRANCH)' -X 'github.com/XiaoMi/soar/common.GitDirty=$(VERSION_GIT_DIRTY)' -X 'github.com/XiaoMi/soar/common.DevPath=$(VERSION_DEV_PATH)'"
 
 # These are the values we want to pass for VERSION  and BUILD
 BUILD_TIME=`date +%Y%m%d%H%M`
@@ -96,9 +96,9 @@ cover: test
 build: fmt
 	@echo "$(CGREEN)Building ...$(CEND)"
 	@mkdir -p bin
-	@ret=0 && for d in $$(go list -f '{{if (eq .Name "main")}}{{.ImportPath}}{{end}}' ./...); do \
+	ret=0 && for d in $$(go list -f '{{if (eq .Name "main")}}{{.ImportPath}}{{end}}' ./...); do \
 		b=$$(basename $${d}) ; \
-		CGO_ENABLED=0 go build ${LDFLAGS} ${GCFLAGS} -o bin/$${b} $$d || ret=$$? ; \
+		CGO_ENABLED=0 go build ${GCFLAGS} -o bin/$${b} $$d || ret=$$? ; \
 	done ; exit $$ret
 	@echo "build Success!"
 
@@ -108,19 +108,19 @@ build: fmt
 # 	go install ./...
 # 	@echo "install Success!"
 
-# .PHONY: release
-# release: build
-# 	@echo "$(CGREEN)Cross platform building for release ...$(CEND)"
-# 	@mkdir -p release
-# 	@for GOOS in darwin linux windows; do \
-# 		for GOARCH in amd64; do \
-# 			for d in $$(go list -f '{{if (eq .Name "main")}}{{.ImportPath}}{{end}}' ./...); do \
-# 				b=$$(basename $${d}) ; \
-# 				echo "Building $${b}.$${GOOS}-$${GOARCH} ..."; \
-# 				CGO_ENABLED=0 GOOS=$${GOOS} GOARCH=$${GOARCH} go build ${GCFLAGS} ${LDFLAGS} -v -o release/$${b}.$${GOOS}-$${GOARCH} $$d 2>/dev/null ; \
-# 			done ; \
-# 		done ;\
-# 	done
+.PHONY: release
+release: build
+	@echo "$(CGREEN)Cross platform building for release ...$(CEND)"
+	@mkdir -p release
+	@for GOOS in darwin linux windows; do \
+		for GOARCH in amd64; do \
+			for d in $$(go list -f '{{if (eq .Name "main")}}{{.ImportPath}}{{end}}' ./...); do \
+				b=$$(basename $${d}) ; \
+				echo "Building $${b}.$${GOOS}-$${GOARCH} ..."; \
+				CGO_ENABLED=0 GOOS=$${GOOS} GOARCH=$${GOARCH} go build ${GCFLAGS} ${LDFLAGS} -v -o release/$${b}.$${GOOS}-$${GOARCH} $$d 2>/dev/null ; \
+			done ; \
+		done ;\
+	done
 
 # Cleans our projects: deletes binaries
 .PHONY: clean
