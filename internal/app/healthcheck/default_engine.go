@@ -404,7 +404,7 @@ func (de *DefaultEngine) checkCPUUsage() error {
 // checkIOUtil check io util
 func (de *DefaultEngine) checkIOUtil() error {
 	// get data
-	datas, err := de.getPrometheusRepo().GetIOUtil(de.getDevices())
+	datas, err := de.getPrometheusRepo().GetIOUtil()
 	if err != nil {
 		return err
 	}
