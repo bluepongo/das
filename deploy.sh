@@ -115,7 +115,7 @@ function installNginx() {
     \cp -f ${WORK_DIR}/archive/nginx.conf ${NGINX_PATH}/conf
     
     echo "export NGINX_HOME=${NGINX_PATH}" >> /etc/profile
-    echo 'export PATH=$PATH:$NGINX_HOME/sbin/nginx'  >> /etc/profile
+    echo 'export PATH=$PATH:$NGINX_HOME/sbin'  >> /etc/profile
 }
 
 function installGolang() {
