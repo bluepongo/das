@@ -17,22 +17,33 @@ NGINX_VERSION=1.21.1
 NGINX_URL=http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
 NGINX_PATH=/data/nginx
 
+GO_VERSION=1.16.7
 GO_URL=https://golang.google.cn/dl/go${GO_VERSION}.linux-amd64.tar.gz
 OLD_GOROOT=$GOROOT
 OLD_GOPATH=$GOPATH
 
 SOAR_URL=https://github.com/romberli/soar.git
-# DAS_URL=https://github.com/romberli/das.git
 DAS_PATH=/data/das
 
-
+function download() {
+    for i in {1..10}
+    do
+        if [ ! -f $2 ]; then
+            wget $1
+        else
+            return
+        fi
+    done
+    echo "[ERROR] download $2 failed"
+    exit 0
+}
 
 
 function deployDAS() {
     mkdir -p ${WORK_DIR}/archive
     
-    mkdir -p ${DAS_HOME}/bin
-    mkdir -p ${DAS_HOME}/conf
+    mkdir -p ${DAS_PATH}/bin
+    mkdir -p ${DAS_PATH}/conf
     
     checkInternet
     installDeps
@@ -65,15 +76,11 @@ function installDeps() {
 function installNginx() {
     cd ${WORK_DIR}/archive
     
-    if [ ! -f pcre-${PCRE_VERSION}.tar.gz ]; then
-        wget ${PCRE_URL}
-    fi
-    if [ ! -f nginx-${NGINX_VERSION}.tar.gz ]; then
-        wget ${NGINX_URL}
-    fi
+    download ${PCRE_URL} pcre-${PCRE_VERSION}.tar.gz
+    download ${NGINX_URL} nginx-${NGINX_VERSION}.tar.gz
     
-    tar -zxf ${WORK_DIR}/archive/pcre-${PCRE_VERSION}.tar.gz -C ${WORK_DIR}/archive
-    tar -zxf ${WORK_DIR}/archive/nginx-${NGINX_VERSION}.tar.gz -C ${WORK_DIR}/archive
+    tar -zxf pcre-${PCRE_VERSION}.tar.gz -C ${WORK_DIR}/archive
+    tar -zxf nginx-${NGINX_VERSION}.tar.gz -C ${WORK_DIR}/archive
     
     mkdir -p /data
     
@@ -106,30 +113,33 @@ function installNginx() {
     
     # mv config
     \cp -f ${WORK_DIR}/archive/nginx.conf ${NGINX_PATH}/conf
+    
+    echo "export NGINX_HOME=${NGINX_PATH}" >> /etc/profile
+    echo 'export PATH=$PATH:$NGINX_HOME/sbin/nginx'  >> /etc/profile
 }
 
 function installGolang() {
     # judge if golang exist & version > 1.16
-    local needGolang=false
-    if [ ! -n"$GOROOT" ]; then # judge if $GOROOT exists
-        echo "golang not found"
-        needGolang=true
-    else
+    local needGolang=true
+    if [ -n "$GOROOT" ]; then # judge if $GOROOT exists
         local version=$(go version | grep -E 'go[1-9]\.((1[6-9])|([2-9][0-9]))')
-        if [[ ! -n$version ]]; then
-            echo "golang version less than 1.16.0"
-            needGolang=true
-        else
+        if [[ -n "$version" ]]; then
+            needGolang=false
             echo "current golang meet the requirement of das"
+        else
+            echo "golang version less than 1.16.0"
         fi
+        
+    else
+        echo "golang not found"
     fi
     
     # install golang
     if [ $needGolang = "true" ]; then
         cd ${WORK_DIR}/archive
-        wget ${GO_URL} -O ${WORK_DIR}/archive
+        download ${GO_URL} go${GO_VERSION}.linux-amd64.tar.gz
         
-        tar -zxf ${WORK_DIR}/archive/go${GO_VERSION}.linux-amd64.tar.gz -C ${WORK_DIR}/archive
+        tar -zxf go${GO_VERSION}.linux-amd64.tar.gz -C ${WORK_DIR}/archive
         
         mv ${WORK_DIR}/archive/go /data
         rm -rf ${WORK_DIR}/archive/go
@@ -158,7 +168,7 @@ function installSoar() {
     fi
     
     # mv das into /data
-    # mv ${WORK_DIR}/../soar/bin/soar ${DAS_HOME}/bin
+    # mv ${WORK_DIR}/../soar/bin/soar ${DAS_PATH}/bin
 }
 
 function installDAS() {
@@ -166,7 +176,7 @@ function installDAS() {
     echo "[INFO] compiling das.."
     make
     
-    if [ ! -f ${WORK_DIR}/bin/das ]; then
+    if [ $? -ne 0  ]; then
         echo "[ERROR] compiling das failed"
         exit 0
     else
@@ -174,21 +184,16 @@ function installDAS() {
     fi
     
     # mv das into /data
-    \cp -f ${WORK_DIR}/bin/das ${DAS_HOME}/bin
-    \cp -f ${WORK_DIR}/config/das_default.yaml ${DAS_HOME}/conf
+    \cp -f ${WORK_DIR}/bin/das ${DAS_PATH}/bin
+    \cp -f ${WORK_DIR}/config/das_default.yaml ${DAS_PATH}/conf/das.ymal
     
     # register to systemd
     chmod 0644 ${WORK_DIR}/archive/das.service
     \cp -f ${WORK_DIR}/archive/das.service /etc/systemd/system/
     systemctl enable das
     
-    echo "export NGINX_HOME=${NGINX_PATH}" >> /etc/profile
-    echo 'export PATH=$PATH:$NGINX_HOME/sbin/nginx'  >> /etc/profile
-    
     echo "export DAS_HOME=${DAS_PATH}"  >> /etc/profile
     echo 'export PATH=$PATH:$DAS_HOME/bin'  >> /etc/profile
-    
-    source /etc/profile
 }
 
 deployDAS

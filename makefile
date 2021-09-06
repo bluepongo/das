@@ -32,7 +32,7 @@ CYELLOW:=$(shell tput setaf 3 2>/dev/null)
 CEND:=$(shell tput sgr0 2>/dev/null)
 
 .PHONY: all
-all: | clean fmt deps build
+all: | deps clean fmt build
 
 .PHONY: go_version_check
 GO_VERSION_MIN=1.16
@@ -50,6 +50,8 @@ go_version_check:
 .PHONY: deps
 deps:
 	@echo "$(CGREEN)Dependency check ...$(CEND)"
+	@export  GO111MODULE=on
+	@export  GOPROXY=https://goproxy.cn,direct
 	@go mod tidy
 	@echo "download deps Success!"
 
