@@ -37,11 +37,12 @@ const (
                  where i.name in (%s)
                    and qcm.start_ts >= ?
                    and qcm.start_ts < ?
-                 group by query_class_id
-                 order by rows_examined_max desc
+				   and qcm.rows_examined_max >= ?
+                 group by qcm.query_class_id
+                 order by qcm.rows_examined_max desc
                   limit ? offset ?) m
-                 inner join query_examples qe on m.query_class_id = qe.query_class_id
                  inner join query_classes qc on m.query_class_id = qc.query_class_id
+                 left join query_examples qe on m.query_class_id = qe.query_class_id;
     `
 	mysqlQueryWithDBName = `
         select qc.checksum as sql_id,
@@ -60,15 +61,17 @@ const (
                         qcm.rows_examined_max
                  from query_class_metrics qcm
                           inner join instances i on qcm.instance_id = i.instance_id
+                 		  inner join query_examples qe on qcm.query_class_id = qe.query_class_id
                  where i.name in (%s)
+				   and qe.db = ?
                    and qcm.start_ts >= ?
                    and qcm.start_ts < ?
-                 group by query_class_id
-                 order by rows_examined_max desc) m
-                 inner join query_examples qe on m.query_class_id = qe.query_class_id
+				   and qcm.rows_examined_max >= ?
+                 group by qcm.query_class_id
+                 order by qcm.rows_examined_max desc
+				  limit ? offset ?) m
                  inner join query_classes qc on m.query_class_id = qc.query_class_id
-        where qe.db = ?
-        limit ? offset ?
+                 left join query_examples qe on m.query_class_id = qe.query_class_id;
     `
 	mysqlQueryWithSQLID = `
         select qc.checksum as sql_id,
@@ -87,134 +90,133 @@ const (
                         qcm.rows_examined_max
                  from query_class_metrics qcm
                           inner join instances i on qcm.instance_id = i.instance_id
+						  inner join query_classes qc on qcm.query_class_id = qc.query_class_id
                  where i.name in (%s)
-                   and qcm.query_class_id in (select query_class_id from query_classes where checksum = ?)
+				   and qc.checksum = ?
                    and qcm.start_ts >= ?
                    and qcm.start_ts < ?
                  group by query_class_id) m
-                 inner join query_examples qe on m.query_class_id = qe.query_class_id
                  inner join query_classes qc on m.query_class_id = qc.query_class_id
-        where qc.checksum = ?
-        order by qe.query_time desc
-        limit 1
+                 left join query_examples qe on m.query_class_id = qe.query_class_id
+        limit 1;
     `
 	clickhouseQueryWithServiceNames = `
-    	select sm.sql_id,
-			   m.fingerprint,
-			   m.example,
-			   m.db_name,
-			   sm.exec_count,
-			   sm.total_exec_time,
-			   sm.avg_exec_time,
-			   sm.rows_examined_max
-		
-		from (
-				 select queryid                                               as sql_id,
-						sum(num_queries)                                      as exec_count,
-						truncate(sum(m_query_time_sum), 2)                    as total_exec_time,
-						truncate(sum(m_query_time_sum) / sum(num_queries), 2) as avg_exec_time,
-						max(m_rows_examined_max)                              as rows_examined_max
-				 from metrics
-				 where service_type = 'mysql'
-				   and service_name in (%s)
-				   and period_start >= ?
-				   and period_start < ?
-				   and m_rows_examined_max >= ?
-				 group by queryid
-				 order by rows_examined_max desc
-				 limit ? offset ? ) sm
-				 left join (select queryid          as sql_id,
-								   max(fingerprint) as fingerprint,
-								   max(example)     as example,
-								   max(database)    as db_name
-							from metrics
-							where service_type = 'mysql'
-							  and service_name in (%s)
-							  and period_start >= ?
-							  and period_start < ?
-							  and m_rows_examined_max >= ?
-							group by queryid) m
-						   on sm.sql_id = m.sql_id;
+        select sm.sql_id,
+               m.fingerprint,
+               m.example,
+               m.db_name,
+               sm.exec_count,
+               sm.total_exec_time,
+               sm.avg_exec_time,
+               sm.rows_examined_max
+        
+        from (
+                 select queryid                                               as sql_id,
+                        sum(num_queries)                                      as exec_count,
+                        truncate(sum(m_query_time_sum), 2)                    as total_exec_time,
+                        truncate(sum(m_query_time_sum) / sum(num_queries), 2) as avg_exec_time,
+                        max(m_rows_examined_max)                              as rows_examined_max
+                 from metrics
+                 where service_type = 'mysql'
+                   and service_name in (%s)
+                   and period_start >= ?
+                   and period_start < ?
+                   and m_rows_examined_max >= ?
+                 group by queryid
+                 order by rows_examined_max desc
+                 limit ? offset ? ) sm
+                 left join (select queryid          as sql_id,
+                                   max(fingerprint) as fingerprint,
+                                   max(example)     as example,
+                                   max(database)    as db_name
+                            from metrics
+                            where service_type = 'mysql'
+                              and service_name in (%s)
+                              and period_start >= ?
+                              and period_start < ?
+                              and m_rows_examined_max >= ?
+                            group by queryid) m
+                           on sm.sql_id = m.sql_id;
     `
 	clickhouseQueryWithDBName = `
-		select sm.sql_id,
-			   m.fingerprint,
-			   m.example,
-			   m.db_name,
-			   sm.exec_count,
-			   sm.total_exec_time,
-			   sm.avg_exec_time,
-			   sm.rows_examined_max
-		
-		from (
-				 select queryid                                               as sql_id,
-						sum(num_queries)                                      as exec_count,
-						truncate(sum(m_query_time_sum), 2)                    as total_exec_time,
-						truncate(sum(m_query_time_sum) / sum(num_queries), 2) as avg_exec_time,
-						max(m_rows_examined_max)                              as rows_examined_max
-				 from metrics
-				 where service_type = 'mysql'
-				   and service_name in (%s)
-				   and database = ?
-				   and period_start >= ?
-				   and period_start < ?
-				   and m_rows_examined_max >= ?
-				 group by queryid
-				 order by rows_examined_max desc
-				 limit ? offset ? ) sm
-				 left join (select queryid          as sql_id,
-								   max(fingerprint) as fingerprint,
-								   max(example)     as example,
-								   max(database)    as db_name
-							from metrics
-							where service_type = 'mysql'
-							  and service_name in (%s)
-							  and database = ?
-							  and period_start >= ?
-							  and period_start < ?
-							  and m_rows_examined_max >= ?
-							group by queryid) m
-						   on sm.sql_id = m.sql_id;
+        select sm.sql_id,
+               m.fingerprint,
+               m.example,
+               m.db_name,
+               sm.exec_count,
+               sm.total_exec_time,
+               sm.avg_exec_time,
+               sm.rows_examined_max
+        
+        from (
+                 select queryid                                               as sql_id,
+                        sum(num_queries)                                      as exec_count,
+                        truncate(sum(m_query_time_sum), 2)                    as total_exec_time,
+                        truncate(sum(m_query_time_sum) / sum(num_queries), 2) as avg_exec_time,
+                        max(m_rows_examined_max)                              as rows_examined_max
+                 from metrics
+                 where service_type = 'mysql'
+                   and service_name in (%s)
+                   and (database = ? or schema = ?)
+                   and period_start >= ?
+                   and period_start < ?
+                   and m_rows_examined_max >= ?
+                 group by queryid
+                 order by rows_examined_max desc
+                 limit ? offset ? ) sm
+                 left join (select queryid          as sql_id,
+                                   max(fingerprint) as fingerprint,
+                                   max(example)     as example,
+                                   max(database)    as db_name
+                            from metrics
+                            where service_type = 'mysql'
+                              and service_name in (%s)
+                              and (database = ? or schema = ?)
+                              and period_start >= ?
+                              and period_start < ?
+                              and m_rows_examined_max >= ?
+                            group by queryid) m
+                           on sm.sql_id = m.sql_id;
     `
 	clickhouseQueryWithSQLID = `
-		select sm.sql_id,
-			   m.fingerprint,
-			   m.example,
-			   m.db_name,
-			   sm.exec_count,
-			   sm.total_exec_time,
-			   sm.avg_exec_time,
-			   sm.rows_examined_max
-		
-		from (
-				 select queryid                                               as sql_id,
-						sum(num_queries)                                      as exec_count,
-						truncate(sum(m_query_time_sum), 2)                    as total_exec_time,
-						truncate(sum(m_query_time_sum) / sum(num_queries), 2) as avg_exec_time,
-						max(m_rows_examined_max)                              as rows_examined_max
-				 from metrics
-				 where service_type = 'mysql'
-				   and service_name in (%s)
-				   and queryid = ?
-				   and period_start >= ?
-				   and period_start < ?
-				   and m_rows_examined_max >= ?
-				 group by queryid
-				 order by rows_examined_max desc
-				 limit ? offset ? ) sm
-				 left join (select queryid          as sql_id,
-								   max(fingerprint) as fingerprint,
-								   max(example)     as example,
-								   max(database)    as db_name
-							from metrics
-							where service_type = 'mysql'
-							  and service_name in (%s)
-							  and queryid = ?
-							  and period_start >= ?
-							  and period_start < ?
-							  and m_rows_examined_max >= ?
-							group by queryid) m
-						   on sm.sql_id = m.sql_id;
+        select sm.sql_id,
+               m.fingerprint,
+               m.example,
+               m.db_name,
+               sm.exec_count,
+               sm.total_exec_time,
+               sm.avg_exec_time,
+               sm.rows_examined_max
+        
+        from (
+                 select queryid                                               as sql_id,
+                        sum(num_queries)                                      as exec_count,
+                        truncate(sum(m_query_time_sum), 2)                    as total_exec_time,
+                        truncate(sum(m_query_time_sum) / sum(num_queries), 2) as avg_exec_time,
+                        max(m_rows_examined_max)                              as rows_examined_max
+                 from metrics
+                 where service_type = 'mysql'
+                   and service_name in (%s)
+                   and queryid = ?
+                   and period_start >= ?
+                   and period_start < ?
+                   and m_rows_examined_max >= ?
+                 group by queryid
+                 order by rows_examined_max desc
+                 limit ? offset ? ) sm
+                 left join (select queryid          as sql_id,
+                                   max(fingerprint) as fingerprint,
+                                   max(example)     as example,
+                                   max(database)    as db_name
+                            from metrics
+                            where service_type = 'mysql'
+                              and service_name in (%s)
+                              and queryid = ?
+                              and period_start >= ?
+                              and period_start < ?
+                              and m_rows_examined_max >= ?
+                            group by queryid) m
+                           on sm.sql_id = m.sql_id;
     `
 )
 
@@ -334,7 +336,7 @@ func (mr *MySQLRepo) getConfig() *Config {
 	return mr.config
 }
 
-// Close close the connection
+// Close closes the connection
 func (mr *MySQLRepo) Close() error {
 	return mr.conn.Close()
 }
@@ -354,8 +356,9 @@ func (mr *MySQLRepo) GetByServiceNames(serviceName []string) ([]query.Query, err
 	sql := fmt.Sprintf(mysqlQueryWithServiceNames, services)
 
 	return mr.execute(sql,
-		mr.getConfig().GetStartTime().Format("2006-01-02 15:04:05"),
-		mr.getConfig().GetEndTime().Format("2006-01-02 15:04:05"),
+		mr.getConfig().GetStartTime().Format(constant.DefaultTimeLayout),
+		mr.getConfig().GetEndTime().Format(constant.DefaultTimeLayout),
+		minRowsExamined,
 		mr.getConfig().GetLimit(),
 		mr.getConfig().GetOffset(),
 	)
@@ -376,9 +379,10 @@ func (mr *MySQLRepo) GetByDBName(serviceName, dbName string) ([]query.Query, err
 	sql := fmt.Sprintf(mysqlQueryWithDBName, services)
 
 	return mr.execute(sql,
-		mr.getConfig().GetStartTime().Format("2006-01-02 15:04:05"),
-		mr.getConfig().GetEndTime().Format("2006-01-02 15:04:05"),
 		dbName,
+		mr.getConfig().GetStartTime().Format(constant.DefaultTimeLayout),
+		mr.getConfig().GetEndTime().Format(constant.DefaultTimeLayout),
+		minRowsExamined,
 		mr.getConfig().GetLimit(),
 		mr.getConfig().GetOffset())
 }
@@ -397,19 +401,18 @@ func (mr *MySQLRepo) GetBySQLID(serviceName, sqlID string) (query.Query, error) 
 
 	sql := fmt.Sprintf(mysqlQueryWithSQLID, services)
 
-	querys, err := mr.execute(sql,
+	queries, err := mr.execute(sql,
 		sqlID,
-		mr.getConfig().GetStartTime().Format("2006-01-02 15:04:05"),
-		mr.getConfig().GetEndTime().Format("2006-01-02 15:04:05"),
-		sqlID,
+		mr.getConfig().GetStartTime().Format(constant.DefaultTimeLayout),
+		mr.getConfig().GetEndTime().Format(constant.DefaultTimeLayout),
 	)
-	if len(querys) == 0 {
+	if len(queries) == 0 {
 		return nil, fmt.Errorf("sql(id=%s) in service(name=%s) is not found", sqlID, serviceName)
 	}
-	return querys[constant.ZeroInt], err
+	return queries[constant.ZeroInt], err
 }
 
-// execute execute the SQL with args
+// execute executes the SQL with args
 func (mr *MySQLRepo) execute(command string, args ...interface{}) ([]query.Query, error) {
 	log.Debugf("query MySQLRepo.execute() sql: %s, args: %v", command, args)
 
@@ -437,7 +440,7 @@ type ClickhouseRepo struct {
 	conn   *clickhouse.Conn
 }
 
-// NewClickHouseRepo return a new ClickHouseRepo
+// NewClickHouseRepo returns a new ClickHouseRepo
 func NewClickHouseRepo(config *Config, conn *clickhouse.Conn) *ClickhouseRepo {
 	return &ClickhouseRepo{
 		config: config,
@@ -445,15 +448,17 @@ func NewClickHouseRepo(config *Config, conn *clickhouse.Conn) *ClickhouseRepo {
 	}
 }
 
+// getConfig returns the configuration
 func (cr *ClickhouseRepo) getConfig() *Config {
 	return cr.config
 }
 
+// Close closes the connection
 func (cr *ClickhouseRepo) Close() error {
 	return cr.conn.Close()
 }
 
-// GetByServiceNames returns query.query list by serviceNames
+// GetByServiceNames returns query.Query list by serviceNames
 func (cr *ClickhouseRepo) GetByServiceNames(serviceNames []string) ([]query.Query, error) {
 	interfaces, err := common.ConvertInterfaceToSliceInterface(serviceNames)
 	if err != nil {
@@ -466,8 +471,6 @@ func (cr *ClickhouseRepo) GetByServiceNames(serviceNames []string) ([]query.Quer
 	}
 
 	sql := fmt.Sprintf(clickhouseQueryWithServiceNames, services, services)
-
-	fmt.Println(sql)
 
 	return cr.execute(
 		sql,
@@ -482,7 +485,7 @@ func (cr *ClickhouseRepo) GetByServiceNames(serviceNames []string) ([]query.Quer
 	)
 }
 
-// GetByDBName returns query.query list by dbNameS
+// GetByDBName returns query.Query list by dbNameS
 func (cr *ClickhouseRepo) GetByDBName(serviceName, dbName string) ([]query.Query, error) {
 	interfaces, err := common.ConvertInterfaceToSliceInterface(serviceName)
 	if err != nil {
@@ -498,20 +501,21 @@ func (cr *ClickhouseRepo) GetByDBName(serviceName, dbName string) ([]query.Query
 
 	return cr.execute(sql,
 		dbName,
+		dbName,
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
 		minRowsExamined,
 		cr.getConfig().GetLimit(),
 		cr.getConfig().GetOffset(),
 		dbName,
+		dbName,
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
 		minRowsExamined,
 	)
-
 }
 
-// GetBySQLID return query.query by SQL ID
+// GetBySQLID returns query.Query by SQL ID
 func (cr *ClickhouseRepo) GetBySQLID(serviceName, sqlID string) (query.Query, error) {
 	interfaces, err := common.ConvertInterfaceToSliceInterface(serviceName)
 	if err != nil {
@@ -523,7 +527,7 @@ func (cr *ClickhouseRepo) GetBySQLID(serviceName, sqlID string) (query.Query, er
 		return nil, err
 	}
 
-	sql := fmt.Sprintf(clickhouseQueryWithDBName, services, services)
+	sql := fmt.Sprintf(clickhouseQueryWithSQLID, services, services)
 
 	queries, err := cr.execute(sql,
 		sqlID,

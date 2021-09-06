@@ -86,7 +86,7 @@ db:
       # type: string
       # default: das
       name: das
-      # description: database user name
+      # description: database username
       # type: string
       # default: root
       user: root
@@ -123,7 +123,7 @@ db:
   application:
     # mysql configuration
     mysql:
-      # description: mysql user name
+      # description: mysql username
       # type: string
       # default: root
       user: root
@@ -135,7 +135,7 @@ db:
   monitor:
     # prometheus configuration
     prometheus:
-      # description: prometheus user name
+      # description: prometheus username
       # type: string
       # default: root
       user: root
@@ -145,7 +145,7 @@ db:
       pass: root
     # clickhouse configuration
     clickhouse:
-      # description: clickhouse user name
+      # description: clickhouse username
       # type: string
       # default: root
       user: root
@@ -154,7 +154,7 @@ db:
       # default: root
       pass: root
     mysql:
-      # description: mysql user name
+      # description: mysql username
       # type: string
       # default: root
       user: root
@@ -174,7 +174,7 @@ db:
       # type: string
       # default: das
       name: das
-      # description: database user name
+      # description: database username
       # type: string
       # default: root
       user: root
