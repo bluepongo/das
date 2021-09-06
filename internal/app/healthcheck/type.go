@@ -247,10 +247,10 @@ func (dec DefaultEngineConfig) getItemConfig(item string) *DefaultItemConfig {
 
 // Validate validates if engine configuration is valid
 func (dec DefaultEngineConfig) Validate() error {
-	itemWeightCount := constant.ZeroInt
+	itemWeightSummary := constant.ZeroInt
 	// validate defaultEngineConfig exits items
 	if len(dec) == constant.ZeroInt {
-		return message.NewMessage(msghc.ErrDefaultEngineConfigContent)
+		return message.NewMessage(msghc.ErrDefaultEngineEmpty)
 	}
 	for itemName, defaultItemConfig := range dec {
 		// validate item weight
@@ -285,12 +285,13 @@ func (dec DefaultEngineConfig) Validate() error {
 		if defaultItemConfig.MaxScoreDeductionMedium > defaultHundred || defaultItemConfig.MaxScoreDeductionMedium < constant.ZeroInt {
 			return message.NewMessage(msghc.ErrMaxScoreDeductionMediumItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionMedium)
 		}
-		itemWeightCount += defaultItemConfig.ItemWeight
+		itemWeightSummary += defaultItemConfig.ItemWeight
 	}
 	// validate item weigh count is 100
-	if itemWeightCount != defaultHundred {
-		return message.NewMessage(msghc.ErrItemWeightPercentInvalid)
+	if itemWeightSummary != defaultHundred {
+		return message.NewMessage(msghc.ErrItemWeightSummaryInvalid, itemWeightSummary)
 	}
+
 	return nil
 }
 

@@ -299,17 +299,12 @@ func (de *DefaultEngine) loadEngineConfig() error {
 	if err != nil {
 		return err
 	}
-	defaultEngine := NewEmptyDefaultEngineConfig()
+
 	for _, defaultEngineConfig := range defaultEngineConfigList {
-		itemName := defaultEngineConfig.ItemName
-		defaultEngine[itemName] = defaultEngineConfig
+		de.engineConfig[defaultEngineConfig.ItemName] = defaultEngineConfig
 	}
 	// validate config
-	err = defaultEngine.Validate()
-	if err == nil {
-		return message.NewMessage(msghc.ErrDefaultEngineConfigFormatInValid)
-	}
-	return nil
+	return de.engineConfig.Validate()
 }
 
 // checkDBConfig checks database configuration
