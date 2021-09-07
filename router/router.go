@@ -47,6 +47,8 @@ func (gr *GinRouter) Register() {
 		RegisterHealthcheck(v1)
 		// sqladvisor
 		RegisterSQLAdvisor(v1)
+		// query
+		RegisterQuery(v1)
 	}
 }
 

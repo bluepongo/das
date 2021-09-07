@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	mysqlClusterIDJSON = "mysql_cluster_id"
-	mysqlServerIDJSON  = "mysql_server_id"
+	mysqlClusterIDJSON = "mysqlClusterID"
+	mysqlServerIDJSON  = "mysqlServerID"
 	dbIDJSON           = "db_id"
 	sqlIDJSON          = "sql_id"
 )
@@ -46,12 +46,6 @@ func GetByMySQLClusterID(c *gin.Context) {
 		return
 	}
 	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
-		return
-	}
-	dataMap = make(map[string]string)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
