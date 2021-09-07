@@ -19,7 +19,7 @@ VERSION_COMPILE := $(shell date +"%F %T %z") by $(shell go version)
 VERSION_BRANCH  := $(shell git rev-parse --abbrev-ref HEAD)
 VERSION_GIT_DIRTY := $(shell git diff --no-ext-diff 2>/dev/null | wc -l | awk '{print $1}')
 VERSION_DEV_PATH:= $(shell pwd)
-LDFLAGS=-ldflags="-s -w -X 'github.com/XiaoMi/soar/common.Version=$(VERSION_VERSION)' -X 'github.com/XiaoMi/soar/common.Compile=$(VERSION_COMPILE)' -X 'github.com/XiaoMi/soar/common.Branch=$(VERSION_BRANCH)' -X 'github.com/XiaoMi/soar/common.GitDirty=$(VERSION_GIT_DIRTY)' -X 'github.com/XiaoMi/soar/common.DevPath=$(VERSION_DEV_PATH)'"
+# LDFLAGS=-ldflags="-s -w -X 'github.com/XiaoMi/soar/common.Version=$(VERSION_VERSION)' -X 'github.com/XiaoMi/soar/common.Compile=$(VERSION_COMPILE)' -X 'github.com/XiaoMi/soar/common.Branch=$(VERSION_BRANCH)' -X 'github.com/XiaoMi/soar/common.GitDirty=$(VERSION_GIT_DIRTY)' -X 'github.com/XiaoMi/soar/common.DevPath=$(VERSION_DEV_PATH)'"
 
 # These are the values we want to pass for VERSION  and BUILD
 BUILD_TIME=`date +%Y%m%d%H%M`
@@ -32,7 +32,7 @@ CYELLOW:=$(shell tput setaf 3 2>/dev/null)
 CEND:=$(shell tput sgr0 2>/dev/null)
 
 .PHONY: all
-all: | clean fmt deps build
+all: | deps clean fmt build
 
 .PHONY: go_version_check
 GO_VERSION_MIN=1.16
@@ -50,6 +50,8 @@ go_version_check:
 .PHONY: deps
 deps:
 	@echo "$(CGREEN)Dependency check ...$(CEND)"
+	@export  GO111MODULE=on
+	@export  GOPROXY=https://goproxy.cn,direct
 	@go mod tidy
 	@echo "download deps Success!"
 
@@ -96,17 +98,17 @@ cover: test
 build: fmt
 	@echo "$(CGREEN)Building ...$(CEND)"
 	@mkdir -p bin
-	@ret=0 && for d in $$(go list -f '{{if (eq .Name "main")}}{{.ImportPath}}{{end}}' ./...); do \
+	ret=0 && for d in $$(go list -f '{{if (eq .Name "main")}}{{.ImportPath}}{{end}}' ./...); do \
 		b=$$(basename $${d}) ; \
-		CGO_ENABLED=0 go build ${LDFLAGS} ${GCFLAGS} -o bin/$${b} $$d || ret=$$? ; \
+		CGO_ENABLED=0 go build ${GCFLAGS} -o bin/$${b} $$d || ret=$$? ; \
 	done ; exit $$ret
 	@echo "build Success!"
 
 # Installs our project: copies binaries
-install: build
-	@echo "$(CGREEN)Install ...$(CEND)"
-	go install ./...
-	@echo "install Success!"
+# install: build
+# 	@echo "$(CGREEN)Install ...$(CEND)"
+# 	go install ./...
+# 	@echo "install Success!"
 
 .PHONY: release
 release: build
