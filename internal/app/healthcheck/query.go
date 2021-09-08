@@ -47,11 +47,11 @@ const (
 		node_filesystem_files{node_name=~"%s",fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}
     `
 	PrometheusIOUtilV1 = `
-		avg by (instance) (rate(node_disk_io_time_ms{instance=~"%s"}[20s])/1000 or
+		max by (instance) (rate(node_disk_io_time_ms{instance=~"%s"}[20s])/1000 or
 		irate(node_disk_io_time_ms{instance=~"%s"}[5m])/1000)
     `
 	PrometheusIOUtilV2 = `
-		avg by (node_name) (rate(node_disk_io_time_seconds_total{node_name=~"%s"}[20s]) or
+		max by (node_name) (rate(node_disk_io_time_seconds_total{node_name=~"%s"}[20s]) or
 		irate(node_disk_io_time_seconds_total{node_name=~"%s"}[5m]) or
 		(max_over_time(rdsosmetrics_diskIO_util{node_name=~"%s"}[20s]) or
 		max_over_time(rdsosmetrics_diskIO_util{node_name=~"%s"}[5m]))/100)
