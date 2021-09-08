@@ -68,7 +68,7 @@ CREATE TABLE `t_hc_default_engine_config` (
 - 如果`score_deduction` < `max_score_deduction_high`, 则令`score_deduction`等于`max_score_deduction_high`, 即以`max_score_deduction_high`为扣分上限
 - 计算`100` - `score_deduction`, 记为`item_score`
 - 计算`item_score` * `item_weight`, 记为`weighted_item_score`
-- `weighted_item_score`为检查项`参数配置`的最终分值
+- `weighted_item_score`为检查项`参数配置`的加权分数
 
 
 ##3.2. 其他检查项
@@ -88,8 +88,9 @@ CREATE TABLE `t_hc_default_engine_config` (
 - 计算`avg_medium` / `unit` * `score_deduction_per_unit_medium`, 记为`score_deduction_medium`
 - 如果`score_deduction_medium`的值大于`max_score_deduction_medium`, 则令`score_deduction_medium`等于`max_score_deduction_medium`, 即以`max_score_deduction_medium`为扣分上限
 ###3.2.3. 计算加权分数
-- 计算`100` - `score_deduction_high` - `score_deduction_medium`, 记为`score_deduction`
-- 计算`score_deduction` * `item_weight`, 该值为该检查项的加权分数
+- 计算`100` - `score_deduction_high` - `score_deduction_medium`, 记为`item_score`
+- 计算`item_score` * `item_weight`,  记为`weighted_item_score`
+-  `weighted_item_score`为该检查项的加权分数
 
 
 ##3.3. 计算总分
@@ -119,10 +120,3 @@ CREATE TABLE `t_hc_default_engine_config` (
 
 
 配置表中的各个字段的值对最终分数影响很大, 需要通过后续的迭代来优化各项值
-
-
-
-
-
-
-
