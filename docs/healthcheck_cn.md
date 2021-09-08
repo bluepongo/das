@@ -105,6 +105,7 @@ CREATE TABLE `t_hc_default_engine_config` (
 
 - 慢查询以`最大单次扫描行数`作为监控数据并按3.2中的规则进行计分
 - 低于`low_watermark`的数值认为是正常使用量, 不对其进行扣分
+- `low_watermark`的值必须小于`high_watermark`
 
 
 #4. 初始化数据
