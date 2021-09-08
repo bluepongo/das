@@ -342,12 +342,22 @@ func (de *DefaultEngine) checkDBConfig() error {
 				dbConfigCount++
 				variables = append(variables, NewVariable(dbConfigMaxUserConnection, value, strconv.Itoa(dbConfigMaxUserConnectionValid)))
 			}
+			// slave_parallel_workers
+		case dbConfigSlaveParallelWorkers:
+			workers, err := strconv.Atoi(value)
+			if err != nil {
+				return err
+			}
+			if workers != dbConfigSlaveParallelWorkersValid {
+				dbConfigCount++
+				variables = append(variables, NewVariable(dbConfigSlaveParallelWorkers, value, strconv.Itoa(dbConfigSlaveParallelWorkersValid)))
+			}
 			// others
 		case dbConfigLogBin, dbConfigBinlogFormat, dbConfigBinlogRowImage, dbConfigSyncBinlog,
 			dbConfigInnodbFlushLogAtTrxCommit, dbConfigGTIDMode, dbConfigEnforceGTIDConsistency,
-			dbConfigSlaveParallelType, dbConfigSlaveParallelWorkers, dbConfigMasterInfoRepository,
-			dbConfigRelayLogInfoRepository, dbConfigReportHost, dbConfigReportPort, dbConfigInnodbFlushMethod,
-			dbConfigInnodbMonitorEnable, dbConfigInnodbPrintAllDeadlocks, dbConfigSlowQueryLog, dbConfigPerformanceSchema:
+			dbConfigSlaveParallelType, dbConfigMasterInfoRepository, dbConfigRelayLogInfoRepository,
+			dbConfigReportHost, dbConfigReportPort, dbConfigInnodbFlushMethod, dbConfigInnodbMonitorEnable,
+			dbConfigInnodbPrintAllDeadlocks, dbConfigSlowQueryLog, dbConfigPerformanceSchema:
 			if strings.ToUpper(value) != dbConfigVariableNames[name] {
 				dbConfigCount++
 				variables = append(variables, NewVariable(name, value, dbConfigVariableNames[name]))

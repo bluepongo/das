@@ -12,6 +12,7 @@ import (
 
 const (
 	dbConfigMaxUserConnection         = "max_user_connection"
+	dbConfigSlaveParallelWorkers      = "slave_parallel_workers"
 	dbConfigLogBin                    = "log_bin"
 	dbConfigBinlogFormat              = "binlog_format"
 	dbConfigBinlogRowImage            = "binlog_row_image"
@@ -20,7 +21,6 @@ const (
 	dbConfigGTIDMode                  = "gtid_mode"
 	dbConfigEnforceGTIDConsistency    = "enforce_gtid_consistency"
 	dbConfigSlaveParallelType         = "slave_parallel_type"
-	dbConfigSlaveParallelWorkers      = "slave_parallel_workers"
 	dbConfigMasterInfoRepository      = "master_info_repository"
 	dbConfigRelayLogInfoRepository    = "relay_log_info_repository"
 	dbConfigReportHost                = "report_host"
@@ -32,6 +32,7 @@ const (
 	dbConfigPerformanceSchema         = "performance_schema"
 
 	dbConfigMaxUserConnectionValid         = 2000
+	dbConfigSlaveParallelWorkersValid      = 16
 	dbConfigLogBinValid                    = "ON"
 	dbConfigBinlogFormatValid              = "ROW"
 	dbConfigBinlogRowImageValid            = "FULL"
@@ -40,7 +41,6 @@ const (
 	dbConfigGTIDModeValid                  = "ON"
 	dbConfigEnforceGTIDConsistencyValid    = "ON"
 	dbConfigSlaveParallelTypeValid         = "LOGICAL_CLOCK"
-	dbConfigSlaveParallelWorkersValid      = "16"
 	dbConfigMasterInfoRepositoryValid      = "TABLE"
 	dbConfigRelayLogInfoRepositoryValid    = "TABLE"
 	dbConfigReportHostValid                = constant.EmptyString
@@ -66,7 +66,6 @@ var (
 		dbConfigGTIDMode:                  dbConfigGTIDModeValid,
 		dbConfigEnforceGTIDConsistency:    dbConfigEnforceGTIDConsistencyValid,
 		dbConfigSlaveParallelType:         dbConfigSlaveParallelTypeValid,
-		dbConfigSlaveParallelWorkers:      dbConfigSlaveParallelWorkersValid,
 		dbConfigMasterInfoRepository:      dbConfigMasterInfoRepositoryValid,
 		dbConfigRelayLogInfoRepository:    dbConfigRelayLogInfoRepositoryValid,
 		dbConfigReportHost:                dbConfigReportHostValid,

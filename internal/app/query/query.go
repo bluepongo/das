@@ -70,7 +70,7 @@ func (q *Query) GetTotalExecTime() float64 {
 	return q.TotalExecTime
 }
 
-// GetAvgExecTime returns the average execution timey
+// GetAvgExecTime returns the average execution time
 func (q *Query) GetAvgExecTime() float64 {
 	return q.AvgExecTime
 }
