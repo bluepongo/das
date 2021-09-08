@@ -72,7 +72,9 @@ CREATE TABLE `t_hc_default_engine_config` (
 
 
 ##3.2. 其他检查项
+
 通过调用PMM接口获取该检查项的监控数据并循环遍历该数据
+
 ###3.2.1. 计算高危数据的扣分数
 - 对所有值高于`high_watermark`的值进行求和, 记为`sum_high`
 - 对所有值高于`high_watermark`的值进行计数, 记为`count_high`
@@ -91,10 +93,12 @@ CREATE TABLE `t_hc_default_engine_config` (
 
 
 ##3.3. 计算总分
+
 对所有检查项的加权分数进行求和即得到该实例的总分数, 代表该实例总体的健康状况
 
 
 ##3.4. 慢查询计分
+
 慢查询以单次最大扫描行数作为监控数据并按3.2中的规则进行计分
 
 
