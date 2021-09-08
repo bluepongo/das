@@ -113,7 +113,7 @@ CREATE TABLE `t_hc_default_engine_config` (
 |item_name|item_weight|low_watermark|high_watermark|unit|score_deduction_per_unit_high|max_score_deduction_high|score_deduction_per_unit_medium|max_score_deduction_medium|
 |:--------|----------:|------------:|-------------:|---:|----------------------------:|-----------------------:|------------------------------:|-------------------------:|
 |参数配置     |   5|         0|         0|        0|   10|   50|   0|   0|
-|cpu使用率    |   5|        50|        80|       10|   20|  100|  10|  50|
+|cpu使用率    |   5|       0.5|       0.8|      0.1|   20|  100|  10|  50|
 |io使用率     |   5|       0.5|       0.8|      0.1|   20|  100|  10|  50|
 |磁盘空间使用率|  20|       0.5|       0.8|      0.1|   40|  100|  10|  50|
 |连接数使用率  |  20|       0.5|       0.8|      0.1|   40|  100|  10|  50|
