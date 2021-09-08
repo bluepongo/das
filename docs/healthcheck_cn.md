@@ -81,12 +81,14 @@ CREATE TABLE `t_hc_default_engine_config` (
 - 计算`sum_high` / `count_high`,以求得平均数, 记为`avg_high`
 - 计算`avg_high` / `unit` * `score_deduction_per_unit_high`, 记为`score_deduction_high`
 - 如果`score_deduction_high`的值大于`max_score_deduction_high`, 则令`score_deduction_high`等于`max_score_deduction_high`, 即以`max_score_deduction_high`为扣分上限
+
 ###3.2.2. 计算中危数据的扣分数
 - 对所有值处于`low_watermark`与`high_waterark`的值进行求和, 记为`sum_medium`
 - 对所有值处于`low_watermark`与`high_waterark`的值进行计数, 记为`count_medium`
 - 计算`sum_medium` / `count_medium`,以求得平均数, 记为`avg_medium`
 - 计算`avg_medium` / `unit` * `score_deduction_per_unit_medium`, 记为`score_deduction_medium`
 - 如果`score_deduction_medium`的值大于`max_score_deduction_medium`, 则令`score_deduction_medium`等于`max_score_deduction_medium`, 即以`max_score_deduction_medium`为扣分上限
+
 ###3.2.3. 计算加权分数
 - 计算`100` - `score_deduction_high` - `score_deduction_medium`, 记为`item_score`
 - 计算`item_score` * `item_weight`,  记为`weighted_item_score`
