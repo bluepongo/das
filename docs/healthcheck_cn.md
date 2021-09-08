@@ -61,7 +61,7 @@ CREATE TABLE `t_hc_default_engine_config` (
 |performance_schema            |ON           |
 
 
-#3. 计分规则:
+#3. 计分规则
 ##3.1. `参数配置`
 - 统计所有不符合要求的参数配置, 记为`count`
 - 计算`count` * `score_deduction_per_unit_high`, 记为`score_deduction`
@@ -90,7 +90,11 @@ CREATE TABLE `t_hc_default_engine_config` (
 - 计算`score_deduction` * `item_weight`, 该值为该检查项的加权分数
 
 
-##3.3. 慢查询计分
+##3.3. 计算总分
+对所有检查项的加权分数进行求和即得到该实例的总分数, 代表该实例总体的健康状况
+
+
+##3.4. 慢查询计分
 慢查询以单次最大扫描行数作为监控数据并按3.2中的规则进行计分
 
 
