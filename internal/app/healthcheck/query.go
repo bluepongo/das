@@ -21,7 +21,7 @@ const (
 	PrometheusCPUUsageV1 = `
 		clamp_max(sum by () ((avg by (mode) (
 		(clamp_max(rate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or
-		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or
+		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) or
 		sum by () (
 		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m]) or
 		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m])) unless
@@ -32,7 +32,7 @@ const (
 	PrometheusCPUUsageV2 = `
 		clamp_max(sum by () ((avg by (mode) ( 
 		(clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or 
-		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or 
+		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) or
 		sum by () (
 		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m]) or 
 		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m])) unless

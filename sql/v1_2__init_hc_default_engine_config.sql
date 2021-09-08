@@ -1,7 +1,7 @@
 insert into t_hc_default_engine_config(item_name, item_weight, low_watermark, high_watermark, unit, score_deduction_per_unit_high, max_score_deduction_high, score_deduction_per_unit_medium, max_score_deduction_medium)
 values('db_config', 5, 0, 0, 0, 10, 50, 0, 0);
 insert into t_hc_default_engine_config(item_name, item_weight, low_watermark, high_watermark, unit, score_deduction_per_unit_high, max_score_deduction_high, score_deduction_per_unit_medium, max_score_deduction_medium)
-values('cpu_usage', 5, 50, 80, 10, 20, 100, 10, 50);
+values('cpu_usage', 5, 0.5, 0.8, 0.1, 20, 100, 10, 50);
 insert into t_hc_default_engine_config(item_name, item_weight, low_watermark, high_watermark, unit, score_deduction_per_unit_high, max_score_deduction_high, score_deduction_per_unit_medium, max_score_deduction_medium)
 values('io_usage', 5, 0.5, 0.8, 0.1, 20, 100, 10, 50);
 insert into t_hc_default_engine_config(item_name, item_weight, low_watermark, high_watermark, unit, score_deduction_per_unit_high, max_score_deduction_high, score_deduction_per_unit_medium, max_score_deduction_medium)
