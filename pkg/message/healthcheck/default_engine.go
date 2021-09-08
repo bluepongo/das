@@ -44,7 +44,7 @@ func initDefaultEngineErrorMessage() {
 	message.Messages[ErrDefaultEngineEmpty] = config.NewErrMessage(message.DefaultMessageHeader, ErrDefaultEngineEmpty, "default engine config should not be empty")
 	message.Messages[ErrItemWeightItemInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrItemWeightItemInvalid, "item weight of %s must be in [1, 100], %d is not valid")
 	message.Messages[ErrLowWatermarkItemInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrLowWatermarkItemInvalid, "low watermark of %s must be higher than 0, %f is not valid")
-	message.Messages[ErrHighWatermarkItemInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrHighWatermarkItemInvalid, "high watermark of %s  must be higher than low watermark, %f is not valid")
+	message.Messages[ErrHighWatermarkItemInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrHighWatermarkItemInvalid, "high watermark of %s  must be larger than low watermark, %f is not valid")
 	message.Messages[ErrUnitItemInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrUnitItemInvalid, "unit of %s must be higher than 0, %f is not valid")
 	message.Messages[ErrScoreDeductionPerUnitHighItemInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrScoreDeductionPerUnitHighItemInvalid, "score deduction per unit high of %s must be in [1, 100], %f is not valid")
 	message.Messages[ErrMaxScoreDeductionHighItemInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrMaxScoreDeductionHighItemInvalid, "max score deduction high of %s must be in [1, 100], %f is not valid")
