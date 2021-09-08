@@ -62,6 +62,7 @@ CREATE TABLE `t_hc_default_engine_config` (
 
 
 #3. 计分规则
+
 ##3.1. `参数配置`
 - 统计所有不符合要求的参数配置, 记为`count`
 - 计算`count` * `score_deduction_per_unit_high`, 记为`score_deduction`
