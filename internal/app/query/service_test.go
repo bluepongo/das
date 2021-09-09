@@ -1,6 +1,8 @@
 package query
 
 import (
+	"testing"
+
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/global"
 	"github.com/romberli/go-util/common"
@@ -8,7 +10,6 @@ import (
 	"github.com/romberli/log"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (
@@ -25,37 +26,32 @@ const (
 	// pmm1
 	serviceTestDBAddr = "192.168.10.220:3306"
 	// pmm2
-	//serviceTestDBAddr   = "192.168.10.219:3306"
+	// serviceTestDBAddr   = "192.168.10.219:3306"
 	serviceTestDBDBName = "das"
 	serviceTestDBDBUser = "root"
 	serviceTestDBDBPass = "root"
 )
 
-var pmmVersion = 0
-
 func init() {
 	// pmm1
 	pmmVersion = 1
 	// pmm2
-	//pmmVersion = 2
+	// pmmVersion = 2
 
 	switch pmmVersion {
 	case 1:
 		viper.Set(config.DBMonitorMySQLUserKey, config.DefaultDBMonitorMySQLUser)
 		viper.Set(config.DBMonitorMySQLPassKey, config.DefaultDBMonitorMySQLPass)
 	case 2:
-		viper.Set(config.DBMonitorClickhouseUserKey, "")
-		viper.Set(config.DBMonitorClickhousePassKey, "")
+		viper.Set(config.DBMonitorClickhouseUserKey, config.DefaultDBMonitorClickhouseUser)
+		viper.Set(config.DBMonitorClickhousePassKey, config.DefaultDBMonitorClickhousePass)
 	}
 }
 
 func initQueryRepo() *DASRepo {
 	var err error
-	dbAddr := serviceTestDBAddr
-	dbDBName := serviceTestDBDBName
-	dbDBUser := serviceTestDBDBUser
-	dbDBPass := serviceTestDBDBPass
-	global.DASMySQLPool, err = mysql.NewPoolWithDefault(dbAddr, dbDBName, dbDBUser, dbDBPass)
+
+	global.DASMySQLPool, err = mysql.NewPoolWithDefault(serviceTestDBAddr, serviceTestDBDBName, serviceTestDBDBUser, serviceTestDBDBPass)
 	if err != nil {
 		log.Error(common.CombineMessageWithError("initQueryRepo() failed", err))
 		return nil
