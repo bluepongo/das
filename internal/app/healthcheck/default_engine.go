@@ -13,6 +13,7 @@ import (
 	depquery "github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
+	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"
 	"github.com/romberli/log"
@@ -63,7 +64,7 @@ func NewDefaultEngine(operationInfo *OperationInfo,
 	return &DefaultEngine{
 		operationInfo:        operationInfo,
 		engineConfig:         NewEmptyDefaultEngineConfig(),
-		result:               NewEmptyResult(),
+		result:               NewEmptyResultWithOperationID(operationInfo.GetOperationID()),
 		dasRepo:              dasRepo,
 		applicationMySQLRepo: applicationMySQLRepo,
 		prometheusRepo:       prometheusRepo,
@@ -260,11 +261,14 @@ func (de *DefaultEngine) preRun() error {
 			return err
 		}
 
-		de.mountPoints = append(de.mountPoints, mountPoint)
+		if !common.StringInSlice(de.mountPoints, mountPoint) {
+			de.mountPoints = append(de.mountPoints, mountPoint)
+		}
 
 		for _, fileSystem := range fileSystems {
-			if mountPoint == fileSystem.GetMountPoint() {
-				de.devices = append(de.devices, fileSystem.GetDevice())
+			device := fileSystem.GetDevice()
+			if mountPoint == fileSystem.GetMountPoint() && !common.StringInSlice(de.devices, device) {
+				de.devices = append(de.devices, device)
 			}
 		}
 	}
@@ -299,17 +303,12 @@ func (de *DefaultEngine) loadEngineConfig() error {
 	if err != nil {
 		return err
 	}
-	defaultEngine := NewEmptyDefaultEngineConfig()
+
 	for _, defaultEngineConfig := range defaultEngineConfigList {
-		itemName := defaultEngineConfig.ItemName
-		defaultEngine[itemName] = defaultEngineConfig
+		de.engineConfig[defaultEngineConfig.ItemName] = defaultEngineConfig
 	}
 	// validate config
-	err = defaultEngine.Validate()
-	if err == nil {
-		return message.NewMessage(msghc.ErrDefaultEngineConfigFormatInValid)
-	}
-	return nil
+	return de.engineConfig.Validate()
 }
 
 // checkDBConfig checks database configuration
@@ -347,12 +346,22 @@ func (de *DefaultEngine) checkDBConfig() error {
 				dbConfigCount++
 				variables = append(variables, NewVariable(dbConfigMaxUserConnection, value, strconv.Itoa(dbConfigMaxUserConnectionValid)))
 			}
+			// slave_parallel_workers
+		case dbConfigSlaveParallelWorkers:
+			workers, err := strconv.Atoi(value)
+			if err != nil {
+				return err
+			}
+			if workers != dbConfigSlaveParallelWorkersValid {
+				dbConfigCount++
+				variables = append(variables, NewVariable(dbConfigSlaveParallelWorkers, value, strconv.Itoa(dbConfigSlaveParallelWorkersValid)))
+			}
 			// others
 		case dbConfigLogBin, dbConfigBinlogFormat, dbConfigBinlogRowImage, dbConfigSyncBinlog,
 			dbConfigInnodbFlushLogAtTrxCommit, dbConfigGTIDMode, dbConfigEnforceGTIDConsistency,
-			dbConfigSlaveParallelType, dbConfigSlaveParallelWorkers, dbConfigMasterInfoRepository,
-			dbConfigRelayLogInfoRepository, dbConfigReportHost, dbConfigReportPort, dbConfigInnodbFlushMethod,
-			dbConfigInnodbMonitorEnable, dbConfigInnodbPrintAllDeadlocks, dbConfigSlowQueryLog, dbConfigPerformanceSchema:
+			dbConfigSlaveParallelType, dbConfigMasterInfoRepository, dbConfigRelayLogInfoRepository,
+			dbConfigReportHost, dbConfigReportPort, dbConfigInnodbFlushMethod, dbConfigInnodbMonitorEnable,
+			dbConfigInnodbPrintAllDeadlocks, dbConfigSlowQueryLog, dbConfigPerformanceSchema:
 			if strings.ToUpper(value) != dbConfigVariableNames[name] {
 				dbConfigCount++
 				variables = append(variables, NewVariable(name, value, dbConfigVariableNames[name]))
@@ -492,10 +501,12 @@ func (de *DefaultEngine) checkTableRows() error {
 	tableRowsConfig := de.getItemConfig(defaultTableRowsItemName)
 
 	var (
-		tableRowsHighSum     int
-		tableRowsHighCount   int
-		tableRowsMediumSum   int
-		tableRowsMediumCount int
+		tableRowsHighSum              int
+		tableRowsHighCount            int
+		tableRowsMediumSum            int
+		tableRowsMediumCount          int
+		tableRowsScoreDeductionHigh   float64
+		tableRowsScoreDeductionMedium float64
 
 		tableRowsHigh []healthcheck.Table
 	)
@@ -526,14 +537,18 @@ func (de *DefaultEngine) checkTableRows() error {
 	de.result.TableRowsHigh = string(jsonBytesHigh)
 
 	// table rows high score deduction
-	tableRowsScoreDeductionHigh := (float64(tableRowsHighSum)/float64(tableRowsHighCount) - tableRowsConfig.GetHighWatermark()) / tableRowsConfig.GetUnit() * tableRowsConfig.GetScoreDeductionPerUnitHigh()
-	if tableRowsScoreDeductionHigh > tableRowsConfig.GetMaxScoreDeductionHigh() {
-		tableRowsScoreDeductionHigh = tableRowsConfig.GetMaxScoreDeductionHigh()
+	if tableRowsHighCount > constant.ZeroInt {
+		tableRowsScoreDeductionHigh = (float64(tableRowsHighSum)/float64(tableRowsHighCount) - tableRowsConfig.GetHighWatermark()) / tableRowsConfig.GetUnit() * tableRowsConfig.GetScoreDeductionPerUnitHigh()
+		if tableRowsScoreDeductionHigh > tableRowsConfig.GetMaxScoreDeductionHigh() {
+			tableRowsScoreDeductionHigh = tableRowsConfig.GetMaxScoreDeductionHigh()
+		}
 	}
 	// table rows medium score deduction
-	tableRowsScoreDeductionMedium := (float64(tableRowsMediumSum)/float64(tableRowsMediumCount) - tableRowsConfig.GetLowWatermark()) / tableRowsConfig.GetUnit() * tableRowsConfig.GetScoreDeductionPerUnitMedium()
-	if tableRowsScoreDeductionMedium > tableRowsConfig.GetMaxScoreDeductionMedium() {
-		tableRowsScoreDeductionMedium = tableRowsConfig.GetMaxScoreDeductionMedium()
+	if tableRowsMediumCount > constant.ZeroInt {
+		tableRowsScoreDeductionMedium = (float64(tableRowsMediumSum)/float64(tableRowsMediumCount) - tableRowsConfig.GetLowWatermark()) / tableRowsConfig.GetUnit() * tableRowsConfig.GetScoreDeductionPerUnitMedium()
+		if tableRowsScoreDeductionMedium > tableRowsConfig.GetMaxScoreDeductionMedium() {
+			tableRowsScoreDeductionMedium = tableRowsConfig.GetMaxScoreDeductionMedium()
+		}
 	}
 	// table rows score
 	de.result.TableRowsScore = int(defaultMaxScore - tableRowsScoreDeductionHigh - tableRowsScoreDeductionMedium)
@@ -555,10 +570,12 @@ func (de *DefaultEngine) checkTableSize() error {
 	tableSizeConfig := de.getItemConfig(defaultTableSizeItemName)
 
 	var (
-		tableSizeHighSum     float64
-		tableSizeHighCount   int
-		tableSizeMediumSum   float64
-		tableSizeMediumCount int
+		tableSizeHighSum              float64
+		tableSizeHighCount            int
+		tableSizeMediumSum            float64
+		tableSizeMediumCount          int
+		tableSizeScoreDeductionHigh   float64
+		tableSizeScoreDeductionMedium float64
 
 		tableSizeHigh []healthcheck.Table
 	)
@@ -589,14 +606,18 @@ func (de *DefaultEngine) checkTableSize() error {
 	de.result.TableSizeHigh = string(jsonBytesHigh)
 
 	// table size high score deduction
-	tableSizeScoreDeductionHigh := (tableSizeHighSum/float64(tableSizeHighCount) - tableSizeConfig.GetHighWatermark()) / tableSizeConfig.GetUnit() * tableSizeConfig.GetScoreDeductionPerUnitHigh()
-	if tableSizeScoreDeductionHigh > tableSizeConfig.GetMaxScoreDeductionHigh() {
-		tableSizeScoreDeductionHigh = tableSizeConfig.GetMaxScoreDeductionHigh()
+	if tableSizeHighCount > constant.ZeroInt {
+		tableSizeScoreDeductionHigh = (tableSizeHighSum/float64(tableSizeHighCount) - tableSizeConfig.GetHighWatermark()) / tableSizeConfig.GetUnit() * tableSizeConfig.GetScoreDeductionPerUnitHigh()
+		if tableSizeScoreDeductionHigh > tableSizeConfig.GetMaxScoreDeductionHigh() {
+			tableSizeScoreDeductionHigh = tableSizeConfig.GetMaxScoreDeductionHigh()
+		}
 	}
 	// table size medium score deduction
-	tableSizeScoreDeductionMedium := (tableSizeMediumSum/float64(tableSizeMediumCount) - tableSizeConfig.GetLowWatermark()) / tableSizeConfig.GetUnit() * tableSizeConfig.GetScoreDeductionPerUnitMedium()
-	if tableSizeScoreDeductionMedium > tableSizeConfig.GetMaxScoreDeductionMedium() {
-		tableSizeScoreDeductionMedium = tableSizeConfig.GetMaxScoreDeductionMedium()
+	if tableSizeMediumCount > constant.ZeroInt {
+		tableSizeScoreDeductionMedium = (tableSizeMediumSum/float64(tableSizeMediumCount) - tableSizeConfig.GetLowWatermark()) / tableSizeConfig.GetUnit() * tableSizeConfig.GetScoreDeductionPerUnitMedium()
+		if tableSizeScoreDeductionMedium > tableSizeConfig.GetMaxScoreDeductionMedium() {
+			tableSizeScoreDeductionMedium = tableSizeConfig.GetMaxScoreDeductionMedium()
+		}
 	}
 	// table size score
 	de.result.TableSizeScore = int(defaultMaxScore - tableSizeScoreDeductionHigh - tableSizeScoreDeductionMedium)
@@ -620,6 +641,9 @@ func (de *DefaultEngine) checkSlowQuery() error {
 		slowQueryRowsExaminedHighCount   int
 		slowQueryRowsExaminedMediumSum   int
 		slowQueryRowsExaminedMediumCount int
+
+		slowQueryRowsExaminedHighScore   float64
+		slowQueryRowsExaminedMediumScore float64
 	)
 
 	// slow query data
@@ -649,14 +673,18 @@ func (de *DefaultEngine) checkSlowQuery() error {
 		}
 	}
 	// slow query rows examined high score
-	slowQueryRowsExaminedHighScore := (float64(slowQueryRowsExaminedHighSum)/float64(slowQueryRowsExaminedHighCount) - slowQueryRowsExaminedConfig.GetHighWatermark()) / slowQueryRowsExaminedConfig.GetUnit() * slowQueryRowsExaminedConfig.GetScoreDeductionPerUnitHigh()
-	if slowQueryRowsExaminedHighScore > slowQueryRowsExaminedConfig.GetMaxScoreDeductionHigh() {
-		slowQueryRowsExaminedHighScore = slowQueryRowsExaminedConfig.GetMaxScoreDeductionHigh()
+	if slowQueryRowsExaminedHighCount > constant.ZeroInt {
+		slowQueryRowsExaminedHighScore = (float64(slowQueryRowsExaminedHighSum)/float64(slowQueryRowsExaminedHighCount) - slowQueryRowsExaminedConfig.GetHighWatermark()) / slowQueryRowsExaminedConfig.GetUnit() * slowQueryRowsExaminedConfig.GetScoreDeductionPerUnitHigh()
+		if slowQueryRowsExaminedHighScore > slowQueryRowsExaminedConfig.GetMaxScoreDeductionHigh() {
+			slowQueryRowsExaminedHighScore = slowQueryRowsExaminedConfig.GetMaxScoreDeductionHigh()
+		}
 	}
 	// slow query rows examined medium score
-	slowQueryRowsExaminedMediumScore := (float64(slowQueryRowsExaminedMediumSum)/float64(slowQueryRowsExaminedMediumCount) - slowQueryRowsExaminedConfig.GetLowWatermark()) / slowQueryRowsExaminedConfig.GetUnit() * slowQueryRowsExaminedConfig.GetScoreDeductionPerUnitMedium()
-	if slowQueryRowsExaminedMediumScore > slowQueryRowsExaminedConfig.GetMaxScoreDeductionMedium() {
-		slowQueryRowsExaminedMediumScore = slowQueryRowsExaminedConfig.GetMaxScoreDeductionMedium()
+	if slowQueryRowsExaminedMediumCount > constant.ZeroInt {
+		slowQueryRowsExaminedMediumScore = (float64(slowQueryRowsExaminedMediumSum)/float64(slowQueryRowsExaminedMediumCount) - slowQueryRowsExaminedConfig.GetLowWatermark()) / slowQueryRowsExaminedConfig.GetUnit() * slowQueryRowsExaminedConfig.GetScoreDeductionPerUnitMedium()
+		if slowQueryRowsExaminedMediumScore > slowQueryRowsExaminedConfig.GetMaxScoreDeductionMedium() {
+			slowQueryRowsExaminedMediumScore = slowQueryRowsExaminedConfig.GetMaxScoreDeductionMedium()
+		}
 	}
 	// slow query score
 	de.result.SlowQueryScore = int(defaultMaxScore - slowQueryRowsExaminedHighScore - slowQueryRowsExaminedMediumScore)
@@ -731,10 +759,12 @@ func (de *DefaultEngine) parsePrometheusDatas(item string, datas []healthcheck.P
 	config := de.getItemConfig(item)
 
 	var (
-		highSum     float64
-		highCount   int
-		mediumSum   float64
-		mediumCount int
+		highSum              float64
+		highCount            int
+		mediumSum            float64
+		mediumCount          int
+		scoreDeductionHigh   float64
+		scoreDeductionMedium float64
 
 		highDatas []healthcheck.PrometheusData
 	)
@@ -752,14 +782,18 @@ func (de *DefaultEngine) parsePrometheusDatas(item string, datas []healthcheck.P
 	}
 
 	// high score deduction
-	scoreDeductionHigh := (highSum/float64(highCount) - config.GetHighWatermark()) / config.GetUnit() * config.GetScoreDeductionPerUnitHigh()
-	if scoreDeductionHigh > config.GetMaxScoreDeductionHigh() {
-		scoreDeductionHigh = config.GetMaxScoreDeductionHigh()
+	if highCount > constant.ZeroInt {
+		scoreDeductionHigh = (highSum/float64(highCount) - config.GetHighWatermark()) / config.GetUnit() * config.GetScoreDeductionPerUnitHigh()
+		if scoreDeductionHigh > config.GetMaxScoreDeductionHigh() {
+			scoreDeductionHigh = config.GetMaxScoreDeductionHigh()
+		}
 	}
 	// medium score deduction
-	scoreDeductionMedium := (mediumSum/float64(mediumCount) - config.GetLowWatermark()) / config.GetUnit() * config.GetScoreDeductionPerUnitMedium()
-	if scoreDeductionMedium > config.GetMaxScoreDeductionMedium() {
-		scoreDeductionMedium = config.GetMaxScoreDeductionMedium()
+	if mediumCount > constant.ZeroInt {
+		scoreDeductionMedium = (mediumSum/float64(mediumCount) - config.GetLowWatermark()) / config.GetUnit() * config.GetScoreDeductionPerUnitMedium()
+		if scoreDeductionMedium > config.GetMaxScoreDeductionMedium() {
+			scoreDeductionMedium = config.GetMaxScoreDeductionMedium()
+		}
 	}
 	// calculate score
 	score := int(defaultMaxScore - scoreDeductionHigh - scoreDeductionMedium)

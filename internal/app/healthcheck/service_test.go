@@ -4,8 +4,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/romberli/das/config"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,6 +29,8 @@ const (
 )
 
 func createService() (*Service, error) {
+	initViper()
+
 	var result = NewResult(testDASRepo,
 		defaultResultOperationID,
 		defaultResultWeightedAverageScore,
@@ -68,6 +72,21 @@ func createService() (*Service, error) {
 		DASRepo: testDASRepo,
 		Result:  result,
 	}, nil
+
+}
+
+func initViper() {
+	viper.Set(config.DBApplicationMySQLUserKey, config.DefaultDBApplicationMySQLUser)
+	viper.Set(config.DBApplicationMySQLPassKey, config.DefaultDBApplicationMySQLPass)
+
+	viper.Set(config.DBMonitorPrometheusUserKey, config.DefaultDBMonitorPrometheusUser)
+	viper.Set(config.DBMonitorPrometheusPassKey, config.DefaultDBMonitorPrometheusPass)
+
+	viper.Set(config.DBMonitorMySQLUserKey, config.DefaultDBMonitorMySQLUser)
+	viper.Set(config.DBMonitorMySQLPassKey, config.DefaultDBMonitorMySQLPass)
+
+	viper.Set(config.DBMonitorClickhouseUserKey, config.DefaultDBMonitorClickhouseUser)
+	viper.Set(config.DBMonitorClickhousePassKey, config.DefaultDBMonitorClickhousePass)
 }
 
 func deleteHCResultByOperationID(operationID int) error {
@@ -119,17 +138,6 @@ func TestService_Check(t *testing.T) {
 
 	err := initGlobalMySQLPool()
 	asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))
-
-	// mss := metadata.NewMySQLServerServiceWithDefault()
-	// err = mss.Create(map[string]interface{}{
-	// 	idStruct:             defaultMysqlServerID,
-	// 	clusterIDStruct:      defaultMySQLServerInfoClusterID,
-	// 	serverNameStruct:     defaultMySQLServerInfoServerName,
-	// 	hostIPStruct:         defaultMySQLServerInfoHostIP,
-	// 	portNumStruct:        defaultMySQLServerInfoPortNum,
-	// 	deploymentTypeStruct: defaultMySQLServerInfoDeploymentType,
-	// 	versionStruct:        defaultMySQLServerInfoVersion})
-	// asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))
 
 	service, err := createService()
 	asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))

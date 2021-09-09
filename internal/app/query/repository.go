@@ -487,7 +487,7 @@ func (cr *ClickhouseRepo) GetByServiceNames(serviceNames []string) ([]query.Quer
 
 // GetByDBName returns query.Query list by dbNameS
 func (cr *ClickhouseRepo) GetByDBName(serviceName, dbName string) ([]query.Query, error) {
-	interfaces, err := common.ConvertInterfaceToSliceInterface(serviceName)
+	interfaces, err := common.ConvertInterfaceToSliceInterface([]string{serviceName})
 	if err != nil {
 		return nil, err
 	}
@@ -517,7 +517,7 @@ func (cr *ClickhouseRepo) GetByDBName(serviceName, dbName string) ([]query.Query
 
 // GetBySQLID returns query.Query by SQL ID
 func (cr *ClickhouseRepo) GetBySQLID(serviceName, sqlID string) (query.Query, error) {
-	interfaces, err := common.ConvertInterfaceToSliceInterface(serviceName)
+	interfaces, err := common.ConvertInterfaceToSliceInterface([]string{serviceName})
 	if err != nil {
 		return nil, err
 	}
@@ -541,6 +541,9 @@ func (cr *ClickhouseRepo) GetBySQLID(serviceName, sqlID string) (query.Query, er
 		cr.getConfig().GetEndTime(),
 		minRowsExamined,
 	)
+	if len(queries) == 0 {
+		return nil, fmt.Errorf("sql(id=%s) in service(name=%s) is not found", sqlID, serviceName)
+	}
 
 	return queries[constant.ZeroInt], err
 }

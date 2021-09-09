@@ -54,12 +54,12 @@ const (
 	MaxDBPoolMaxIdleTime           = constant.MaxInt
 	MinDBPoolKeepAliveInterval     = 1
 	MaxDBPoolKeepAliveInterval     = constant.MaxInt
-	DefaultDBMonitorPrometheusUser = "root"
-	DefaultDBMonitorPrometheusPass = "root"
-	DefaultDBMonitorClickhouseUser = "root"
-	DefaultDBMonitorClickhousePass = "root"
+	DefaultDBMonitorPrometheusUser = "admin"
+	DefaultDBMonitorPrometheusPass = "admin"
+	DefaultDBMonitorClickhouseUser = ""
+	DefaultDBMonitorClickhousePass = ""
 	DefaultDBMonitorMySQLUser      = "root"
-	DefaultDBMonitorMySQLPass      = "root"
+	DefaultDBMonitorMySQLPass      = ""
 	DefaultDBApplicationMySQLUser  = "root"
 	DefaultDBApplicationMySQLPass  = "root"
 	DefaultDBSoarMySQLUser         = "root"

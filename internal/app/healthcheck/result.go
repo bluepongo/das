@@ -151,9 +151,16 @@ func NewResultWithDefault(operationID int, weightedAverageScore int, dbConfigSco
 	}
 }
 
-// NewEmptyResult return a empty Result
+// NewEmptyResult returns an empty Result
 func NewEmptyResult() *Result {
-	return &Result{}
+	return NewEmptyResultWithOperationID(constant.ZeroInt)
+}
+
+// NewEmptyResultWithOperationID returns an empty Result but with operation identity
+func NewEmptyResultWithOperationID(operationID int) *Result {
+	return &Result{
+		OperationID: operationID,
+	}
 }
 
 // Identity returns the identity

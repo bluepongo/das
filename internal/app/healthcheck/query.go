@@ -21,7 +21,7 @@ const (
 	PrometheusCPUUsageV1 = `
 		clamp_max(sum by () ((avg by (mode) (
 		(clamp_max(rate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or
-		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or
+		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) or
 		sum by () (
 		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m]) or
 		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m])) unless
@@ -32,7 +32,7 @@ const (
 	PrometheusCPUUsageV2 = `
 		clamp_max(sum by () ((avg by (mode) ( 
 		(clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or 
-		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or 
+		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) or
 		sum by () (
 		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m]) or 
 		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m])) unless
@@ -47,11 +47,11 @@ const (
 		node_filesystem_files{node_name=~"%s",fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}
     `
 	PrometheusIOUtilV1 = `
-		avg by (instance) (rate(node_disk_io_time_ms{instance=~"%s"}[20s])/1000 or
+		max by (instance) (rate(node_disk_io_time_ms{instance=~"%s"}[20s])/1000 or
 		irate(node_disk_io_time_ms{instance=~"%s"}[5m])/1000)
     `
 	PrometheusIOUtilV2 = `
-		avg by (node_name) (rate(node_disk_io_time_seconds_total{node_name=~"%s"}[20s]) or
+		max by (node_name) (rate(node_disk_io_time_seconds_total{node_name=~"%s"}[20s]) or
 		irate(node_disk_io_time_seconds_total{node_name=~"%s"}[5m]) or
 		(max_over_time(rdsosmetrics_diskIO_util{node_name=~"%s"}[20s]) or
 		max_over_time(rdsosmetrics_diskIO_util{node_name=~"%s"}[5m]))/100)

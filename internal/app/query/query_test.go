@@ -2,11 +2,13 @@ package query
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/global"
 	"github.com/romberli/go-util/common"
+	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
 	"github.com/spf13/viper"
@@ -48,33 +50,23 @@ func init() {
 	viper.Set(config.DBMonitorMySQLUserKey, config.DefaultDBMonitorMySQLUser)
 	viper.Set(config.DBMonitorMySQLPassKey, config.DefaultDBMonitorMySQLPass)
 
-	// viper.Set(config.DBMonitorClickhouseUserKey, config.DefaultDBMonitorClickhouseUser)
-	// viper.Set(config.DBMonitorClickhousePassKey, config.DefaultDBMonitorClickhousePass)
-
-	viper.Set(config.DBMonitorClickhouseUserKey, "")
-	viper.Set(config.DBMonitorClickhousePassKey, "")
+	viper.Set(config.DBMonitorClickhouseUserKey, config.DefaultDBMonitorClickhouseUser)
+	viper.Set(config.DBMonitorClickhousePassKey, config.DefaultDBMonitorClickhousePass)
 
 	// pmmVersion = 1
 	pmmVersion = 2
 
-	if err := initGlobalMySQLPool(); err != nil {
-		panic(err)
+	err := initGlobalMySQLPool()
+	if err != nil {
+		log.Errorf("initGlobalMySQLPool() failed. error:\n%s", err.Error())
+		os.Exit(constant.DefaultAbnormalExitCode)
 	}
 }
 
 func initGlobalMySQLPool() error {
-	dbAddr := queryTestDBAddr
-	dbName := queryTestDBDBName
-	dbUser := queryTestDBDBUser
-	dbPass := queryTestDBDBPass
-	maxConnections := mysql.DefaultMaxConnections
-	initConnections := mysql.DefaultInitConnections
-	maxIdleConnections := mysql.DefaultMaxIdleConnections
-	maxIdleTime := mysql.DefaultMaxIdleTime
-	keepAliveInterval := mysql.DefaultKeepAliveInterval
-
-	config := mysql.NewConfig(dbAddr, dbName, dbUser, dbPass)
-	poolConfig := mysql.NewPoolConfigWithConfig(config, maxConnections, initConnections, maxIdleConnections, maxIdleTime, keepAliveInterval)
+	cfg := mysql.NewConfig(queryTestDBAddr, queryTestDBDBName, queryTestDBDBUser, queryTestDBDBPass)
+	poolConfig := mysql.NewPoolConfigWithConfig(cfg, mysql.DefaultMaxConnections, mysql.DefaultInitConnections,
+		mysql.DefaultMaxIdleConnections, mysql.DefaultMaxIdleTime, mysql.DefaultKeepAliveInterval)
 	log.Debugf("pool config: %v", poolConfig)
 	var err error
 	global.DASMySQLPool, err = mysql.NewPoolWithPoolConfig(poolConfig)
