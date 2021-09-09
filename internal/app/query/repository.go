@@ -244,8 +244,8 @@ func newDASRepo(db middleware.Pool) *DASRepo {
 }
 
 // Execute executes given command and placeholders on the middleware
-func (r *DASRepo) Execute(command string, args ...interface{}) (middleware.Result, error) {
-	conn, err := r.Database.Get()
+func (dr *DASRepo) Execute(command string, args ...interface{}) (middleware.Result, error) {
+	conn, err := dr.Database.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -260,60 +260,58 @@ func (r *DASRepo) Execute(command string, args ...interface{}) (middleware.Resul
 }
 
 // Transaction returns a middleware.Transaction that could execute multiple commands as a transaction
-func (r *DASRepo) Transaction() (middleware.Transaction, error) {
-	return r.Database.Transaction()
+func (dr *DASRepo) Transaction() (middleware.Transaction, error) {
+	return dr.Database.Transaction()
 }
 
-// GetMonitorSystemByDBID returns a metadata.MonitorSystem by Database ID
-func (r *DASRepo) GetMonitorSystemByDBID(dbID int) (demetadata.MonitorSystem, error) {
-	dbInfo := metadata.NewDBServiceWithDefault()
-	err := dbInfo.GetByID(dbID)
+// GetMonitorSystemByDBID gets a metadata.MonitorSystem by database identity
+func (dr *DASRepo) GetMonitorSystemByDBID(dbID int) (demetadata.MonitorSystem, error) {
+	dbService := metadata.NewDBServiceWithDefault()
+	err := dbService.GetByID(dbID)
 	if err != nil {
 		return nil, err
 	}
-	dbs := dbInfo.DBs[constant.ZeroInt]
-	clusterID := dbs.GetClusterID()
-	return r.GetMonitorSystemByClusterID(clusterID)
+
+	return dr.GetMonitorSystemByClusterID(dbService.GetDBs()[constant.ZeroInt].GetClusterID())
 }
 
-// GetMonitorSystemByMySQLServerID returns a metadata.MonitorSystem by mysqlServerID
-func (r *DASRepo) GetMonitorSystemByMySQLServerID(mysqlServerID int) (demetadata.MonitorSystem, error) {
-	serverInfo := metadata.NewMySQLServerServiceWithDefault()
-	// serverInfo.GetAll()//test
-	err := serverInfo.GetByID(mysqlServerID)
+// GetMonitorSystemByMySQLServerID gets a metadata.MonitorSystem by mysql server identity
+func (dr *DASRepo) GetMonitorSystemByMySQLServerID(mysqlServerID int) (demetadata.MonitorSystem, error) {
+	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
+	err := mysqlServerService.GetByID(mysqlServerID)
 	if err != nil {
 		return nil, err
 	}
-	ss := serverInfo.MySQLServers[constant.ZeroInt]
-	clusterID := ss.GetClusterID()
-	return r.GetMonitorSystemByClusterID(clusterID)
+
+	return dr.GetMonitorSystemByClusterID(mysqlServerService.GetMySQLServers()[constant.ZeroInt].GetClusterID())
 }
 
-// GetMonitorSystemByClusterID returns a metadata.MonitorSystem by clusterID
-func (r *DASRepo) GetMonitorSystemByClusterID(clusterID int) (demetadata.MonitorSystem, error) {
-	clusterInfo := metadata.NewMySQLClusterServiceWithDefault()
-	// clusterInfo.GetAll()
-	err := clusterInfo.GetByID(clusterID)
+// GetMonitorSystemByClusterID gets a metadata.MonitorSystem by mysql cluster identify
+func (dr *DASRepo) GetMonitorSystemByClusterID(clusterID int) (demetadata.MonitorSystem, error) {
+	mysqlClusterService := metadata.NewMySQLClusterServiceWithDefault()
+	err := mysqlClusterService.GetByID(clusterID)
 	if err != nil {
 		return nil, err
 	}
-	mcs := clusterInfo.MySQLClusters[constant.ZeroInt]
-	monitorSystemID := mcs.GetMonitorSystemID()
 
-	monitorSystemInfo := metadata.NewMonitorSystemServiceWithDefault()
-	err = monitorSystemInfo.GetByID(monitorSystemID)
+	monitorSystemService := metadata.NewMonitorSystemServiceWithDefault()
+	err = monitorSystemService.GetByID(mysqlClusterService.GetMySQLClusters()[constant.ZeroInt].GetMonitorSystemID())
 	if err != nil {
 		return nil, err
 	}
-	msi := monitorSystemInfo.MonitorSystems[constant.ZeroInt]
-	return msi, nil
+
+	return monitorSystemService.GetMonitorSystems()[constant.ZeroInt], nil
 }
 
-// Save save dasInfo into table
-func (r *DASRepo) Save(mysqlClusterID, mysqlServerID, dbID int, sqlID string, startTime, endTime time.Time, limit, offset int) error {
-	sql := "\t\tinsert into t_query_operation_info(mysql_cluster_id, mysql_server_id, db_id, sql_id, start_time, end_time, `limit`, offset) values(?, ?, ?, ?, ?, ?, ?, ?);"
+// Save saves dasInfo into table
+func (dr *DASRepo) Save(mysqlClusterID, mysqlServerID, dbID int, sqlID string, startTime, endTime time.Time, limit, offset int) error {
+	sql := `
+		insert into t_query_operation_info(mysql_cluster_id, mysql_server_id, db_id, sql_id, start_time, end_time, limit, offset)
+		values(?, ?, ?, ?, ?, ?, ?, ?);
+	`
 
-	_, err := r.Execute(sql, mysqlClusterID, mysqlServerID, dbID, sqlID, startTime.Format(constant.DefaultTimeLayout), endTime.Format(constant.DefaultTimeLayout), limit, offset)
+	_, err := dr.Execute(sql, mysqlClusterID, mysqlServerID, dbID, sqlID, startTime.Format(constant.DefaultTimeLayout),
+		endTime.Format(constant.DefaultTimeLayout), limit, offset)
 
 	return err
 }
