@@ -305,10 +305,7 @@ func (dr *DASRepo) GetMonitorSystemByClusterID(clusterID int) (demetadata.Monito
 
 // Save saves dasInfo into table
 func (dr *DASRepo) Save(mysqlClusterID, mysqlServerID, dbID int, sqlID string, startTime, endTime time.Time, limit, offset int) error {
-	sql := `
-		insert into t_query_operation_info(mysql_cluster_id, mysql_server_id, db_id, sql_id, start_time, end_time, limit, offset)
-		values(?, ?, ?, ?, ?, ?, ?, ?);
-	`
+	sql := "\t\tinsert into t_query_operation_info(mysql_cluster_id, mysql_server_id, db_id, sql_id, start_time, end_time, `limit`, offset) values(?, ?, ?, ?, ?, ?, ?, ?);"
 
 	_, err := dr.Execute(sql, mysqlClusterID, mysqlServerID, dbID, sqlID, startTime.Format(constant.DefaultTimeLayout),
 		endTime.Format(constant.DefaultTimeLayout), limit, offset)
