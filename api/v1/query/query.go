@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	mysqlClusterIDJSON = "mysqlClusterID"
-	mysqlServerIDJSON  = "mysqlServerID"
+	mysqlClusterIDJSON = "mysql_cluster_id"
+	mysqlServerIDJSON  = "mysql_server_id"
 	dbIDJSON           = "db_id"
 	sqlIDJSON          = "sql_id"
 )
@@ -26,7 +26,7 @@ const (
 // @Summary get slow queries by mysql server id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/query/cluster/:mysqlClusterID [get]
+// @Router /api/v1/query/cluster/:mysql_cluster_id [get]
 func GetByMySQLClusterID(c *gin.Context) {
 	// get data
 	mysqlClusterIDStr := c.Param(mysqlClusterIDJSON)
@@ -83,7 +83,7 @@ func GetByMySQLClusterID(c *gin.Context) {
 // @Summary get slow queries by mysql server id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/query/server/:mysqlServerID [get]
+// @Router /api/v1/query/server/:mysql_server_id [get]
 func GetByMySQLServerID(c *gin.Context) {
 	// get data
 	mysqlServerIDStr := c.Param(mysqlServerIDJSON)
@@ -140,7 +140,7 @@ func GetByMySQLServerID(c *gin.Context) {
 // @Summary get slow queries by db id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/query/db/:dbID [get]
+// @Router /api/v1/query/db/:db_id [get]
 func GetByDBID(c *gin.Context) {
 	// get data
 	dbIDStr := c.Param(dbIDJSON)
@@ -210,7 +210,7 @@ func GetByDBID(c *gin.Context) {
 // @Summary get slow query by query id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/query/:sqlID [get]
+// @Router /api/v1/query/:sql_id [get]
 func GetBySQLID(c *gin.Context) {
 	// get data
 	sqlIDStr := c.Param(sqlIDJSON)

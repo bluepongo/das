@@ -7,23 +7,23 @@ Accept: application/json
 {"startTime": "2021-08-02 09:02:22.346672", "endTime":"2021-09-02 10:18:40.467998","limit":"5","offset":"0"}
 
 ### query.GetByMySQLServerID
-GET http://{{baseURL}}/api/v1/query/server/1
+GET http://{{baseURL}}/api/v1/query/server/3
 Accept: application/json
 
 {"startTime": "2021-09-02 09:02:22.346672", "endTime":"2021-09-02 10:18:40.467998","limit":"5","offset":"0"}
 
 
 ### query.GetByDBID
-GET http://{{baseURL}}/api/v1/query/db/:dbID
+GET http://{{baseURL}}/api/v1/query/db/2
 Accept: application/json
 
-{"startTime": "2021-09-02 09:02:22.346672", "endTime":"2021-09-02 10:18:40.467998","limit":"5","offset":"0"}
+{"mysqlServerID":"4","startTime": "2021-09-02 09:02:22.346672", "endTime":"2021-09-02 10:18:40.467998","limit":"5","offset":"0"}
 
 ### query.GetByMySQLSQLID
-GET http://{{baseURL}}/api/v1/query/:sqlID
+GET http://{{baseURL}}/api/v1/query/999ECD050D719733
 Accept: application/json
 
-{"startTime": "2021-09-02 09:02:22.346672", "endTime":"2021-09-02 10:18:40.467998","limit":"5","offset":"0"}
+{"mysqlServerID":"4", "startTime": "2021-09-02 09:02:22.346672", "endTime":"2021-09-02 10:18:40.467998","limit":"5","offset":"0"}
 
 
 
