@@ -1,4 +1,5 @@
-#1. 健康检查配置
+# 1. 健康检查配置
+
 健康检查按照若干个检查项来进行打分, 每个检查项独立以满分100分来进行打分, 并乘以该项的权重后计入总分, 所有检查项的权重和应等于100.
 
 DAS的健康检查模块会从数据库读取配置,表结构如下:
@@ -23,7 +24,8 @@ CREATE TABLE `t_hc_default_engine_config` (
 ```
 
 
-#2. 检查项
+# 2. 检查项
+
 目前检查项共有10种,分别为
 - 参数配置
 - cpu使用率
@@ -36,7 +38,7 @@ CREATE TABLE `t_hc_default_engine_config` (
 - 表大小
 - 慢查询
 
-其中参数配置又可以细分为19个子项, 分别为:
+其中参数配置又可以细分为19个子项, 分别为
 
 |参数名                         |建议值        |
 |------------------------------|-------------|
@@ -61,9 +63,9 @@ CREATE TABLE `t_hc_default_engine_config` (
 |performance_schema            |ON           |
 
 
-#3. 计分规则
+# 3. 计分规则
 
-##3.1. `参数配置`
+## 3.1. `参数配置`
 - 统计所有不符合要求的参数配置, 记为`count`
 - 计算`count` * `score_deduction_per_unit_high`, 记为`score_deduction`
 - 如果`score_deduction` < `max_score_deduction_high`, 则令`score_deduction`等于`max_score_deduction_high`, 即以`max_score_deduction_high`为扣分上限
@@ -72,43 +74,43 @@ CREATE TABLE `t_hc_default_engine_config` (
 - `weighted_item_score`为检查项`参数配置`的加权分数
 
 
-##3.2. 其他检查项
+## 3.2. 其他检查项
 
 通过调用PMM接口获取该检查项的监控数据并循环遍历该数据
 
-###3.2.1. 计算高危数据的扣分数
+### 3.2.1. 计算高危数据的扣分数
 - 对所有值高于`high_watermark`的值进行求和, 记为`sum_high`
 - 对所有值高于`high_watermark`的值进行计数, 记为`count_high`
 - 计算`sum_high` / `count_high`,以求得平均数, 记为`avg_high`
 - 计算`avg_high` / `unit` * `score_deduction_per_unit_high`, 记为`score_deduction_high`
 - 如果`score_deduction_high`的值大于`max_score_deduction_high`, 则令`score_deduction_high`等于`max_score_deduction_high`, 即以`max_score_deduction_high`为扣分上限
 
-###3.2.2. 计算中危数据的扣分数
+### 3.2.2. 计算中危数据的扣分数
 - 对所有值处于`low_watermark`与`high_waterark`的值进行求和, 记为`sum_medium`
 - 对所有值处于`low_watermark`与`high_waterark`的值进行计数, 记为`count_medium`
 - 计算`sum_medium` / `count_medium`,以求得平均数, 记为`avg_medium`
 - 计算`avg_medium` / `unit` * `score_deduction_per_unit_medium`, 记为`score_deduction_medium`
 - 如果`score_deduction_medium`的值大于`max_score_deduction_medium`, 则令`score_deduction_medium`等于`max_score_deduction_medium`, 即以`max_score_deduction_medium`为扣分上限
 
-###3.2.3. 计算加权分数
+### 3.2.3. 计算加权分数
 - 计算`100` - `score_deduction_high` - `score_deduction_medium`, 记为`item_score`
 - 计算`item_score` * `item_weight`,  记为`weighted_item_score`
 -  `weighted_item_score`为该检查项的加权分数
 
 
-##3.3. 计算总分
+## 3.3. 计算总分
 
 对所有检查项的加权分数进行求和即得到该实例的总分数, 代表该实例总体的健康状况
 
 
-##3.4. 其他说明
+## 3.4. 其他说明
 
 - 慢查询以`最大单次扫描行数`作为监控数据并按3.2中的规则进行计分
 - 低于`low_watermark`的数值认为是正常使用量, 不对其进行扣分
 - `low_watermark`的值必须小于`high_watermark`
 
 
-#4. 初始化数据
+# 4. 初始化数据
 
 |item_name|item_weight|low_watermark|high_watermark|unit|score_deduction_per_unit_high|max_score_deduction_high|score_deduction_per_unit_medium|max_score_deduction_medium|
 |:--------|----------:|------------:|-------------:|---:|----------------------------:|-----------------------:|------------------------------:|-------------------------:|
