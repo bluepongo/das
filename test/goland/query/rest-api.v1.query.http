@@ -1,28 +1,28 @@
 @baseURL = 127.0.0.1:6090
 
 ### query.GetByMySQLClusterID
-GET http://{{baseURL}}/api/v1/query/cluster/:mysqlClusterID 
+GET http://{{baseURL}}/api/v1/query/cluster/3
 Accept: application/json
 
-{"startTime": "...", "endTime":"...","limit":0,"offset":0}
+{"start_time": "2021-08-29 09:02:22.346672", "end_time":"2021-10-02 10:18:40.467998","limit":"5","offset":"0"}
 
 ### query.GetByMySQLServerID
-GET http://{{baseURL}}/api/v1/query/server/:mysqlServerID
+GET http://{{baseURL}}/api/v1/query/server/2
 Accept: application/json
 
-{"startTime": "...", "endTime":"...","limit":0,"offset":0}
+{"start_time": "2021-08-29 09:02:22.346672", "end_time":"2021-10-02 10:18:40.467998","limit":"5","offset":"0"}
+
 
 ### query.GetByDBID
-GET http://{{baseURL}}/api/v1/query/db/:dbID
+GET http://{{baseURL}}/api/v1/query/db/2
 Accept: application/json
 
-{"startTime": "...", "endTime":"...","limit":0,"offset":0,"mysql_server_id":0}
+{"mysql_server_id":"4","start_time": "2021-08-29 09:02:22.346672", "end_time":"2021-10-02 10:18:40.467998","limit":"5","offset":"0"}
 
 ### query.GetByMySQLSQLID
-GET http://{{baseURL}}/api/v1/query/:sqlID
+GET http://{{baseURL}}/api/v1/query/A58343E0C8847EFA
 Accept: application/json
 
-{"startTime": "...", "endTime":"...","limit":0,"offset":0,"mysql_server_id":0}
-
+{"mysql_server_id":"4", "start_time": "2021-08-29 09:02:22.346672", "end_time":"2021-10-02 10:18:40.467998","limit":"5","offset":"0"}
 
 

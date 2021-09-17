@@ -177,7 +177,7 @@ func GetByDBID(c *gin.Context) {
 
 	mysqlServerIDStr, exists := dataMap[mysqlServerIDJSON]
 	if !exists {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, fmt.Errorf("%s not exists", mysqlClusterIDJSON))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, fmt.Errorf("%s not exists", mysqlServerIDJSON))
 	}
 
 	mysqlServerID, err := strconv.Atoi(mysqlServerIDStr)
@@ -235,7 +235,7 @@ func GetBySQLID(c *gin.Context) {
 
 	mysqlServerIDStr, exists := dataMap[mysqlServerIDJSON]
 	if !exists {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, fmt.Errorf("%s not exists", mysqlClusterIDJSON))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, fmt.Errorf("%s not exists", mysqlServerIDStr))
 	}
 
 	mysqlServerID, err := strconv.Atoi(mysqlServerIDStr)
@@ -254,7 +254,7 @@ func GetBySQLID(c *gin.Context) {
 	service := query.NewServiceWithDefault(config)
 	err = service.GetBySQLID(mysqlServerID, sqlIDStr)
 	if err != nil {
-		resp.ResponseNOK(c, msgquery.DebugQueryGetBySQLID, sqlIDStr, err.Error())
+		resp.ResponseNOK(c, msgquery.DebugQueryGetBySQLID, mysqlServerID, sqlIDStr, err.Error())
 		return
 	}
 
@@ -264,7 +264,7 @@ func GetBySQLID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 	}
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgquery.DebugQueryGetBySQLID, sqlIDStr).Error())
+	log.Debug(message.NewMessage(msgquery.DebugQueryGetBySQLID, mysqlServerID, sqlIDStr).Error())
 
 	// response
 	resp.ResponseOK(c, jsonStr, msgquery.InfoQueryGetBySQLID, sqlIDStr)

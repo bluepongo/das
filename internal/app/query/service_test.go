@@ -86,7 +86,6 @@ func TestService_All(t *testing.T) {
 	TestService_GetByDBID(t)
 	TestService_GetBySQLID(t)
 	TestService_Marshal(t)
-	TestService_MarshalWithFields(t)
 }
 
 func TestService_GetConfig(t *testing.T) {
@@ -161,11 +160,4 @@ func TestService_Marshal(t *testing.T) {
 
 	_, err := service.Marshal()
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
-}
-
-func TestService_MarshalWithFields(t *testing.T) {
-	asst := assert.New(t)
-
-	_, err := service.MarshalWithFields(queryQueriesStruct)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields(fields ...string) failed", err))
 }

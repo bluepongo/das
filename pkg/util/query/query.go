@@ -58,7 +58,7 @@ func GetConfig(dataMap map[string]string) (*query.Config, error) {
 			return nil, err
 		}
 
-		config.SetLimit(offset)
+		config.SetOffset(offset)
 	}
 	// validate config
 	if !config.IsValid() {
