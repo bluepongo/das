@@ -17,12 +17,12 @@ const (
 )
 
 const (
-	testServiceName = "192-168-10-220:3306"
+	testServiceName = "192-168-10-219:3306"
 	testDbName      = "test"
-	testSQLID       = "999ECD050D719733"
+	testSQLID       = "A58343E0C8847EFA"
 	serverID        = 3
 	serverName      = "test"
-	mysqlServerID   = 2
+	mysqlServerID   = 4
 )
 
 func TestQueryRepositoryAll(t *testing.T) {
@@ -138,6 +138,7 @@ func TestClickhouseRepo_GetByDBName(t *testing.T) {
 
 	cr := monitorRepo
 	qu, err := cr.GetByDBName(testServiceName, testDbName)
+
 	asst.Equal(nil, err, "test ClickhouseRepo_GetByDBName Failed")
 	asst.Equal(true, qu != nil, "test ClickhouseRepo_GetByDBName Failed")
 
