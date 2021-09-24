@@ -28,48 +28,22 @@ const (
 	// sum(mysqldumpnbubackup)/count(mysqldumpnbubackup)+
 	// sum(nbubackup)/count(nbubackup))/4
 	PrometheusBackupV1 = `
-		clamp_max(sum by () ((avg by (mode) (
-		(clamp_max(rate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or
-		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or
-		sum by () (
-		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m]) or
-		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m])) unless
-		(avg_over_time(node_cpu_average{instance=~"%s",mode="total",job="rds-basic"}[5m]) or
-		avg_over_time(node_cpu_average{instance=~"%s",mode="total",job="rds-basic"}[5m]))
-		),100)
+		(sum(mysqldumpbackup{instance=~"%s",type="status"})/count(mysqldumpbackup{instance=~"%s",type="status"})+
+		sum(xtrabackup{instance=~"%s",type="status"})/count(xtrabackup{instance=~"%s",type="status"})+
+		sum(mysqldumpnbubackup{instance=~"%s"})/count(mysqldumpnbubackup{instance=~"%s"})+
+		sum(nbubackup{instance=~"%s"})/count(nbubackup{instance=~"%s"}))/4
     `
 	PrometheusBackupV2 = `
-		clamp_max(sum by () ((avg by (mode) ( 
-		(clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or 
-		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or 
-		sum by () (
-		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m]) or 
-		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m])) unless
-		(avg_over_time(node_cpu_average{node_name=~"%s",mode="total",job="rds-basic"}[5m]) or 
-		avg_over_time(node_cpu_average{node_name=~"%s",mode="total",job="rds-basic"}[5m]))
-		),100)
+		(sum(mysqldumpbackup{instance=~"%s",type="status"})/count(mysqldumpbackup{instance=~"%s",type="status"})+
+		sum(xtrabackup{instance=~"%s",type="status"})/count(xtrabackup{instance=~"%s",type="status"})+
+		sum(mysqldumpnbubackup{instance=~"%s"})/count(mysqldumpnbubackup{instance=~"%s"})+
+		sum(nbubackup{instance=~"%s"})/count(nbubackup{instance=~"%s"}))/4
     `
 	PrometheusStatisticV1 = `
-		clamp_max(sum by () ((avg by (mode) (
-		(clamp_max(rate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or
-		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or
-		sum by () (
-		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m]) or
-		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m])) unless
-		(avg_over_time(node_cpu_average{instance=~"%s",mode="total",job="rds-basic"}[5m]) or
-		avg_over_time(node_cpu_average{instance=~"%s",mode="total",job="rds-basic"}[5m]))
-		),100)
+	(sum(mysqlupdbstat{instance=~"%s",type="dbupstatus"})/count(mysqlupdbstat{instance=~"%s",type="dbupstatus"}))
     `
 	PrometheusStatisticV2 = `
-		clamp_max(sum by () ((avg by (mode) ( 
-		(clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or 
-		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or 
-		sum by () (
-		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m]) or 
-		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m])) unless
-		(avg_over_time(node_cpu_average{node_name=~"%s",mode="total",job="rds-basic"}[5m]) or 
-		avg_over_time(node_cpu_average{node_name=~"%s",mode="total",job="rds-basic"}[5m]))
-		),100)
+	(sum(mysqlupdbstat{node_name=~"%s",type="dbupstatus"})/count(mysqlupdbstat{node_name=~"%s",type="dbupstatus"}))
     `
 	PrometheusCPUUsageV1 = `
 		clamp_max(sum by () ((avg by (mode) (
