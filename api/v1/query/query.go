@@ -26,7 +26,7 @@ const (
 // @Summary get slow queries by mysql server id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/query/cluster/:mysqlClusterID [get]
+// @Router /api/v1/query/cluster/:mysql_cluster_id [get]
 func GetByMySQLClusterID(c *gin.Context) {
 	// get data
 	mysqlClusterIDStr := c.Param(mysqlClusterIDJSON)
@@ -46,12 +46,6 @@ func GetByMySQLClusterID(c *gin.Context) {
 		return
 	}
 	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
-		return
-	}
-	dataMap = make(map[string]string)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
@@ -89,7 +83,7 @@ func GetByMySQLClusterID(c *gin.Context) {
 // @Summary get slow queries by mysql server id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/query/server/:mysqlServerID [get]
+// @Router /api/v1/query/server/:mysql_server_id [get]
 func GetByMySQLServerID(c *gin.Context) {
 	// get data
 	mysqlServerIDStr := c.Param(mysqlServerIDJSON)
@@ -146,7 +140,7 @@ func GetByMySQLServerID(c *gin.Context) {
 // @Summary get slow queries by db id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/query/db/:dbID [get]
+// @Router /api/v1/query/db/:db_id [get]
 func GetByDBID(c *gin.Context) {
 	// get data
 	dbIDStr := c.Param(dbIDJSON)
@@ -183,7 +177,7 @@ func GetByDBID(c *gin.Context) {
 
 	mysqlServerIDStr, exists := dataMap[mysqlServerIDJSON]
 	if !exists {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, fmt.Errorf("%s not exists", mysqlClusterIDJSON))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, fmt.Errorf("%s not exists", mysqlServerIDJSON))
 	}
 
 	mysqlServerID, err := strconv.Atoi(mysqlServerIDStr)
@@ -216,7 +210,7 @@ func GetByDBID(c *gin.Context) {
 // @Summary get slow query by query id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/query/:sqlID [get]
+// @Router /api/v1/query/:sql_id [get]
 func GetBySQLID(c *gin.Context) {
 	// get data
 	sqlIDStr := c.Param(sqlIDJSON)
@@ -241,7 +235,7 @@ func GetBySQLID(c *gin.Context) {
 
 	mysqlServerIDStr, exists := dataMap[mysqlServerIDJSON]
 	if !exists {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, fmt.Errorf("%s not exists", mysqlClusterIDJSON))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, fmt.Errorf("%s not exists", mysqlServerIDStr))
 	}
 
 	mysqlServerID, err := strconv.Atoi(mysqlServerIDStr)
@@ -260,7 +254,7 @@ func GetBySQLID(c *gin.Context) {
 	service := query.NewServiceWithDefault(config)
 	err = service.GetBySQLID(mysqlServerID, sqlIDStr)
 	if err != nil {
-		resp.ResponseNOK(c, msgquery.DebugQueryGetBySQLID, sqlIDStr, err.Error())
+		resp.ResponseNOK(c, msgquery.DebugQueryGetBySQLID, mysqlServerID, sqlIDStr, err.Error())
 		return
 	}
 
@@ -270,7 +264,7 @@ func GetBySQLID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 	}
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgquery.DebugQueryGetBySQLID, sqlIDStr).Error())
+	log.Debug(message.NewMessage(msgquery.DebugQueryGetBySQLID, mysqlServerID, sqlIDStr).Error())
 
 	// response
 	resp.ResponseOK(c, jsonStr, msgquery.InfoQueryGetBySQLID, sqlIDStr)

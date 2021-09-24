@@ -5,19 +5,10 @@ import (
 	"time"
 
 	"github.com/romberli/go-util/common"
-	"github.com/romberli/go-util/middleware/mysql"
-	"github.com/romberli/log"
 	"github.com/stretchr/testify/assert"
 )
 
 const (
-	defaultResultDBAddress = "192.168.10.210:3306"
-	defaultResultHostIP    = "127.0.0.1"
-	defaultResultPortNum   = 3306
-	defaultResultDBName    = "das"
-	defaultResultDBUser    = "root"
-	defaultResultDBPass    = "root"
-
 	defaultResultID                                = 1
 	defaultResultOperationID                       = 1
 	defaultResultWeightedAverageScore              = 1
@@ -61,19 +52,8 @@ const (
 	defaultResultDelFlag                           = 0
 )
 
-func rInitRepository() *DASRepo {
-	pool, err := mysql.NewPoolWithDefault(defaultResultDBAddress, defaultResultDBName, defaultResultDBUser, defaultResultDBPass)
-	if err != nil {
-		log.Error(common.CombineMessageWithError("initRepository() failed", err))
-		return nil
-	}
-	return NewDASRepo(pool)
-}
-
-var rRepo = rInitRepository()
-
 func rCreateService() (*Service, error) {
-	var result = NewResult(rRepo,
+	var result = NewResult(testDASRepo,
 		defaultResultOperationID, defaultResultWeightedAverageScore,
 		defaultResultDBConfigScore, defaultResultDBConfigData, defaultResultDBConfigAdvice,
 		defaultResultBackupScore, defaultResultBackupData, defaultResultBackupHigh,
@@ -87,19 +67,19 @@ func rCreateService() (*Service, error) {
 		defaultResultTableRowsScore, defaultResultTableRowsData, defaultResultTableRowsHigh,
 		defaultResultTableSizeScore, defaultResultTableSizeData, defaultResultTableSizeHigh,
 		defaultResultSlowQueryScore, defaultResultSlowQueryData, defaultResultSlowQueryAdvice)
-	err := rRepo.SaveResult(result)
+	err := testDASRepo.SaveResult(result)
 	if err != nil {
 		return nil, err
 	}
 	return &Service{
-		DASRepo: rRepo,
+		DASRepo: testDASRepo,
 		Result:  result,
 	}, nil
 }
 
 func rDeleteHCResultByOperationID(operationID int) error {
 	sql := `delete from t_hc_result where operation_id = ?`
-	_, err := rRepo.Execute(sql, operationID)
+	_, err := testDASRepo.Execute(sql, operationID)
 	return err
 }
 
@@ -808,7 +788,7 @@ func TestResult_Set(t *testing.T) {
 
 	fields := make(map[string]interface{})
 	fields["ID"] = defaultResultID
-	fields["operationID"] = defaultResultOperationID
+	fields["OperationID"] = defaultResultOperationID
 
 	err = result.Set(fields)
 	asst.Nil(err, common.CombineMessageWithError("test Set() failed", err))

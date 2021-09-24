@@ -1,13 +1,13 @@
-package sqladvisor
+package alert
 
 import (
 	"github.com/romberli/das/global"
-	"github.com/romberli/das/internal/dependency/sqladvisor"
+	"github.com/romberli/das/internal/dependency/alert"
 	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/log"
 )
 
-var _ sqladvisor.Repository = (*Repository)(nil)
+var _ alert.Repository = (*Repository)(nil)
 
 type Repository struct {
 	Database middleware.Pool
@@ -32,7 +32,7 @@ func (r *Repository) Execute(command string, args ...interface{}) (middleware.Re
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("sqladvisor DASRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("alert DASRepo.Execute(): close database connection failed.\n%s", err.Error())
 		}
 	}()
 
@@ -45,9 +45,6 @@ func (r *Repository) Transaction() (middleware.Transaction, error) {
 }
 
 // Save saves sql tuning advice into the middleware
-func (r *Repository) Save(dbID int, sqlText, advice, message string) error {
-	sql := `insert into t_sa_operation_info(db_id, sql_text, advice, message) values(?, ?, ?, ?);`
-	_, err := r.Execute(sql, dbID, sqlText, advice, message)
-
-	return err
+func (r *Repository) Save(url string, toAddr, ccAddr []string, content string, status int) error {
+	return nil
 }

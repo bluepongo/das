@@ -59,6 +59,4 @@ type Service interface {
 	GetBySQLID(mysqlServerID int, sqlID string) error
 	// Marshal marshals Service.Queries to json bytes
 	Marshal() ([]byte, error)
-	// MarshalWithFields marshals only specified fields of the Service to json bytes
-	MarshalWithFields(fields ...string) ([]byte, error)
 }

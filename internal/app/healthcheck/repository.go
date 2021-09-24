@@ -2,6 +2,7 @@ package healthcheck
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/go-version"
@@ -31,7 +32,7 @@ const (
 	binlogDirVariable = "log_bin_base"
 
 	minTableRows      = 30000000
-	minRowsExamined   = 1000000
+	minRowsExamined   = 1
 	SlowQueryNumLimit = 100
 )
 
@@ -171,7 +172,7 @@ func (dr *DASRepo) IsRunning(mysqlServerID int) (bool, error) {
 	return count != 0, nil
 }
 
-// InitOperation creates a operationInfo in the middleware
+// InitOperation creates a testOperationInfo in the middleware
 func (dr *DASRepo) InitOperation(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
 	startTimeStr := startTime.Format(constant.TimeLayoutSecond)
 	endTimeStr := endTime.Format(constant.TimeLayoutSecond)
@@ -316,9 +317,14 @@ func (amr *ApplicationMySQLRepo) GetOperationInfo() *OperationInfo {
 	return amr.operationInfo
 }
 
+// getConnection returns the connection
+func (amr *ApplicationMySQLRepo) getConnection() *mysql.Conn {
+	return amr.conn
+}
+
 // Close closes the application mysql connection
 func (amr *ApplicationMySQLRepo) Close() error {
-	return amr.conn.Close()
+	return amr.getConnection().Close()
 }
 
 // GetVariables gets db config with given items
@@ -347,7 +353,7 @@ func (amr *ApplicationMySQLRepo) GetVariables(items []string) ([]healthcheck.Var
 		sql = fmt.Sprintf(applicationMySQLVariables, informationSchema, inClause)
 	}
 	// get result
-	result, err := amr.conn.Execute(sql)
+	result, err := amr.getConnection().Execute(sql)
 	if err != nil {
 		return nil, err
 	}
@@ -380,7 +386,7 @@ func (amr *ApplicationMySQLRepo) GetMySQLDirs() ([]string, error) {
 
 // GetLargeTables gets the large tables
 func (amr *ApplicationMySQLRepo) GetLargeTables() ([]healthcheck.Table, error) {
-	result, err := amr.conn.Execute(applicationMySQLTableSize, minTableRows)
+	result, err := amr.getConnection().Execute(applicationMySQLTableSize, minTableRows)
 	if err != nil {
 		return nil, err
 	}
@@ -414,6 +420,11 @@ func (pr *PrometheusRepo) GetOperationInfo() *OperationInfo {
 	return pr.operationInfo
 }
 
+// getConnection returns the connection
+func (pr *PrometheusRepo) getConnection() *prometheus.Conn {
+	return pr.conn
+}
+
 // GetFileSystems gets the file systems from the prometheus
 func (pr *PrometheusRepo) GetFileSystems() ([]healthcheck.FileSystem, error) {
 	var prometheusQuery string
@@ -430,11 +441,10 @@ func (pr *PrometheusRepo) GetFileSystems() ([]healthcheck.FileSystem, error) {
 		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
 	}
 
-	serviceName := pr.getServiceName()
-	prometheusQuery = fmt.Sprintf(prometheusQuery, serviceName)
+	prometheusQuery = fmt.Sprintf(prometheusQuery, pr.getNodeName())
 	log.Debugf("healthcheck PrometheusRepo.GetFileSystems() query: \n%s\n", prometheusQuery)
 	// get data
-	result, err := pr.conn.Execute(prometheusQuery)
+	result, err := pr.getConnection().Execute(prometheusQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -514,28 +524,27 @@ func (pr *PrometheusRepo) GetCPUUsage() ([]healthcheck.PrometheusData, error) {
 		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
 	}
 
-	serviceName := pr.getServiceName()
-	prometheusQuery = fmt.Sprintf(prometheusQuery, serviceName, serviceName, serviceName, serviceName, serviceName, serviceName)
+	nodeName := pr.getNodeName()
+	prometheusQuery = fmt.Sprintf(prometheusQuery, nodeName, nodeName, nodeName, nodeName, nodeName, nodeName)
 	log.Debugf("healthcheck PrometheusRepo.GetCPUUsage() query: \n%s\n", prometheusQuery)
 
 	return pr.execute(prometheusQuery)
 }
 
 // GetIOUtil gets the io util
-func (pr *PrometheusRepo) GetIOUtil(devices []string) ([]healthcheck.PrometheusData, error) {
+func (pr *PrometheusRepo) GetIOUtil() ([]healthcheck.PrometheusData, error) {
 	var prometheusQuery string
 
-	devs := common.ConvertStringSliceToString(devices, constant.VerticalBarString)
-	serviceName := pr.getServiceName()
+	nodeName := pr.getNodeName()
 
 	// prepare query
 	switch pr.getPMMVersion() {
 	case 1:
 		// pmm 1.x
-		prometheusQuery = fmt.Sprintf(PrometheusIOUtilV1, devs, serviceName, devs, serviceName)
+		prometheusQuery = fmt.Sprintf(PrometheusIOUtilV1, nodeName, nodeName)
 	case 2:
 		// pmm 2.x
-		prometheusQuery = fmt.Sprintf(PrometheusIOUtilV2, devs, serviceName, devs, serviceName, devs, serviceName, devs, serviceName)
+		prometheusQuery = fmt.Sprintf(PrometheusIOUtilV2, nodeName, nodeName, nodeName, nodeName)
 	default:
 		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
 	}
@@ -550,16 +559,16 @@ func (pr *PrometheusRepo) GetDiskCapacityUsage(mountPoints []string) ([]healthch
 	var prometheusQuery string
 
 	mps := common.ConvertStringSliceToString(mountPoints, constant.VerticalBarString)
-	serviceName := pr.getServiceName()
+	nodeName := pr.getNodeName()
 
 	// prepare query
 	switch pr.getPMMVersion() {
 	case 1:
 		// pmm 1.x
-		prometheusQuery = fmt.Sprintf(PrometheusDiskCapacityV1, serviceName, mps, serviceName, mps)
+		prometheusQuery = fmt.Sprintf(PrometheusDiskCapacityV1, nodeName, mps, nodeName, mps)
 	case 2:
 		// pmm 2.x
-		prometheusQuery = fmt.Sprintf(PrometheusDiskCapacityV2, serviceName, mps, serviceName, mps, serviceName, mps, serviceName, mps)
+		prometheusQuery = fmt.Sprintf(PrometheusDiskCapacityV2, nodeName, mps, nodeName, mps, nodeName, mps, nodeName, mps)
 	default:
 		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
 	}
@@ -638,12 +647,23 @@ func (pr *PrometheusRepo) GetCacheMissRatio() ([]healthcheck.PrometheusData, err
 	return pr.execute(prometheusQuery)
 }
 
-// getPMMVersion return the pmm version
+// getServiceName returns the service name
 func (pr *PrometheusRepo) getServiceName() string {
 	return pr.GetOperationInfo().GetMySQLServer().GetServiceName()
 }
 
-// getPMMVersion return the pmm version
+// getNodeName returns the node name
+func (pr *PrometheusRepo) getNodeName() string {
+	serviceName := pr.getServiceName()
+	strList := strings.Split(serviceName, constant.ColonString)
+	if len(strList) > constant.ZeroInt {
+		return strList[constant.ZeroInt]
+	}
+
+	return serviceName[:strings.LastIndex(serviceName, constant.DashString)]
+}
+
+// getPMMVersion returns the pmm version
 func (pr *PrometheusRepo) getPMMVersion() int {
 	return pr.GetOperationInfo().GetMonitorSystem().GetSystemType()
 }
@@ -651,7 +671,7 @@ func (pr *PrometheusRepo) getPMMVersion() int {
 // execute executes the given query
 func (pr *PrometheusRepo) execute(query string) ([]healthcheck.PrometheusData, error) {
 	// execute query
-	result, err := pr.conn.Execute(query, pr.GetOperationInfo().GetStartTime(),
+	result, err := pr.getConnection().Execute(query, pr.GetOperationInfo().GetStartTime(),
 		pr.GetOperationInfo().GetEndTime(), pr.GetOperationInfo().GetStep())
 	if err != nil {
 		return nil, err
@@ -677,6 +697,7 @@ type MySQLQueryRepo struct {
 	conn          *mysql.Conn
 }
 
+// NewMySQLQueryRepo returns the new *MySQLQueryRepo
 func NewMySQLQueryRepo(operationInfo *OperationInfo, conn *mysql.Conn) *MySQLQueryRepo {
 	return &MySQLQueryRepo{
 		operationInfo: operationInfo,
@@ -684,17 +705,25 @@ func NewMySQLQueryRepo(operationInfo *OperationInfo, conn *mysql.Conn) *MySQLQue
 	}
 }
 
+// GetOperationInfo returns the operation information
 func (mqr *MySQLQueryRepo) GetOperationInfo() *OperationInfo {
 	return mqr.operationInfo
 }
 
-func (mqr *MySQLQueryRepo) Close() error {
-	return mqr.conn.Close()
+// getConnection returns the connection
+func (mqr *MySQLQueryRepo) getConnection() *mysql.Conn {
+	return mqr.conn
 }
 
+// Close closes the connection
+func (mqr *MySQLQueryRepo) Close() error {
+	return mqr.getConnection().Close()
+}
+
+// GetSlowQuery gets the slow query
 func (mqr *MySQLQueryRepo) GetSlowQuery() ([]depquery.Query, error) {
 	// get result
-	result, err := mqr.conn.Execute(MonitorMySQLQuery, mqr.getServiceName(), mqr.GetOperationInfo().GetStartTime(),
+	result, err := mqr.getConnection().Execute(MonitorMySQLQuery, mqr.getServiceName(), mqr.GetOperationInfo().GetStartTime(),
 		mqr.GetOperationInfo().GetEndTime(), minRowsExamined, SlowQueryNumLimit)
 	if err != nil {
 		return nil, err
@@ -727,6 +756,7 @@ type ClickhouseQueryRepo struct {
 	conn          *clickhouse.Conn
 }
 
+// NewClickhouseQueryRepo returns the new *ClickhouseQueryRepo
 func NewClickhouseQueryRepo(operationInfo *OperationInfo, conn *clickhouse.Conn) *ClickhouseQueryRepo {
 	return &ClickhouseQueryRepo{
 		operationInfo: operationInfo,
@@ -734,18 +764,27 @@ func NewClickhouseQueryRepo(operationInfo *OperationInfo, conn *clickhouse.Conn)
 	}
 }
 
+// GetOperationInfo returns the operation information
 func (cqr *ClickhouseQueryRepo) GetOperationInfo() *OperationInfo {
 	return cqr.operationInfo
 }
 
-func (cqr *ClickhouseQueryRepo) Close() error {
-	return cqr.conn.Close()
+// getConnection returns the connection
+func (cqr *ClickhouseQueryRepo) getConnection() *clickhouse.Conn {
+	return cqr.conn
 }
 
+// Close closes the connection
+func (cqr *ClickhouseQueryRepo) Close() error {
+	return cqr.getConnection().Close()
+}
+
+// GetSlowQuery gets the slow query
 func (cqr *ClickhouseQueryRepo) GetSlowQuery() ([]depquery.Query, error) {
 	// get result
-	result, err := cqr.conn.Execute(MonitorClickhouseQuery, cqr.getServiceName(), cqr.GetOperationInfo().GetStartTime(),
-		cqr.GetOperationInfo().GetEndTime(), minRowsExamined, SlowQueryNumLimit)
+	result, err := cqr.getConnection().Execute(MonitorClickhouseQuery, cqr.getServiceName(), cqr.GetOperationInfo().GetStartTime(),
+		cqr.GetOperationInfo().GetEndTime(), minRowsExamined, SlowQueryNumLimit,
+		cqr.getServiceName(), cqr.GetOperationInfo().GetStartTime(), cqr.GetOperationInfo().GetEndTime(), minRowsExamined)
 	if err != nil {
 		return nil, err
 	}
@@ -762,12 +801,12 @@ func (cqr *ClickhouseQueryRepo) GetSlowQuery() ([]depquery.Query, error) {
 	return queries, nil
 }
 
-// getPMMVersion return the pmm version
+// getServiceName returns the service name
 func (cqr *ClickhouseQueryRepo) getServiceName() string {
 	return cqr.GetOperationInfo().GetMySQLServer().GetServiceName()
 }
 
-// getPMMVersion return the pmm version
+// getPMMVersion returns the pmm version
 func (cqr *ClickhouseQueryRepo) getPMMVersion() int {
 	return cqr.GetOperationInfo().GetMonitorSystem().GetSystemType()
 }

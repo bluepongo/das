@@ -3,6 +3,7 @@ package healthcheck
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -34,23 +35,23 @@ const (
 	defaultOperationID      = 1
 	defaultMysqlServerID    = 1
 	newResultStatus         = 1
-	accuracyReviewStruct    = "accuracyReview"
+	accuracyReviewStruct    = "AccuracyReview"
 	newResultAccuracyReview = 1
 
 	defaultVariableName  = "datadir"
 	defaultVariableValue = "/mysqldata/mysql3306/data"
 
-	defaultFileSystemNum     = 3
-	defaultPrometheusDataNum = 61
+	defaultFileSystemNum     = 2
+	defaultPrometheusDataNum = 10081
 )
 
 var (
-	operationInfo        = initOperationInfo()
-	dasRepo              = initDASRepo()
-	applicationMySQLRepo = initApplicationMySQLRepo()
-	prometheusRepo       = initPrometheusRepo()
-	queryRepo            = initQueryRepo()
-	mountPoints, devices = initFileSystems()
+	testOperationInfo        = initOperationInfo()
+	testDASRepo              = initDASRepo()
+	testApplicationMySQLRepo = initApplicationMySQLRepo()
+	testPrometheusRepo       = initPrometheusRepo()
+	testQueryRepo            = initQueryRepo()
+	testMountPoints, _       = initFileSystems()
 )
 
 func initGlobalMySQLPool() error {
@@ -114,15 +115,15 @@ func initApplicationMySQLRepo() *ApplicationMySQLRepo {
 		os.Exit(1)
 	}
 
-	return NewApplicationMySQLRepo(operationInfo, conn)
+	return NewApplicationMySQLRepo(testOperationInfo, conn)
 }
 
 func initPrometheusRepo() *PrometheusRepo {
 	var config prometheus.Config
 
-	addr := fmt.Sprintf("%s:%d/%s", operationInfo.GetMonitorSystem().GetHostIP(),
-		operationInfo.GetMonitorSystem().GetPortNum(), operationInfo.GetMonitorSystem().GetBaseURL())
-	switch operationInfo.GetMonitorSystem().GetSystemType() {
+	addr := fmt.Sprintf("%s:%d/%s", testOperationInfo.GetMonitorSystem().GetHostIP(),
+		testOperationInfo.GetMonitorSystem().GetPortNum(), testOperationInfo.GetMonitorSystem().GetBaseURL())
+	switch testOperationInfo.GetMonitorSystem().GetSystemType() {
 	case 1:
 		config = prometheus.NewConfig(addr, prometheus.DefaultRoundTripper)
 	case 2:
@@ -135,28 +136,28 @@ func initPrometheusRepo() *PrometheusRepo {
 		os.Exit(1)
 	}
 
-	return NewPrometheusRepo(operationInfo, conn)
+	return NewPrometheusRepo(testOperationInfo, conn)
 }
 
 func initQueryRepo() healthcheck.QueryRepo {
 	var queryRepo healthcheck.QueryRepo
 
-	addr := fmt.Sprintf("%s:%d", operationInfo.GetMonitorSystem().GetHostIP(), operationInfo.GetMonitorSystem().GetPortNumSlow())
-	switch operationInfo.GetMonitorSystem().GetSystemType() {
+	addr := fmt.Sprintf("%s:%d", testOperationInfo.GetMonitorSystem().GetHostIP(), testOperationInfo.GetMonitorSystem().GetPortNumSlow())
+	switch testOperationInfo.GetMonitorSystem().GetSystemType() {
 	case 1:
 		conn, err := mysql.NewConn(addr, defaultQueryDBName, defaultDBUser, defaultDBPass)
 		if err != nil {
 			log.Error(common.CombineMessageWithError("initQueryRepo() failed", err))
 			os.Exit(1)
 		}
-		queryRepo = NewMySQLQueryRepo(operationInfo, conn)
+		queryRepo = NewMySQLQueryRepo(testOperationInfo, conn)
 	case 2:
 		conn, err := clickhouse.NewConnWithDefault(addr, defaultQueryDBName, constant.EmptyString, constant.EmptyString)
 		if err != nil {
 			log.Error(common.CombineMessageWithError("initQueryRepo() failed", err))
 			os.Exit(1)
 		}
-		queryRepo = NewClickhouseQueryRepo(operationInfo, conn)
+		queryRepo = NewClickhouseQueryRepo(testOperationInfo, conn)
 	}
 
 	return queryRepo
@@ -170,7 +171,7 @@ func initFileSystems() ([]string, []string) {
 	)
 
 	// get file systems
-	fileSystems, err := prometheusRepo.GetFileSystems()
+	fileSystems, err := testPrometheusRepo.GetFileSystems()
 	if err != nil {
 		log.Error(common.CombineMessageWithError("initFileSystems() failed", err))
 		os.Exit(1)
@@ -180,7 +181,7 @@ func initFileSystems() ([]string, []string) {
 		systemMountPoints = append(systemMountPoints, fileSystem.GetMountPoint())
 	}
 	// get mysql directories
-	dirs, err := applicationMySQLRepo.GetMySQLDirs()
+	dirs, err := testApplicationMySQLRepo.GetMySQLDirs()
 	if err != nil {
 		log.Error(common.CombineMessageWithError("initFileSystems() failed", err))
 		os.Exit(1)
@@ -213,20 +214,20 @@ func createResult() error {
 		defaultResultDiskCapacityUsageScore, defaultResultConnectionUsageScore, defaultResultAverageActiveSessionPercentsScore,
 		defaultResultCacheMissRatioScore, defaultResultTableRowsScore, defaultResultTableSizeScore,
 		defaultResultSlowQueryScore, defaultResultAccuracyReview)
-	err := dasRepo.SaveResult(hcInfo)
+	err := testDASRepo.SaveResult(hcInfo)
 
 	return err
 }
 
 func deleteResultByID(id int) error {
 	sql := `delete from t_hc_result where id = ?`
-	_, err := dasRepo.Execute(sql, id)
+	_, err := testDASRepo.Execute(sql, id)
 	return err
 }
 
 func deleteOperationInfoByID(id int) error {
 	sql := `delete from t_hc_operation_info where id = ?`
-	_, err := dasRepo.Execute(sql, id)
+	_, err := testDASRepo.Execute(sql, id)
 	return err
 }
 
@@ -270,7 +271,7 @@ func TestDASRepo_Execute(t *testing.T) {
 	asst := assert.New(t)
 
 	sql := "select 1;"
-	result, err := dasRepo.Execute(sql)
+	result, err := testDASRepo.Execute(sql)
 	asst.Nil(err, common.CombineMessageWithError("test Execute() failed", err))
 	r, err := result.GetInt(0, 0)
 	asst.Nil(err, common.CombineMessageWithError("test Execute() failed", err))
@@ -290,7 +291,7 @@ func TestDASRepo_Transaction(t *testing.T) {
 		slow_query_data, slow_query_advice, accuracy_review) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 	?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 	`
-	tx, err := dasRepo.Transaction()
+	tx, err := testDASRepo.Transaction()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	err = tx.Begin()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
@@ -318,7 +319,7 @@ func TestDASRepo_Transaction(t *testing.T) {
 	err = tx.Rollback()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	// check if rollbacked
-	entity, err := dasRepo.GetResultByOperationID(defaultResultOperationID)
+	entity, err := testDASRepo.GetResultByOperationID(defaultResultOperationID)
 	if entity != nil {
 		asst.Fail("test Transaction() failed")
 	}
@@ -329,7 +330,7 @@ func TestDASRepo_GetResultByOperationID(t *testing.T) {
 
 	err := createResult()
 	asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))
-	result, err := dasRepo.GetResultByOperationID(defaultResultOperationID)
+	result, err := testDASRepo.GetResultByOperationID(defaultResultOperationID)
 	asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))
 	operationID := result.GetOperationID()
 	asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))
@@ -343,14 +344,15 @@ func TestDASRepo_IsRunning(t *testing.T) {
 	asst := assert.New(t)
 
 	sql := `insert into t_hc_operation_info(mysql_server_id, start_time, end_time, step) values(?, ?, ?, ?);`
-	_, err := dasRepo.Execute(sql, defaultMysqlServerID, time.Now().Add(-constant.Week), time.Now(), defaultStep)
+	_, err := testDASRepo.Execute(sql, defaultMysqlServerID, time.Now().Add(-constant.Week).Format(constant.DefaultTimeLayout),
+		time.Now().Format(constant.DefaultTimeLayout), int(defaultStep.Seconds()))
 	asst.Nil(err, common.CombineMessageWithError("test IsRunning() failed", err))
-	result, err := dasRepo.IsRunning(defaultMysqlServerID)
+	result, err := testDASRepo.IsRunning(defaultMysqlServerID)
 	asst.Nil(err, common.CombineMessageWithError("test IsRunning() failed", err))
 	asst.False(result, "test IsRunning() failed")
 	// delete
 	sql = `select id from t_hc_operation_info order by id desc limit 0,1`
-	resultID, err := dasRepo.Execute(sql)
+	resultID, err := testDASRepo.Execute(sql)
 	asst.Nil(err, common.CombineMessageWithError("test IsRunning() failed", err))
 	id, err := resultID.GetInt(0, 0)
 	asst.Nil(err, common.CombineMessageWithError("test IsRunning() failed", err))
@@ -361,10 +363,10 @@ func TestDASRepo_IsRunning(t *testing.T) {
 func TestDASRepo_InitOperation(t *testing.T) {
 	asst := assert.New(t)
 
-	id, err := dasRepo.InitOperation(defaultMysqlServerID, time.Now().Add(-constant.Week), time.Now(), defaultStep)
+	id, err := testDASRepo.InitOperation(defaultMysqlServerID, time.Now().Add(-constant.Week), time.Now(), defaultStep)
 	asst.Nil(err, common.CombineMessageWithError("test InitOperation() failed", err))
 	sql := `select mysql_server_id from t_hc_operation_info where id = ?;`
-	result, err := dasRepo.Execute(sql, id)
+	result, err := testDASRepo.Execute(sql, id)
 	asst.Nil(err, common.CombineMessageWithError("test InitOperation() failed", err))
 	mysqlServerID, err := result.GetInt(0, 0)
 	asst.Nil(err, common.CombineMessageWithError("test InitOperation() failed", err))
@@ -377,12 +379,12 @@ func TestDASRepo_InitOperation(t *testing.T) {
 func TestDASRepo_UpdateOperationStatus(t *testing.T) {
 	asst := assert.New(t)
 
-	id, err := dasRepo.InitOperation(defaultMysqlServerID, time.Now().Add(-constant.Week), time.Now(), defaultStep)
+	id, err := testDASRepo.InitOperation(defaultMysqlServerID, time.Now().Add(-constant.Week), time.Now(), defaultStep)
 	asst.Nil(err, common.CombineMessageWithError("test UpdateOperationStatus() failed", err))
-	err = dasRepo.UpdateOperationStatus(id, newResultStatus, "")
+	err = testDASRepo.UpdateOperationStatus(id, newResultStatus, "")
 	asst.Nil(err, common.CombineMessageWithError("test UpdateOperationStatus() failed", err))
 	sql := `select status from t_hc_operation_info where id = ?;`
-	result, err := dasRepo.Execute(sql, id)
+	result, err := testDASRepo.Execute(sql, id)
 	asst.Nil(err, common.CombineMessageWithError("test UpdateOperationStatus() failed", err))
 	status, err := result.GetInt(0, 0)
 	asst.Nil(err, common.CombineMessageWithError("test UpdateOperationStatus() failed", err))
@@ -397,7 +399,7 @@ func TestDASRepo_SaveResult(t *testing.T) {
 
 	err := createResult()
 	asst.Nil(err, common.CombineMessageWithError("test SaveResult() failed", err))
-	result, err := dasRepo.GetResultByOperationID(defaultResultOperationID)
+	result, err := testDASRepo.GetResultByOperationID(defaultResultOperationID)
 	asst.Nil(err, common.CombineMessageWithError("test SaveResult() failed", err))
 	asst.Equal(defaultResultOperationID, result.GetOperationID(), "test SaveResult() failed")
 	// delete
@@ -410,11 +412,11 @@ func TestDASRepo_UpdateAccuracyReviewByOperationID(t *testing.T) {
 
 	err := createResult()
 	asst.Nil(err, common.CombineMessageWithError("test UpdateAccuracyReviewByOperationID() failed", err))
-	result, err := dasRepo.GetResultByOperationID(defaultResultOperationID)
+	result, err := testDASRepo.GetResultByOperationID(defaultResultOperationID)
 	asst.Nil(err, common.CombineMessageWithError("test UpdateAccuracyReviewByOperationID() failed", err))
 	err = result.Set(map[string]interface{}{accuracyReviewStruct: newResultAccuracyReview})
 	asst.Nil(err, common.CombineMessageWithError("test UpdateAccuracyReviewByOperationID() failed", err))
-	err = dasRepo.UpdateAccuracyReviewByOperationID(result.GetOperationID(), newResultAccuracyReview)
+	err = testDASRepo.UpdateAccuracyReviewByOperationID(result.GetOperationID(), newResultAccuracyReview)
 	asst.Nil(err, common.CombineMessageWithError("test UpdateAccuracyReviewByOperationID() failed", err))
 	asst.Equal(newResultAccuracyReview, result.GetAccuracyReview(), "test UpdateAccuracyReviewByOperationID() failed")
 	// delete
@@ -426,26 +428,26 @@ func TestApplicationMySQLRepo_GetVariables(t *testing.T) {
 	asst := assert.New(t)
 
 	items := []string{defaultVariableName}
-	variables, err := applicationMySQLRepo.GetVariables(items)
+	variables, err := testApplicationMySQLRepo.GetVariables(items)
 	asst.Nil(err, common.CombineMessageWithError("test TestApplicationMySQLRepo_GetVariables() failed", err))
 	value := variables[constant.ZeroInt].GetValue()
-	asst.Equal(defaultVariableValue, value, "test TestApplicationMySQLRepo_GetVariables() failed")
+	asst.Equal(strings.TrimRight(defaultVariableValue, constant.SlashString), strings.TrimRight(value, constant.SlashString), "test TestApplicationMySQLRepo_GetVariables() failed")
 }
 
 func TestApplicationMySQLRepo_GetMySQLDirs(t *testing.T) {
 	asst := assert.New(t)
 
 	items := []string{defaultVariableName}
-	variables, err := applicationMySQLRepo.GetVariables(items)
+	variables, err := testApplicationMySQLRepo.GetVariables(items)
 	asst.Nil(err, common.CombineMessageWithError("test TestApplicationMySQLRepo_GetMySQLDirs() failed", err))
 	value := variables[constant.ZeroInt].GetValue()
-	asst.Equal(defaultVariableValue, value, "test TestApplicationMySQLRepo_GetMySQLDirs() failed")
+	asst.Equal(strings.TrimRight(defaultVariableValue, constant.SlashString), strings.TrimRight(value, constant.SlashString), "test TestApplicationMySQLRepo_GetMySQLDirs() failed")
 }
 
 func TestApplicationMySQLRepo_GetLargeTables(t *testing.T) {
 	asst := assert.New(t)
 
-	tables, err := applicationMySQLRepo.GetLargeTables()
+	tables, err := testApplicationMySQLRepo.GetLargeTables()
 	asst.Nil(err, common.CombineMessageWithError("test TestApplicationMySQLRepo_GetLargeTables() failed", err))
 	asst.Equal(constant.ZeroInt, len(tables), "test TestApplicationMySQLRepo_GetLargeTables() failed")
 }
@@ -453,7 +455,7 @@ func TestApplicationMySQLRepo_GetLargeTables(t *testing.T) {
 func TestPrometheusRepo_GetFileSystems(t *testing.T) {
 	asst := assert.New(t)
 
-	fileSystems, err := prometheusRepo.GetFileSystems()
+	fileSystems, err := testPrometheusRepo.GetFileSystems()
 	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetFileSystems() failed", err))
 	asst.Equal(defaultFileSystemNum, len(fileSystems), "test TestPrometheusRepo_GetFileSystems() failed")
 }
@@ -477,7 +479,7 @@ func TestPrometheusRepo_GetStatistic(t *testing.T) {
 func TestPrometheusRepo_GetCPUUsage(t *testing.T) {
 	asst := assert.New(t)
 
-	datas, err := prometheusRepo.GetCPUUsage()
+	datas, err := testPrometheusRepo.GetCPUUsage()
 	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetCPUUsage() failed", err))
 	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_GetCPUUsage() failed")
 }
@@ -485,7 +487,7 @@ func TestPrometheusRepo_GetCPUUsage(t *testing.T) {
 func TestPrometheusRepo_GetIOUtil(t *testing.T) {
 	asst := assert.New(t)
 
-	datas, err := prometheusRepo.GetIOUtil(devices)
+	datas, err := testPrometheusRepo.GetIOUtil()
 	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetIOUtil() failed", err))
 	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_GetIOUtil() failed")
 }
@@ -493,7 +495,7 @@ func TestPrometheusRepo_GetIOUtil(t *testing.T) {
 func TestPrometheusRepo_GetDiskCapacityUsage(t *testing.T) {
 	asst := assert.New(t)
 
-	datas, err := prometheusRepo.GetDiskCapacityUsage(mountPoints)
+	datas, err := testPrometheusRepo.GetDiskCapacityUsage(testMountPoints)
 	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetDiskCapacityUsage() failed", err))
 	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_GetDiskCapacityUsage() failed")
 }
@@ -501,7 +503,7 @@ func TestPrometheusRepo_GetDiskCapacityUsage(t *testing.T) {
 func TestPrometheusRepo_GetConnectionUsage(t *testing.T) {
 	asst := assert.New(t)
 
-	datas, err := prometheusRepo.GetConnectionUsage()
+	datas, err := testPrometheusRepo.GetConnectionUsage()
 	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetConnectionUsage() failed", err))
 	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_GetConnectionUsage() failed")
 }
@@ -509,7 +511,7 @@ func TestPrometheusRepo_GetConnectionUsage(t *testing.T) {
 func TestPrometheusRepo_GetAverageActiveSessionPercents(t *testing.T) {
 	asst := assert.New(t)
 
-	datas, err := prometheusRepo.GetAverageActiveSessionPercents()
+	datas, err := testPrometheusRepo.GetAverageActiveSessionPercents()
 	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetAverageActiveSessionPercents() failed", err))
 	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_GetAverageActiveSessionPercents() failed")
 }
@@ -517,7 +519,7 @@ func TestPrometheusRepo_GetAverageActiveSessionPercents(t *testing.T) {
 func TestPrometheusRepo_GetCacheMissRatio(t *testing.T) {
 	asst := assert.New(t)
 
-	datas, err := prometheusRepo.GetCacheMissRatio()
+	datas, err := testPrometheusRepo.GetCacheMissRatio()
 	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetCacheMissRatio() failed", err))
 	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_GetCacheMissRatio() failed")
 }
@@ -525,19 +527,36 @@ func TestPrometheusRepo_GetCacheMissRatio(t *testing.T) {
 func TestPrometheusRepo_getServiceName(t *testing.T) {
 	asst := assert.New(t)
 
-	asst.Equal(operationInfo.GetMySQLServer().GetServiceName(), prometheusRepo.getServiceName(), "test TestPrometheusRepo_getServiceName() failed")
+	asst.Equal(testOperationInfo.GetMySQLServer().GetServiceName(), testPrometheusRepo.getServiceName(),
+		"test TestPrometheusRepo_getServiceName() failed")
 }
 
 func TestPrometheusRepo_getPMMVersion(t *testing.T) {
 	asst := assert.New(t)
 
-	asst.Equal(operationInfo.GetMonitorSystem().GetSystemType(), prometheusRepo.getPMMVersion(), "test TestPrometheusRepo_getPMMVersion() failed")
+	asst.Equal(testOperationInfo.GetMonitorSystem().GetSystemType(), testPrometheusRepo.getPMMVersion(),
+		"test TestPrometheusRepo_getPMMVersion() failed")
 }
 
 func TestPrometheusRepo_execute(t *testing.T) {
 	asst := assert.New(t)
 
-	datas, err := prometheusRepo.execute(PrometheusCPUUsageV2)
+	var prometheusQuery string
+
+	// prepare query
+	switch testPrometheusRepo.getPMMVersion() {
+	case 1:
+		// pmm 1.x
+		prometheusQuery = PrometheusCPUUsageV1
+	case 2:
+		// pmm 2.x
+		prometheusQuery = PrometheusCPUUsageV2
+	}
+
+	nodeName := testPrometheusRepo.getNodeName()
+	prometheusQuery = fmt.Sprintf(prometheusQuery, nodeName, nodeName, nodeName, nodeName, nodeName, nodeName)
+
+	datas, err := testPrometheusRepo.execute(prometheusQuery)
 	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_execute() failed", err))
 	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_execute() failed")
 }
@@ -545,8 +564,8 @@ func TestPrometheusRepo_execute(t *testing.T) {
 func TestMySQLQueryRepo_GetSlowQuery(t *testing.T) {
 	asst := assert.New(t)
 
-	if operationInfo.GetMonitorSystem().GetSystemType() == 1 {
-		queries, err := queryRepo.(*MySQLQueryRepo).GetSlowQuery()
+	if testOperationInfo.GetMonitorSystem().GetSystemType() == 1 {
+		queries, err := testQueryRepo.(*MySQLQueryRepo).GetSlowQuery()
 		asst.Nil(err, common.CombineMessageWithError("test TestMySQLQueryRepo_GetSlowQuery() failed", err))
 		asst.LessOrEqual(constant.ZeroInt, len(queries), "test TestMySQLQueryRepo_GetSlowQuery() failed")
 	}
@@ -555,24 +574,26 @@ func TestMySQLQueryRepo_GetSlowQuery(t *testing.T) {
 func TestMySQLQueryRepo_getServiceName(t *testing.T) {
 	asst := assert.New(t)
 
-	if operationInfo.GetMonitorSystem().GetSystemType() == 1 {
-		asst.Equal(operationInfo.GetMySQLServer().GetServiceName(), queryRepo.(*MySQLQueryRepo).getServiceName(), "test TestMySQLQueryRepo_getServiceName() failed")
+	if testOperationInfo.GetMonitorSystem().GetSystemType() == 1 {
+		asst.Equal(testOperationInfo.GetMySQLServer().GetServiceName(), testQueryRepo.(*MySQLQueryRepo).getServiceName(),
+			"test TestMySQLQueryRepo_getServiceName() failed")
 	}
 }
 
 func TestMySQLQueryRepo_getPMMVersion(t *testing.T) {
 	asst := assert.New(t)
 
-	if operationInfo.GetMonitorSystem().GetSystemType() == 1 {
-		asst.Equal(operationInfo.GetMySQLServer().GetServiceName(), queryRepo.(*MySQLQueryRepo).getPMMVersion(), "test TestMySQLQueryRepo_getPMMVersion() failed")
+	if testOperationInfo.GetMonitorSystem().GetSystemType() == 1 {
+		asst.Equal(testOperationInfo.GetMySQLServer().GetServiceName(), testQueryRepo.(*MySQLQueryRepo).getPMMVersion(),
+			"test TestMySQLQueryRepo_getPMMVersion() failed")
 	}
 }
 
 func TestClickhouseQueryRepo_GetSlowQuery(t *testing.T) {
 	asst := assert.New(t)
 
-	if operationInfo.GetMonitorSystem().GetSystemType() == 1 {
-		queries, err := queryRepo.(*ClickhouseQueryRepo).GetSlowQuery()
+	if testOperationInfo.GetMonitorSystem().GetSystemType() == 2 {
+		queries, err := testQueryRepo.(*ClickhouseQueryRepo).GetSlowQuery()
 		asst.Nil(err, common.CombineMessageWithError("test TestClickhouseQueryRepo_GetSlowQuery() failed", err))
 		asst.LessOrEqual(constant.ZeroInt, len(queries), "test TestClickhouseQueryRepo_GetSlowQuery() failed")
 	}
@@ -581,15 +602,17 @@ func TestClickhouseQueryRepo_GetSlowQuery(t *testing.T) {
 func TestClickhouseQueryRepo_getServiceName(t *testing.T) {
 	asst := assert.New(t)
 
-	if operationInfo.GetMonitorSystem().GetSystemType() == 1 {
-		asst.Equal(operationInfo.GetMySQLServer().GetServiceName(), queryRepo.(*ClickhouseQueryRepo).getServiceName(), "test TestClickhouseQueryRepo_getServiceName() failed")
+	if testOperationInfo.GetMonitorSystem().GetSystemType() == 2 {
+		asst.Equal(testOperationInfo.GetMySQLServer().GetServiceName(), testQueryRepo.(*ClickhouseQueryRepo).getServiceName(),
+			"test TestClickhouseQueryRepo_getServiceName() failed")
 	}
 }
 
 func TestClickhouseQueryRepo_getPMMVersion(t *testing.T) {
 	asst := assert.New(t)
 
-	if operationInfo.GetMonitorSystem().GetSystemType() == 1 {
-		asst.Equal(operationInfo.GetMySQLServer().GetServiceName(), queryRepo.(*ClickhouseQueryRepo).getPMMVersion(), "test TestClickhouseQueryRepo_getServiceName() failed")
+	if testOperationInfo.GetMonitorSystem().GetSystemType() == 2 {
+		asst.Equal(testOperationInfo.GetMonitorSystem().GetSystemType(), testQueryRepo.(*ClickhouseQueryRepo).getPMMVersion(),
+			"test TestClickhouseQueryRepo_getServiceName() failed")
 	}
 }

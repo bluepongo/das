@@ -17,9 +17,12 @@ const (
 )
 
 const (
-	testServiceName = "test"
+	testServiceName = "192-168-10-220:3306"
 	testDbName      = "test"
-	testSQLID       = "0"
+	testSQLID       = "999ECD050D719733"
+	serverID        = 3
+	serverName      = "test"
+	mysqlServerID   = 2
 )
 
 func TestQueryRepositoryAll(t *testing.T) {
@@ -67,10 +70,10 @@ func TestDASRepo_GetMonitorSystemByClusterID(t *testing.T) {
 func TestDASRepo_GetMonitorSystemByMySQLServerID(t *testing.T) {
 	asst := assert.New(t)
 
-	serverInfo := metadata.NewMySQLServerServiceWithDefault()
-	serverInfo.GetAll()
-	ss := serverInfo.MySQLServers[constant.ZeroInt]
-	serverID := ss.Identity()
+	// serverInfo := metadata.NewMySQLServerServiceWithDefault()
+	// serverInfo.GetAll()
+	// ss := serverInfo.MySQLServers[constant.ZeroInt]
+	// serverID := ss.Identity()
 
 	var r *DASRepo
 	ms, err := r.GetMonitorSystemByMySQLServerID(serverID)
@@ -82,12 +85,16 @@ func TestDASRepo_GetMonitorSystemByMySQLServerID(t *testing.T) {
 func TestMySQLRepo_GetByServiceNames(t *testing.T) {
 	asst := assert.New(t)
 
-	serverInfo := metadata.NewMySQLServerServiceWithDefault()
-	serverInfo.GetAll()
-	ss := serverInfo.MySQLServers[constant.ZeroInt]
-	serverName := ss.GetServerName()
+	// serverInfo := metadata.NewMySQLServerServiceWithDefault()
+	// serverInfo.GetAll()
+	// ss := serverInfo.MySQLServers[constant.ZeroInt]
+	// serverName := ss.GetServerName()
+	q := NewQuerierWithGlobal(NewConfigWithDefault())
+	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
 
-	var mr *MySQLRepo
+	monitorRepo, err := q.getMonitorRepo(monitorSystem)
+
+	mr := monitorRepo
 	qu, err := mr.GetByServiceNames([]string{serverName})
 	asst.Equal(nil, err, "test MySQLRepo_GetByServiceNames Failed")
 	asst.Equal(true, qu != nil, "test MySQLRepo_GetByServiceNames Failed")
@@ -96,7 +103,12 @@ func TestMySQLRepo_GetByServiceNames(t *testing.T) {
 func TestMySQLRepo_GetByDBName(t *testing.T) {
 	asst := assert.New(t)
 
-	var mr *MySQLRepo
+	q := NewQuerierWithGlobal(NewConfigWithDefault())
+	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
+
+	monitorRepo, err := q.getMonitorRepo(monitorSystem)
+
+	mr := monitorRepo
 	qu, err := mr.GetByDBName(testServiceName, testDbName)
 	asst.Equal(nil, err, "test MySQLRepo_GetByDBName Failed")
 	asst.Equal(true, qu != nil, "test MySQLRepo_GetByDBName Failed")
@@ -105,7 +117,12 @@ func TestMySQLRepo_GetByDBName(t *testing.T) {
 func TestMySQLRepo_GetBySQLID(t *testing.T) {
 	asst := assert.New(t)
 
-	var mr *MySQLRepo
+	q := NewQuerierWithGlobal(NewConfigWithDefault())
+	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
+
+	monitorRepo, err := q.getMonitorRepo(monitorSystem)
+
+	mr := monitorRepo
 	qu, err := mr.GetBySQLID(testServiceName, testSQLID)
 	asst.Equal(nil, err, "test MySQLRepo_GetBySQLID Failed")
 	asst.Equal(true, qu != nil, "test MySQLRepo_GetBySQLID Failed")
@@ -114,7 +131,12 @@ func TestMySQLRepo_GetBySQLID(t *testing.T) {
 func TestClickhouseRepo_GetByDBName(t *testing.T) {
 	asst := assert.New(t)
 
-	var cr *ClickhouseRepo
+	q := NewQuerierWithGlobal(NewConfigWithDefault())
+	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
+
+	monitorRepo, err := q.getMonitorRepo(monitorSystem)
+
+	cr := monitorRepo
 	qu, err := cr.GetByDBName(testServiceName, testDbName)
 	asst.Equal(nil, err, "test ClickhouseRepo_GetByDBName Failed")
 	asst.Equal(true, qu != nil, "test ClickhouseRepo_GetByDBName Failed")
@@ -124,7 +146,12 @@ func TestClickhouseRepo_GetByDBName(t *testing.T) {
 func TestClickhouseRepo_GetByServiceNames(t *testing.T) {
 	asst := assert.New(t)
 
-	var cr *ClickhouseRepo
+	q := NewQuerierWithGlobal(NewConfigWithDefault())
+	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
+
+	monitorRepo, err := q.getMonitorRepo(monitorSystem)
+
+	cr := monitorRepo
 	qu, err := cr.GetByServiceNames([]string{testServiceName})
 	asst.Equal(nil, err, "test ClickhouseRepo_GetByServiceNamesFailed")
 	asst.Equal(true, qu != nil, "test ClickhouseRepo_GetByServiceNames Failed")
@@ -133,7 +160,12 @@ func TestClickhouseRepo_GetByServiceNames(t *testing.T) {
 func TestClickhouseRepo_GetBySQLID(t *testing.T) {
 	asst := assert.New(t)
 
-	var cr *ClickhouseRepo
+	q := NewQuerierWithGlobal(NewConfigWithDefault())
+	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
+
+	monitorRepo, err := q.getMonitorRepo(monitorSystem)
+
+	cr := monitorRepo
 	qu, err := cr.GetBySQLID(testServiceName, testSQLID)
 	asst.Equal(nil, err, "test ClickhouseRepo_GetBySQLID Failed")
 	asst.Equal(true, qu != nil, "test ClickhouseRepo_GetBySQLID Failed")

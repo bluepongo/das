@@ -12,7 +12,7 @@ const (
 			   table_name,
 			   table_rows,
 			   truncate((data_length + index_length) / 1024 / 1024 / 1024, 2) as size
-		from tables
+		from information_schema.tables
 		where table_type = 'BASE TABLE'
 		  and table_rows > ?
 		order by table_rows desc;
@@ -74,7 +74,7 @@ const (
 	PrometheusCPUUsageV1 = `
 		clamp_max(sum by () ((avg by (mode) (
 		(clamp_max(rate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or
-		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or
+		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) or
 		sum by () (
 		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m]) or
 		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m])) unless
@@ -85,7 +85,7 @@ const (
 	PrometheusCPUUsageV2 = `
 		clamp_max(sum by () ((avg by (mode) ( 
 		(clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or 
-		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or 
+		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) or
 		sum by () (
 		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m]) or 
 		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m])) unless
@@ -100,14 +100,14 @@ const (
 		node_filesystem_files{node_name=~"%s",fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"}
     `
 	PrometheusIOUtilV1 = `
-		avg by (instance) (rate(node_disk_io_time_ms{device=~"(%s)", instance=~"%s"}[20s])/1000 or
-		irate(node_disk_io_time_ms{device=~"(%s)", instance=~"%s"}[5m])/1000)
+		max by (instance) (rate(node_disk_io_time_ms{instance=~"%s"}[20s])/1000 or
+		irate(node_disk_io_time_ms{instance=~"%s"}[5m])/1000)
     `
 	PrometheusIOUtilV2 = `
-		avg by (node_name) (rate(node_disk_io_time_seconds_total{device=~"(%s)",node_name=~"%s"}[20s]) or
-		irate(node_disk_io_time_seconds_total{device=~"(%s)",node_name=~"%s"}[5m]) or
-		(max_over_time(rdsosmetrics_diskIO_util{device=~"(%s)",node_name=~"%s"}[20s]) or
-		max_over_time(rdsosmetrics_diskIO_util{device=~"(%s)",node_name=~"%s"}[5m]))/100)
+		max by (node_name) (rate(node_disk_io_time_seconds_total{node_name=~"%s"}[20s]) or
+		irate(node_disk_io_time_seconds_total{node_name=~"%s"}[5m]) or
+		(max_over_time(rdsosmetrics_diskIO_util{node_name=~"%s"}[20s]) or
+		max_over_time(rdsosmetrics_diskIO_util{node_name=~"%s"}[5m]))/100)
     `
 	PrometheusDiskCapacityV1 = `
 		1 - node_filesystem_free{instance=~"%s", mountpoint=~"(%s)", fstype!~"rootfs|selinuxfs|autofs|rpc_pipefs|tmpfs"} /
@@ -184,22 +184,41 @@ const (
 				 inner join query_classes qc on m.query_class_id = qc.query_class_id;
     `
 	MonitorClickhouseQuery = `
-		select queryid                                                       as sql_id,
-			   fingerprint,
-			   (select example from metrics where queryid = queryid limit 1) as example,
-			   database                                                      as db_name,
-			   sum(num_queries)                                              as exec_count,
-			   truncate(sum(m_query_time_sum), 2)                            as total_exec_time,
-			   truncate(sum(m_query_time_sum) / sum(num_queries), 2)         as avg_exec_time,
-			   max(m_rows_examined_max)                                      as rows_examined_max
-		from metrics
-		where service_type = 'mysql'
-		  and service_name = ?
-		  and period_start >= ?
-		  and period_start < ?
-		  and m_rows_examined_max >= ?
-		group by queryid, fingerprint
-		order by rows_examined_max desc
-		limit ?;
+		select sm.sql_id,
+			   m.fingerprint,
+			   m.example,
+			   m.db_name,
+			   sm.exec_count,
+			   sm.total_exec_time,
+			   sm.avg_exec_time,
+			   sm.rows_examined_max
+		
+		from (
+				 select queryid                                               as sql_id,
+						sum(num_queries)                                      as exec_count,
+						truncate(sum(m_query_time_sum), 2)                    as total_exec_time,
+						truncate(sum(m_query_time_sum) / sum(num_queries), 2) as avg_exec_time,
+						max(m_rows_examined_max)                              as rows_examined_max
+				 from metrics
+				 where service_type = 'mysql'
+				   and service_name = ?
+				   and period_start >= ?
+				   and period_start < ?
+				   and m_rows_examined_max >= ?
+				 group by queryid
+				 order by rows_examined_max desc
+				 limit ?) sm
+				 left join (select queryid          as sql_id,
+								   max(fingerprint) as fingerprint,
+								   max(example)     as example,
+								   max(database)    as db_name
+							from metrics
+							where service_type = 'mysql'
+							  and service_name = ?
+							  and period_start >= ?
+							  and period_start < ?
+							  and m_rows_examined_max >= ?
+							group by queryid) m
+						   on sm.sql_id = m.sql_id;
     `
 )

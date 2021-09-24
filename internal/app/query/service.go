@@ -1,12 +1,11 @@
 package query
 
 import (
+	"encoding/json"
+
 	"github.com/romberli/das/internal/dependency/query"
-	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 )
-
-const queryQueriesStruct = "Queries"
 
 var _ query.Service = (*Service)(nil)
 
@@ -106,11 +105,5 @@ func (s *Service) Save(mysqlClusterID, mysqlServerID, dbID int, sqlID string) er
 // Marshal marshals Service.Queries to json bytes
 func (s *Service) Marshal() ([]byte, error) {
 
-	return s.MarshalWithFields(queryQueriesStruct)
-}
-
-// MarshalWithFields marshals only specified fields of the Service to json bytes
-func (s *Service) MarshalWithFields(fields ...string) ([]byte, error) {
-
-	return common.MarshalStructWithFields(s, fields...)
+	return json.Marshal(s.GetQueries())
 }

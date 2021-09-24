@@ -70,7 +70,7 @@ func (q *Query) GetTotalExecTime() float64 {
 	return q.TotalExecTime
 }
 
-// GetAvgExecTime returns the average execution timey
+// GetAvgExecTime returns the average execution time
 func (q *Query) GetAvgExecTime() float64 {
 	return q.AvgExecTime
 }
@@ -286,7 +286,7 @@ func (q *Querier) getMonitorRepo(monitorSystem depmeta.MonitorSystem) (query.Mon
 		monitorRepo = NewMySQLRepo(q.getConfig(), mysqlConn)
 	case 2:
 		// pmm 2.x
-		clickhouseConn, err := clickhouse.NewConnWithDefault(addr, pmmClickhouseDBName, q.getMonitorClickhouseUser(), q.getMonitorClickhousePass())
+		clickhouseConn, err := clickhouse.NewConnWithDefault(addr, pmmClickhouseDBName, "", "")
 		if err != nil {
 			return nil, err
 		}

@@ -48,8 +48,8 @@ type PrometheusRepo interface {
 	GetStatistic() ([]PrometheusData, error)
 	// GetCPUUsage gets the cpu usage
 	GetCPUUsage() ([]PrometheusData, error)
-	// GetIOUtil gets the io util
-	GetIOUtil(devices []string) ([]PrometheusData, error)
+	// CheckIOUtil gets the io util
+	GetIOUtil() ([]PrometheusData, error)
 	// GetDiskCapacityUsage gets the disk capacity usage
 	GetDiskCapacityUsage(mountPoints []string) ([]PrometheusData, error)
 	// GetConnectionUsage gets the connection usage
