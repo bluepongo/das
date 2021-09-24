@@ -14,13 +14,19 @@ type Repository interface {
 }
 
 type EmailAlerter interface {
+	// GetURL returns the url
 	GetURL() string
+	// GetToAddr returns the to address
 	GetToAddr() []string
+	// GetCCAddr returns the cc address
 	GetCCAddr() []string
+	// GetContent returns the content
 	GetContent() string
+	// Send sends the email
 	Send() error
 }
 
 type Service interface {
+	// SendEmail sends the email
 	SendEmail(url string, toAddr, ccAddr []string, content string) error
 }
