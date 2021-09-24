@@ -463,7 +463,7 @@ func TestPrometheusRepo_GetFileSystems(t *testing.T) {
 func TestPrometheusRepo_GetBackup(t *testing.T) {
 	asst := assert.New(t)
 
-	datas, err := prometheusRepo.GetBackup()
+	datas, err := testPrometheusRepo.GetBackup()
 	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetBackup() failed", err))
 	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_GetBackup() failed")
 }
@@ -471,7 +471,7 @@ func TestPrometheusRepo_GetBackup(t *testing.T) {
 func TestPrometheusRepo_GetStatistic(t *testing.T) {
 	asst := assert.New(t)
 
-	datas, err := prometheusRepo.GetStatistic()
+	datas, err := testPrometheusRepo.GetStatistic()
 	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetStatistic() failed", err))
 	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_GetStatistic() failed")
 }
