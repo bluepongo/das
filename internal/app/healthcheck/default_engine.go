@@ -24,6 +24,8 @@ const (
 	defaultMaxScore                             = 100.0
 	defaultHundred                              = 100
 	defaultDBConfigItemName                     = "db_config"
+	defaultBackupItemName                       = "backup"
+	defaultStatisticItemName                    = "statistic"
 	defaultCPUUsageItemName                     = "cpu_usage"
 	defaultIOUtilItemName                       = "io_util"
 	defaultDiskCapacityUsageItemName            = "disk_capacity_usage"
@@ -160,6 +162,16 @@ func (de *DefaultEngine) run() error {
 	}
 	// check db config
 	err = de.checkDBConfig()
+	if err != nil {
+		return err
+	}
+	// check mysql backup
+	err = de.CheckBackup()
+	if err != nil {
+		return err
+	}
+	// check mysql statistic
+	err = de.CheckStatistic()
 	if err != nil {
 		return err
 	}
@@ -380,6 +392,38 @@ func (de *DefaultEngine) checkDBConfig() error {
 	de.result.DBConfigScore = int(defaultMaxScore - dbConfigScoreDeduction)
 	if de.result.DBConfigScore < constant.ZeroInt {
 		de.result.DBConfigScore = constant.ZeroInt
+	}
+
+	return nil
+}
+
+// CheckBackup checks the mysql backup information
+func (de *DefaultEngine) CheckBackup() error {
+	// get data
+	datas, err := de.getPrometheusRepo().GetBackup()
+	if err != nil {
+		return err
+	}
+	// parse data
+	de.result.BackupScore, de.result.BackupData, de.result.BackupHigh, err = de.parsePrometheusDatas(defaultCPUUsageItemName, datas)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// CheckStatistic checks the statistic of mysql
+func (de *DefaultEngine) CheckStatistic() error {
+	// get data
+	datas, err := de.getPrometheusRepo().GetCPUUsage()
+	if err != nil {
+		return err
+	}
+	// parse data
+	de.result.StatisticScore, de.result.StatisticData, de.result.StatisticHigh, err = de.parsePrometheusDatas(defaultCPUUsageItemName, datas)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -705,6 +749,8 @@ func (de *DefaultEngine) checkSlowQuery() error {
 // summarize summarizes all item scores with weight
 func (de *DefaultEngine) summarize() {
 	de.result.WeightedAverageScore = (de.result.DBConfigScore*de.getItemConfig(defaultDBConfigItemName).GetItemWeight() +
+		de.result.BackupScore*de.getItemConfig(defaultBackupItemName).GetItemWeight() +
+		de.result.StatisticScore*de.getItemConfig(defaultStatisticItemName).GetItemWeight() +
 		de.result.CPUUsageScore*de.getItemConfig(defaultCPUUsageItemName).GetItemWeight() +
 		de.result.IOUtilScore*de.getItemConfig(defaultIOUtilItemName).GetItemWeight() +
 		de.result.DiskCapacityUsageScore*de.getItemConfig(defaultDiskCapacityUsageItemName).GetItemWeight() +

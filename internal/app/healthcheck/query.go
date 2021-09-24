@@ -17,7 +17,60 @@ const (
 		  and table_rows > ?
 		order by table_rows desc;
     `
+)
+
+// PrometheusAPI
+const (
 	// prometheus
+	// Backup
+	// 	(sum(mysqldumpbackup{type="status"})/count(mysqldumpbackup{type="status"})+
+	// sum(xtrabackup{type="status"})/count(xtrabackup{type="status"})+
+	// sum(mysqldumpnbubackup)/count(mysqldumpnbubackup)+
+	// sum(nbubackup)/count(nbubackup))/4
+	PrometheusBackupV1 = `
+		clamp_max(sum by () ((avg by (mode) (
+		(clamp_max(rate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or
+		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or
+		sum by () (
+		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m]) or
+		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m])) unless
+		(avg_over_time(node_cpu_average{instance=~"%s",mode="total",job="rds-basic"}[5m]) or
+		avg_over_time(node_cpu_average{instance=~"%s",mode="total",job="rds-basic"}[5m]))
+		),100)
+    `
+	PrometheusBackupV2 = `
+		clamp_max(sum by () ((avg by (mode) ( 
+		(clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or 
+		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or 
+		sum by () (
+		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m]) or 
+		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m])) unless
+		(avg_over_time(node_cpu_average{node_name=~"%s",mode="total",job="rds-basic"}[5m]) or 
+		avg_over_time(node_cpu_average{node_name=~"%s",mode="total",job="rds-basic"}[5m]))
+		),100)
+    `
+	PrometheusStatisticV1 = `
+		clamp_max(sum by () ((avg by (mode) (
+		(clamp_max(rate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or
+		(clamp_max(irate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or
+		sum by () (
+		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m]) or
+		avg_over_time(node_cpu_average{instance=~"%s",mode!="total",mode!="idle"}[5m])) unless
+		(avg_over_time(node_cpu_average{instance=~"%s",mode="total",job="rds-basic"}[5m]) or
+		avg_over_time(node_cpu_average{instance=~"%s",mode="total",job="rds-basic"}[5m]))
+		),100)
+    `
+	PrometheusStatisticV2 = `
+		clamp_max(sum by () ((avg by (mode) ( 
+		(clamp_max(rate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or 
+		(clamp_max(irate(node_cpu_seconds_total{node_name=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) )) *100 or 
+		sum by () (
+		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m]) or 
+		avg_over_time(node_cpu_average{node_name=~"%s",mode!="total",mode!="idle"}[5m])) unless
+		(avg_over_time(node_cpu_average{node_name=~"%s",mode="total",job="rds-basic"}[5m]) or 
+		avg_over_time(node_cpu_average{node_name=~"%s",mode="total",job="rds-basic"}[5m]))
+		),100)
+    `
 	PrometheusCPUUsageV1 = `
 		clamp_max(sum by () ((avg by (mode) (
 		(clamp_max(rate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or
