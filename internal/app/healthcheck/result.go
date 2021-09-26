@@ -18,12 +18,12 @@ type Result struct {
 	DBConfigScore                     int       `middleware:"db_config_score" json:"db_config_score"`
 	DBConfigData                      string    `middleware:"db_config_data" json:"db_config_data"`
 	DBConfigAdvice                    string    `middleware:"db_config_advice" json:"db_config_advice"`
-	BackupScore                       int       `middleware:"backup_score" json:"backup_score"`
-	BackupData                        string    `middleware:"backup_data" json:"backup_data"`
-	BackupHigh                        string    `middleware:"backup_high" json:"backup_high"`
-	StatisticScore                    int       `middleware:"statistic_score" json:"statistic_score"`
-	StatisticData                     string    `middleware:"statistic_data" json:"statistic_data"`
-	StatisticHigh                     string    `middleware:"statistic_high" json:"statistic_high"`
+	BackupScore                       int       `middleware:"avg_backup_failed_ratio_score" json:"avg_backup_failed_ratio_score"`
+	BackupData                        string    `middleware:"avg_backup_failed_ratio_data" json:"avg_backup_failed_ratio_data"`
+	BackupHigh                        string    `middleware:"avg_backup_failed_ratio_high" json:"avg_backup_failed_ratio_high"`
+	StatisticScore                    int       `middleware:"statistics_failed_ratio_score" json:"statistics_failed_ratio_score"`
+	StatisticData                     string    `middleware:"statistics_failed_ratio_data" json:"statistics_failed_ratio_data"`
+	StatisticHigh                     string    `middleware:"statistics_failed_ratio_high" json:"statistics_failed_ratio_high"`
 	CPUUsageScore                     int       `middleware:"cpu_usage_score" json:"cpu_usage_score"`
 	CPUUsageData                      string    `middleware:"cpu_usage_data" json:"cpu_usage_data"`
 	CPUUsageHigh                      string    `middleware:"cpu_usage_high" json:"cpu_usage_high"`

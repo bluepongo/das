@@ -42,6 +42,7 @@ const (
 	defaultVariableValue = "/mysqldata/mysql3306/data"
 
 	defaultFileSystemNum     = 2
+	defaultBackupNum         = 2557
 	defaultPrometheusDataNum = 10081
 )
 
@@ -465,7 +466,7 @@ func TestPrometheusRepo_GetBackup(t *testing.T) {
 
 	datas, err := testPrometheusRepo.GetBackup()
 	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetBackup() failed", err))
-	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_GetBackup() failed")
+	asst.Equal(defaultBackupNum, len(datas), "test TestPrometheusRepo_GetBackup() failed")
 }
 
 func TestPrometheusRepo_GetStatistic(t *testing.T) {
