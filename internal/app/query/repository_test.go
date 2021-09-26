@@ -3,8 +3,12 @@ package query
 import (
 	"testing"
 
+	"time"
+
+	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/go-util/constant"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,12 +21,14 @@ const (
 )
 
 const (
-	testServiceName = "192-168-10-220:3306"
-	testDbName      = "test"
-	testSQLID       = "999ECD050D719733"
-	serverID        = 3
-	serverName      = "test"
-	mysqlServerID   = 2
+	testServiceName   = "192-168-10-219:3306"
+	testDbName        = "test"
+	testSQLID         = "A58343E0C8847EFA"
+	testSQLID2        = "83546FE35D8AD5F8"
+	serverID          = 3
+	serverName        = "test"
+	mysqlServerID     = 4
+	pmm2MysqlServerID = 4
 )
 
 func TestQueryRepositoryAll(t *testing.T) {
@@ -35,6 +41,11 @@ func TestQueryRepositoryAll(t *testing.T) {
 	TestClickhouseRepo_GetByDBName(t)
 	TestClickhouseRepo_GetByServiceNames(t)
 	TestClickhouseRepo_GetBySQLID(t)
+}
+
+func init() {
+	viper.Set(config.DBMonitorMySQLUserKey, config.DefaultDBMonitorMySQLUser)
+	viper.Set(config.DBMonitorMySQLPassKey, config.DefaultDBMonitorMySQLPass)
 }
 
 func TestDASRepo_GetMonitorSystemByDBID(t *testing.T) {
@@ -93,7 +104,6 @@ func TestMySQLRepo_GetByServiceNames(t *testing.T) {
 	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
 
 	monitorRepo, err := q.getMonitorRepo(monitorSystem)
-
 	mr := monitorRepo
 	qu, err := mr.GetByServiceNames([]string{serverName})
 	asst.Equal(nil, err, "test MySQLRepo_GetByServiceNames Failed")
@@ -118,7 +128,10 @@ func TestMySQLRepo_GetBySQLID(t *testing.T) {
 	asst := assert.New(t)
 
 	q := NewQuerierWithGlobal(NewConfigWithDefault())
-	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
+	q.config.startTime = time.Date(2021, 8, 1, 1, 1, 1, 1, time.Local)
+
+	q.config.endTime = time.Date(2021, 9, 30, 1, 1, 1, 1, time.Local)
+	monitorSystem, err := q.getMonitorSystemByMySQLServerID(4)
 
 	monitorRepo, err := q.getMonitorRepo(monitorSystem)
 
@@ -138,6 +151,7 @@ func TestClickhouseRepo_GetByDBName(t *testing.T) {
 
 	cr := monitorRepo
 	qu, err := cr.GetByDBName(testServiceName, testDbName)
+
 	asst.Equal(nil, err, "test ClickhouseRepo_GetByDBName Failed")
 	asst.Equal(true, qu != nil, "test ClickhouseRepo_GetByDBName Failed")
 
@@ -161,7 +175,11 @@ func TestClickhouseRepo_GetBySQLID(t *testing.T) {
 	asst := assert.New(t)
 
 	q := NewQuerierWithGlobal(NewConfigWithDefault())
-	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
+	q.config.startTime = time.Date(2021, 8, 1, 1, 1, 1, 1, time.Local)
+
+	q.config.endTime = time.Date(2021, 9, 30, 1, 1, 1, 1, time.Local)
+
+	monitorSystem, err := q.getMonitorSystemByMySQLServerID(pmm2MysqlServerID)
 
 	monitorRepo, err := q.getMonitorRepo(monitorSystem)
 
