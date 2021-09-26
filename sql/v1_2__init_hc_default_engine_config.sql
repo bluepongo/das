@@ -7,7 +7,7 @@ values('statistics_failed_ratio', 5, 0.1, 0.2, 0.1, 20, 100, 10, 50);
 insert into t_hc_default_engine_config(item_name, item_weight, low_watermark, high_watermark, unit, score_deduction_per_unit_high, max_score_deduction_high, score_deduction_per_unit_medium, max_score_deduction_medium)
 values('cpu_usage', 5, 0.5, 0.8, 0.1, 20, 100, 10, 50);
 insert into t_hc_default_engine_config(item_name, item_weight, low_watermark, high_watermark, unit, score_deduction_per_unit_high, max_score_deduction_high, score_deduction_per_unit_medium, max_score_deduction_medium)
-values('io_usage', 5, 0.5, 0.8, 0.1, 20, 100, 10, 50);
+values('io_util', 5, 0.5, 0.8, 0.1, 20, 100, 10, 50);
 insert into t_hc_default_engine_config(item_name, item_weight, low_watermark, high_watermark, unit, score_deduction_per_unit_high, max_score_deduction_high, score_deduction_per_unit_medium, max_score_deduction_medium)
 values('disk_capacity_usage', 20, 0.5, 0.8, 0.1, 40, 100, 10, 50);
 insert into t_hc_default_engine_config(item_name, item_weight, low_watermark, high_watermark, unit, score_deduction_per_unit_high, max_score_deduction_high, score_deduction_per_unit_medium, max_score_deduction_medium)

@@ -41,9 +41,9 @@ const (
 	defaultVariableName  = "datadir"
 	defaultVariableValue = "/mysqldata/mysql3306/data"
 
-	defaultFileSystemNum     = 2
-	defaultBackupNum         = 2557
-	defaultPrometheusDataNum = 10081
+	defaultFileSystemNum           = 2
+	defaultAvgBackupFailedRatioNum = 2557
+	defaultPrometheusDataNum       = 10081
 )
 
 var (
@@ -211,7 +211,7 @@ func initFileSystems() ([]string, []string) {
 
 func createResult() error {
 	hcInfo := NewResultWithDefault(defaultResultOperationID, defaultResultWeightedAverageScore,
-		defaultResultDBConfigScore, defaultResultBackupScore, defaultResultStatisticScore, defaultResultCPUUsageScore, defaultResultIOUtilScore,
+		defaultResultDBConfigScore, defaultResultAvgBackupFailedRatioScore, defaultResultStatisticFailedRatioScore, defaultResultCPUUsageScore, defaultResultIOUtilScore,
 		defaultResultDiskCapacityUsageScore, defaultResultConnectionUsageScore, defaultResultAverageActiveSessionPercentsScore,
 		defaultResultCacheMissRatioScore, defaultResultTableRowsScore, defaultResultTableSizeScore,
 		defaultResultSlowQueryScore, defaultResultAccuracyReview)
@@ -247,8 +247,8 @@ func TestRepositoryAll(t *testing.T) {
 	TestApplicationMySQLRepo_GetLargeTables(t)
 	// prometheus repository
 	TestPrometheusRepo_GetFileSystems(t)
-	TestPrometheusRepo_GetBackup(t)
-	TestPrometheusRepo_GetStatistic(t)
+	TestPrometheusRepo_GetAvgBackupFailedRatio(t)
+	TestPrometheusRepo_GetStatisticFailedRatio(t)
 	TestPrometheusRepo_GetCPUUsage(t)
 	TestPrometheusRepo_GetIOUtil(t)
 	TestPrometheusRepo_GetDiskCapacityUsage(t)
@@ -296,11 +296,12 @@ func TestDASRepo_Transaction(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	err = tx.Begin()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
-	_, err = tx.Execute(sql, defaultResultOperationID, defaultResultWeightedAverageScore, defaultResultDBConfigScore,
-		defaultResultDBConfigData, defaultResultDBConfigAdvice, defaultResultBackupScore, defaultResultBackupData,
-		defaultResultBackupHigh, defaultResultStatisticScore, defaultResultStatisticData, defaultResultStatisticHigh,
-		defaultResultCPUUsageScore, defaultResultCPUUsageData,
-		defaultResultCPUUsageHigh, defaultResultIOUtilScore, defaultResultIOUtilData, defaultResultIOUtilHigh,
+	_, err = tx.Execute(sql, defaultResultOperationID, defaultResultWeightedAverageScore,
+		defaultResultDBConfigScore, defaultResultDBConfigData, defaultResultDBConfigAdvice,
+		defaultResultAvgBackupFailedRatioScore, defaultResultAvgBackupFailedRatioData, defaultResultAvgBackupFailedRatioHigh,
+		defaultResultStatisticFailedRatioScore, defaultResultStatisticFailedRatioData, defaultResultStatisticFailedRatioHigh,
+		defaultResultCPUUsageScore, defaultResultCPUUsageData, defaultResultCPUUsageHigh,
+		defaultResultIOUtilScore, defaultResultIOUtilData, defaultResultIOUtilHigh,
 		defaultResultDiskCapacityUsageScore, defaultResultDiskCapacityUsageData, defaultResultDiskCapacityUsageHigh,
 		defaultResultConnectionUsageScore, defaultResultConnectionUsageData, defaultResultConnectionUsageHigh,
 		defaultResultAverageActiveSessionPercentsScore, defaultResultAverageActiveSessionPercentsData, defaultResultAverageActiveSessionPercentsHigh,
@@ -461,20 +462,20 @@ func TestPrometheusRepo_GetFileSystems(t *testing.T) {
 	asst.Equal(defaultFileSystemNum, len(fileSystems), "test TestPrometheusRepo_GetFileSystems() failed")
 }
 
-func TestPrometheusRepo_GetBackup(t *testing.T) {
+func TestPrometheusRepo_GetAvgBackupFailedRatio(t *testing.T) {
 	asst := assert.New(t)
 
-	datas, err := testPrometheusRepo.GetBackup()
-	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetBackup() failed", err))
-	asst.Equal(defaultBackupNum, len(datas), "test TestPrometheusRepo_GetBackup() failed")
+	datas, err := testPrometheusRepo.GetAvgBackupFailedRatio()
+	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetAvgBackupFailedRatio() failed", err))
+	asst.Equal(defaultAvgBackupFailedRatioNum, len(datas), "test TestPrometheusRepo_GetAvgBackupFailedRatio() failed")
 }
 
-func TestPrometheusRepo_GetStatistic(t *testing.T) {
+func TestPrometheusRepo_GetStatisticFailedRatio(t *testing.T) {
 	asst := assert.New(t)
 
-	datas, err := testPrometheusRepo.GetStatistic()
-	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetStatistic() failed", err))
-	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_GetStatistic() failed")
+	datas, err := testPrometheusRepo.GetStatisticFailedRatio()
+	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetStatisticFailedRatio() failed", err))
+	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_GetStatisticFailedRatio() failed")
 }
 
 func TestPrometheusRepo_GetCPUUsage(t *testing.T) {

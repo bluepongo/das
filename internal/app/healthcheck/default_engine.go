@@ -25,8 +25,8 @@ const (
 	defaultMaxScore                             = 100.0
 	defaultHundred                              = 100
 	defaultDBConfigItemName                     = "db_config"
-	defaultBackupItemName                       = "backup"
-	defaultStatisticItemName                    = "statistic"
+	defaultAvgBackupFailedRatioItemName         = "avg_backup_failed_ratio"
+	defaultStatisticItemName                    = "statistics_failed_ratio"
 	defaultCPUUsageItemName                     = "cpu_usage"
 	defaultIOUtilItemName                       = "io_util"
 	defaultDiskCapacityUsageItemName            = "disk_capacity_usage"
@@ -166,13 +166,13 @@ func (de *DefaultEngine) run() error {
 	if err != nil {
 		return err
 	}
-	// check mysql backup
-	err = de.CheckBackup()
+	// check mysql average backup failed ratio
+	err = de.CheckAvgBackupFailedRatio()
 	if err != nil {
 		return err
 	}
-	// check mysql statistic
-	err = de.CheckStatistic()
+	// check mysql statistic failed ratio
+	err = de.CheckStatisticFailedRatio()
 	if err != nil {
 		return err
 	}
@@ -196,7 +196,7 @@ func (de *DefaultEngine) run() error {
 	if err != nil {
 		return err
 	}
-	// check active session number
+	// check average active session percents
 	err = de.checkAverageActiveSessionPercents()
 	if err != nil {
 		return err
@@ -406,15 +406,15 @@ func (de *DefaultEngine) checkDBConfig() error {
 	return nil
 }
 
-// CheckBackup checks the mysql backup information
-func (de *DefaultEngine) CheckBackup() error {
+// CheckAvgBackupFailedRatio checks the mysql backup information
+func (de *DefaultEngine) CheckAvgBackupFailedRatio() error {
 	// get data
-	datas, err := de.getPrometheusRepo().GetBackup()
+	datas, err := de.getPrometheusRepo().GetAvgBackupFailedRatio()
 	if err != nil {
 		return err
 	}
 	// parse data
-	de.result.BackupScore, de.result.BackupData, de.result.BackupHigh, err = de.parsePrometheusDatas(defaultCPUUsageItemName, datas)
+	de.result.AvgBackupFailedRatioScore, de.result.AvgBackupFailedRatioData, de.result.AvgBackupFailedRatioHigh, err = de.parsePrometheusDatas(defaultCPUUsageItemName, datas)
 	if err != nil {
 		return err
 	}
@@ -422,15 +422,15 @@ func (de *DefaultEngine) CheckBackup() error {
 	return nil
 }
 
-// CheckStatistic checks the statistic of mysql
-func (de *DefaultEngine) CheckStatistic() error {
+// CheckStatisticFailedRatio checks the statistic of mysql
+func (de *DefaultEngine) CheckStatisticFailedRatio() error {
 	// get data
 	datas, err := de.getPrometheusRepo().GetCPUUsage()
 	if err != nil {
 		return err
 	}
 	// parse data
-	de.result.StatisticScore, de.result.StatisticData, de.result.StatisticHigh, err = de.parsePrometheusDatas(defaultCPUUsageItemName, datas)
+	de.result.StatisticFailedRatioScore, de.result.StatisticFailedRatioData, de.result.StatisticFailedRatioHigh, err = de.parsePrometheusDatas(defaultCPUUsageItemName, datas)
 	if err != nil {
 		return err
 	}
@@ -688,6 +688,8 @@ func (de *DefaultEngine) checkSlowQuery() error {
 
 		slowQueryRowsExaminedHighScore   float64
 		slowQueryRowsExaminedMediumScore float64
+
+		topSQLList []depquery.Query
 	)
 
 	// slow query data
@@ -698,11 +700,10 @@ func (de *DefaultEngine) checkSlowQuery() error {
 	de.result.SlowQueryData = string(jsonBytesRowsExamined)
 
 	slowQueryRowsExaminedConfig := de.getItemConfig(defaultSlowQueryRowsExaminedItemName)
-	topSQLList := make([]depquery.Query, defaultSlowQueryTopSQLNum)
 
 	for i, slowQuery := range slowQueries {
 		if i < defaultSlowQueryTopSQLNum {
-			topSQLList[i] = slowQuery
+			topSQLList = append(topSQLList, slowQuery)
 		}
 		if slowQuery.GetRowsExaminedMax() >= int(slowQueryRowsExaminedConfig.GetHighWatermark()) {
 			// slow query rows examined high
@@ -777,8 +778,8 @@ func (de *DefaultEngine) checkSlowQuery() error {
 // summarize summarizes all item scores with weight
 func (de *DefaultEngine) summarize() {
 	de.result.WeightedAverageScore = (de.result.DBConfigScore*de.getItemConfig(defaultDBConfigItemName).GetItemWeight() +
-		de.result.BackupScore*de.getItemConfig(defaultBackupItemName).GetItemWeight() +
-		de.result.StatisticScore*de.getItemConfig(defaultStatisticItemName).GetItemWeight() +
+		de.result.AvgBackupFailedRatioScore*de.getItemConfig(defaultAvgBackupFailedRatioItemName).GetItemWeight() +
+		de.result.StatisticFailedRatioScore*de.getItemConfig(defaultStatisticItemName).GetItemWeight() +
 		de.result.CPUUsageScore*de.getItemConfig(defaultCPUUsageItemName).GetItemWeight() +
 		de.result.IOUtilScore*de.getItemConfig(defaultIOUtilItemName).GetItemWeight() +
 		de.result.DiskCapacityUsageScore*de.getItemConfig(defaultDiskCapacityUsageItemName).GetItemWeight() +

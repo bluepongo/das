@@ -231,8 +231,8 @@ func (dr *DASRepo) SaveResult(result healthcheck.Result) error {
 	log.Debugf("healthCheck DASRepo.SaveResult() insert sql: \n%s\nplaceholders: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %ss, %s, %s, %s",
 		sql, result.GetOperationID(), result.GetWeightedAverageScore(),
 		result.GetDBConfigScore(), result.GetDBConfigData(), result.GetDBConfigAdvice(),
-		result.GetBackupScore(), result.GetBackupData(), result.GetBackupHigh(),
-		result.GetStatisticScore(), result.GetStatisticData(), result.GetStatisticHigh(),
+		result.GetAvgBackupFailedRatioScore(), result.GetAvgBackupFailedRatioData(), result.GetAvgBackupFailedRatioHigh(),
+		result.GetStatisticFailedRatioScore(), result.GetStatisticFailedRatioData(), result.GetStatisticFailedRatioHigh(),
 		result.GetCPUUsageScore(), result.GetCPUUsageData(), result.GetCPUUsageHigh(),
 		result.GetIOUtilScore(), result.GetIOUtilData(), result.GetIOUtilHigh(),
 		result.GetDiskCapacityUsageScore(), result.GetDiskCapacityUsageData(), result.GetDiskCapacityUsageHigh(),
@@ -246,8 +246,8 @@ func (dr *DASRepo) SaveResult(result healthcheck.Result) error {
 	// execute
 	_, err := dr.Execute(sql, result.GetOperationID(), result.GetWeightedAverageScore(),
 		result.GetDBConfigScore(), result.GetDBConfigData(), result.GetDBConfigAdvice(),
-		result.GetBackupScore(), result.GetBackupData(), result.GetBackupHigh(),
-		result.GetStatisticScore(), result.GetStatisticData(), result.GetStatisticHigh(),
+		result.GetAvgBackupFailedRatioScore(), result.GetAvgBackupFailedRatioData(), result.GetAvgBackupFailedRatioHigh(),
+		result.GetStatisticFailedRatioScore(), result.GetStatisticFailedRatioData(), result.GetStatisticFailedRatioHigh(),
 		result.GetCPUUsageScore(), result.GetCPUUsageData(), result.GetCPUUsageHigh(),
 		result.GetIOUtilScore(), result.GetIOUtilData(), result.GetIOUtilHigh(),
 		result.GetDiskCapacityUsageScore(), result.GetDiskCapacityUsageData(), result.GetDiskCapacityUsageHigh(),
@@ -465,46 +465,46 @@ func (pr *PrometheusRepo) GetFileSystems() ([]healthcheck.FileSystem, error) {
 	return fileSystems, nil
 }
 
-// GetBackup gets the mysql backup information
-func (pr *PrometheusRepo) GetBackup() ([]healthcheck.PrometheusData, error) {
+// GetAvgBackupFailedRatio gets the mysql backup information
+func (pr *PrometheusRepo) GetAvgBackupFailedRatio() ([]healthcheck.PrometheusData, error) {
 	var prometheusQuery string
 
 	// prepare query
 	switch pr.getPMMVersion() {
 	case 1:
 		// pmm 1.x
-		prometheusQuery = PrometheusBackupV1
+		prometheusQuery = PrometheusAvgBackupFailedRatioV1
 	case 2:
 		// pmm 2.x
-		prometheusQuery = PrometheusBackupV2
+		prometheusQuery = PrometheusAvgBackupFailedRatioV2
 	default:
 		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
 	}
 
 	prometheusQuery = fmt.Sprintf(prometheusQuery, pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName())
-	log.Debugf("healthcheck PrometheusRepo.GetBackup() query: \n%s\n", prometheusQuery)
+	log.Debugf("healthcheck PrometheusRepo.GetAvgBackupFailedRatio() query: \n%s\n", prometheusQuery)
 
 	return pr.execute(prometheusQuery)
 }
 
-// GetStatistic gets the statistic of mysql
-func (pr *PrometheusRepo) GetStatistic() ([]healthcheck.PrometheusData, error) {
+// GetStatisticFailedRatio gets the statistic of mysql
+func (pr *PrometheusRepo) GetStatisticFailedRatio() ([]healthcheck.PrometheusData, error) {
 	var prometheusQuery string
 
 	// prepare query
 	switch pr.getPMMVersion() {
 	case 1:
 		// pmm 1.x
-		prometheusQuery = PrometheusStatisticV1
+		prometheusQuery = PrometheusStatisticFailedRatioV1
 	case 2:
 		// pmm 2.x
-		prometheusQuery = PrometheusStatisticV2
+		prometheusQuery = PrometheusStatisticFailedRatioV2
 	default:
 		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
 	}
 
 	prometheusQuery = fmt.Sprintf(prometheusQuery, pr.getNodeName(), pr.getNodeName())
-	log.Debugf("healthcheck PrometheusRepo.GetStatistic() query: \n%s\n", prometheusQuery)
+	log.Debugf("healthcheck PrometheusRepo.GetStatisticFailedRatio() query: \n%s\n", prometheusQuery)
 
 	return pr.execute(prometheusQuery)
 }

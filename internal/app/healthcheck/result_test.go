@@ -15,12 +15,12 @@ const (
 	defaultResultDBConfigScore                     = 1
 	defaultResultDBConfigData                      = "db config data"
 	defaultResultDBConfigAdvice                    = "db config advice"
-	defaultResultBackupScore                       = 80
-	defaultResultBackupData                        = "cpu usage data"
-	defaultResultBackupHigh                        = "cpu usage high"
-	defaultResultStatisticScore                    = 80
-	defaultResultStatisticData                     = "cpu usage data"
-	defaultResultStatisticHigh                     = "cpu usage high"
+	defaultResultAvgBackupFailedRatioScore         = 80
+	defaultResultAvgBackupFailedRatioData          = "cpu usage data"
+	defaultResultAvgBackupFailedRatioHigh          = "cpu usage high"
+	defaultResultStatisticFailedRatioScore         = 80
+	defaultResultStatisticFailedRatioData          = "cpu usage data"
+	defaultResultStatisticFailedRatioHigh          = "cpu usage high"
 	defaultResultCPUUsageScore                     = 80
 	defaultResultCPUUsageData                      = "cpu usage data"
 	defaultResultCPUUsageHigh                      = "cpu usage high"
@@ -56,8 +56,8 @@ func rCreateService() (*Service, error) {
 	var result = NewResult(testDASRepo,
 		defaultResultOperationID, defaultResultWeightedAverageScore,
 		defaultResultDBConfigScore, defaultResultDBConfigData, defaultResultDBConfigAdvice,
-		defaultResultBackupScore, defaultResultBackupData, defaultResultBackupHigh,
-		defaultResultStatisticScore, defaultResultStatisticData, defaultResultStatisticHigh,
+		defaultResultAvgBackupFailedRatioScore, defaultResultAvgBackupFailedRatioData, defaultResultAvgBackupFailedRatioHigh,
+		defaultResultStatisticFailedRatioScore, defaultResultStatisticFailedRatioData, defaultResultStatisticFailedRatioHigh,
 		defaultResultCPUUsageScore, defaultResultCPUUsageData, defaultResultCPUUsageHigh,
 		defaultResultIOUtilScore, defaultResultIOUtilData, defaultResultIOUtilHigh,
 		defaultResultDiskCapacityUsageScore, defaultResultDiskCapacityUsageData, defaultResultDiskCapacityUsageHigh,
@@ -90,12 +90,12 @@ func TestResultAll(t *testing.T) {
 	TestResult_GetDBConfigScore(t)
 	TestResult_GetDBConfigData(t)
 	TestResult_GetDBConfigAdvice(t)
-	TestResult_GetBackupScore(t)
-	TestResult_GetBackupData(t)
-	TestResult_GetBackupHigh(t)
-	TestResult_GetStatisticScore(t)
-	TestResult_GetStatisticData(t)
-	TestResult_GetStatisticHigh(t)
+	TestResult_GetAvgBackupFailedRatioScore(t)
+	TestResult_GetAvgBackupFailedRatioData(t)
+	TestResult_GetAvgBackupFailedRatioHigh(t)
+	TestResult_GetStatisticFailedRatioScore(t)
+	TestResult_GetStatisticFailedRatioData(t)
+	TestResult_GetStatisticFailedRatioHigh(t)
 	TestResult_GetCPUUsageScore(t)
 	TestResult_GetCPUUsageData(t)
 	TestResult_GetCPUUsageHigh(t)
@@ -222,94 +222,94 @@ func TestResult_GetDBConfigAdvice(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test GetDBConfigAdvice() failed", err))
 }
 
-func TestResult_GetBackupScore(t *testing.T) {
+func TestResult_GetAvgBackupFailedRatioScore(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := rCreateService()
-	asst.Nil(err, common.CombineMessageWithError("test GetBackupScore() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetAvgBackupFailedRatioScore() failed", err))
 	err = service.GetResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetBackupScore() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetAvgBackupFailedRatioScore() failed", err))
 	result := service.GetResult()
-	BackupScore := result.GetBackupScore()
-	asst.Equal(defaultResultBackupScore, BackupScore, "test GetBackupScore() failed")
+	avgBackupFailedRatioScore := result.GetAvgBackupFailedRatioScore()
+	asst.Equal(defaultResultAvgBackupFailedRatioScore, avgBackupFailedRatioScore, "test GetAvgBackupFailedRatioScore() failed")
 	// delete
 	err = rDeleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetBackupScore() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetAvgBackupFailedRatioScore() failed", err))
 }
 
-func TestResult_GetBackupData(t *testing.T) {
+func TestResult_GetAvgBackupFailedRatioData(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := rCreateService()
-	asst.Nil(err, common.CombineMessageWithError("test GetBackupData() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetAvgBackupFailedRatioData() failed", err))
 	err = service.GetResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetBackupData() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetAvgBackupFailedRatioData() failed", err))
 	result := service.GetResult()
-	BackupData := result.GetBackupData()
-	asst.Equal(defaultResultBackupData, BackupData, "test GetBackupData() failed")
+	avgBackupFailedRatioData := result.GetAvgBackupFailedRatioData()
+	asst.Equal(defaultResultAvgBackupFailedRatioData, avgBackupFailedRatioData, "test GetAvgBackupFailedRatioData() failed")
 	// delete
 	err = rDeleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetBackupData() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetAvgBackupFailedRatioData() failed", err))
 }
 
-func TestResult_GetBackupHigh(t *testing.T) {
+func TestResult_GetAvgBackupFailedRatioHigh(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := rCreateService()
-	asst.Nil(err, common.CombineMessageWithError("test GetBackupHigh() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetAvgBackupFailedRatioHigh() failed", err))
 	err = service.GetResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetBackupHigh() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetAvgBackupFailedRatioHigh() failed", err))
 	result := service.GetResult()
-	BackupHigh := result.GetBackupHigh()
-	asst.Equal(defaultResultBackupHigh, BackupHigh, "test GetBackupHigh() failed")
+	avgBackupFailedRatioHigh := result.GetAvgBackupFailedRatioHigh()
+	asst.Equal(defaultResultAvgBackupFailedRatioHigh, avgBackupFailedRatioHigh, "test GetAvgBackupFailedRatioHigh() failed")
 	// delete
 	err = rDeleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetBackupHigh() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetAvgBackupFailedRatioHigh() failed", err))
 }
 
-func TestResult_GetStatisticScore(t *testing.T) {
+func TestResult_GetStatisticFailedRatioScore(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := rCreateService()
-	asst.Nil(err, common.CombineMessageWithError("test GetStatisticScore() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetStatisticFailedRatioScore() failed", err))
 	err = service.GetResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetStatisticScore() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetStatisticFailedRatioScore() failed", err))
 	result := service.GetResult()
-	StatisticScore := result.GetStatisticScore()
-	asst.Equal(defaultResultStatisticScore, StatisticScore, "test GetStatisticScore() failed")
+	statisticFailedRatioScore := result.GetStatisticFailedRatioScore()
+	asst.Equal(defaultResultStatisticFailedRatioScore, statisticFailedRatioScore, "test GetStatisticFailedRatioScore() failed")
 	// delete
 	err = rDeleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetStatisticScore() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetStatisticFailedRatioScore() failed", err))
 }
 
-func TestResult_GetStatisticData(t *testing.T) {
+func TestResult_GetStatisticFailedRatioData(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := rCreateService()
-	asst.Nil(err, common.CombineMessageWithError("test GetStatisticData() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetStatisticFailedRatioData() failed", err))
 	err = service.GetResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetStatisticData() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetStatisticFailedRatioData() failed", err))
 	result := service.GetResult()
-	StatisticData := result.GetStatisticData()
-	asst.Equal(defaultResultStatisticData, StatisticData, "test GetStatisticData() failed")
+	statisticFailedRatioData := result.GetStatisticFailedRatioData()
+	asst.Equal(defaultResultStatisticFailedRatioData, statisticFailedRatioData, "test GetStatisticFailedRatioData() failed")
 	// delete
 	err = rDeleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetStatisticData() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetStatisticFailedRatioData() failed", err))
 }
 
-func TestResult_GetStatisticHigh(t *testing.T) {
+func TestResult_GetStatisticFailedRatioHigh(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := rCreateService()
-	asst.Nil(err, common.CombineMessageWithError("test GetStatisticHigh() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetStatisticFailedRatioHigh() failed", err))
 	err = service.GetResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetStatisticHigh() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetStatisticFailedRatioHigh() failed", err))
 	result := service.GetResult()
-	StatisticHigh := result.GetStatisticHigh()
-	asst.Equal(defaultResultStatisticHigh, StatisticHigh, "test GetStatisticHigh() failed")
+	statisticFailedRatioHigh := result.GetStatisticFailedRatioHigh()
+	asst.Equal(defaultResultStatisticFailedRatioHigh, statisticFailedRatioHigh, "test GetStatisticFailedRatioHigh() failed")
 	// delete
 	err = rDeleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test GetStatisticHigh() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test GetStatisticFailedRatioHigh() failed", err))
 }
 
 func TestResult_GetCPUUsageScore(t *testing.T) {

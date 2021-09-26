@@ -17,18 +17,18 @@ type Result interface {
 	GetDBConfigData() string
 	// GetDBConfigAdvice returns the database configuration advice
 	GetDBConfigAdvice() string
-	// GetBackupScore returns the backup score
-	GetBackupScore() int
-	// GetBackupData returns the backup data
-	GetBackupData() string
-	// GetBackupHigh returns the high backup data
-	GetBackupHigh() string
-	// GetStatisticScore returns the statistic score
-	GetStatisticScore() int
-	// GetStatisticData returns the statistic data
-	GetStatisticData() string
-	// GetStatisticHigh returns the high statistic data
-	GetStatisticHigh() string
+	// GetAvgBackupFailedRatioScore returns the average backup failed ratio score
+	GetAvgBackupFailedRatioScore() int
+	// GetAvgBackupFailedRatioData returns the average backup failed ratio data
+	GetAvgBackupFailedRatioData() string
+	// GetAvgBackupFailedRatioHigh returns the high average backup failed ratio data
+	GetAvgBackupFailedRatioHigh() string
+	// GetStatisticFailedRatioScore returns the statistic failed ratio score
+	GetStatisticFailedRatioScore() int
+	// GetStatisticFailedRatioData returns the statistic failed ratio data
+	GetStatisticFailedRatioData() string
+	// GetStatisticFailedRatioHigh returns the high statistic failed ratio data
+	GetStatisticFailedRatioHigh() string
 	// GetCPUUsageScore returns the cpu usage score
 	GetCPUUsageScore() int
 	// GetCPUUsageData returns the cpu usage data
