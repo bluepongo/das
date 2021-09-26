@@ -42,7 +42,7 @@ const (
 	defaultVariableValue = "/mysqldata/mysql3306/data"
 
 	defaultFileSystemNum           = 2
-	defaultAvgBackupFailedRatioNum = 2557
+	defaultAvgBackupFailedRatioNum = 2634
 	defaultPrometheusDataNum       = 10081
 )
 
