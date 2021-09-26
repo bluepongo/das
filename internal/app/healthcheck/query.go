@@ -17,7 +17,34 @@ const (
 		  and table_rows > ?
 		order by table_rows desc;
     `
+)
+
+// PrometheusAPI
+const (
 	// prometheus
+	// Backup
+	// 	(sum(mysqldumpbackup{type="status"})/count(mysqldumpbackup{type="status"})+
+	// sum(xtrabackup{type="status"})/count(xtrabackup{type="status"})+
+	// sum(mysqldumpnbubackup)/count(mysqldumpnbubackup)+
+	// sum(nbubackup)/count(nbubackup))/4
+	PrometheusBackupV1 = `
+		1-(sum(mysqldumpbackup{instance=~"%s",type="status"})/count(mysqldumpbackup{instance=~"%s",type="status"})+
+		sum(xtrabackup{instance=~"%s",type="status"})/count(xtrabackup{instance=~"%s",type="status"})+
+		sum(mysqldumpnbubackup{instance=~"%s"})/count(mysqldumpnbubackup{instance=~"%s"})+
+		sum(nbubackup{instance=~"%s"})/count(nbubackup{instance=~"%s"}))/4
+    `
+	PrometheusBackupV2 = `
+		1-(sum(mysqldumpbackup{node_name=~"%s",type="status"})/count(mysqldumpbackup{node_name=~"%s",type="status"})+
+		sum(xtrabackup{node_name=~"%s",type="status"})/count(xtrabackup{node_name=~"%s",type="status"})+
+		sum(mysqldumpnbubackup{node_name=~"%s"})/count(mysqldumpnbubackup{node_name=~"%s"})+
+		sum(nbubackup{node_name=~"%s"})/count(nbubackup{node_name=~"%s"}))/4
+    `
+	PrometheusStatisticV1 = `
+	1-(sum(mysqlupdbstat{instance=~"%s",type="dbupstatus"})/count(mysqlupdbstat{instance=~"%s",type="dbupstatus"}))
+	`
+	PrometheusStatisticV2 = `
+	1-(sum(mysqlupdbstat{node_name=~"%s",type="dbupstatus"})/count(mysqlupdbstat{node_name=~"%s",type="dbupstatus"}))
+	`
 	PrometheusCPUUsageV1 = `
 		clamp_max(sum by () ((avg by (mode) (
 		(clamp_max(rate(node_cpu{instance=~"%s",mode!="idle",mode!="iowait"}[5m]),1)) or

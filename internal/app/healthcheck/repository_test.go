@@ -42,6 +42,7 @@ const (
 	defaultVariableValue = "/mysqldata/mysql3306/data"
 
 	defaultFileSystemNum     = 2
+	defaultBackupNum         = 2557
 	defaultPrometheusDataNum = 10081
 )
 
@@ -210,7 +211,7 @@ func initFileSystems() ([]string, []string) {
 
 func createResult() error {
 	hcInfo := NewResultWithDefault(defaultResultOperationID, defaultResultWeightedAverageScore,
-		defaultResultDBConfigScore, defaultResultCPUUsageScore, defaultResultIOUtilScore,
+		defaultResultDBConfigScore, defaultResultBackupScore, defaultResultStatisticScore, defaultResultCPUUsageScore, defaultResultIOUtilScore,
 		defaultResultDiskCapacityUsageScore, defaultResultConnectionUsageScore, defaultResultAverageActiveSessionPercentsScore,
 		defaultResultCacheMissRatioScore, defaultResultTableRowsScore, defaultResultTableSizeScore,
 		defaultResultSlowQueryScore, defaultResultAccuracyReview)
@@ -246,6 +247,8 @@ func TestRepositoryAll(t *testing.T) {
 	TestApplicationMySQLRepo_GetLargeTables(t)
 	// prometheus repository
 	TestPrometheusRepo_GetFileSystems(t)
+	TestPrometheusRepo_GetBackup(t)
+	TestPrometheusRepo_GetStatistic(t)
 	TestPrometheusRepo_GetCPUUsage(t)
 	TestPrometheusRepo_GetIOUtil(t)
 	TestPrometheusRepo_GetDiskCapacityUsage(t)
@@ -294,7 +297,9 @@ func TestDASRepo_Transaction(t *testing.T) {
 	err = tx.Begin()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	_, err = tx.Execute(sql, defaultResultOperationID, defaultResultWeightedAverageScore, defaultResultDBConfigScore,
-		defaultResultDBConfigData, defaultResultDBConfigAdvice, defaultResultCPUUsageScore, defaultResultCPUUsageData,
+		defaultResultDBConfigData, defaultResultDBConfigAdvice, defaultResultBackupScore, defaultResultBackupData,
+		defaultResultBackupHigh, defaultResultStatisticScore, defaultResultStatisticData, defaultResultStatisticHigh,
+		defaultResultCPUUsageScore, defaultResultCPUUsageData,
 		defaultResultCPUUsageHigh, defaultResultIOUtilScore, defaultResultIOUtilData, defaultResultIOUtilHigh,
 		defaultResultDiskCapacityUsageScore, defaultResultDiskCapacityUsageData, defaultResultDiskCapacityUsageHigh,
 		defaultResultConnectionUsageScore, defaultResultConnectionUsageData, defaultResultConnectionUsageHigh,
@@ -454,6 +459,22 @@ func TestPrometheusRepo_GetFileSystems(t *testing.T) {
 	fileSystems, err := testPrometheusRepo.GetFileSystems()
 	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetFileSystems() failed", err))
 	asst.Equal(defaultFileSystemNum, len(fileSystems), "test TestPrometheusRepo_GetFileSystems() failed")
+}
+
+func TestPrometheusRepo_GetBackup(t *testing.T) {
+	asst := assert.New(t)
+
+	datas, err := testPrometheusRepo.GetBackup()
+	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetBackup() failed", err))
+	asst.Equal(defaultBackupNum, len(datas), "test TestPrometheusRepo_GetBackup() failed")
+}
+
+func TestPrometheusRepo_GetStatistic(t *testing.T) {
+	asst := assert.New(t)
+
+	datas, err := testPrometheusRepo.GetStatistic()
+	asst.Nil(err, common.CombineMessageWithError("test TestPrometheusRepo_GetStatistic() failed", err))
+	asst.Equal(defaultPrometheusDataNum, len(datas), "test TestPrometheusRepo_GetStatistic() failed")
 }
 
 func TestPrometheusRepo_GetCPUUsage(t *testing.T) {

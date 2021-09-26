@@ -120,18 +120,18 @@ func (dr *DASRepo) LoadEngineConfig() (healthcheck.EngineConfig, error) {
 // GetResultByOperationID gets a Result by the operationID from the middleware
 func (dr *DASRepo) GetResultByOperationID(operationID int) (healthcheck.Result, error) {
 	sql := `
-		select id, operation_id, weighted_average_score,
-		db_config_score, db_config_data, db_config_advice,
-		cpu_usage_score, cpu_usage_data, cpu_usage_high,
-		io_util_score, io_util_data, io_util_high,
-		disk_capacity_usage_score, disk_capacity_usage_data, disk_capacity_usage_high,
-		connection_usage_score, connection_usage_data, connection_usage_high,
-		average_active_session_percents_score, average_active_session_percents_data, average_active_session_percents_high,
-		cache_miss_ratio_score, cache_miss_ratio_data, cache_miss_ratio_high,
-		table_rows_score, table_rows_data, table_rows_high,
-		table_size_score, table_size_data, table_size_high,
-		slow_query_score, slow_query_data, slow_query_advice,
-		accuracy_review, del_flag, create_time, last_update_time
+		select id, operation_id, weighted_average_score, db_config_score, db_config_data, 
+		db_config_advice, avg_backup_failed_ratio_score, avg_backup_failed_ratio_data, 
+		avg_backup_failed_ratio_high, statistics_failed_ratio_score, statistics_failed_ratio_data, 
+		statistics_failed_ratio_high, cpu_usage_score, cpu_usage_data, cpu_usage_high,
+		io_util_score, io_util_data, io_util_high, 
+		disk_capacity_usage_score, disk_capacity_usage_data, disk_capacity_usage_high, 
+		connection_usage_score, connection_usage_data, connection_usage_high, 
+		average_active_session_percents_score, average_active_session_percents_data,
+		average_active_session_percents_high, cache_miss_ratio_score, cache_miss_ratio_data, 
+		cache_miss_ratio_high, table_rows_score, table_rows_data, table_rows_high,
+		table_size_score, table_size_data, table_size_high, slow_query_score,
+		slow_query_data, slow_query_advice, accuracy_review, del_flag, create_time, last_update_time
 		from t_hc_result
 		where del_flag = 0
 		and operation_id = ? 
@@ -216,19 +216,23 @@ func (dr *DASRepo) UpdateOperationStatus(operationID int, status int, message st
 // SaveResult saves the result in the middleware
 func (dr *DASRepo) SaveResult(result healthcheck.Result) error {
 	sql := `insert into t_hc_result(operation_id, weighted_average_score, db_config_score, db_config_data, 
-		db_config_advice, cpu_usage_score, cpu_usage_data, cpu_usage_high, io_util_score,
-		io_util_data, io_util_high, disk_capacity_usage_score, disk_capacity_usage_data, 
+		db_config_advice, avg_backup_failed_ratio_score, avg_backup_failed_ratio_data, 
+		avg_backup_failed_ratio_high, statistics_failed_ratio_score, statistics_failed_ratio_data, 
+		statistics_failed_ratio_high, cpu_usage_score, cpu_usage_data, cpu_usage_high, 
+		io_util_score, io_util_data, io_util_high, disk_capacity_usage_score, disk_capacity_usage_data, 
 		disk_capacity_usage_high, connection_usage_score, connection_usage_data, 
 		connection_usage_high, average_active_session_percents_score, average_active_session_percents_data,
 		average_active_session_percents_high, cache_miss_ratio_score, cache_miss_ratio_data, 
 		cache_miss_ratio_high, table_rows_score, table_rows_data, table_rows_high,
 		table_size_score, table_size_data, table_size_high, slow_query_score,
 		slow_query_data, slow_query_advice, accuracy_review)
-		values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+		values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 	`
-	log.Debugf("healthCheck DASRepo.SaveResult() insert sql: \n%s\nplaceholders: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %ss, %s, %s, %s",
+	log.Debugf("healthCheck DASRepo.SaveResult() insert sql: \n%s\nplaceholders: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %ss, %s, %s, %s",
 		sql, result.GetOperationID(), result.GetWeightedAverageScore(),
 		result.GetDBConfigScore(), result.GetDBConfigData(), result.GetDBConfigAdvice(),
+		result.GetBackupScore(), result.GetBackupData(), result.GetBackupHigh(),
+		result.GetStatisticScore(), result.GetStatisticData(), result.GetStatisticHigh(),
 		result.GetCPUUsageScore(), result.GetCPUUsageData(), result.GetCPUUsageHigh(),
 		result.GetIOUtilScore(), result.GetIOUtilData(), result.GetIOUtilHigh(),
 		result.GetDiskCapacityUsageScore(), result.GetDiskCapacityUsageData(), result.GetDiskCapacityUsageHigh(),
@@ -242,6 +246,8 @@ func (dr *DASRepo) SaveResult(result healthcheck.Result) error {
 	// execute
 	_, err := dr.Execute(sql, result.GetOperationID(), result.GetWeightedAverageScore(),
 		result.GetDBConfigScore(), result.GetDBConfigData(), result.GetDBConfigAdvice(),
+		result.GetBackupScore(), result.GetBackupData(), result.GetBackupHigh(),
+		result.GetStatisticScore(), result.GetStatisticData(), result.GetStatisticHigh(),
 		result.GetCPUUsageScore(), result.GetCPUUsageData(), result.GetCPUUsageHigh(),
 		result.GetIOUtilScore(), result.GetIOUtilData(), result.GetIOUtilHigh(),
 		result.GetDiskCapacityUsageScore(), result.GetDiskCapacityUsageData(), result.GetDiskCapacityUsageHigh(),
@@ -457,6 +463,50 @@ func (pr *PrometheusRepo) GetFileSystems() ([]healthcheck.FileSystem, error) {
 	}
 
 	return fileSystems, nil
+}
+
+// GetBackup gets the mysql backup information
+func (pr *PrometheusRepo) GetBackup() ([]healthcheck.PrometheusData, error) {
+	var prometheusQuery string
+
+	// prepare query
+	switch pr.getPMMVersion() {
+	case 1:
+		// pmm 1.x
+		prometheusQuery = PrometheusBackupV1
+	case 2:
+		// pmm 2.x
+		prometheusQuery = PrometheusBackupV2
+	default:
+		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+	}
+
+	prometheusQuery = fmt.Sprintf(prometheusQuery, pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName())
+	log.Debugf("healthcheck PrometheusRepo.GetBackup() query: \n%s\n", prometheusQuery)
+
+	return pr.execute(prometheusQuery)
+}
+
+// GetStatistic gets the statistic of mysql
+func (pr *PrometheusRepo) GetStatistic() ([]healthcheck.PrometheusData, error) {
+	var prometheusQuery string
+
+	// prepare query
+	switch pr.getPMMVersion() {
+	case 1:
+		// pmm 1.x
+		prometheusQuery = PrometheusStatisticV1
+	case 2:
+		// pmm 2.x
+		prometheusQuery = PrometheusStatisticV2
+	default:
+		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+	}
+
+	prometheusQuery = fmt.Sprintf(prometheusQuery, pr.getNodeName(), pr.getNodeName())
+	log.Debugf("healthcheck PrometheusRepo.GetStatistic() query: \n%s\n", prometheusQuery)
+
+	return pr.execute(prometheusQuery)
 }
 
 // GetCPUUsage gets the cpu usage

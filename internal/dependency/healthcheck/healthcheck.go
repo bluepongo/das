@@ -42,7 +42,11 @@ type ApplicationMySQLRepo interface {
 type PrometheusRepo interface {
 	// GetMountPoint gets the mount points from the prometheus
 	GetFileSystems() ([]FileSystem, error)
-	// CheckCPUUsage gets the cpu usage
+	// GetBackup gets the mysql backup information
+	GetBackup() ([]PrometheusData, error)
+	// GetStatistic gets the statistic of mysql
+	GetStatistic() ([]PrometheusData, error)
+	// GetCPUUsage gets the cpu usage
 	GetCPUUsage() ([]PrometheusData, error)
 	// CheckIOUtil gets the io util
 	GetIOUtil() ([]PrometheusData, error)

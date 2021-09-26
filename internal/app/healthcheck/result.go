@@ -18,6 +18,12 @@ type Result struct {
 	DBConfigScore                     int       `middleware:"db_config_score" json:"db_config_score"`
 	DBConfigData                      string    `middleware:"db_config_data" json:"db_config_data"`
 	DBConfigAdvice                    string    `middleware:"db_config_advice" json:"db_config_advice"`
+	BackupScore                       int       `middleware:"avg_backup_failed_ratio_score" json:"avg_backup_failed_ratio_score"`
+	BackupData                        string    `middleware:"avg_backup_failed_ratio_data" json:"avg_backup_failed_ratio_data"`
+	BackupHigh                        string    `middleware:"avg_backup_failed_ratio_high" json:"avg_backup_failed_ratio_high"`
+	StatisticScore                    int       `middleware:"statistics_failed_ratio_score" json:"statistics_failed_ratio_score"`
+	StatisticData                     string    `middleware:"statistics_failed_ratio_data" json:"statistics_failed_ratio_data"`
+	StatisticHigh                     string    `middleware:"statistics_failed_ratio_high" json:"statistics_failed_ratio_high"`
 	CPUUsageScore                     int       `middleware:"cpu_usage_score" json:"cpu_usage_score"`
 	CPUUsageData                      string    `middleware:"cpu_usage_data" json:"cpu_usage_data"`
 	CPUUsageHigh                      string    `middleware:"cpu_usage_high" json:"cpu_usage_high"`
@@ -53,6 +59,7 @@ type Result struct {
 
 // NewResult returns a new *Result
 func NewResult(repo healthcheck.DASRepo, operationID int, weightedAverageScore int, dbConfigScore int, dbConfigData string, dbConfigAdvice string,
+	backupScore int, backupData string, backupHigh string, statisticScore int, statisticData string, statisticHigh string,
 	cpuUsageScore int, cpuUsageData string, cpuUsageHigh string, ioUtilScore int, ioUtilData string, ioUtilHigh string,
 	diskCapacityUsageScore int, diskCapacityUsageData string, diskCapacityUsageHigh string,
 	connectionUsageScore int, connectionUsageData string, connectionUsageHigh string,
@@ -68,6 +75,12 @@ func NewResult(repo healthcheck.DASRepo, operationID int, weightedAverageScore i
 		DBConfigScore:                     dbConfigScore,
 		DBConfigData:                      dbConfigData,
 		DBConfigAdvice:                    dbConfigAdvice,
+		BackupScore:                       backupScore,
+		BackupData:                        backupData,
+		BackupHigh:                        backupHigh,
+		StatisticScore:                    statisticScore,
+		StatisticData:                     statisticData,
+		StatisticHigh:                     statisticHigh,
 		CPUUsageScore:                     cpuUsageScore,
 		CPUUsageData:                      cpuUsageData,
 		CPUUsageHigh:                      cpuUsageHigh,
@@ -110,6 +123,7 @@ func NewEmptyResultWithGlobal() *Result {
 
 // NewResultWithDefault returns a new *Result with default DASRepo
 func NewResultWithDefault(operationID int, weightedAverageScore int, dbConfigScore int,
+	backupScore int, statisticScore int,
 	cpuUsageScore int, ioUtilScore int, diskCapacityUsageScore int, connectionUsageScore int,
 	averageActiveSessionPercentsScore int, cacheMissRatioScore int, tableRowsScore int, tableSizeScore int,
 	slowQueryScore int, accuracyReview int) *Result {
@@ -120,6 +134,12 @@ func NewResultWithDefault(operationID int, weightedAverageScore int, dbConfigSco
 		DBConfigScore:                     dbConfigScore,
 		DBConfigData:                      constant.DefaultRandomString,
 		DBConfigAdvice:                    constant.DefaultRandomString,
+		BackupScore:                       backupScore,
+		BackupData:                        constant.DefaultRandomString,
+		BackupHigh:                        constant.DefaultRandomString,
+		StatisticScore:                    statisticScore,
+		StatisticData:                     constant.DefaultRandomString,
+		StatisticHigh:                     constant.DefaultRandomString,
 		CPUUsageScore:                     cpuUsageScore,
 		CPUUsageData:                      constant.DefaultRandomString,
 		CPUUsageHigh:                      constant.DefaultRandomString,
@@ -191,6 +211,36 @@ func (r *Result) GetDBConfigData() string {
 // GetDBConfigAdvice returns the DBConfigAdvice
 func (r *Result) GetDBConfigAdvice() string {
 	return r.DBConfigAdvice
+}
+
+// GetBackupScore returns the BackupScore
+func (r *Result) GetBackupScore() int {
+	return r.BackupScore
+}
+
+// GetBackupData returns the BackupData
+func (r *Result) GetBackupData() string {
+	return r.BackupData
+}
+
+// GetBackupHigh returns the BackupHigh
+func (r *Result) GetBackupHigh() string {
+	return r.BackupHigh
+}
+
+// GetStatisticScore returns the StatisticScore
+func (r *Result) GetStatisticScore() int {
+	return r.StatisticScore
+}
+
+// GetStatisticData returns the StatisticData
+func (r *Result) GetStatisticData() string {
+	return r.StatisticData
+}
+
+// GetStatisticHigh returns the StatisticHigh
+func (r *Result) GetStatisticHigh() string {
+	return r.StatisticHigh
 }
 
 // GetCPUUsageScore returns the CPUUsageScore
