@@ -168,7 +168,7 @@ db:
     mysql:
       # description: database address, format: host:port
       # type: string
-      # default: 127.0.0.1:3306
+      # default: "127.0.0.1:3306"
       addr: "127.0.0.1:3306"
       # description: database name
       # type: string
@@ -182,6 +182,46 @@ db:
       # type: string
       # default: root
       pass: root
+
+# alert configuration
+alert:
+  # send alert message via smtp server
+  smtp:
+    # description: specify if enables smtp method, note that only one of these two ways could be enabled, because sending email twice is meaningless
+    # type: bool
+    # default: true
+    enabled: true
+    # description: specify the address of the smtp server
+    # type: string
+    # default: "127.0.0.1:25"
+    addr: "127.0.0.1:25"
+    # description: specify the username of the smtp server
+    # type: string
+    # default: root
+    user: root
+    # description: specify the password of the smtp server
+    # type: string
+    # default: root
+    pass: root
+    # description: specify the from email address
+    # type: string
+    # default: "mail@example.com"
+    from: "mail@example.com"
+  # send alert message via calling http api
+  http:
+    # description: specify if enables http method, note that only one of these two ways could be enabled, because sending email twice is meaningless
+    # type: bool
+    # default: false
+    enabled: false
+    # description: specify alert api url, alert module calls this api to send alert messages
+    # type: string
+    # default: "http://127.0.0.1:8080"
+    url: http://127.0.0.1:8080
+    # description: specify alert api parameters, these may be needed by the api, such as username, token, and other information
+    # type: map[string]string
+    # default: {}
+    config: {}
+
 # sqladvisor configuration
 sqladvisor:
   # soar configuration

@@ -151,6 +151,25 @@ CREATE TABLE `t_meta_user_info` (
   KEY `idx06_user_name` (`user_name`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '用户信息表';
 
+CREATE TABLE `t_alert_operation_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `url` varchar(200) NOT NULL COMMENT '发送邮件渠道URL',
+  `to_addrs` varchar(200) NOT NULL COMMENT '收件地址列表, 多个地址以逗号分隔',
+  `cc_addrs` varchar(200) DEFAULT NULL COMMENT '抄送地址列表, 多个地址以逗号分隔',
+  `subject` varchar(100) DEFAULT NULL COMMENT '邮件标题',
+  `content` mediumtext NOT NULL COMMENT '邮件正文',
+  `config` json DEFAULT NULL COMMENT '配置信息',
+  `message` mediumtext DEFAULT NULL COMMENT '发送日志',
+  `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
+  `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
+  `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx01_url` (`url`),
+  KEY `idx02_to_addrs` (`to_addrs`),
+  KEY `idx03_cc_addrs` (`cc_addrs`),
+  KEY `idx04_subject` (`subject`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '告警邮件操作表';
+
 CREATE TABLE `t_hc_default_engine_config` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `item_name` varchar(100) NOT NULL COMMENT '检查项名称',

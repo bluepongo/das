@@ -9,6 +9,6 @@ import (
 func RegisterAlert(group *gin.RouterGroup) {
 	alertGroup := group.Group("/alert")
 	{
-		alertGroup.POST("/alert/email", alert.SendEmail)
+		alertGroup.POST("/email", alert.SendEmail)
 	}
 }

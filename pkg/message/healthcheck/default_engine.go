@@ -17,18 +17,18 @@ const (
 	// info
 
 	// error
-	ErrHealthcheckUpdateOperationStatus       = 401001
-	ErrDefaultEngineEmpty                     = 401002
-	ErrItemWeightItemInvalid                  = 401003
-	ErrLowWatermarkItemInvalid                = 401004
-	ErrHighWatermarkItemInvalid               = 401005
-	ErrUnitItemInvalid                        = 401006
-	ErrScoreDeductionPerUnitHighItemInvalid   = 401007
-	ErrMaxScoreDeductionHighItemInvalid       = 401008
-	ErrScoreDeductionPerUnitMediumItemInvalid = 401009
-	ErrMaxScoreDeductionMediumItemInvalid     = 401010
-	ErrItemWeightSummaryInvalid               = 401011
-	ErrPmmVersionInvalid                      = 401012
+	ErrHealthcheckUpdateOperationStatus       = 402001
+	ErrDefaultEngineEmpty                     = 402002
+	ErrItemWeightItemInvalid                  = 402003
+	ErrLowWatermarkItemInvalid                = 402004
+	ErrHighWatermarkItemInvalid               = 402005
+	ErrUnitItemInvalid                        = 402006
+	ErrScoreDeductionPerUnitHighItemInvalid   = 402007
+	ErrMaxScoreDeductionHighItemInvalid       = 402008
+	ErrScoreDeductionPerUnitMediumItemInvalid = 402009
+	ErrMaxScoreDeductionMediumItemInvalid     = 402010
+	ErrItemWeightSummaryInvalid               = 402011
+	ErrPmmVersionInvalid                      = 402012
 )
 
 func initDefaultEngineDebugMessage() {

@@ -115,7 +115,7 @@ func (s *server) Run() {
 func (s *server) Stop() {
 	err := linux.RemovePidFile(s.pidFile)
 	if err != nil {
-		log.Error(fmt.Sprintf("%s\n%s", message.Messages[message.ErrRemovePidFile].Error(), err.Error()))
+		log.Error(message.NewMessage(message.ErrRemovePidFile, s.pidFile, err.Error()).Error())
 	}
 
 	os.Exit(constant.DefaultNormalExitCode)

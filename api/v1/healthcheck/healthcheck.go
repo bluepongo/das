@@ -47,7 +47,7 @@ func GetResultByOperationID(c *gin.Context) {
 	// get entities
 	err = s.GetResultByOperationID(operationID)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckGetResultByOperationID)
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckGetResultByOperationID, err.Error())
 		return
 	}
 	// marshal service
@@ -125,7 +125,7 @@ func Check(c *gin.Context) {
 	// check health
 	err = s.Check(mysqlServerID, startTime, endTime, step)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck)
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err.Error())
 		return
 	}
 	respMessage := "healthcheck started"
@@ -198,7 +198,7 @@ func CheckByHostInfo(c *gin.Context) {
 	// get entities
 	err = s.CheckByHostInfo(hostIP, portNum, startTime, endTime, step)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo)
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, err.Error())
 		return
 	}
 	respMessage := "healthcheck by host info started"
@@ -239,7 +239,7 @@ func ReviewAccuracy(c *gin.Context) {
 	// review accuracy
 	err = s.ReviewAccuracy(operationID, review)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckReviewAccuracy)
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckReviewAccuracy, operationID, err.Error())
 		return
 	}
 	respMessage := "reviewed accuracy"

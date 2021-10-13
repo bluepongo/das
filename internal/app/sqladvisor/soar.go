@@ -32,8 +32,8 @@ func NewDefaultAdvisor(soarBin, configFile string) *DefaultAdvisor {
 
 // NewDefaultAdvisorWithDefault returns a new *DefaultAdvisor with default value
 func NewDefaultAdvisorWithDefault() *DefaultAdvisor {
-	soarBin := viper.GetString(config.SQLAdvisorSoarBin)
-	configFile := viper.GetString(config.SQLAdvisorSoarConfig)
+	soarBin := viper.GetString(config.SQLAdvisorSoarBinKey)
+	configFile := viper.GetString(config.SQLAdvisorSoarConfigKey)
 
 	return newDefaultAdvisor(soarBin, configFile)
 }

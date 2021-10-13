@@ -15,12 +15,12 @@ const (
 	// debug
 
 	// info
-	InfoSQLAdvisorGetFingerprint = 202001
-	InfoSQLAdvisorGetSQLID       = 202002
-	InfoSQLAdvisorAdvice         = 202003
+	InfoSQLAdvisorGetFingerprint = 204001
+	InfoSQLAdvisorGetSQLID       = 204002
+	InfoSQLAdvisorAdvice         = 204003
 
 	// error
-	ErrSQLAdvisorAdvice = 402001
+	ErrSQLAdvisorAdvice = 404001
 )
 
 func initServiceDebugMessage() {
@@ -42,5 +42,5 @@ func initServiceInfoMessage() {
 func initServiceErrorMessage() {
 	message.Messages[ErrSQLAdvisorAdvice] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrSQLAdvisorAdvice,
-		"sqladvisor: advice failed. db id: %d, sql text: %s, error: %s")
+		"sqladvisor: advice failed. db id: %d, sql text: %s.\n%s")
 }

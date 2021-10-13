@@ -40,8 +40,7 @@ const (
 	MaxServerWriteTimeout          = 60
 	DaemonArgTrue                  = "--daemon=true"
 	DaemonArgFalse                 = "--daemon=false"
-	DefaultDBDASMySQLName          = "das"
-	DefaultDBSoarMySQLName         = "soar"
+	DefaultDBName                  = "das"
 	DefaultDBUser                  = "root"
 	DefaultDBPass                  = "root"
 	MinDBPoolMaxConnections        = 1
@@ -62,8 +61,17 @@ const (
 	DefaultDBMonitorMySQLPass      = ""
 	DefaultDBApplicationMySQLUser  = "root"
 	DefaultDBApplicationMySQLPass  = "root"
+	DefaultDBSoarMySQLName         = "soar"
 	DefaultDBSoarMySQLUser         = "root"
 	DefaultDBSoarMySQLPass         = "root"
+	DefaultAlertSMTPEnabled        = true
+	DefaultAlertSMTPAddr           = "smtp.163.com"
+	DefaultAlertSMTPUser           = "root"
+	DefaultAlertSMTPPass           = "root"
+	DefaultAlertSMTPFrom           = "mail@example.com"
+	DefaultAlertHTTPEnabled        = false
+	DefaultAlertHTTPURL            = "http://127.0.0.1:8080"
+	DefaultAlertHTTPConfig         = "{}"
 	DefaultSQLAdvisorSoarBin       = "./soar"
 	DefaultSQLAdvisorSoarConfig    = "./soar.yaml"
 	DefaultSQLAdvisorSoarBlacklist = "./soar.blacklist"
@@ -109,9 +117,19 @@ const (
 	DBSoarMySQLNameKey          = "db.soar.mysql.name"
 	DBSoarMySQLUserKey          = "db.soar.mysql.user"
 	DBSoarMySQLPassKey          = "db.soar.mysql.pass"
+	// alert
+	AlertSMTPEnabledKey = "alert.smtp.enabled"
+	AlertSMTPAddrKey    = "alert.smtp.addr"
+	AlertSMTPUserKey    = "alert.smtp.user"
+	AlertSMTPPassKey    = "alert.smtp.pass"
+	AlertSMTPFromKey    = "alert.smtp.from"
+	AlertHTTPEnabledKey = "alert.http.enabled"
+	AlertHTTPURLKey     = "alert.http.url"
+	AlertHTTPConfigKey  = "alert.http.config"
+
 	// sqladvisor
-	SQLAdvisorSoarBin          = "sqladvisor.soar.Bin"
-	SQLAdvisorSoarConfig       = "sqladvisor.soar.Config"
+	SQLAdvisorSoarBinKey       = "sqladvisor.soar.Bin"
+	SQLAdvisorSoarConfigKey    = "sqladvisor.soar.Config"
 	SQLAdvisorSoarSamplingKey  = "sqladvisor.soar.sampling"
 	SQLAdvisorSoarProfilingKey = "sqladvisor.soar.profiling"
 	SQLAdvisorSoarTraceKey     = "sqladvisor.soar.trace"

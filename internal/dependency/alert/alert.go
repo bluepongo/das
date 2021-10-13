@@ -1,8 +1,19 @@
 package alert
 
 import (
+	"net/http"
+
 	"github.com/romberli/go-util/middleware"
 )
+
+type Config interface {
+	// Get returns the value of the given key
+	Get(key string) string
+	// Set sets the value of the given key
+	Set(key string, value string)
+	// Delete deletes the given key from the config
+	Delete(key string)
+}
 
 type Repository interface {
 	// Execute executes given command and placeholders on the middleware
@@ -10,23 +21,25 @@ type Repository interface {
 	// Transaction returns a middleware.Transaction that could execute multiple commands as a transaction
 	Transaction() (middleware.Transaction, error)
 	// Save saves alert message to the middleware
-	Save(url string, toAddr, ccAddr []string, content string, status int) error
+	Save(url, toAddrs, ccAddrs, subject, content, config, message string) error
 }
 
-type EmailAlerter interface {
+type Sender interface {
+	// GetClient returns the http client
+	GetClient() *http.Client
+	// GetConfig return the config
+	GetConfig() Config
 	// GetURL returns the url
 	GetURL() string
-	// GetToAddr returns the to address
-	GetToAddr() []string
-	// GetCCAddr returns the cc address
-	GetCCAddr() []string
-	// GetContent returns the content
-	GetContent() string
 	// Send sends the email
 	Send() error
 }
 
 type Service interface {
+	// GetRepository returns the repository of the service
+	GetRepository() Repository
+	// GetConfig returns the config of the service
+	GetConfig() Config
 	// SendEmail sends the email
-	SendEmail(url string, toAddr, ccAddr []string, content string) error
+	SendEmail(toAddrs, ccAddrs, subject, content string) error
 }

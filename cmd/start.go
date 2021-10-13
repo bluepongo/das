@@ -48,7 +48,7 @@ var startCmd = &cobra.Command{
 		// init config
 		err = initConfig()
 		if err != nil {
-			fmt.Println(fmt.Sprintf("%s\n%s", message.NewMessage(message.ErrInitConfig).Error(), err.Error()))
+			fmt.Println(message.NewMessage(message.ErrInitConfig, err.Error()).Error())
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 
@@ -56,13 +56,13 @@ var startCmd = &cobra.Command{
 		serverPidFile = viper.GetString(config.ServerPidFileKey)
 		pidFileExists, err = linux.PathExists(serverPidFile)
 		if err != nil {
-			log.Error(fmt.Sprintf("%s\n%s", message.NewMessage(message.ErrCheckServerPid).Error(), err.Error()))
+			log.Error(message.NewMessage(message.ErrCheckServerPid, err.Error()).Error())
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 		if pidFileExists {
 			isRunning, err = linux.IsRunningWithPidFile(serverPidFile)
 			if err != nil {
-				log.Error(fmt.Sprintf("%s\n%s", message.NewMessage(message.ErrCheckServerRunningStatus).Error(), err.Error()))
+				log.Error(message.NewMessage(message.ErrCheckServerRunningStatus, err.Error()).Error())
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 			if isRunning {
@@ -86,7 +86,7 @@ var startCmd = &cobra.Command{
 			startCommand := exec.Command(os.Args[0], args...)
 			err = startCommand.Start()
 			if err != nil {
-				log.Error(fmt.Sprintf("%s\n%s", message.NewMessage(message.ErrStartAsForeground).Error(), err.Error()))
+				log.Error(message.NewMessage(message.ErrStartAsForeground, err.Error()).Error())
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 
@@ -99,7 +99,7 @@ var startCmd = &cobra.Command{
 			// save pid
 			err = linux.SavePid(serverPid, serverPidFile, constant.DefaultFileMode)
 			if err != nil {
-				log.Error(fmt.Sprintf("%s\n%s", message.NewMessage(message.ErrSavePidToFile).Error(), err.Error()))
+				log.Error(message.NewMessage(message.ErrSavePidToFile, err.Error()).Error())
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 
@@ -108,7 +108,7 @@ var startCmd = &cobra.Command{
 			// init connection pool
 			err = global.InitDASMySQLPool()
 			if err != nil {
-				log.Error(fmt.Sprintf("%s\n%s", message.NewMessage(message.ErrInitConnectionPool).Error(), err.Error()))
+				log.Error(message.NewMessage(message.ErrInitConnectionPool, err.Error()).Error())
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 

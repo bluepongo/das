@@ -44,7 +44,13 @@ func (r *Repository) Transaction() (middleware.Transaction, error) {
 	return r.Database.Transaction()
 }
 
-// Save saves sql tuning advice into the middleware
-func (r *Repository) Save(url string, toAddr, ccAddr []string, content string, status int) error {
-	return nil
+// Save saves sending result into the middleware
+func (r *Repository) Save(url, toAddrs, ccAddrs, subject, content, config, message string) error {
+	sql := `
+		insert into t_alert_operation_info(url, to_addrs, ccAddrs, subject, content, config, message)
+		values(?, ?, ?, ?, ?, ?, ?);
+    `
+	_, err := r.Execute(sql, url, toAddrs, ccAddrs, subject, content, config, message)
+
+	return err
 }

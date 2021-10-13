@@ -42,7 +42,7 @@ var statusCmd = &cobra.Command{
 		// init config
 		err = initConfig()
 		if err != nil {
-			fmt.Println(fmt.Sprintf("%s\n%s", message.NewMessage(message.ErrInitConfig).Error(), err.Error()))
+			fmt.Println(message.NewMessage(message.ErrInitConfig, err.Error()).Error())
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 
@@ -50,7 +50,7 @@ var statusCmd = &cobra.Command{
 		if serverPid != constant.DefaultRandomInt {
 			isRunning, err = linux.IsRunningWithPid(serverPid)
 			if err != nil {
-				fmt.Println(fmt.Sprintf("%s\n%s", message.NewMessage(message.ErrCheckServerRunningStatus).Error(), err.Error()))
+				fmt.Println(message.NewMessage(message.ErrCheckServerRunningStatus, err.Error()).Error())
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 			if isRunning {
@@ -66,12 +66,12 @@ var statusCmd = &cobra.Command{
 		serverPidFile = viper.GetString(config.ServerPidFileKey)
 		serverPid, err = linux.GetPidFromPidFile(serverPidFile)
 		if err != nil {
-			fmt.Println(fmt.Sprintf("%s\n%s", message.NewMessage(message.ErrGetPidFromPidFile, serverPidFile).Error(), err.Error()))
+			fmt.Println(message.NewMessage(message.ErrGetPidFromPidFile, serverPidFile, err.Error()).Error())
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 		isRunning, err = linux.IsRunningWithPid(serverPid)
 		if err != nil {
-			fmt.Println(fmt.Sprintf("%s\n%s", message.NewMessage(message.ErrCheckServerRunningStatus).Error(), err.Error()))
+			fmt.Println(message.NewMessage(message.ErrCheckServerRunningStatus, err.Error()).Error())
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 		if isRunning {

@@ -21,7 +21,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/hashicorp/go-multierror"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
@@ -73,6 +72,15 @@ var (
 	dbSoarMySQLName          string
 	dbSoarMySQLUser          string
 	dbSoarMySQLPass          string
+	// alert
+	alertSMTPEnabledStr string
+	alertSMTPAddr       string
+	alertSMTPUser       string
+	alertSMTPPass       string
+	alertSMTPFrom       string
+	alertHTTPEnabledStr string
+	alertHTTPURL        string
+	alertHTTPConfig     string
 	// sqladvisor
 	sqladvisorSoarBin          string
 	sqladvisorSoarConfig       string
@@ -92,7 +100,7 @@ var rootCmd = &cobra.Command{
 		if len(args) == 0 {
 			err := cmd.Help()
 			if err != nil {
-				fmt.Println(fmt.Sprintf("%s\n%s", message.NewMessage(message.ErrPrintHelpInfo).Error(), err.Error()))
+				fmt.Println(message.NewMessage(message.ErrPrintHelpInfo, err.Error()).Error())
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 
@@ -102,7 +110,7 @@ var rootCmd = &cobra.Command{
 		// init config
 		err := initConfig()
 		if err != nil {
-			fmt.Println(fmt.Sprintf("%s\n%s", message.NewMessage(message.ErrInitConfig).Error(), err.Error()))
+			fmt.Println(message.NewMessage(message.ErrInitConfig, err.Error()).Error())
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 	},
@@ -134,15 +142,15 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&logFormat, "log-format", constant.DefaultRandomString, fmt.Sprintf("specify the log format(default: %s)", log.DefaultLogFormat))
 	rootCmd.PersistentFlags().IntVar(&logMaxSize, "log-max-size", constant.DefaultRandomInt, fmt.Sprintf("specify the log file max size(default: %d, unit: MB)", log.DefaultLogMaxSize))
 	rootCmd.PersistentFlags().IntVar(&logMaxDays, "log-max-days", constant.DefaultRandomInt, fmt.Sprintf("specify the log file max days(default: %d)", log.DefaultLogMaxDays))
-	rootCmd.PersistentFlags().IntVar(&logMaxBackups, "log-max-backups", constant.DefaultRandomInt, fmt.Sprintf("specify the log file max size(default: %d)", log.DefaultLogMaxBackups))
+	rootCmd.PersistentFlags().IntVar(&logMaxBackups, "log-max-backups", constant.DefaultRandomInt, fmt.Sprintf("specify the log file max backups(default: %d)", log.DefaultLogMaxBackups))
 	// server
 	rootCmd.PersistentFlags().StringVar(&serverAddr, "server-addr", constant.DefaultRandomString, fmt.Sprintf("specify the server port(default: %s)", config.DefaultServerAddr))
 	rootCmd.PersistentFlags().StringVar(&serverPidFile, "server-pid-file", constant.DefaultRandomString, fmt.Sprintf("specify the server pid file path(default: %s)", filepath.Join(config.DefaultBaseDir, fmt.Sprintf("%s.pid", config.DefaultCommandName))))
 	rootCmd.PersistentFlags().IntVar(&serverReadTimeout, "server-read-timeout", constant.DefaultRandomInt, fmt.Sprintf("specify the read timeout in seconds of http request(default: %d)", config.DefaultServerReadTimeout))
-	rootCmd.PersistentFlags().IntVar(&serverWriteTimeout, "server-write-timeout", constant.DefaultRandomInt, fmt.Sprintf("specify the read timeout in seconds of http request(default: %d)", config.DefaultServerReadTimeout))
+	rootCmd.PersistentFlags().IntVar(&serverWriteTimeout, "server-write-timeout", constant.DefaultRandomInt, fmt.Sprintf("specify the write timeout in seconds of http request(default: %d)", config.DefaultServerWriteTimeout))
 	// database
 	rootCmd.PersistentFlags().StringVar(&dbDASMySQLAddr, "db-das-mysql-addr", constant.DefaultRandomString, fmt.Sprintf("specify das database address(format: host:port)(default: %s)", fmt.Sprintf("%s:%d", constant.DefaultLocalHostIP, constant.DefaultMySQLPort)))
-	rootCmd.PersistentFlags().StringVar(&dbDASMySQLName, "db-das-mysql-name", constant.DefaultRandomString, fmt.Sprintf("specify das database name(default: %s)", config.DefaultDBDASMySQLName))
+	rootCmd.PersistentFlags().StringVar(&dbDASMySQLName, "db-das-mysql-name", constant.DefaultRandomString, fmt.Sprintf("specify das database name(default: %s)", config.DefaultDBName))
 	rootCmd.PersistentFlags().StringVar(&dbDASMySQLUser, "db-das-mysql-user", constant.DefaultRandomString, fmt.Sprintf("specify das database user name(default: %s)", config.DefaultDBUser))
 	rootCmd.PersistentFlags().StringVar(&dbDASMySQLPass, "db-das-mysql-pass", constant.DefaultRandomString, fmt.Sprintf("specify das database user password(default: %s)", config.DefaultDBPass))
 	rootCmd.PersistentFlags().IntVar(&dbPoolMaxConnections, "db-pool-max-connections", constant.DefaultRandomInt, fmt.Sprintf("specify max connections of the connection pool(default: %d)", mysql.DefaultMaxConnections))
@@ -162,6 +170,15 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&dbSoarMySQLName, "db-soar-mysql-name", constant.DefaultRandomString, fmt.Sprintf("specify soar database name(default: %s)", config.DefaultDBSoarMySQLName))
 	rootCmd.PersistentFlags().StringVar(&dbSoarMySQLUser, "db-soar-mysql-user", constant.DefaultRandomString, fmt.Sprintf("specify soar database user name(default: %s)", config.DefaultDBSoarMySQLUser))
 	rootCmd.PersistentFlags().StringVar(&dbSoarMySQLPass, "db-soar-mysql-pass", constant.DefaultRandomString, fmt.Sprintf("specify soar database user password(default: %s)", config.DefaultDBSoarMySQLPass))
+	// alert
+	rootCmd.PersistentFlags().StringVar(&alertSMTPEnabledStr, "alert-smtp-enabled", constant.DefaultRandomString, fmt.Sprintf("specify if enables smtp method(default: %s)", constant.TrueString))
+	rootCmd.PersistentFlags().StringVar(&alertSMTPAddr, "alert-smtp-addr", constant.DefaultRandomString, fmt.Sprintf("specify the address of the smtp server(default: %s)", config.DefaultAlertSMTPAddr))
+	rootCmd.PersistentFlags().StringVar(&alertSMTPUser, "alert-smtp-user", constant.DefaultRandomString, fmt.Sprintf("specify the username of the smtp server(default: %s)", config.DefaultAlertSMTPUser))
+	rootCmd.PersistentFlags().StringVar(&alertSMTPPass, "alert-smtp-pass", constant.DefaultRandomString, fmt.Sprintf("specify the password of the smtp server(default: %s)", config.DefaultAlertSMTPPass))
+	rootCmd.PersistentFlags().StringVar(&alertSMTPFrom, "alert-smtp-from", constant.DefaultRandomString, fmt.Sprintf("specify the from email address(default: %s)", config.DefaultAlertSMTPFrom))
+	rootCmd.PersistentFlags().StringVar(&alertHTTPEnabledStr, "alert-http-enabled", constant.DefaultRandomString, fmt.Sprintf("specify if enables http method(default: %s)", constant.FalseString))
+	rootCmd.PersistentFlags().StringVar(&alertHTTPURL, "alert-http-url", constant.DefaultRandomString, fmt.Sprintf("specify actual alert api url(default: %s)", config.DefaultAlertHTTPURL))
+	rootCmd.PersistentFlags().StringVar(&alertHTTPConfig, "alert-http-config", constant.DefaultRandomString, fmt.Sprintf("specify alert api parameters(default: %s)", config.DefaultAlertHTTPConfig))
 	// sqladvisor
 	rootCmd.PersistentFlags().StringVar(&sqladvisorSoarBin, "sqladvisor-soar-bin", constant.DefaultRandomString, fmt.Sprintf("specify binary path of soar(default: %s)", config.DefaultSQLAdvisorSoarBin))
 	rootCmd.PersistentFlags().StringVar(&sqladvisorSoarConfig, "sqladvisor-soar-config", constant.DefaultRandomString, fmt.Sprintf("specify config file path of soar(default: %s)", config.DefaultSQLAdvisorSoarConfig))
@@ -182,19 +199,19 @@ func initConfig() error {
 	// init default config
 	err = initDefaultConfig()
 	if err != nil {
-		return multierror.Append(message.NewMessage(message.ErrInitDefaultConfig), err)
+		return message.NewMessage(message.ErrInitDefaultConfig, err.Error())
 	}
 
 	// read config with config file
 	err = ReadConfigFile()
 	if err != nil {
-		return multierror.Append(message.NewMessage(message.ErrReadConfigFile), err)
+		return message.NewMessage(message.ErrReadConfigFile, err.Error())
 	}
 
 	// override config with command line arguments
 	err = OverrideConfig()
 	if err != nil {
-		return multierror.Append(message.NewMessage(message.ErrOverrideCommandLineArgs), err)
+		return message.NewMessage(message.ErrOverrideCommandLineArgs, err.Error())
 	}
 
 	// init log
@@ -210,12 +227,12 @@ func initConfig() error {
 	if !isAbs {
 		fileNameAbs, err = filepath.Abs(fileName)
 		if err != nil {
-			return multierror.Append(message.NewMessage(message.ErrAbsoluteLogFilePath), err)
+			return message.NewMessage(message.ErrAbsoluteLogFilePath, fileName, err.Error())
 		}
 	}
 	_, _, err = log.InitFileLogger(fileNameAbs, level, format, maxSize, maxDays, maxBackups)
 	if err != nil {
-		return multierror.Append(message.NewMessage(message.ErrInitLogger), err)
+		return message.NewMessage(message.ErrInitLogger, err.Error())
 	}
 
 	log.SetDisableDoubleQuotes(true)
@@ -229,7 +246,7 @@ func initDefaultConfig() (err error) {
 	// get base dir
 	baseDir, err = filepath.Abs(config.DefaultBaseDir)
 	if err != nil {
-		return multierror.Append(message.NewMessage(message.ErrBaseDir, config.DefaultCommandName), err)
+		return message.NewMessage(message.ErrBaseDir, config.DefaultCommandName, err.Error())
 	}
 	// set default config value
 	config.SetDefaultConfig(baseDir)
@@ -252,7 +269,7 @@ func ReadConfigFile() (err error) {
 		}
 		err = config.ValidateConfig()
 		if err != nil {
-			return multierror.Append(message.NewMessage(message.ErrValidateConfig), err)
+			return message.NewMessage(message.ErrValidateConfig, err.Error())
 		}
 	}
 
@@ -374,12 +391,42 @@ func OverrideConfig() (err error) {
 		viper.Set(config.DBDASMySQLPassKey, dbSoarMySQLPass)
 	}
 
+	// override alert
+	if alertSMTPEnabledStr == constant.TrueString {
+		viper.Set(config.AlertSMTPEnabledKey, true)
+	} else {
+		viper.Set(config.AlertSMTPEnabledKey, false)
+	}
+	if alertSMTPAddr != constant.DefaultRandomString {
+		viper.Set(config.AlertSMTPAddrKey, alertSMTPAddr)
+	}
+	if alertSMTPUser != constant.DefaultRandomString {
+		viper.Set(config.AlertSMTPUserKey, alertSMTPUser)
+	}
+	if alertSMTPPass != constant.DefaultRandomString {
+		viper.Set(config.AlertSMTPPassKey, alertSMTPPass)
+	}
+	if alertSMTPFrom != constant.DefaultRandomString {
+		viper.Set(config.AlertSMTPFromKey, alertSMTPFrom)
+	}
+	if alertHTTPEnabledStr == constant.TrueString {
+		viper.Set(config.AlertHTTPEnabledKey, true)
+	} else {
+		viper.Set(config.AlertHTTPEnabledKey, false)
+	}
+	if alertHTTPURL != constant.DefaultRandomString {
+		viper.Set(config.AlertHTTPURLKey, alertHTTPURL)
+	}
+	if alertHTTPConfig != constant.DefaultRandomString {
+		viper.Set(config.AlertHTTPConfigKey, alertHTTPConfig)
+	}
+
 	// override sqladvisor
 	if sqladvisorSoarBin != constant.DefaultRandomString {
-		viper.Set(config.SQLAdvisorSoarBin, sqladvisorSoarBin)
+		viper.Set(config.SQLAdvisorSoarBinKey, sqladvisorSoarBin)
 	}
 	if sqladvisorSoarConfig != constant.DefaultRandomString {
-		viper.Set(config.SQLAdvisorSoarConfig, sqladvisorSoarConfig)
+		viper.Set(config.SQLAdvisorSoarConfigKey, sqladvisorSoarConfig)
 	}
 	if sqladvisorSoarSamplingStr == constant.TrueString {
 		viper.Set(config.SQLAdvisorSoarSamplingKey, true)
@@ -405,7 +452,7 @@ func OverrideConfig() (err error) {
 	// validate configuration
 	err = config.ValidateConfig()
 	if err != nil {
-		return multierror.Append(message.NewMessage(message.ErrValidateConfig), err)
+		return message.NewMessage(message.ErrValidateConfig, err)
 	}
 
 	return err

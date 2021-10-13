@@ -13,22 +13,22 @@ func init() {
 
 const (
 	// debug
-	DebugHealthcheckGetResultByOperationID = 101001
-	DebugHealthcheckCheck                  = 101002
-	DebugHealthcheckCheckByHostInfo        = 101003
-	DebugHealthcheckReviewAccuracy         = 101004
+	DebugHealthcheckGetResultByOperationID = 102101
+	DebugHealthcheckCheck                  = 102102
+	DebugHealthcheckCheckByHostInfo        = 102103
+	DebugHealthcheckReviewAccuracy         = 102104
 	// info
-	InfoHealthcheckGetResultByOperationID = 201001
-	InfoHealthcheckCheck                  = 201002
-	InfoHealthcheckCheckByHostInfo        = 201003
-	InfoHealthcheckReviewAccuracy         = 201004
+	InfoHealthcheckGetResultByOperationID = 202101
+	InfoHealthcheckCheck                  = 202102
+	InfoHealthcheckCheckByHostInfo        = 202103
+	InfoHealthcheckReviewAccuracy         = 202104
 	// error
-	ErrHealthcheckDefaultEngineRun       = 401013
-	ErrHealthcheckGetResultByOperationID = 401014
-	ErrHealthcheckCheck                  = 401015
-	ErrHealthcheckCheckByHostInfo        = 401016
-	ErrHealthcheckReviewAccuracy         = 401017
-	ErrHealthcheckCloseConnection        = 401018
+	ErrHealthcheckDefaultEngineRun       = 402101
+	ErrHealthcheckGetResultByOperationID = 402102
+	ErrHealthcheckCheck                  = 402103
+	ErrHealthcheckCheckByHostInfo        = 402104
+	ErrHealthcheckReviewAccuracy         = 402105
+	ErrHealthcheckCloseConnection        = 402106
 )
 
 func initServiceDebugMessage() {
@@ -70,10 +70,13 @@ func initServiceErrorMessage() {
 		"healthcheck: get result by operation id failed. operation_id: %d\n%s")
 	message.Messages[ErrHealthcheckCheck] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCheck,
-		"healthcheck: check failed.  %s")
+		"healthcheck: check failed.\n%s")
 	message.Messages[ErrHealthcheckCheckByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCheckByHostInfo,
-		"healthcheck: check by host info failed. host info %s")
+		"healthcheck: check by host info failed. host info %s.\n%s")
+	message.Messages[ErrHealthcheckReviewAccuracy] = config.NewErrMessage(
+		message.DefaultMessageHeader, ErrHealthcheckReviewAccuracy,
+		"healthcheck: review accuracy failed.operation id: %d.\n%s")
 	message.Messages[ErrHealthcheckCloseConnection] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCloseConnection,
 		"healthcheck: close middleware connection failed.\n%s")

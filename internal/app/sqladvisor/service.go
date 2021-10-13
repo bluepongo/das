@@ -1,6 +1,7 @@
 package sqladvisor
 
 import (
+	"github.com/hashicorp/go-multierror"
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/dependency/sqladvisor"
 	"github.com/romberli/go-util/constant"
@@ -24,8 +25,8 @@ func NewService(soarBin, configFile string) *Service {
 
 // NewServiceWithDefault returns a new *Service with default value
 func NewServiceWithDefault() *Service {
-	soarBin := viper.GetString(config.SQLAdvisorSoarBin)
-	configFile := viper.GetString(config.SQLAdvisorSoarConfig)
+	soarBin := viper.GetString(config.SQLAdvisorSoarBinKey)
+	configFile := viper.GetString(config.SQLAdvisorSoarConfigKey)
 
 	return newService(soarBin, configFile)
 }
@@ -51,24 +52,26 @@ func (s *Service) GetSQLID(sqlText string) string {
 // Advise parses the sql text and returns the tuning advice,
 // note that only the first sql statement in the sql text will be advised
 func (s *Service) Advise(dbID int, sqlText string) (string, error) {
+	merr := &multierror.Error{}
+
 	sqlList, err := s.Advisor.GetParser().Split(sqlText)
 	if err != nil {
 		return constant.EmptyString, err
 	}
 
-	advice, message, err := s.Advisor.Advise(dbID, sqlList[constant.ZeroInt])
+	advice, msg, err := s.Advisor.Advise(dbID, sqlList[constant.ZeroInt])
 	if err != nil {
-		return constant.EmptyString, nil
+		merr = multierror.Append(merr, err)
 	}
 
-	if message != constant.EmptyString {
-		log.Infof("advisor message: %s", message)
+	if msg != constant.EmptyString {
+		log.Infof("advisor message: %s", msg)
 	}
 
-	err = s.Repository.Save(dbID, sqlText, advice, message)
+	err = s.Repository.Save(dbID, sqlText, advice, msg)
 	if err != nil {
-		return constant.EmptyString, err
+		merr = multierror.Append(merr, err)
 	}
 
-	return advice, nil
+	return advice, merr.ErrorOrNil()
 }

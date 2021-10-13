@@ -57,7 +57,7 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(ServerWriteTimeoutKey, DefaultServerWriteTimeout)
 	// database
 	viper.SetDefault(DBDASMySQLAddrKey, fmt.Sprintf("%s:%d", constant.DefaultLocalHostIP, constant.DefaultMySQLPort))
-	viper.SetDefault(DBDASMySQLNameKey, DefaultDBDASMySQLName)
+	viper.SetDefault(DBDASMySQLNameKey, DefaultDBName)
 	viper.SetDefault(DBDASMySQLUserKey, DefaultDBUser)
 	viper.SetDefault(DBDASMySQLPassKey, DefaultDBPass)
 	viper.SetDefault(DBPoolMaxConnectionsKey, mysql.DefaultMaxConnections)
@@ -74,12 +74,21 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(DBApplicationMySQLUserKey, DefaultDBApplicationMySQLUser)
 	viper.SetDefault(DBApplicationMySQLPassKey, DefaultDBApplicationMySQLPass)
 	viper.SetDefault(DBSoarMySQLAddrKey, fmt.Sprintf("%s:%d", constant.DefaultLocalHostIP, constant.DefaultMySQLPort))
-	viper.SetDefault(DBSoarMySQLNameKey, DefaultDBDASMySQLName)
+	viper.SetDefault(DBSoarMySQLNameKey, DefaultDBName)
 	viper.SetDefault(DBSoarMySQLUserKey, DefaultDBUser)
 	viper.SetDefault(DBSoarMySQLPassKey, DefaultDBPass)
+	// alert
+	viper.SetDefault(AlertSMTPEnabledKey, DefaultAlertSMTPEnabled)
+	viper.SetDefault(AlertSMTPAddrKey, DefaultAlertSMTPAddr)
+	viper.SetDefault(AlertSMTPUserKey, DefaultAlertSMTPUser)
+	viper.SetDefault(AlertSMTPPassKey, DefaultAlertSMTPPass)
+	viper.SetDefault(AlertSMTPFromKey, DefaultAlertSMTPFrom)
+	viper.SetDefault(AlertHTTPEnabledKey, DefaultAlertHTTPEnabled)
+	viper.SetDefault(AlertHTTPURLKey, DefaultAlertHTTPURL)
+	viper.SetDefault(AlertHTTPConfigKey, DefaultAlertHTTPConfig)
 	// sqladvisor
-	viper.SetDefault(SQLAdvisorSoarBin, DefaultSQLAdvisorSoarBin)
-	viper.SetDefault(SQLAdvisorSoarConfig, DefaultSQLAdvisorSoarConfig)
+	viper.SetDefault(SQLAdvisorSoarBinKey, DefaultSQLAdvisorSoarBin)
+	viper.SetDefault(SQLAdvisorSoarConfigKey, DefaultSQLAdvisorSoarConfig)
 	viper.SetDefault(SQLAdvisorSoarSamplingKey, false)
 	viper.SetDefault(SQLAdvisorSoarProfilingKey, false)
 	viper.SetDefault(SQLAdvisorSoarTraceKey, false)
@@ -114,7 +123,13 @@ func ValidateConfig() (err error) {
 		merr = multierror.Append(merr, err)
 	}
 
-	// validate soar section
+	// validate alert section
+	err = ValidateAlert()
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	// validate sql advisor section
 	err = ValidateSQLAdvisor()
 	if err != nil {
 		merr = multierror.Append(merr, err)
@@ -143,7 +158,7 @@ func ValidateLog() error {
 	}
 	logFileName = strings.TrimSpace(logFileName)
 	if logFileName == constant.EmptyString {
-		merr = multierror.Append(merr, message.Messages[message.ErrEmptyLogFileName])
+		merr = multierror.Append(merr, message.NewMessage(message.ErrEmptyLogFileName))
 	}
 	isAbs := filepath.IsAbs(logFileName)
 	if !isAbs {
@@ -154,7 +169,7 @@ func ValidateLog() error {
 	}
 	valid, _ = govalidator.IsFilePath(logFileName)
 	if !valid {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidLogFileName].Renew(logFileName))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogFileName, logFileName))
 	}
 
 	// validate log.level
@@ -167,7 +182,7 @@ func ValidateLog() error {
 		merr = multierror.Append(merr, err)
 	}
 	if !valid {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidLogLevel].Renew(logLevel))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogLevel, logLevel))
 	}
 
 	// validate log.format
@@ -180,7 +195,7 @@ func ValidateLog() error {
 		merr = multierror.Append(merr, err)
 	}
 	if !valid {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidLogFormat].Renew(logFormat))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogFormat, logFormat))
 	}
 
 	// validate log.maxSize
@@ -189,7 +204,7 @@ func ValidateLog() error {
 		merr = multierror.Append(merr, err)
 	}
 	if logMaxSize < MinLogMaxSize || logMaxSize > MaxLogMaxSize {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidLogMaxSize].Renew(MinLogMaxSize, MaxLogMaxSize, logMaxSize))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogMaxSize, MinLogMaxSize, MaxLogMaxSize, logMaxSize))
 	}
 
 	// validate log.maxDays
@@ -198,7 +213,7 @@ func ValidateLog() error {
 		merr = multierror.Append(merr, err)
 	}
 	if logMaxDays < MinLogMaxDays || logMaxDays > MaxLogMaxDays {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidLogMaxDays].Renew(MinLogMaxDays, MaxLogMaxDays, logMaxDays))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogMaxDays, MinLogMaxDays, MaxLogMaxDays, logMaxDays))
 	}
 
 	// validate log.maxBackups
@@ -207,7 +222,7 @@ func ValidateLog() error {
 		merr = multierror.Append(merr, err)
 	}
 	if logMaxBackups < MinLogMaxDays || logMaxBackups > MaxLogMaxDays {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidLogMaxBackups].Renew(MinLogMaxBackups, MaxLogMaxBackups, logMaxBackups))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogMaxBackups, MinLogMaxBackups, MaxLogMaxBackups, logMaxBackups))
 	}
 
 	return merr.ErrorOrNil()
@@ -228,10 +243,10 @@ func ValidateServer() error {
 	case 2:
 		port := serverAddrList[1]
 		if !govalidator.IsPort(port) {
-			merr = multierror.Append(merr, message.Messages[message.ErrNotValidServerPort].Renew(constant.MinPort, constant.MaxPort, port))
+			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidServerPort, constant.MinPort, constant.MaxPort, port))
 		}
 	default:
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidServerAddr].Renew(serverAddr))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidServerAddr, serverAddr))
 	}
 
 	// validate server.pidFile
@@ -248,7 +263,7 @@ func ValidateServer() error {
 	}
 	ok, _ := govalidator.IsFilePath(serverPidFile)
 	if !ok {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidPidFile].Renew(serverPidFile))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidPidFile, serverPidFile))
 	}
 
 	// validate server.readTimeout
@@ -257,7 +272,7 @@ func ValidateServer() error {
 		merr = multierror.Append(merr, err)
 	}
 	if serverReadTimeout < MinServerReadTimeout || serverReadTimeout > MaxServerReadTimeout {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidServerPort].Renew(MinServerReadTimeout, MaxServerWriteTimeout, serverReadTimeout))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidServerReadTimeout, MinServerReadTimeout, MaxServerWriteTimeout, serverReadTimeout))
 	}
 
 	// validate server.writeTimeout
@@ -266,7 +281,7 @@ func ValidateServer() error {
 		merr = multierror.Append(merr, err)
 	}
 	if serverWriteTimeout < MinServerWriteTimeout || serverWriteTimeout > MaxServerWriteTimeout {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidServerPort].Renew(MinServerReadTimeout, MaxServerWriteTimeout, serverWriteTimeout))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidServerWriteTimeout, MinServerWriteTimeout, MaxServerWriteTimeout, serverWriteTimeout))
 	}
 
 	return merr.ErrorOrNil()
@@ -283,13 +298,13 @@ func ValidateDatabase() error {
 	}
 	dasAddr := strings.Split(dbDASAddr, ":")
 	if len(dasAddr) != 2 {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidDBAddr].Renew(dbDASAddr))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbDASAddr))
 	} else {
 		if !govalidator.IsIPv4(dasAddr[0]) {
-			merr = multierror.Append(merr, message.Messages[message.ErrNotValidDBAddr].Renew(dbDASAddr))
+			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbDASAddr))
 		}
 		if !govalidator.IsPort(dasAddr[1]) {
-			merr = multierror.Append(merr, message.Messages[message.ErrNotValidDBAddr].Renew(dbDASAddr))
+			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbDASAddr))
 		}
 	}
 	// validate db.das.mysql.name
@@ -313,7 +328,7 @@ func ValidateDatabase() error {
 		merr = multierror.Append(merr, err)
 	}
 	if maxConnections < MinDBPoolMaxConnections || maxConnections > MaxDBPoolMaxConnections {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidDBPoolMaxConnections].Renew(MinDBPoolMaxConnections, MaxDBPoolMaxConnections, maxConnections))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBPoolMaxConnections, MinDBPoolMaxConnections, MaxDBPoolMaxConnections, maxConnections))
 	}
 	// validate db.pool.initConnections
 	initConnections, err := cast.ToIntE(viper.Get(DBPoolInitConnectionsKey))
@@ -321,7 +336,7 @@ func ValidateDatabase() error {
 		merr = multierror.Append(merr, err)
 	}
 	if initConnections < MinDBPoolInitConnections || initConnections > MaxDBPoolInitConnections {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidDBPoolInitConnections].Renew(MinDBPoolInitConnections, MaxDBPoolInitConnections, initConnections))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBPoolInitConnections, MinDBPoolInitConnections, MaxDBPoolInitConnections, initConnections))
 	}
 	// validate db.pool.maxIdleConnections
 	maxIdleConnections, err := cast.ToIntE(viper.Get(DBPoolMaxIdleConnectionsKey))
@@ -329,7 +344,7 @@ func ValidateDatabase() error {
 		merr = multierror.Append(merr, err)
 	}
 	if maxIdleConnections < MinDBPoolMaxIdleConnections || maxIdleConnections > MaxDBPoolMaxIdleConnections {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidDBPoolMaxIdleConnections].Renew(MinDBPoolMaxIdleConnections, MaxDBPoolMaxIdleConnections, maxIdleConnections))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBPoolMaxIdleConnections, MinDBPoolMaxIdleConnections, MaxDBPoolMaxIdleConnections, maxIdleConnections))
 	}
 	// validate db.pool.maxIdleTime
 	maxIdleTime, err := cast.ToIntE(viper.Get(DBPoolMaxIdleTimeKey))
@@ -337,7 +352,7 @@ func ValidateDatabase() error {
 		merr = multierror.Append(merr, err)
 	}
 	if maxIdleTime < MinDBPoolMaxIdleTime || maxIdleTime > MaxDBPoolMaxIdleTime {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidDBPoolMaxIdleTime].Renew(MinDBPoolMaxIdleTime, MaxDBPoolMaxIdleTime, maxIdleTime))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBPoolMaxIdleTime, MinDBPoolMaxIdleTime, MaxDBPoolMaxIdleTime, maxIdleTime))
 	}
 	// validate db.pool.keepAliveInterval
 	keepAliveInterval, err := cast.ToIntE(viper.Get(DBPoolKeepAliveIntervalKey))
@@ -345,7 +360,7 @@ func ValidateDatabase() error {
 		merr = multierror.Append(merr, err)
 	}
 	if keepAliveInterval < MinDBPoolKeepAliveInterval || keepAliveInterval > MaxDBPoolKeepAliveInterval {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidDBPoolKeepAliveInterval].Renew(MinDBPoolKeepAliveInterval, MaxDBPoolKeepAliveInterval, keepAliveInterval))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBPoolKeepAliveInterval, MinDBPoolKeepAliveInterval, MaxDBPoolKeepAliveInterval, keepAliveInterval))
 	}
 	// validate db.application.mysql.user
 	_, err = cast.ToStringE(viper.Get(DBApplicationMySQLUserKey))
@@ -394,13 +409,13 @@ func ValidateDatabase() error {
 	}
 	soarAddr := strings.Split(dbSoarAddr, ":")
 	if len(soarAddr) != 2 {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidDBAddr].Renew(dbSoarAddr))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbSoarAddr))
 	} else {
 		if !govalidator.IsIPv4(soarAddr[0]) {
-			merr = multierror.Append(merr, message.Messages[message.ErrNotValidDBAddr].Renew(dbSoarAddr))
+			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbSoarAddr))
 		}
 		if !govalidator.IsPort(soarAddr[1]) {
-			merr = multierror.Append(merr, message.Messages[message.ErrNotValidDBAddr].Renew(dbSoarAddr))
+			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbSoarAddr))
 		}
 	}
 	// validate db.soar.mysql.name
@@ -422,18 +437,74 @@ func ValidateDatabase() error {
 	return merr.ErrorOrNil()
 }
 
-// ValidateSQLAdvisor validates if sqladvisor section is valid
+// ValidateAlert validates if alert section is valid
+func ValidateAlert() error {
+	merr := &multierror.Error{}
+
+	// validate alert.smtp.enabled
+	_, err := cast.ToBoolE(viper.Get(AlertSMTPEnabledKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+	// validate alert.smtp.addr
+	_, err = cast.ToBoolE(viper.Get(AlertSMTPAddrKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+	// validate alert.smtp.user
+	_, err = cast.ToStringE(viper.Get(AlertSMTPUserKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+	// validate alert.smtp.pass
+	_, err = cast.ToBoolE(viper.Get(AlertSMTPPassKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+	// validate alert.smtp.frin
+	_, err = cast.ToBoolE(viper.Get(AlertSMTPFromKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	// validate alert.http.enabled
+	_, err = cast.ToBoolE(viper.Get(AlertHTTPEnabledKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+	// validate alert.http.url
+	url, err := cast.ToStringE(viper.Get(AlertHTTPURLKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+	if !govalidator.IsURL(url) {
+
+	}
+	url = strings.TrimSpace(url)
+	if url == constant.EmptyString {
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidAlertHTTPURL, url))
+	}
+	// validate alert.config
+	_, err = cast.ToStringMapStringE(viper.Get(AlertHTTPConfigKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	return merr.ErrorOrNil()
+}
+
+// ValidateSQLAdvisor validates if sql advisor section is valid
 func ValidateSQLAdvisor() error {
 	merr := &multierror.Error{}
 
 	// validate sqladvisor.soar.bin
-	soarBin, err := cast.ToStringE(viper.Get(SQLAdvisorSoarBin))
+	soarBin, err := cast.ToStringE(viper.Get(SQLAdvisorSoarBinKey))
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
 	soarBin = strings.TrimSpace(soarBin)
 	if soarBin == constant.EmptyString {
-		merr = multierror.Append(merr, message.Messages[message.ErrEmptySoarBin])
+		merr = multierror.Append(merr, message.NewMessage(message.ErrEmptySoarBin))
 	}
 	isAbs := filepath.IsAbs(soarBin)
 	if !isAbs {
@@ -444,17 +515,17 @@ func ValidateSQLAdvisor() error {
 	}
 	valid, _ := govalidator.IsFilePath(soarBin)
 	if !valid {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidSoarBin].Renew(soarBin))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidSoarBin, soarBin))
 	}
 
 	// validate sqladvisor.soar.config
-	config, err := cast.ToStringE(viper.Get(SQLAdvisorSoarConfig))
+	config, err := cast.ToStringE(viper.Get(SQLAdvisorSoarConfigKey))
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
 	config = strings.TrimSpace(config)
 	if soarBin == constant.EmptyString {
-		merr = multierror.Append(merr, message.Messages[message.ErrEmptySoarConfig])
+		merr = multierror.Append(merr, message.NewMessage(message.ErrEmptySoarConfig))
 	}
 	isAbs = filepath.IsAbs(config)
 	if !isAbs {
@@ -465,7 +536,7 @@ func ValidateSQLAdvisor() error {
 	}
 	valid, _ = govalidator.IsFilePath(config)
 	if !valid {
-		merr = multierror.Append(merr, message.Messages[message.ErrNotValidSoarConfig].Renew(config))
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidSoarConfig, config))
 	}
 
 	// validate sqladvisor.soar.sampling
@@ -494,7 +565,7 @@ func ValidateSQLAdvisor() error {
 
 // TrimSpaceOfArg trims spaces of given argument
 func TrimSpaceOfArg(arg string) string {
-	args := strings.SplitN(arg, "=", 2)
+	args := strings.SplitN(arg, constant.EqualString, 2)
 
 	switch len(args) {
 	case 1:
