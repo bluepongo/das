@@ -16,12 +16,12 @@ require (
 	github.com/jinzhu/now v1.1.2
 	github.com/romberli/go-util v0.3.12-0.20211008113222-c672e84666e3
 	github.com/romberli/log v1.0.20
-	github.com/spf13/cast v1.3.1
+	github.com/spf13/cast v1.4.1
 	github.com/spf13/cobra v1.1.1
-	github.com/spf13/viper v1.7.1
-	github.com/stretchr/testify v1.6.1
+	github.com/spf13/viper v1.9.0
+	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
-	go.uber.org/zap v1.16.0
+	go.uber.org/zap v1.17.0
 )
