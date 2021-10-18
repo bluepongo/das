@@ -1,6 +1,6 @@
 module github.com/romberli/das
 
-go 1.17
+go 1.16
 
 replace (
 	github.com/ClickHouse/clickhouse-go v1.4.7 => github.com/romberli/clickhouse-go v1.4.4-0.20210902113008-bb38dc6f756d
