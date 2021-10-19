@@ -447,7 +447,7 @@ func ValidateAlert() error {
 		merr = multierror.Append(merr, err)
 	}
 	// validate alert.smtp.addr
-	_, err = cast.ToBoolE(viper.Get(AlertSMTPAddrKey))
+	_, err = cast.ToStringE(viper.Get(AlertSMTPAddrKey))
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
@@ -457,12 +457,12 @@ func ValidateAlert() error {
 		merr = multierror.Append(merr, err)
 	}
 	// validate alert.smtp.pass
-	_, err = cast.ToBoolE(viper.Get(AlertSMTPPassKey))
+	_, err = cast.ToStringE(viper.Get(AlertSMTPPassKey))
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
-	// validate alert.smtp.frin
-	_, err = cast.ToBoolE(viper.Get(AlertSMTPFromKey))
+	// validate alert.smtp.from
+	_, err = cast.ToStringE(viper.Get(AlertSMTPFromKey))
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}

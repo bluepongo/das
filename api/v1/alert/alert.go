@@ -40,7 +40,7 @@ func SendEmail(c *gin.Context) {
 		return
 	}
 
-	config := alert.NewEmptyConfig()
+	config := alert.NewConfigFromFile()
 	configStr, configExists := dataMap[configJSON]
 	if configExists {
 		err = json.Unmarshal([]byte(configStr), &config)
