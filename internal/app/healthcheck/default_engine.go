@@ -798,6 +798,8 @@ func (de *DefaultEngine) summarize() {
 
 // postRun performs post-run actions, for now, it ony saves healthcheck result to the middleware
 func (de *DefaultEngine) postRun() error {
+	// send email
+
 	// save result
 	return de.getDASRepo().SaveResult(de.result)
 }

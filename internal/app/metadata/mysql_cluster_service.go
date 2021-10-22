@@ -24,14 +24,18 @@ var _ metadata.MySQLClusterService = (*MySQLClusterService)(nil)
 
 // MySQLClusterService implements Service interface
 type MySQLClusterService struct {
-	MySQLClusterRepo  metadata.MySQLClusterRepo
-	MySQLClusters     []metadata.MySQLCluster `json:"mysql_clusters"`
-	MySQLServerIDList []int                   `json:"mysql_server_id_list"`
+	MySQLClusterRepo metadata.MySQLClusterRepo
+	MySQLClusters    []metadata.MySQLCluster `json:"mysql_clusters"`
+	MySQLServers     []metadata.MySQLServer  `json:"mysql_servers"`
 }
 
 // NewMySQLClusterService returns a new *MySQLClusterService
 func NewMySQLClusterService(repo metadata.MySQLClusterRepo) *MySQLClusterService {
-	return &MySQLClusterService{repo, []metadata.MySQLCluster{}, []int{}}
+	return &MySQLClusterService{
+		repo,
+		[]metadata.MySQLCluster{},
+		[]metadata.MySQLServer{},
+	}
 }
 
 // NewMySQLClusterServiceWithDefault returns a new *MySQLClusterService with default repository
@@ -66,7 +70,7 @@ func (mcs *MySQLClusterService) GetByEnv(envID int) error {
 	return err
 }
 
-// GetByID gets an mysql cluster entity that contains the given id from the middleware
+// GetByID gets a mysql cluster entity that contains the given id from the middleware
 func (mcs *MySQLClusterService) GetByID(id int) error {
 	mysqlCluster, err := mcs.MySQLClusterRepo.GetByID(id)
 	if err != nil {
@@ -87,14 +91,26 @@ func (mcs *MySQLClusterService) GetByName(clusterName string) error {
 	return err
 }
 
-// GetMySQLServerIDList gets the mysql server id list of given cluster id
-func (mcs *MySQLClusterService) GetMySQLServerIDList(clusterID int) error {
-	mysqlCluster, err := mcs.MySQLClusterRepo.GetByID(clusterID)
+// GetMySQLServersByID gets the mysql servers of given cluster id
+func (mcs *MySQLClusterService) GetMySQLServersByID(id int) error {
+	err := mcs.GetByID(id)
 	if err != nil {
 		return err
 	}
 
-	mcs.MySQLServerIDList, err = mysqlCluster.GetMySQLServerIDList()
+	mcs.MySQLServers, err = mcs.GetMySQLClusters()[constant.ZeroInt].GetMySQLServers()
+
+	return err
+}
+
+// GetMasterServersByID gets the master servers of this cluster
+func (mcs *MySQLClusterService) GetMasterServersByID(id int) error {
+	mysqlCluster, err := mcs.MySQLClusterRepo.GetByID(id)
+	if err != nil {
+		return err
+	}
+
+	mcs.MySQLServers, err = mysqlCluster.GetMasterServers()
 
 	return err
 }

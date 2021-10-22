@@ -62,6 +62,8 @@ func equalMySQLServerInfo(a, b *MySQLServerInfo) bool {
 func TestMySQLServerEntityAll(t *testing.T) {
 	TestMySQLServerInfo_Identity(t)
 	TestMySQLServerInfo_Get(t)
+	TestMySQLServerInfo_IsMaster(t)
+	TestMySQLServerInfo_GetMonitorSystem(t)
 	TestMySQLServerInfo_Set(t)
 	TestMySQLServerInfo_Delete(t)
 	TestMySQLServerInfo_MarshalJSON(t)
@@ -103,6 +105,24 @@ func TestMySQLServerInfo_Get(t *testing.T) {
 
 	lastUpdateTime := mysqlServerInfo.GetLastUpdateTime()
 	asst.True(reflect.DeepEqual(mysqlServerInfo.LastUpdateTime, lastUpdateTime), "test GetLastUpdateTime() failed")
+}
+
+func TestMySQLServerInfo_IsMaster(t *testing.T) {
+	asst := assert.New(t)
+
+	mysqlServerInfo := initNewMySQLServerInfo()
+	isMaster, err := mysqlServerInfo.IsMaster()
+	asst.Nil(err, "test IsMaster() failed")
+	asst.Equal(true, isMaster, "test IsMaster() failed")
+}
+
+func TestMySQLServerInfo_GetMonitorSystem(t *testing.T) {
+	asst := assert.New(t)
+
+	mysqlServerInfo := initNewMySQLServerInfo()
+	monitorSystemInfo, err := mysqlServerInfo.GetMonitorSystem()
+	asst.Nil(err, "test GetMonitorSystem() failed")
+	asst.Equal(1, monitorSystemInfo.Identity(), "test GetMonitorSystem() failed")
 }
 
 func TestMySQLServerInfo_Set(t *testing.T) {

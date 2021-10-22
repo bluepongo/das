@@ -18,28 +18,31 @@ const (
 	DebugMetadataGetMySQLClusterByEnv  = 100702
 	DebugMetadataGetMySQLClusterByID   = 100703
 	DebugMetadataGetMySQLClusterByName = 100704
-	DebugMetadataGetMySQLServerIDList  = 100705
-	DebugMetadataAddMySQLCluster       = 100706
-	DebugMetadataUpdateMySQLCluster    = 100707
-	DebugMetadataDeleteMySQLCluster    = 100708
+	DebugMetadataGetMySQLServers       = 100705
+	DebugMetadataGetMasterServers      = 100706
+	DebugMetadataAddMySQLCluster       = 100707
+	DebugMetadataUpdateMySQLCluster    = 100708
+	DebugMetadataDeleteMySQLCluster    = 100709
 	// debug
 	InfoMetadataGetMySQLClusterAll    = 200701
 	InfoMetadataGetMySQLClusterByEnv  = 200702
 	InfoMetadataGetMySQLClusterByID   = 200703
 	InfoMetadataGetMySQLClusterByName = 200704
-	InfoMetadataGetMySQLServerIDList  = 200705
-	InfoMetadataAddMySQLCluster       = 200706
-	InfoMetadataUpdateMySQLCluster    = 200707
-	InfoMetadataDeleteMySQLCluster    = 200708
+	InfoMetadataGetMySQLServers       = 200705
+	InfoMetadataGetMasterServers      = 200706
+	InfoMetadataAddMySQLCluster       = 200707
+	InfoMetadataUpdateMySQLCluster    = 200708
+	InfoMetadataDeleteMySQLCluster    = 200709
 	// error
 	ErrMetadataGetMySQLClusterAll    = 400701
 	ErrMetadataGetMySQLClusterByEnv  = 400702
 	ErrMetadataGetMySQLClusterByID   = 400703
 	ErrMetadataGetMySQLClusterByName = 400704
-	ErrMetadataGetMySQLServerIDList  = 400705
-	ErrMetadataAddMySQLCluster       = 400706
-	ErrMetadataUpdateMySQLCluster    = 400707
-	ErrMetadataDeleteMySQLCluster    = 400708
+	ErrMetadataGetMySQLServers       = 400705
+	ErrMetadataGetMasterServers      = 400706
+	ErrMetadataAddMySQLCluster       = 400707
+	ErrMetadataUpdateMySQLCluster    = 400708
+	ErrMetadataDeleteMySQLCluster    = 400709
 )
 
 func initDebugMySQLCLusterMessage() {
@@ -59,10 +62,14 @@ func initDebugMySQLCLusterMessage() {
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLClusterByName,
 		"metadata: get mysql cluster by name message: %s")
-	message.Messages[DebugMetadataGetMySQLServerIDList] = config.NewErrMessage(
+	message.Messages[DebugMetadataGetMySQLServers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
-		DebugMetadataGetMySQLServerIDList,
-		"metadata: get mysql server id from mysql cluster message: %s")
+		DebugMetadataGetMySQLServers,
+		"metadata: get mysql servers from mysql cluster message: %s")
+	message.Messages[DebugMetadataGetMasterServers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		DebugMetadataGetMasterServers,
+		"metadata: get master servers from mysql cluster message: %s")
 	message.Messages[DebugMetadataAddMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataAddMySQLCluster,
@@ -94,10 +101,14 @@ func initInfoMySQLCLusterMessage() {
 		message.DefaultMessageHeader,
 		InfoMetadataGetMySQLClusterByName,
 		"metadata: get mysql cluster by name completed. cluster_name: %s")
-	message.Messages[InfoMetadataGetMySQLServerIDList] = config.NewErrMessage(
+	message.Messages[InfoMetadataGetMySQLServers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
-		InfoMetadataGetMySQLServerIDList,
-		"metadata: get mysql server id from mysql cluster completed. id: %d")
+		InfoMetadataGetMySQLServers,
+		"metadata: get mysql servers from mysql cluster completed. id: %d")
+	message.Messages[InfoMetadataGetMasterServers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		InfoMetadataGetMasterServers,
+		"metadata: get master servers from mysql cluster completed. id: %d")
 	message.Messages[InfoMetadataAddMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		InfoMetadataAddMySQLCluster,
@@ -129,10 +140,14 @@ func initErrorMySQLCLusterMessage() {
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterByName,
 		"metadata: get mysql cluster by name failed. cluster_name: %s\n%s")
-	message.Messages[ErrMetadataGetMySQLServerIDList] = config.NewErrMessage(
+	message.Messages[ErrMetadataGetMySQLServers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
-		ErrMetadataGetMySQLServerIDList,
-		"metadata: get mysql server id from mysql cluster failed. id: %d\n%s")
+		ErrMetadataGetMySQLServers,
+		"metadata: get mysql servers from mysql cluster failed. id: %d\n%s")
+	message.Messages[ErrMetadataGetMasterServers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		ErrMetadataGetMasterServers,
+		"metadata: get master servers from mysql cluster failed. id: %d\n%s")
 	message.Messages[ErrMetadataAddMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataAddMySQLCluster,

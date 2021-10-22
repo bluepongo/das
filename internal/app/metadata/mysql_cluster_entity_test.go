@@ -56,6 +56,8 @@ func equalMySQLClusterInfo(a, b *MySQLClusterInfo) bool {
 func TestMySQLClusterEntityAll(t *testing.T) {
 	TestMySQLClusterInfo_Identity(t)
 	TestMySQLClusterInfo_Get(t)
+	TestMySQLClusterInfo_GetMySQLServers(t)
+	TestMySQLClusterInfo_GetMasterServers(t)
 	TestMySQLClusterInfo_Set(t)
 	TestMySQLClusterInfo_Delete(t)
 	TestMySQLClusterInfo_MarshalJSON(t)
@@ -96,6 +98,24 @@ func TestMySQLClusterInfo_Get(t *testing.T) {
 
 	lastUpdateTime := mysqlClusterInfo.GetLastUpdateTime()
 	asst.True(reflect.DeepEqual(mysqlClusterInfo.LastUpdateTime, lastUpdateTime), "test GetLastUpdateTime() failed")
+}
+
+func TestMySQLClusterInfo_GetMySQLServers(t *testing.T) {
+	asst := assert.New(t)
+
+	mysqlClusterInfo := initNewMySQLClusterInfo()
+	mysqlServers, err := mysqlClusterInfo.GetMySQLServers()
+	asst.Nil(err, common.CombineMessageWithError("test GetMySQLServersByID() failed", err))
+	asst.Equal(3, len(mysqlServers), "test GetMySQLServersByID() failed")
+}
+
+func TestMySQLClusterInfo_GetMasterServers(t *testing.T) {
+	asst := assert.New(t)
+
+	mysqlClusterInfo := initNewMySQLClusterInfo()
+	masterServers, err := mysqlClusterInfo.GetMasterServers()
+	asst.Nil(err, common.CombineMessageWithError("test GetMasterServers() failed", err))
+	asst.Equal(1, masterServers[constant.ZeroInt].Identity(), "test GetMasterServers() failed", err)
 }
 
 func TestMySQLClusterInfo_Set(t *testing.T) {

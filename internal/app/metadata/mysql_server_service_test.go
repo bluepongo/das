@@ -16,6 +16,7 @@ func TestMySQLServerServiceAll(t *testing.T) {
 	TestMySQLServerService_GetByClusterID(t)
 	TestMySQLServerService_GetByID(t)
 	TestMySQLServerService_GetByHostInfo(t)
+	TestMySQLServerService_IsMaster(t)
 	TestMySQLServerService_Create(t)
 	TestMySQLServerService_Update(t)
 	TestMySQLServerService_Delete(t)
@@ -73,6 +74,15 @@ func TestMySQLServerService_GetByHostInfo(t *testing.T) {
 	asst.Equal(testInitHostIP, hostIP, "test GetByHostInfo() failed")
 	portNum := s.MySQLServers[constant.ZeroInt].GetPortNum()
 	asst.Equal(testInitPortNum, portNum, "test GetByHostInfo() failed")
+}
+
+func TestMySQLServerService_IsMaster(t *testing.T) {
+	asst := assert.New(t)
+
+	s := NewMySQLServerService(mysqlServerRepo)
+	isMaster, err := s.IsMaster(testInitHostIP, testInitPortNum)
+	asst.Nil(err, "test IsMaster() failed")
+	asst.Equal(true, isMaster, "test IsMaster() failed")
 }
 
 func TestMySQLServerService_Create(t *testing.T) {

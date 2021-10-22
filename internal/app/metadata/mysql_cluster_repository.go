@@ -5,7 +5,6 @@ import (
 
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
-
 	"github.com/romberli/log"
 
 	"github.com/romberli/das/global"
@@ -16,7 +15,7 @@ const (
 	addr   = "localhost:3306"
 	dbName = "das"
 	dbUser = "root"
-	dbPass = "rootroot"
+	dbPass = "root"
 )
 
 var _ metadata.MySQLClusterRepo = (*MySQLClusterRepo)(nil)
@@ -199,34 +198,6 @@ func (mcr *MySQLClusterRepo) GetID(clusterName string) (int, error) {
 	}
 
 	return result.GetInt(constant.ZeroInt, constant.ZeroInt)
-}
-
-// GetMySQLServerIDList gets the mysql server id list of given cluster id
-func (mcr *MySQLClusterRepo) GetMySQLServerIDList(clusterID int) ([]int, error) {
-	sql := `
-		select id from t_meta_mysql_server_info where del_flag = 0 and cluster_id = ?;
-	`
-	log.Debugf("metadata MySQLClusterRepo.GetMySQLServerIDList() select sql: %s", sql)
-	result, err := mcr.Execute(sql, clusterID)
-	if err != nil {
-		return nil, err
-	}
-
-	resultNum := result.RowNumber()
-	log.Debugf(fmt.Sprint(resultNum))
-	mysqlServerIDList := make([]int, resultNum)
-
-	for row := 0; row < resultNum; row++ {
-		mysqlServerID, err := result.GetInt(row, constant.ZeroInt)
-		if err != nil {
-			return nil, err
-		}
-
-		mysqlServerIDList[row] = mysqlServerID
-	}
-
-	return mysqlServerIDList, nil
-
 }
 
 // Create creates data with given entity in the middleware

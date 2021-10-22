@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -20,6 +21,7 @@ const (
 	msClusterIDJSON = "cluster_id"
 	msHostIPJSON    = "host_ip"
 	msPortNumJSON   = "port_num"
+	msIsMasterJSON  = "is_master"
 
 	msClusterIDStruct      = "ClusterID"
 	msServerNameStruct     = "ServerName"
@@ -27,6 +29,8 @@ const (
 	msPortNumStruct        = "PortNum"
 	msDeploymentTypeStruct = "DeploymentType"
 	msVersionStruct        = "Version"
+
+	isMasterResponse = `{"is_master": "%t"}`
 )
 
 // @Tags mysql server
@@ -59,7 +63,7 @@ func GetMySQLServer(c *gin.Context) {
 // @Tags mysql server
 // @Summary get mysql servers by cluster id
 // @Produce  application/json
-// @Success
+// @Success 200 {string} string "{"code": 200, "data": [{"cluster_id":1,"deployment_type":1,"host_ip":"host_ip_init","port_num":3306,"version":"1.1.1","del_flag":0,"create_time":"2021-02-23T23:43:37.236228+08:00","last_update_time":"2021-02-23T23:43:37.236228+08:00","id":1}]}"
 // @Router /api/v1/metadata/mysql-server/cluster-id/:cluster_id [get]
 func GetMySQLServerByClusterID(c *gin.Context) {
 	// get param
@@ -132,12 +136,11 @@ func GetMySQLServerByID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerByID, id)
 }
 
-// TODO: Modify Swagger comment
 // @Tags mysql server
 // @Summary get mysql servers by host info
 // @Produce  application/json
-// @Success
-// @Router /api/v1/metadata/mysql-server/:id [get]
+// @Success 200 {string} string "{"code": 200, "data": [{"cluster_id":1,"deployment_type":1,"host_ip":"host_ip_init","port_num":3306,"version":"1.1.1","del_flag":0,"create_time":"2021-02-23T23:43:37.236228+08:00","last_update_time":"2021-02-23T23:43:37.236228+08:00","id":1}]}"
+// @Router /api/v1/metadata/mysql-server/host-info [get]
 func GetMySQLServerByHostInfo(c *gin.Context) {
 	// get param
 	hostIP := c.Query(msHostIPJSON)
@@ -174,6 +177,53 @@ func GetMySQLServerByHostInfo(c *gin.Context) {
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLServerByHostInfo, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerByHostInfo, hostIP, portNum)
+}
+
+// @Tags mysql server
+// @Summary check if mysql server is a master node
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": {"is_master": "true"}}"
+// @Router /api/v1/metadata/mysql-server/is-master/host-info [get]
+func IsMaster(c *gin.Context) {
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		return
+	}
+	dataMap := make(map[string]string)
+	err = json.Unmarshal(data, &dataMap)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		return
+	}
+
+	hostIP, hostIPExists := dataMap[msHostIPJSON]
+	if !hostIPExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, msHostIPJSON)
+		return
+	}
+	portNumStr, portNumExists := dataMap[msPortNumJSON]
+	if !portNumExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, msPortNumJSON)
+		return
+	}
+	portNum, err := strconv.Atoi(portNumStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, portNum)
+	}
+	// init service
+	s := metadata.NewMySQLServerServiceWithDefault()
+	// get entity
+	isMaster, err := s.IsMaster(hostIP, portNum)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataIsMaster, hostIP, portNum, err.Error())
+		return
+	}
+	// response
+	jsonStr := fmt.Sprintf(isMasterResponse, isMaster)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataIsMaster, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataIsMaster, hostIP, portNum)
 }
 
 // @Tags mysql server

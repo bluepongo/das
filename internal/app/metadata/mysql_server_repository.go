@@ -3,8 +3,11 @@ package metadata
 import (
 	"fmt"
 
+	"github.com/romberli/das/config"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
+	"github.com/romberli/go-util/middleware/mysql"
+	"github.com/spf13/viper"
 
 	"github.com/romberli/log"
 
@@ -195,6 +198,30 @@ func (msr *MySQLServerRepo) GetID(hostIP string, portNum int) (int, error) {
 	}
 
 	return result.GetInt(constant.ZeroInt, constant.ZeroInt)
+}
+
+// IsMaster returns if mysql server of given host ip and port number is a master node
+func (msr *MySQLServerRepo) IsMaster(hostIP string, portNum int) (bool, error) {
+	// create connection
+	conn, err := mysql.NewConn(
+		fmt.Sprintf("%s:%d", hostIP, portNum),
+		constant.EmptyString,
+		viper.GetString(config.DBApplicationMySQLUserKey),
+		viper.GetString(config.DBApplicationMySQLPassKey),
+	)
+	if err != nil {
+		return false, err
+	}
+
+	sql := `show slave status;`
+	log.Debugf("metadata MySQLServerRepo.IsMaster() sql: %s", sql)
+	// execute
+	result, err := conn.Execute(sql)
+	if err != nil {
+		return false, err
+	}
+
+	return result.RowNumber() == constant.ZeroInt, nil
 }
 
 // GetMonitorSystem gets monitor system with given mysql server id from the mysql

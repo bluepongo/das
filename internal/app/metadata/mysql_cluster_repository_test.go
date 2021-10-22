@@ -59,7 +59,6 @@ func TestMySQLClusterRepoAll(t *testing.T) {
 	TestMySQLClusterRepo_GetByID(t)
 	TestMySQLClusterRepo_GetByName(t)
 	TestMySQLClusterRepo_GetID(t)
-	TestMySQLClusterRepo_GetMySQLServerIDList(t)
 	TestMySQLClusterRepo_Update(t)
 	TestMySQLClusterRepo_Delete(t)
 }
@@ -180,18 +179,6 @@ func TestMySQLClusterRepo_GetID(t *testing.T) {
 	id, err := mysqlClusterRepo.GetID(testInitClusterName)
 	asst.Nil(err, common.CombineMessageWithError("test GetID() failed", err))
 	asst.NotEqual(0, id, "test GetID() failed")
-}
-
-func TestMySQLClusterRepo_GetMySQLServerIDList(t *testing.T) {
-	asst := assert.New(t)
-	mysqlServerIDList, err := mysqlClusterRepo.GetMySQLServerIDList(testInitClusterID)
-	// mysqlServerIDList, err := mysqlClusterRepo.GetMySQLServerIDList(97)
-	asst.Nil(err, common.CombineMessageWithError("test GetMySQLServerIDList() failed", err))
-	for _, mysqlServerID := range mysqlServerIDList {
-		mysqlServer, err := mysqlServerRepo.GetByID(mysqlServerID)
-		asst.Nil(err, common.CombineMessageWithError("test GetMySQLServerIDList() failed", err))
-		asst.Equal(mysqlServer.GetClusterID(), testInitClusterID, "test GetMySQLServerIDList() failed", err)
-	}
 }
 
 func TestMySQLClusterRepo_Create(t *testing.T) {

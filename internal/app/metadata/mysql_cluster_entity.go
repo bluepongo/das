@@ -147,9 +147,35 @@ func (mci *MySQLClusterInfo) GetLastUpdateTime() time.Time {
 	return mci.LastUpdateTime
 }
 
-// GetMySQLServerIDList gets the mysql server id list of this cluster
-func (mci *MySQLClusterInfo) GetMySQLServerIDList() ([]int, error) {
-	return mci.MySQLClusterRepo.GetMySQLServerIDList(mci.Identity())
+// GetMySQLServers gets the mysql servers of this cluster
+func (mci *MySQLClusterInfo) GetMySQLServers() ([]metadata.MySQLServer, error) {
+	mysqlServerService := NewMySQLServerServiceWithDefault()
+	err := mysqlServerService.GetByClusterID(mci.Identity())
+
+	return mysqlServerService.GetMySQLServers(), err
+}
+
+// GetMasterServers gets the master servers of this cluster
+func (mci *MySQLClusterInfo) GetMasterServers() ([]metadata.MySQLServer, error) {
+	var masterServers []metadata.MySQLServer
+
+	mysqlServers, err := mci.GetMySQLServers()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, mysqlServer := range mysqlServers {
+		isMaster, err := mysqlServer.IsMaster()
+		if err != nil {
+			return nil, err
+		}
+
+		if isMaster {
+			masterServers = append(masterServers, mysqlServer)
+		}
+	}
+
+	return masterServers, nil
 }
 
 // Set sets mysql cluster with given fields, key is the field name and value is the relevant value of the key

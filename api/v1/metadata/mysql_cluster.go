@@ -25,13 +25,13 @@ const (
 	mcMonitorSystemIDStruct     = "MonitorSystemID"
 	mcOwnerIDStruct             = "OwnerID"
 	mcEnvIDStruct               = "EnvID"
-	mcMySQLServerIDListStruct   = "MySQLServerIDList"
+	mcMySQLServers              = "MySQLServers"
 )
 
 // @Tags mysql cluster
 // @Summary get all mysql clusters
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"owner_group":"2,3","del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init","owner_id":1},{"monitor_system_id":1,"owner_id":1,"owner_group":"2,3","env_id":1,"create_time":"2021-02-23T04:14:23.707238+08:00","last_update_time":"2021-02-23T04:14:23.707238+08:00","id":2,"cluster_name":"newTest","middleware_cluster_id":1,"del_flag":0}]}"
+// @Success 200 {string} string "{"code": 200, "data": [{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init","owner_id":1},{"monitor_system_id":1,"owner_id":1,"env_id":1,"create_time":"2021-02-23T04:14:23.707238+08:00","last_update_time":"2021-02-23T04:14:23.707238+08:00","id":2,"cluster_name":"newTest","middleware_cluster_id":1,"del_flag":0}]}"
 // @Router /api/v1/metadata/mysql-cluster [get]
 func GetMySQLCluster(c *gin.Context) {
 	// init service
@@ -93,7 +93,7 @@ func GetMySQLClusterByEnv(c *gin.Context) {
 // @Tags mysql cluster
 // @Summary get mysql cluster by id
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"owner_id":1,"owner_group":"2,3","del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
+// @Success 200 {string} string "{"code": 200, "data": [{"owner_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
 // @Router /api/v1/metadata/mysql-cluster/:id [get]
 func GetMySQLClusterByID(c *gin.Context) {
 	// get param
@@ -128,6 +128,11 @@ func GetMySQLClusterByID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClusterByID, id)
 }
 
+// @Tags mysql cluster
+// @Summary get mysql cluster by name
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"owner_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
+// @Router /api/v1/metadata/mysql-cluster/cluster-name/:name [get]
 func GetMySQLClusterByName(c *gin.Context) {
 	// get param
 	clusterName := c.Param(mcClusterNameJSON)
@@ -155,7 +160,12 @@ func GetMySQLClusterByName(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClusterByName, clusterName)
 }
 
-func GetMySQLServerIDList(c *gin.Context) {
+// @Tags mysql cluster
+// @Summary get mysql servers by id
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"owner_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
+// @Router /api/v1/metadata/mysql-cluster/mysql-servers/:id [get]
+func GetMySQLServersByID(c *gin.Context) {
 	// get params
 	idStr := c.Param(mcIDJSON)
 	if idStr == constant.EmptyString {
@@ -169,13 +179,13 @@ func GetMySQLServerIDList(c *gin.Context) {
 	// init service
 	s := metadata.NewMySQLClusterServiceWithDefault()
 	// get entity
-	err = s.GetMySQLServerIDList(id)
+	err = s.GetMySQLServersByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLServerIDList, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLServers, id, err.Error())
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(mcMySQLServerIDListStruct)
+	jsonBytes, err := s.MarshalWithFields(mcMySQLServers)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
@@ -183,8 +193,45 @@ func GetMySQLServerIDList(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(jsonStr)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLServerIDList, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerIDList, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLServers, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServers, id)
+}
+
+// @Tags mysql cluster
+// @Summary get master servers by id
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"owner_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
+// @Router /api/v1/metadata/mysql-cluster/master-servers/:id [get]
+func GetMasterServersByID(c *gin.Context) {
+	// get params
+	idStr := c.Param(mcIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mcIDJSON)
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewMySQLClusterServiceWithDefault()
+	// get entity
+	err = s.GetMasterServersByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMasterServers, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(mcMySQLServers)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(jsonStr)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMasterServers, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMasterServers, id)
 }
 
 // @Tags mysql cluster

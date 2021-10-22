@@ -30,6 +30,8 @@ type MySQLServer interface {
 	GetCreateTime() time.Time
 	// GetLastUpdateTime returns the last update time
 	GetLastUpdateTime() time.Time
+	// IsMaster returns if this mysql server is a master node
+	IsMaster() (bool, error)
 	// GetMonitorSystem gets monitor system from the mysql
 	GetMonitorSystem() (MonitorSystem, error)
 	// Set sets MySQLServer with given fields, key is the field name and value is the relevant value of the key
@@ -58,6 +60,8 @@ type MySQLServerRepo interface {
 	GetByHostInfo(hostIP string, portNum int) (MySQLServer, error)
 	// GetID gets the identity with given host ip and port number from the mysql
 	GetID(hostIP string, portNum int) (int, error)
+	// IsMaster returns if mysql server of given host ip and port number is a master node
+	IsMaster(hostIP string, portNum int) (bool, error)
 	// GetMonitorSystem gets monitor system with given mysql server id from the mysql
 	GetMonitorSystem(id int) (MonitorSystem, error)
 	// Create creates a mysql server in the mysql
@@ -80,6 +84,8 @@ type MySQLServerService interface {
 	GetByID(id int) error
 	// GetByHostInfo gets a mysql server with given host ip and port number
 	GetByHostInfo(hostIP string, portNum int) error
+	// IsMaster returns if mysql server with given host ip and port number is a master node
+	IsMaster(hostIP string, portNum int) (bool, error)
 	// Create creates a mysql server in the mysql
 	Create(fields map[string]interface{}) error
 	// Update gets a mysql server of the given id from the mysql,

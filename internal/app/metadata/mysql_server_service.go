@@ -94,6 +94,11 @@ func (mss *MySQLServerService) GetByHostInfo(hostIP string, portNum int) error {
 	return nil
 }
 
+// IsMaster returns if mysql server with given host ip and port number is a master node
+func (mss *MySQLServerService) IsMaster(hostIP string, portNum int) (bool, error) {
+	return mss.MySQLServerRepo.IsMaster(hostIP, portNum)
+}
+
 // Create creates a new mysql server entity and insert it into the middleware
 func (mss *MySQLServerService) Create(fields map[string]interface{}) error {
 	// generate new map

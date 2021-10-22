@@ -65,6 +65,7 @@ func TestMySQLServerRepoAll(t *testing.T) {
 	TestMySQLServerRepo_GetByID(t)
 	TestMySQLServerRepo_GetByHostInfo(t)
 	TestMySQLServerRepo_GetID(t)
+	TestMySQLServerRepo_IsMaster(t)
 	TestMySQLServerRepo_Update(t)
 	TestMySQLServerRepo_Delete(t)
 }
@@ -175,7 +176,7 @@ func TestMySQLServerRepo_GetByClusterID(t *testing.T) {
 func TestMySQLServerRepo_GetByID(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := mysqlServerRepo.GetByID(1)
+	entity, err := mysqlServerRepo.GetByID(testInitServerID)
 	asst.Nil(err, common.CombineMessageWithError("test GetByID() failed", err))
 	hostIP := entity.GetHostIP()
 	asst.Equal(testInitHostIP, hostIP, "test GetByID() failed")
@@ -200,6 +201,22 @@ func TestMySQLServerRepo_GetID(t *testing.T) {
 	id, err := mysqlServerRepo.GetID(testInitHostIP, testInitPortNum)
 	asst.Nil(err, common.CombineMessageWithError("test GetID() failed", err))
 	asst.NotEqual(0, id, "test GetID() failed")
+}
+
+func TestMySQLServerRepo_IsMaster(t *testing.T) {
+	asst := assert.New(t)
+
+	isMaster, err := mysqlServerRepo.IsMaster(testInitHostIP, testInitPortNum)
+	asst.Nil(err, common.CombineMessageWithError("test IsMaster() failed", err))
+	asst.Equal(true, isMaster, "test IsMaster() failed")
+}
+
+func TestMySQLServerRepo_GetMonitorSystem(t *testing.T) {
+	asst := assert.New(t)
+
+	monitorSystemInfo, err := mysqlServerRepo.GetMonitorSystem(testInitServerID)
+	asst.Nil(err, common.CombineMessageWithError("test GetMonitorSystem() failed", err))
+	asst.Equal(1, monitorSystemInfo.Identity(), "test GetMonitorSystem() failed")
 }
 
 func TestMySQLServerRepo_Create(t *testing.T) {

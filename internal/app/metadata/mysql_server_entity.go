@@ -171,6 +171,11 @@ func (msi *MySQLServerInfo) GetLastUpdateTime() time.Time {
 	return msi.LastUpdateTime
 }
 
+// IsMaster returns if this mysql server is a master node
+func (msi *MySQLServerInfo) IsMaster() (bool, error) {
+	return msi.MySQLServerRepo.IsMaster(msi.GetHostIP(), msi.GetPortNum())
+}
+
 // GetMonitorSystem gets monitor system from the mysql
 func (msi *MySQLServerInfo) GetMonitorSystem() (metadata.MonitorSystem, error) {
 	return msi.MySQLServerRepo.GetMonitorSystem(msi.Identity())

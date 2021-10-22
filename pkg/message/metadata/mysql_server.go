@@ -18,9 +18,10 @@ const (
 	DebugMetadataGetMySQLServerByClusterID = 100802
 	DebugMetadataGetMySQLServerByID        = 100803
 	DebugMetadataGetMySQLServerByHostInfo  = 100804
-	DebugMetadataAddMySQLServer            = 100805
-	DebugMetadataUpdateMySQLServer         = 100806
-	DebugMetadataDeleteMySQLServer         = 100807
+	DebugMetadataIsMaster                  = 100805
+	DebugMetadataAddMySQLServer            = 100806
+	DebugMetadataUpdateMySQLServer         = 100807
+	DebugMetadataDeleteMySQLServer         = 100808
 )
 const (
 	// info
@@ -28,9 +29,10 @@ const (
 	InfoMetadataGetMySQLServerByClusterID = 200802
 	InfoMetadataGetMySQLServerByID        = 200803
 	InfoMetadataGetMySQLServerByHostInfo  = 200804
-	InfoMetadataAddMySQLServer            = 200805
-	InfoMetadataUpdateMySQLServer         = 200806
-	InfoMetadataDeleteMySQLServer         = 200807
+	InfoMetadataIsMaster                  = 200805
+	InfoMetadataAddMySQLServer            = 200806
+	InfoMetadataUpdateMySQLServer         = 200807
+	InfoMetadataDeleteMySQLServer         = 200808
 )
 const (
 	// error
@@ -38,9 +40,10 @@ const (
 	ErrMetadataGetMySQLServerByClusterID = 400802
 	ErrMetadataGetMySQLServerByID        = 400803
 	ErrMetadataGetMySQLServerByHostInfo  = 400804
-	ErrMetadataAddMySQLServer            = 400805
-	ErrMetadataUpdateMySQLServer         = 400806
-	ErrMetadataDeleteMySQLServer         = 400807
+	ErrMetadataIsMaster                  = 400805
+	ErrMetadataAddMySQLServer            = 400806
+	ErrMetadataUpdateMySQLServer         = 400807
+	ErrMetadataDeleteMySQLServer         = 400808
 )
 
 func initDebugMySQLServerMessage() {
@@ -60,6 +63,10 @@ func initDebugMySQLServerMessage() {
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLServerByHostInfo,
 		"metadata: get mysql server by host info message: %s")
+	message.Messages[DebugMetadataIsMaster] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		DebugMetadataIsMaster,
+		"metadata: check if server is master message: %s")
 	message.Messages[DebugMetadataAddMySQLServer] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataAddMySQLServer,
@@ -90,7 +97,11 @@ func initInfoMySQLServerMessage() {
 	message.Messages[InfoMetadataGetMySQLServerByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		InfoMetadataGetMySQLServerByHostInfo,
-		"metadata: get mysql server by host info completed. id: %d")
+		"metadata: get mysql server by host info completed. host_ip: %s, port_num: %d")
+	message.Messages[InfoMetadataIsMaster] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		InfoMetadataIsMaster,
+		"metadata: check if server is master completed. host_ip: %s, port_num: %d, isMaster: %t")
 	message.Messages[InfoMetadataAddMySQLServer] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		InfoMetadataAddMySQLServer,
@@ -121,7 +132,11 @@ func initErrorMySQLServerMessage() {
 	message.Messages[ErrMetadataGetMySQLServerByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLServerByHostInfo,
-		"metadata: get mysql server by host info failed. id: %d\n%s")
+		"metadata: get mysql server by host info failed. host_ip: %s, port_num: %d\n%s")
+	message.Messages[ErrMetadataIsMaster] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		ErrMetadataIsMaster,
+		"metadata: check if server is master failed. host_ip: %s, port_num: %d\n%s")
 	message.Messages[ErrMetadataAddMySQLServer] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataAddMySQLServer,
