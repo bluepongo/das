@@ -115,7 +115,7 @@ func (hs *HTTPSender) parseResponse(resp *http.Response) error {
 		return err
 	}
 	if resp.StatusCode != http.StatusOK {
-		return errors.New(fmt.Sprintf("got http error when calling alert http api. status code:%d, message: %s",
+		return errors.New(fmt.Sprintf("got http error when calling alert http api. status code: %d, message: %s",
 			resp.StatusCode, string(respBody)))
 	}
 	// unmarshal to a map
