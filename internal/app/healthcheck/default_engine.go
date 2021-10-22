@@ -147,6 +147,7 @@ func (de *DefaultEngine) Run() {
 		updateErr := de.getDASRepo().UpdateOperationStatus(de.operationInfo.operationID, defaultFailedStatus, err.Error())
 		if updateErr != nil {
 			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
+			return
 		}
 	}
 
@@ -804,19 +805,18 @@ func (de *DefaultEngine) summarize() {
 
 // postRun performs post-run actions, for now, it ony saves healthcheck result to the middleware
 func (de *DefaultEngine) postRun() error {
-	// send email
-	toAddrs, err := de.getToAddrs()
-	if err != nil {
-		return err
-	}
-	resultBytes, err := de.getResult().MarshalJSON()
-	alertService := alert.NewServiceWithDefault(alert.NewConfigFromFile())
-	err = alertService.SendEmail(toAddrs, constant.EmptyString, defaultAlertSubject, string(resultBytes))
-	if err != nil {
-		return err
-	}
 	// save result
-	return de.getDASRepo().SaveResult(de.result)
+	err := de.getDASRepo().SaveResult(de.result) // send email
+	if err != nil {
+		return err
+	}
+
+	err = de.sendEmail()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // parsePrometheusDatas parses prometheus datas
@@ -876,6 +876,17 @@ func (de *DefaultEngine) parsePrometheusDatas(item string, datas []healthcheck.P
 	}
 
 	return score, string(jsonBytesTotal), string(jsonBytesHigh), nil
+}
+
+func (de *DefaultEngine) sendEmail() error {
+	toAddrs, err := de.getToAddrs()
+	if err != nil {
+		return err
+	}
+	resultBytes, err := de.getResult().MarshalJSON()
+	alertService := alert.NewServiceWithDefault(alert.NewConfigFromFile())
+
+	return alertService.SendEmail(toAddrs, constant.EmptyString, defaultAlertSubject, string(resultBytes))
 }
 
 // getToAddrs gets to addrs that will send email to
