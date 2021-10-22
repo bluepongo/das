@@ -81,6 +81,8 @@ var (
 	alertHTTPEnabledStr string
 	alertHTTPURL        string
 	alertHTTPConfig     string
+	// healthcheck
+	healthcheckAlertOwnerType string
 	// sqladvisor
 	sqladvisorSoarBin          string
 	sqladvisorSoarConfig       string
@@ -179,6 +181,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&alertHTTPEnabledStr, "alert-http-enabled", constant.DefaultRandomString, fmt.Sprintf("specify if enables http method(default: %s)", constant.FalseString))
 	rootCmd.PersistentFlags().StringVar(&alertHTTPURL, "alert-http-url", constant.DefaultRandomString, fmt.Sprintf("specify actual alert api url(default: %s)", config.DefaultAlertHTTPURL))
 	rootCmd.PersistentFlags().StringVar(&alertHTTPConfig, "alert-http-config", constant.DefaultRandomString, fmt.Sprintf("specify alert api parameters(default: %s)", config.DefaultAlertHTTPConfig))
+	// healthcheck
+	rootCmd.PersistentFlags().StringVar(&healthcheckAlertOwnerType, "healthcheck-alert-owner-type", constant.DefaultRandomString, fmt.Sprintf("specify healthcheck alert owner type(default: %s)", config.DefaultHealthcheckAlertOwnerType))
 	// sqladvisor
 	rootCmd.PersistentFlags().StringVar(&sqladvisorSoarBin, "sqladvisor-soar-bin", constant.DefaultRandomString, fmt.Sprintf("specify binary path of soar(default: %s)", config.DefaultSQLAdvisorSoarBin))
 	rootCmd.PersistentFlags().StringVar(&sqladvisorSoarConfig, "sqladvisor-soar-config", constant.DefaultRandomString, fmt.Sprintf("specify config file path of soar(default: %s)", config.DefaultSQLAdvisorSoarConfig))
@@ -419,6 +423,11 @@ func OverrideConfig() (err error) {
 	}
 	if alertHTTPConfig != constant.DefaultRandomString {
 		viper.Set(config.AlertHTTPConfigKey, alertHTTPConfig)
+	}
+
+	// override healthcheck
+	if healthcheckAlertOwnerType != constant.DefaultRandomString {
+		viper.Set(config.HealthcheckAlertOwnerTypeKey, healthcheckAlertOwnerType)
 	}
 
 	// override sqladvisor

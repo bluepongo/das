@@ -7,9 +7,12 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-multierror"
+	"github.com/romberli/das/config"
+	"github.com/romberli/das/internal/app/alert"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/internal/app/sqladvisor"
 	"github.com/romberli/das/internal/dependency/healthcheck"
+	depmeta "github.com/romberli/das/internal/dependency/metadata"
 	depquery "github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
@@ -17,6 +20,7 @@ import (
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"
 	"github.com/romberli/log"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -38,6 +42,8 @@ const (
 	defaultSlowQueryRowsExaminedItemName        = "slow_query_rows_examined"
 	defaultSlowQueryTopSQLNum                   = 3
 	defaultClusterType                          = 1
+
+	defaultAlertSubject = "das healthcheck result"
 )
 
 var (
@@ -799,13 +805,23 @@ func (de *DefaultEngine) summarize() {
 // postRun performs post-run actions, for now, it ony saves healthcheck result to the middleware
 func (de *DefaultEngine) postRun() error {
 	// send email
-
+	toAddrs, err := de.getToAddrs()
+	if err != nil {
+		return err
+	}
+	resultBytes, err := de.getResult().MarshalJSON()
+	alertService := alert.NewServiceWithDefault(alert.NewConfigFromFile())
+	err = alertService.SendEmail(toAddrs, constant.EmptyString, defaultAlertSubject, string(resultBytes))
+	if err != nil {
+		return err
+	}
 	// save result
 	return de.getDASRepo().SaveResult(de.result)
 }
 
+// parsePrometheusDatas parses prometheus datas
 func (de *DefaultEngine) parsePrometheusDatas(item string, datas []healthcheck.PrometheusData) (int, string, string, error) {
-	config := de.getItemConfig(item)
+	cfg := de.getItemConfig(item)
 
 	var (
 		highSum              float64
@@ -820,11 +836,11 @@ func (de *DefaultEngine) parsePrometheusDatas(item string, datas []healthcheck.P
 	// parse monitor data
 	for _, data := range datas {
 		switch {
-		case data.GetValue() >= config.GetHighWatermark():
+		case data.GetValue() >= cfg.GetHighWatermark():
 			highDatas = append(highDatas, data)
 			highSum += data.GetValue()
 			highCount++
-		case data.GetValue() >= config.GetLowWatermark():
+		case data.GetValue() >= cfg.GetLowWatermark():
 			mediumSum += data.GetValue()
 			mediumCount++
 		}
@@ -832,16 +848,16 @@ func (de *DefaultEngine) parsePrometheusDatas(item string, datas []healthcheck.P
 
 	// high score deduction
 	if highCount > constant.ZeroInt {
-		scoreDeductionHigh = (highSum/float64(highCount) - config.GetHighWatermark()) / config.GetUnit() * config.GetScoreDeductionPerUnitHigh()
-		if scoreDeductionHigh > config.GetMaxScoreDeductionHigh() {
-			scoreDeductionHigh = config.GetMaxScoreDeductionHigh()
+		scoreDeductionHigh = (highSum/float64(highCount) - cfg.GetHighWatermark()) / cfg.GetUnit() * cfg.GetScoreDeductionPerUnitHigh()
+		if scoreDeductionHigh > cfg.GetMaxScoreDeductionHigh() {
+			scoreDeductionHigh = cfg.GetMaxScoreDeductionHigh()
 		}
 	}
 	// medium score deduction
 	if mediumCount > constant.ZeroInt {
-		scoreDeductionMedium = (mediumSum/float64(mediumCount) - config.GetLowWatermark()) / config.GetUnit() * config.GetScoreDeductionPerUnitMedium()
-		if scoreDeductionMedium > config.GetMaxScoreDeductionMedium() {
-			scoreDeductionMedium = config.GetMaxScoreDeductionMedium()
+		scoreDeductionMedium = (mediumSum/float64(mediumCount) - cfg.GetLowWatermark()) / cfg.GetUnit() * cfg.GetScoreDeductionPerUnitMedium()
+		if scoreDeductionMedium > cfg.GetMaxScoreDeductionMedium() {
+			scoreDeductionMedium = cfg.GetMaxScoreDeductionMedium()
 		}
 	}
 	// calculate score
@@ -860,4 +876,34 @@ func (de *DefaultEngine) parsePrometheusDatas(item string, datas []healthcheck.P
 	}
 
 	return score, string(jsonBytesTotal), string(jsonBytesHigh), nil
+}
+
+// getToAddrs gets to addrs that will send email to
+func (de *DefaultEngine) getToAddrs() (string, error) {
+	mysqlCluster, err := de.getOperationInfo().GetMySQLServer().GetMySQLCluster()
+	if err != nil {
+		return constant.EmptyString, err
+	}
+
+	var (
+		owners  []depmeta.User
+		toAddrs string
+	)
+	switch viper.GetString(config.HealthcheckAlertOwnerTypeKey) {
+	case config.HealthcheckAlertOwnerTypeApp:
+		owners, err = mysqlCluster.GetAppOwners()
+	case config.HealthcheckAlertOwnerTypeDB:
+		owners, err = mysqlCluster.GetDBOwners()
+	case config.HealthcheckAlertOwnerTypeAll:
+		owners, err = mysqlCluster.GetAllOwners()
+	}
+	if err != nil {
+		return constant.EmptyString, err
+	}
+
+	for _, owner := range owners {
+		toAddrs += owner.GetEmail() + constant.CommaString
+	}
+
+	return strings.Trim(toAddrs, constant.CommaString), nil
 }
