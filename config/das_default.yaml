@@ -222,6 +222,16 @@ alert:
     # default: {}
     config: {}
 
+# healthcheck configuration
+healthcheck:
+  # alert configuration
+  alert:
+    # description: specify owner type
+    # type: string
+    # available: [app, db, all]
+    # default: "all"
+    ownerType: all
+
 # sqladvisor configuration
 sqladvisor:
   # soar configuration
