@@ -123,42 +123,12 @@ func GetAppByName(c *gin.Context) {
 }
 
 // @Tags application
-// @Summary get db id list
+// @Summary get dbs
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [1, 2]}"
 // @Router /api/vi/metadata/app/dbs/:id [get]
-func GetDBIDList(c *gin.Context) {
-	// get params
-	idStr := c.Param(appIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
-		return
-	}
-	// init service
-	s := metadata.NewAppServiceWithDefault()
-	// get entity
-	err = s.GetDBIDList(id)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBIDList, id, err.Error())
-		return
-	}
+func GetDBsByAppID(c *gin.Context) {
 
-	b := s.DBIDList
-	fmt.Println(b)
-	// marshal service
-	jsonBytes, err := s.MarshalWithFields(appDBIDListStruct)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
-		return
-	}
-	// response
-	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBIDList, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBIDList, id)
 }
 
 // @Tags application

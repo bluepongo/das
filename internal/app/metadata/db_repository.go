@@ -192,36 +192,24 @@ func (dr *DBRepo) GetID(dbName string, clusterID int, clusterType int) (int, err
 	return result.GetInt(constant.ZeroInt, constant.ZeroInt)
 }
 
-// GetAppIDList gets an app identity list that uses this db
-func (dr *DBRepo) GetAppIDList(dbID int) ([]int, error) {
-	sql := `
-		select app_id
-		from t_meta_db_info di
-				 inner join t_meta_app_db_map adm on di.id = adm.db_id
-		where di.del_flag = 0
-		and adm.del_flag = 0
-		and di.id = ?;
-	`
-	log.Debugf("metadata DBRepo.GetAppIDList() select sql: %s", sql)
+// GetAppsByID gets an apps that uses this db
+func (dr *DBRepo) GetAppsByID(dbID int) ([]metadata.App, error) {
+	return nil, nil
+}
 
-	result, err := dr.Execute(sql, dbID)
-	if err != nil {
-		return nil, err
-	}
+// GetAppOwnersByID gets the application owners of the given id from the middleware
+func (dr *DBRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
+	return nil, nil
+}
 
-	resultNum := result.RowNumber()
-	appIDList := make([]int, resultNum)
+// GetDBOwnersByID gets the db owners of the given id from the middleware
+func (dr *DBRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
+	return nil, nil
+}
 
-	for row := 0; row < resultNum; row++ {
-		appID, err := result.GetInt(row, constant.ZeroInt)
-		if err != nil {
-			return nil, err
-		}
-
-		appIDList[row] = appID
-	}
-
-	return appIDList, nil
+// GetAllOwnersByID gets both application and db owners of the given id from the middleware
+func (dr *DBRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
+	return nil, nil
 }
 
 // Create creates a database in the middleware

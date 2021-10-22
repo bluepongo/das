@@ -164,7 +164,7 @@ func GetMySQLClusterByName(c *gin.Context) {
 // @Summary get mysql servers by id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"owner_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
-// @Router /api/v1/metadata/mysql-cluster/mysql-servers/:id [get]
+// @Router /api/v1/metadata/mysql-cluster/mysql-server/:id [get]
 func GetMySQLServersByID(c *gin.Context) {
 	// get params
 	idStr := c.Param(mcIDJSON)
@@ -201,7 +201,7 @@ func GetMySQLServersByID(c *gin.Context) {
 // @Summary get master servers by id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"owner_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
-// @Router /api/v1/metadata/mysql-cluster/master-servers/:id [get]
+// @Router /api/v1/metadata/mysql-cluster/master-server/:id [get]
 func GetMasterServersByID(c *gin.Context) {
 	// get params
 	idStr := c.Param(mcIDJSON)
@@ -232,6 +232,42 @@ func GetMasterServersByID(c *gin.Context) {
 	log.Debug(jsonStr)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMasterServers, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMasterServers, id)
+}
+
+// @Tags mysql cluster
+// @Summary get dbs by id
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router /api/v1/metadata/mysql-cluster/db/:id [get]
+func GetDBsByMySQLCLusterID(c *gin.Context) {
+
+}
+
+// @Tags mysql cluster
+// @Summary get app owners
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router /api/v1/metadata/mysql-cluster/app-owner/:id [get]
+func GetAppOwnersByMySQLCLusterID(c *gin.Context) {
+
+}
+
+// @Tags mysql cluster
+// @Summary get db owners
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router /api/v1/metadata/mysql-cluster/db-owner/:id [get]
+func GetDBOwnersByMySQLCLusterID(c *gin.Context) {
+
+}
+
+// @Tags mysql cluster
+// @Summary get all owners
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router /api/v1/metadata/mysql-cluster/all-owner/:id [get]
+func GetAllOwnersByMySQLCLusterID(c *gin.Context) {
+
 }
 
 // @Tags mysql cluster

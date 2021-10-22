@@ -14,13 +14,13 @@ var _ metadata.AppService = (*AppService)(nil)
 
 type AppService struct {
 	metadata.AppRepo
-	Apps     []metadata.App `json:"apps"`
-	DBIDList []int          `json:"db_id_list"`
+	Apps []metadata.App `json:"apps"`
+	DBs  []metadata.DB  `json:"dbs"`
 }
 
 // NewAppService returns a new *AppService
 func NewAppService(repo metadata.AppRepo) *AppService {
-	return &AppService{repo, []metadata.App{}, []int{}}
+	return &AppService{repo, []metadata.App{}, []metadata.DB{}}
 }
 
 // NewAppServiceWithDefault returns a new *AppService with default repository
@@ -66,16 +66,9 @@ func (as *AppService) GetAppByName(appName string) error {
 	return nil
 }
 
-// GetDBIDList gets a database identity list that the app uses
-func (as *AppService) GetDBIDList(id int) error {
-	app, err := as.AppRepo.GetByID(id)
-	if err != nil {
-		return err
-	}
-
-	as.DBIDList, err = app.GetDBIDList()
-
-	return err
+// GetDBsByID gets databases that the app uses
+func (as *AppService) GetDBsByID(id int) error {
+	return nil
 }
 
 // Create creates an app in the middleware
@@ -135,7 +128,7 @@ func (as *AppService) AddDB(appID, dbID int) error {
 		return err
 	}
 
-	return as.GetDBIDList(appID)
+	return as.GetDBsByID(appID)
 }
 
 // DeleteDB deletes the map of app and database in the middleware
@@ -145,7 +138,7 @@ func (as *AppService) DeleteDB(appID, dbID int) error {
 		return err
 	}
 
-	return as.GetDBIDList(appID)
+	return as.GetDBsByID(appID)
 }
 
 // Marshal marshals AppService.Apps to json bytes

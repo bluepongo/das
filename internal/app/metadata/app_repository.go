@@ -143,36 +143,9 @@ func (ar *AppRepo) GetAppByName(appName string) (metadata.App, error) {
 	return ar.GetByID(id)
 }
 
-// GetDBIDList gets a database identity list that app uses
-func (ar *AppRepo) GetDBIDList(id int) ([]int, error) {
-	sql := `
-		select db_id
-		from t_meta_app_info ai
-				 inner join t_meta_app_db_map adm on ai.id = adm.app_id
-		where ai.del_flag = 0
-		  and adm.del_flag = 0
-		  and ai.id = ?;
-	`
-	log.Debugf("metadata AppRepo.GetDBIDList() select sql: %s", sql)
-	result, err := ar.Execute(sql, id)
-	if err != nil {
-		return nil, err
-	}
-
-	resultNum := result.RowNumber()
-	dbIDList := make([]int, resultNum)
-
-	for row := 0; row < resultNum; row++ {
-		dbID, err := result.GetInt(row, constant.ZeroInt)
-		if err != nil {
-			return nil, err
-		}
-
-		dbIDList[row] = dbID
-	}
-
-	return dbIDList, nil
-
+// GetDBsByID gets databases that app uses
+func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
+	return nil, nil
 }
 
 // Create creates an app in the middleware

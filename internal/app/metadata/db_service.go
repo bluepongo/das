@@ -77,16 +77,24 @@ func (ds *DBService) GetByNameAndClusterInfo(name string, clusterID, clusterType
 	return nil
 }
 
-// GetAppIDList gets an app identity list that uses this db
-func (ds *DBService) GetAppIDList(dbID int) error {
-	db, err := ds.DBRepo.GetByID(dbID)
-	if err != nil {
-		return err
-	}
+// GetAppsByID gets an apps that uses this db
+func (ds *DBService) GetAppsByID(dbID int) error {
+	return nil
+}
 
-	ds.AppIDList, err = db.GetAppIDList()
+// GetAppOwnersByID gets the application owners of the given id
+func (ds *DBService) GetAppOwnersByID(id int) error {
+	return nil
+}
 
-	return err
+// GetDBOwnersByID gets the db owners of the given id
+func (ds *DBService) GetDBOwnersByID(id int) error {
+	return nil
+}
+
+// GetAllOwnersByID gets both application and db owners of the given id
+func (ds *DBService) GetAllOwnersByID(id int) error {
+	return nil
 }
 
 // Create creates an new database in the middleware
@@ -145,7 +153,7 @@ func (ds *DBService) AddApp(dbID, appID int) error {
 		return err
 	}
 
-	return ds.GetAppIDList(dbID)
+	return ds.GetAppsByID(dbID)
 }
 
 // DeleteApp deletes the map of app and database in the middleware
@@ -155,7 +163,7 @@ func (ds *DBService) DeleteApp(dbID, appID int) error {
 		return err
 	}
 
-	return ds.GetAppIDList(dbID)
+	return ds.GetAppsByID(dbID)
 }
 
 // Marshal marshals DBService.DBs to json bytes

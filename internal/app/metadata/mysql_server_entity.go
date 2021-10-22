@@ -176,7 +176,12 @@ func (msi *MySQLServerInfo) IsMaster() (bool, error) {
 	return msi.MySQLServerRepo.IsMaster(msi.GetHostIP(), msi.GetPortNum())
 }
 
-// GetMonitorSystem gets monitor system from the mysql
+// GetMySQLCluster gets mysql cluster of this server
+func (msi *MySQLServerInfo) GetMySQLCluster() (metadata.MySQLCluster, error) {
+	return msi.MySQLServerRepo.GetMySQLCluster(msi.Identity())
+}
+
+// GetMonitorSystem gets monitor system of this server
 func (msi *MySQLServerInfo) GetMonitorSystem() (metadata.MonitorSystem, error) {
 	return msi.MySQLServerRepo.GetMonitorSystem(msi.Identity())
 }

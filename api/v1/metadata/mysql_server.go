@@ -227,6 +227,15 @@ func IsMaster(c *gin.Context) {
 }
 
 // @Tags mysql server
+// @Summary get mysql cluster by id
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"owner_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
+// @Router /api/v1/metadata/mysql-server/mysql-cluster/:id [get]
+func GetMySQLClusterByMySQLServerID(c *gin.Context) {
+
+}
+
+// @Tags mysql server
 // @Summary add a new mysql server
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"create_time":"2021-02-24T02:47:19.589172+08:00","del_flag":0,"last_update_time":"2021-02-24T02:47:19.589172+08:00","id":93,"cluster_id":0,"host_ip":"192.168.1.1","port_num":3306,"deployment_type":0,"version":""}]}"

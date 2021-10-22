@@ -125,9 +125,9 @@ func (ai *AppInfo) GetLastUpdateTime() time.Time {
 	return ai.LastUpdateTime
 }
 
-// GetDBIDList gets database identity list that the app uses
-func (ai *AppInfo) GetDBIDList() ([]int, error) {
-	return ai.AppRepo.GetDBIDList(ai.Identity())
+// GetDBs gets databases that the app uses
+func (ai *AppInfo) GetDBs() ([]metadata.DB, error) {
+	return ai.AppRepo.GetDBsByID(ai.Identity())
 }
 
 // Set sets App with given fields, key is the field name and value is the relevant value of the key

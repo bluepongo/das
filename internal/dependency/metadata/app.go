@@ -21,8 +21,8 @@ type App interface {
 	GetCreateTime() time.Time
 	// GetLastUpdateTime returns the last update time
 	GetLastUpdateTime() time.Time
-	// GetDBIDList gets database identity list that the app uses
-	GetDBIDList() ([]int, error)
+	// GetDBs gets database identity list that the app uses
+	GetDBs() ([]DB, error)
 	// Set sets App with given fields, key is the field name and value is the relevant value of the key
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
@@ -50,8 +50,8 @@ type AppRepo interface {
 	GetID(appName string) (int, error)
 	// GetAppSystemByName gets the app by name from the middleware
 	GetAppByName(appName string) (App, error)
-	// GetDBIDList gets a database identity list that app uses
-	GetDBIDList(id int) ([]int, error)
+	// GetDBsByID gets databases that app uses
+	GetDBsByID(id int) ([]DB, error)
 	// Create creates an app in the middleware
 	Create(appSystem App) (App, error)
 	// Update updates the app in the middleware
@@ -73,8 +73,8 @@ type AppService interface {
 	GetByID(id int) error
 	// GetAppByName gets App from the middleware by name
 	GetAppByName(appName string) error
-	// GetDBIDList gets a database identity list that the app uses
-	GetDBIDList(id int) error
+	// GetDBsByID gets databases that the app uses
+	GetDBsByID(id int) error
 	// Create creates an app in the middleware
 	Create(fields map[string]interface{}) error
 	// Update gets the app of the given id from the middleware,

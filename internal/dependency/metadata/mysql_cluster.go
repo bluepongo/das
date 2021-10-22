@@ -30,6 +30,14 @@ type MySQLCluster interface {
 	GetMySQLServers() ([]MySQLServer, error)
 	// GetMasterServers gets the master servers of this cluster
 	GetMasterServers() ([]MySQLServer, error)
+	// GetDBs gets the databases of this cluster
+	GetDBs() ([]DB, error)
+	// GetAppOwners gets the application owners of this cluster
+	GetAppOwners() ([]User, error)
+	// GetDBOwners gets the db owners of this cluster
+	GetDBOwners() ([]User, error)
+	// GetAllOwners gets both application and db owners of this cluster
+	GetAllOwners() ([]User, error)
 	// Set sets MySQLCluster with given fields, key is the field name and value is the relevant value of the key
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
@@ -56,6 +64,14 @@ type MySQLClusterRepo interface {
 	GetByName(clusterName string) (MySQLCluster, error)
 	// GetID gets the identity with given cluster name from the middleware
 	GetID(clusterName string) (int, error)
+	// GetDBsByID gets the databases of the given id from the middleware
+	GetDBsByID(id int) ([]DB, error)
+	// GetAppOwnersByID gets the application owners of the given id from the middleware
+	GetAppOwnersByID(id int) ([]User, error)
+	// GetDBOwnersByID gets the db owners of the given id from the middleware
+	GetDBOwnersByID(id int) ([]User, error)
+	// GetAllOwnersByID gets both application and db owners of the given id from the middleware
+	GetAllOwnersByID(id int) ([]User, error)
 	// Create creates a mysql cluster in the middleware
 	Create(mc MySQLCluster) (MySQLCluster, error)
 	// Update updates the mysql cluster in the middleware
@@ -76,10 +92,18 @@ type MySQLClusterService interface {
 	GetByID(id int) error
 	// GetByName gets a mysql cluster of given cluster name
 	GetByName(clusterName string) error
-	// GetMySQLServersByID gets the mysql servers of given cluster id
+	// GetMySQLServersByID gets the mysql servers of given id
 	GetMySQLServersByID(id int) error
-	// GetMasterServersByID gets the master servers of this cluster
+	// GetMasterServersByID gets the master servers of the given id
 	GetMasterServersByID(id int) error
+	// GetDBsByID gets the databases of the given id
+	GetDBsByID(id int) error
+	// GetAppOwnersByID gets the application owners of the given id
+	GetAppOwnersByID(id int) error
+	// GetDBOwnersByID gets the db owners of the given id
+	GetDBOwnersByID(id int) error
+	// GetAllOwnersByID gets both application and db owners of the given id
+	GetAllOwnersByID(id int) error
 	// Create creates a mysql cluster in the middleware
 	Create(fields map[string]interface{}) error
 	// Update gets a mysql cluster of the given id from the middleware,

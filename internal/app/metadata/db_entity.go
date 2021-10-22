@@ -144,9 +144,29 @@ func (di *DBInfo) GetLastUpdateTime() time.Time {
 	return di.LastUpdateTime
 }
 
-// GetAppIDList gets app identity list that uses this db
-func (di *DBInfo) GetAppIDList() ([]int, error) {
-	return di.DBRepo.GetAppIDList(di.ID)
+// GetApps gets app identity list that uses this db
+func (di *DBInfo) GetApps() ([]metadata.App, error) {
+	return di.DBRepo.GetAppsByID(di.ID)
+}
+
+// GetMySQLCluster gets the mysql cluster of this db
+func (di *DBInfo) GetMySQLCluster() (metadata.MySQLCluster, error) {
+	return nil, nil
+}
+
+// GetAllOwners gets the application owners of this db
+func (di *DBInfo) GetAppOwners() ([]metadata.User, error) {
+	return nil, nil
+}
+
+// GetAllOwners gets the db owners of this db
+func (di *DBInfo) GetDBOwners() ([]metadata.User, error) {
+	return nil, nil
+}
+
+// GetAllOwners gets both application and db owners of this db
+func (di *DBInfo) GetAllOwners() ([]metadata.User, error) {
+	return nil, nil
 }
 
 // Set sets DB with given fields, key is the field name and value is the relevant value of the key

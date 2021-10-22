@@ -224,6 +224,11 @@ func (msr *MySQLServerRepo) IsMaster(hostIP string, portNum int) (bool, error) {
 	return result.RowNumber() == constant.ZeroInt, nil
 }
 
+// GetMySQLClusterByID gets the mysql cluster of the given id
+func (msr *MySQLServerRepo) GetMySQLClusterByID(id int) (metadata.MySQLCluster, error) {
+	return nil, nil
+}
+
 // GetMonitorSystem gets monitor system with given mysql server id from the mysql
 func (msr *MySQLServerRepo) GetMonitorSystem(id int) (metadata.MonitorSystem, error) {
 	sql := `

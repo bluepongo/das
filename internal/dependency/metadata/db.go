@@ -25,8 +25,16 @@ type DB interface {
 	GetCreateTime() time.Time
 	// GetLastUpdateTime returns the last update time
 	GetLastUpdateTime() time.Time
-	// GetAppIDList gets app identity list that uses this db
-	GetAppIDList() ([]int, error)
+	// Gets gets apps that uses this db
+	GetApps() ([]App, error)
+	// GetMySQLCluster gets the mysql cluster of this db
+	GetMySQLCluster() (MySQLCluster, error)
+	// GetAppOwners gets the application owners of this db
+	GetAppOwners() ([]User, error)
+	// GetDBOwners gets the db owners of this db
+	GetDBOwners() ([]User, error)
+	// GetAllOwners gets both application and db owners of this db
+	GetAllOwners() ([]User, error)
 	// Set sets DB with given fields, key is the field name and value is the relevant value of the key
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
@@ -56,8 +64,14 @@ type DBRepo interface {
 	GetByNameAndClusterInfo(name string, clusterID, clusterType int) (DB, error)
 	// GetID gets the identity with given database name, cluster id and cluster type from the middleware
 	GetID(dbName string, clusterID int, clusterType int) (int, error)
-	// GetAppIDList gets an app identity list that uses this db
-	GetAppIDList(id int) ([]int, error)
+	// GetAppsByID gets an apps that uses this db
+	GetAppsByID(id int) ([]App, error)
+	// GetAppOwnersByID gets the application owners of the given id from the middleware
+	GetAppOwnersByID(id int) ([]User, error)
+	// GetDBOwnersByID gets the db owners of the given id from the middleware
+	GetDBOwnersByID(id int) ([]User, error)
+	// GetAllOwnersByID gets both application and db owners of the given id from the middleware
+	GetAllOwnersByID(id int) ([]User, error)
 	// Create creates a database in the middleware
 	Create(db DB) (DB, error)
 	// Update updates the database in the middleware
@@ -81,8 +95,14 @@ type DBService interface {
 	GetByID(id int) error
 	// GetByNameAndClusterInfo gets an database of the given db name and cluster info from the middleware
 	GetByNameAndClusterInfo(name string, clusterID, clusterType int) error
-	// GetAppIDList gets an app identity list that uses this db
-	GetAppIDList(id int) error
+	// GetAppsByID gets an apps that uses this db
+	GetAppsByID(id int) error
+	// GetAppOwnersByID gets the application owners of the given id
+	GetAppOwnersByID(id int) error
+	// GetDBOwnersByID gets the db owners of the given id
+	GetDBOwnersByID(id int) error
+	// GetAllOwnersByID gets both application and db owners of the given id
+	GetAllOwnersByID(id int) error
 	// Create creates a database in the middleware
 	Create(fields map[string]interface{}) error
 	// Update gets a database of the given id from the middleware,

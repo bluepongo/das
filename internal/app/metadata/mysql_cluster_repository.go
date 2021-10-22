@@ -200,6 +200,26 @@ func (mcr *MySQLClusterRepo) GetID(clusterName string) (int, error) {
 	return result.GetInt(constant.ZeroInt, constant.ZeroInt)
 }
 
+// GetDBsByID gets the databases of the given id from the middleware
+func (mcr *MySQLClusterRepo) GetDBsByID(id int) ([]metadata.DB, error) {
+	return nil, nil
+}
+
+// GetAppOwnersByID gets the application owners of the given id from the middleware
+func (mcr *MySQLClusterRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
+	return nil, nil
+}
+
+// GetDBOwnersByID gets the db owners of the given id from the middleware
+func (mcr *MySQLClusterRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
+	return nil, nil
+}
+
+// GetAllOwnersByID gets both application and db owners of the given id from the middleware
+func (mcr *MySQLClusterRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
+	return nil, nil
+}
+
 // Create creates data with given entity in the middleware
 func (mcr *MySQLClusterRepo) Create(mysqlCluster metadata.MySQLCluster) (metadata.MySQLCluster, error) {
 	sql := `

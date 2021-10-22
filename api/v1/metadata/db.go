@@ -174,39 +174,48 @@ func GetDBByNameAndClusterInfo(c *gin.Context) {
 }
 
 // @Tags db
-// @Summary get app id list
+// @Summary get apps by id
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [1, 2]}"
-// @Router /api/v1/metadata/db/apps/:id [get]
-func GetAppIDList(c *gin.Context) {
-	// get params
-	idStr := c.Param(dbIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, dbIDJSON)
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
-		return
-	}
-	// init service
-	s := metadata.NewDBServiceWithDefault()
-	// get entity
-	err = s.GetAppIDList(id)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppIDList, id, err.Error())
-		return
-	}
-	// marshal service
-	jsonBytes, err := s.MarshalWithFields(dbAppIDListStruct)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
-		return
-	}
-	// response
-	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppIDList, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppIDList, id)
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Router /api/v1/metadata/db/app/:id [get]
+func GetAppsByID(c *gin.Context) {
+
+}
+
+// @Tags db
+// @Summary get mysql cluster by id
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init","owner_id":1},{"monitor_system_id":1,"owner_id":1,"env_id":1,"create_time":"2021-02-23T04:14:23.707238+08:00","last_update_time":"2021-02-23T04:14:23.707238+08:00","id":2,"cluster_name":"newTest","middleware_cluster_id":1,"del_flag":0}]}"
+// @Router /api/v1/metadata/db/app/:id [get]
+func GetMySQLClusterByDBID(c *gin.Context) {
+
+}
+
+// @Tags db
+// @Summary get app owners
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router /api/v1/metadata/db/app-owner/:id [get]
+func GetAppOwnersByDBID(c *gin.Context) {
+
+}
+
+// @Tags db
+// @Summary get db owners
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router /api/v1/metadata/db/db-owner/:id [get]
+func GetDBOwnersByDBID(c *gin.Context) {
+
+}
+
+// @Tags db
+// @Summary get all owners
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router /api/v1/metadata/db/all-owner/:id [get]
+func GetAllOwnersByDBID(c *gin.Context) {
+
 }
 
 // @Tags database

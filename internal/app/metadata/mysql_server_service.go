@@ -28,11 +28,16 @@ var _ metadata.MySQLServerService = (*MySQLServerService)(nil)
 type MySQLServerService struct {
 	MySQLServerRepo metadata.MySQLServerRepo
 	MySQLServers    []metadata.MySQLServer
+	MySQLCluster    metadata.MySQLCluster
 }
 
 // NewMySQLServerService returns a new *MySQLServerService
 func NewMySQLServerService(repo metadata.MySQLServerRepo) *MySQLServerService {
-	return &MySQLServerService{repo, []metadata.MySQLServer{}}
+	return &MySQLServerService{
+		repo,
+		[]metadata.MySQLServer{},
+		nil,
+	}
 }
 
 // NewMySQLServerServiceWithDefault returns a new *MySQLServerService with default repository
@@ -97,6 +102,11 @@ func (mss *MySQLServerService) GetByHostInfo(hostIP string, portNum int) error {
 // IsMaster returns if mysql server with given host ip and port number is a master node
 func (mss *MySQLServerService) IsMaster(hostIP string, portNum int) (bool, error) {
 	return mss.MySQLServerRepo.IsMaster(hostIP, portNum)
+}
+
+// GetMySQLCluster gets the mysql cluster of the given id
+func (mss *MySQLServerService) GetMySQLClusterByID(id int) error {
+	return nil
 }
 
 // Create creates a new mysql server entity and insert it into the middleware

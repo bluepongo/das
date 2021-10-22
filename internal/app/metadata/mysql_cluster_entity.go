@@ -178,6 +178,26 @@ func (mci *MySQLClusterInfo) GetMasterServers() ([]metadata.MySQLServer, error) 
 	return masterServers, nil
 }
 
+// GetDBs gets the databases of this cluster
+func (mci *MySQLClusterInfo) GetDBs() ([]metadata.DB, error) {
+	return nil, nil
+}
+
+// GetAllOwners gets the application owners of this cluster
+func (mci *MySQLClusterInfo) GetAppOwners() ([]metadata.User, error) {
+	return nil, nil
+}
+
+// GetAllOwners gets the db owners of this cluster
+func (mci *MySQLClusterInfo) GetDBOwners() ([]metadata.User, error) {
+	return nil, nil
+}
+
+// GetAllOwners gets both application and db owners of this cluster
+func (mci *MySQLClusterInfo) GetAllOwners() ([]metadata.User, error) {
+	return nil, nil
+}
+
 // Set sets mysql cluster with given fields, key is the field name and value is the relevant value of the key
 func (mci *MySQLClusterInfo) Set(fields map[string]interface{}) error {
 	for fieldName, fieldValue := range fields {
