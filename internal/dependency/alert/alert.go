@@ -1,8 +1,6 @@
 package alert
 
 import (
-	"net/http"
-
 	"github.com/romberli/go-util/middleware"
 )
 
@@ -25,8 +23,6 @@ type Repository interface {
 }
 
 type Sender interface {
-	// GetClient returns the http client
-	GetClient() *http.Client
 	// GetConfig return the config
 	GetConfig() Config
 	// GetURL returns the url
