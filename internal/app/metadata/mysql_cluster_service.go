@@ -121,48 +121,32 @@ func (mcs *MySQLClusterService) GetMasterServersByID(id int) error {
 
 // GetDBsByID gets the databases of the given id
 func (mcs *MySQLClusterService) GetDBsByID(id int) error {
-	err := mcs.GetByID(id)
-	if err != nil {
-		return err
-	}
-
-	mcs.Databases, err = mcs.GetMySQLClusters()[constant.ZeroInt].GetDBs()
+	var err error
+	mcs.Databases, err = mcs.MySQLClusterRepo.GetDBsByID(id)
 
 	return err
 }
 
 // GetAppOwnersByID gets the application owners of the given id
 func (mcs *MySQLClusterService) GetAppOwnersByID(id int) error {
-	err := mcs.GetByID(id)
-	if err != nil {
-		return err
-	}
-
-	mcs.Owners, err = mcs.GetMySQLClusters()[constant.ZeroInt].GetAppOwners()
+	var err error
+	mcs.Owners, err = mcs.MySQLClusterRepo.GetAppOwnersByID(id)
 
 	return err
 }
 
 // GetDBOwnersByID gets the db owners of the given id
 func (mcs *MySQLClusterService) GetDBOwnersByID(id int) error {
-	err := mcs.GetByID(id)
-	if err != nil {
-		return err
-	}
-
-	mcs.Owners, err = mcs.GetMySQLClusters()[constant.ZeroInt].GetDBOwners()
+	var err error
+	mcs.Owners, err = mcs.MySQLClusterRepo.GetDBOwnersByID(id)
 
 	return err
 }
 
 // GetAllOwnersByID gets both application and db owners of the given id
 func (mcs *MySQLClusterService) GetAllOwnersByID(id int) error {
-	err := mcs.GetByID(id)
-	if err != nil {
-		return err
-	}
-
-	mcs.Owners, err = mcs.GetMySQLClusters()[constant.ZeroInt].GetAllOwners()
+	var err error
+	mcs.Owners, err = mcs.MySQLClusterRepo.GetAllOwnersByID(id)
 
 	return err
 }

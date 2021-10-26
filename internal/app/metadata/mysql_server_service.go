@@ -37,7 +37,7 @@ func NewMySQLServerService(repo metadata.MySQLServerRepo) *MySQLServerService {
 	return &MySQLServerService{
 		repo,
 		[]metadata.MySQLServer{},
-		nil
+		nil,
 	}
 }
 

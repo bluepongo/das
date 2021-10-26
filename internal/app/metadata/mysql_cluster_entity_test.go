@@ -29,7 +29,7 @@ func initNewMySQLClusterInfo() *MySQLClusterInfo {
 
 	createTime, _ := now.Parse(defaultMySQLClusterInfoCreateTimeString)
 	lastUpdateTime, _ := now.Parse(defaultMySQLClusterInfoLastUpdateTimeString)
-	return NewMySQLClusterInfoWithGlobal(
+	mysqlClusterInfo := NewMySQLClusterInfoWithGlobal(
 		defaultMySQLClusterInfoID,
 		defaultMySQLClusterInfoClusterName,
 		defaultMySQLClusterInfoMiddlewareClusterID,
@@ -38,7 +38,13 @@ func initNewMySQLClusterInfo() *MySQLClusterInfo {
 		defaultMySQLClusterInfoEnvID,
 		defaultMySQLClusterInfoDelFlag,
 		createTime,
-		lastUpdateTime)
+		lastUpdateTime,
+	)
+
+	initMySQLClusterRepo()
+	mysqlClusterInfo.MySQLClusterRepo = mysqlClusterRepo
+
+	return mysqlClusterInfo
 }
 
 func equalMySQLClusterInfo(a, b *MySQLClusterInfo) bool {
@@ -131,27 +137,27 @@ func TestMySQLClusterInfo_GetAppOwners(t *testing.T) {
 	asst := assert.New(t)
 
 	mysqlClusterInfo := initNewMySQLClusterInfo()
-	masterServers, err := mysqlClusterInfo.GetAppOwners()
+	appOwners, err := mysqlClusterInfo.GetAppOwners()
 	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
-	asst.Equal(1, masterServers[constant.ZeroInt].Identity(), "test GetAppOwners() failed", err)
+	asst.Equal(1, appOwners[constant.ZeroInt].Identity(), "test GetAppOwners() failed", err)
 }
 
 func TestMySQLClusterInfo_GetDBOwners(t *testing.T) {
 	asst := assert.New(t)
 
 	mysqlClusterInfo := initNewMySQLClusterInfo()
-	masterServers, err := mysqlClusterInfo.GetDBOwners()
+	dbOwners, err := mysqlClusterInfo.GetDBOwners()
 	asst.Nil(err, common.CombineMessageWithError("test GetDBOwners() failed", err))
-	asst.Equal(1, masterServers[constant.ZeroInt].Identity(), "test GetDBOwners() failed", err)
+	asst.Equal(1, dbOwners[constant.ZeroInt].Identity(), "test GetDBOwners() failed", err)
 }
 
 func TestMySQLClusterInfo_GetAllOwners(t *testing.T) {
 	asst := assert.New(t)
 
 	mysqlClusterInfo := initNewMySQLClusterInfo()
-	masterServers, err := mysqlClusterInfo.GetAllOwners()
+	allOwners, err := mysqlClusterInfo.GetAllOwners()
 	asst.Nil(err, common.CombineMessageWithError("test GetAllOwners() failed", err))
-	asst.Equal(1, masterServers[constant.ZeroInt].Identity(), "test GetAllOwners() failed", err)
+	asst.Equal(1, allOwners[constant.ZeroInt].Identity(), "test GetAllOwners() failed", err)
 }
 
 func TestMySQLClusterInfo_Set(t *testing.T) {
@@ -216,4 +222,3 @@ func TestMySQLClusterInfo_MarshalJSONWithFields(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 	asst.Equal(string(expect), string(data), "test MarshalJSONWithFields() failed")
 }
-

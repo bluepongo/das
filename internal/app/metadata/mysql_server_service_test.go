@@ -91,7 +91,7 @@ func TestMySQLServerService_GetMySQLServersByID(t *testing.T) {
 	s := NewMySQLServerService(mysqlServerRepo)
 	err := s.GetMySQLClusterByID(testInitServerID)
 	asst.Nil(err, "test GetMySQLClusterByID() failed")
-	id := s.MySQLCluster[constant.ZeroInt].Identity()
+	id := s.MySQLCluster.Identity()
 	asst.Equal(1, id, "test GetMySQLClusterByID() failed")
 }
 

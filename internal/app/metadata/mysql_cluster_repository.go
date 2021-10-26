@@ -11,13 +11,6 @@ import (
 	"github.com/romberli/das/internal/dependency/metadata"
 )
 
-const (
-	addr   = "localhost:3306"
-	dbName = "das"
-	dbUser = "root"
-	dbPass = "root"
-)
-
 var _ metadata.MySQLClusterRepo = (*MySQLClusterRepo)(nil)
 
 // MySQLClusterRepo implements dependency.MySQLClusterRepo interface
