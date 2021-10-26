@@ -1,11 +1,11 @@
-@baseURL = 127.0.0.1:6090
+http://127.0.0.1:6090
 
 ### healthcheck.GetResultByOperationID
-GET http://{{baseURL}}/api/v1/healthcheck/result/1
+GET /api/v1/healthcheck/result/1
 Accept: application/json
 
 ### healthcheck.Check
-POST http://{{baseURL}}/api/v1/healthcheck/check
+POST /api/v1/healthcheck/check
 Content-Type: application/json
 
 {
@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 
 ### healthcheck.CheckByHostInfo
-POST http://{{baseURL}}/api/v1/healthcheck/check/host-info
+POST /api/v1/healthcheck/check/host-info
 Content-Type: application/json
 
 {
@@ -28,7 +28,7 @@ Content-Type: application/json
 }
 
 ### healthcheck.ReviewAccuracy
-POST http://{{baseURL}}/api/v1/healthcheck/review
+POST /api/v1/healthcheck/review
 Content-Type: application/json
 
 {

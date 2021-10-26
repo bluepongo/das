@@ -1,26 +1,27 @@
-@baseURL = 127.0.0.1:6090
+
+http://127.0.0.1:6090
 
 ### query.GetByMySQLClusterID
-GET http://{{baseURL}}/api/v1/query/cluster/3
+GET /api/v1/query/cluster/3
 Accept: application/json
 
 {"start_time": "2021-08-29 09:02:22.346672", "end_time":"2021-10-02 10:18:40.467998","limit":"5","offset":"0"}
 
 ### query.GetByMySQLServerID
-GET http://{{baseURL}}/api/v1/query/server/2
+GET /api/v1/query/server/2
 Accept: application/json
 
 {"start_time": "2021-08-29 09:02:22.346672", "end_time":"2021-10-02 10:18:40.467998","limit":"5","offset":"0"}
 
 
 ### query.GetByDBID
-GET http://{{baseURL}}/api/v1/query/db/2
+GET /api/v1/query/db/2
 Accept: application/json
 
 {"mysql_server_id":"4","start_time": "2021-08-29 09:02:22.346672", "end_time":"2021-10-02 10:18:40.467998","limit":"5","offset":"0"}
 
 ### query.GetByMySQLSQLID
-GET http://{{baseURL}}/api/v1/query/A58343E0C8847EFA
+GET /api/v1/query/A58343E0C8847EFA
 Accept: application/json
 
 {"mysql_server_id":"4", "start_time": "2021-08-29 09:02:22.346672", "end_time":"2021-10-02 10:18:40.467998","limit":"5","offset":"0"}
