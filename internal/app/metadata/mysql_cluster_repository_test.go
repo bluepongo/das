@@ -189,33 +189,33 @@ func TestMySQLClusterRepo_GetID(t *testing.T) {
 func TestMySQLClusterRepo_GetDBsByID(t *testing.T) {
 	asst := assert.New(t)
 
-	id, err := mysqlClusterRepo.GetDBsByID(testInitClusterID)
+	dbs, err := mysqlClusterRepo.GetDBsByID(testInitClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test GetDBsByID() failed", err))
-	asst.NotEqual(0, id, "test GetDBsByID() failed")
+	asst.NotEqual(0, len(dbs), "test GetDBsByID() failed")
 }
 
 func TestMySQLClusterRepo_GetAppOwners(t *testing.T) {
 	asst := assert.New(t)
 
-	id, err := mysqlClusterRepo.GetAppOwnersByID(testInitClusterID)
+	owners, err := mysqlClusterRepo.GetAppOwnersByID(testInitClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
-	asst.NotEqual(0, id, "test GetAppOwners() failed")
+	asst.NotEqual(0, len(owners), "test GetAppOwners() failed")
 }
 
 func TestMySQLClusterRepo_GetDBOwners(t *testing.T) {
 	asst := assert.New(t)
 
-	id, err := mysqlClusterRepo.GetDBOwnersByID(testInitClusterID)
+	owners, err := mysqlClusterRepo.GetDBOwnersByID(testInitClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test GetDBOwners() failed", err))
-	asst.NotEqual(0, id, "test GetDBOwners() failed")
+	asst.NotEqual(0, len(owners), "test GetDBOwners() failed")
 }
 
 func TestMySQLClusterRepo_GetAllOwners(t *testing.T) {
 	asst := assert.New(t)
 
-	id, err := mysqlClusterRepo.GetAllOwnersByID(testInitClusterID)
+	owners, err := mysqlClusterRepo.GetAllOwnersByID(testInitClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAllOwners() failed", err))
-	asst.NotEqual(0, id, "test GetAllOwners() failed")
+	asst.NotEqual(0, len(owners), "test GetAllOwners() failed")
 }
 
 func TestMySQLClusterRepo_Create(t *testing.T) {
