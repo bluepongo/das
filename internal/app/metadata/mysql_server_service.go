@@ -5,6 +5,7 @@ import (
 
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
+	"github.com/romberli/log"
 
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/pkg/message"
@@ -27,8 +28,8 @@ var _ metadata.MySQLServerService = (*MySQLServerService)(nil)
 // MySQLServerService implements Service interface
 type MySQLServerService struct {
 	MySQLServerRepo metadata.MySQLServerRepo
-	MySQLServers    []metadata.MySQLServer
-	MySQLCluster    metadata.MySQLCluster
+	MySQLServers    []metadata.MySQLServer `json:"mysql_servers"`
+	MySQLCluster    metadata.MySQLCluster  `json:"mysql_cluster"`
 }
 
 // NewMySQLServerService returns a new *MySQLServerService
@@ -36,7 +37,7 @@ func NewMySQLServerService(repo metadata.MySQLServerRepo) *MySQLServerService {
 	return &MySQLServerService{
 		repo,
 		[]metadata.MySQLServer{},
-		nil,
+		nil
 	}
 }
 
@@ -104,8 +105,17 @@ func (mss *MySQLServerService) IsMaster(hostIP string, portNum int) (bool, error
 	return mss.MySQLServerRepo.IsMaster(hostIP, portNum)
 }
 
-// GetMySQLCluster gets the mysql cluster of the given id
+// GetMySQLClusterByID gets the mysql cluster of the given id
 func (mss *MySQLServerService) GetMySQLClusterByID(id int) error {
+	err := mss.GetByID(id)
+	if err != nil {
+		return err
+	}
+
+	mss.MySQLCluster, err = mss.GetMySQLServers()[constant.ZeroInt].GetMySQLCluster()
+
+	log.Debug(fmt.Sprintf("%v", mss.MySQLCluster))
+
 	return nil
 }
 

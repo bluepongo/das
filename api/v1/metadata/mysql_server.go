@@ -30,6 +30,8 @@ const (
 	msDeploymentTypeStruct = "DeploymentType"
 	msVersionStruct        = "Version"
 
+	msMySQLCluster = "MySQLCluster"
+
 	isMasterResponse = `{"is_master": "%t"}`
 )
 
@@ -232,7 +234,40 @@ func IsMaster(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"owner_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
 // @Router /api/v1/metadata/mysql-server/mysql-cluster/:id [get]
 func GetMySQLClusterByMySQLServerID(c *gin.Context) {
+	// get param
+	idStr := c.Param(msIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, msIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
 
+	}
+	// init service
+	s := metadata.NewMySQLServerServiceWithDefault()
+	log.Debug("==========================")
+	// get entity
+	err = s.GetMySQLClusterByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByServerID, id, err.Error())
+		return
+	}
+	log.Debug(fmt.Sprintf("%v", s))
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(msMySQLCluster)
+	// jsonBytes, err := s.Marshal()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(jsonStr)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLClusterByServerID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClusterByServerID, id)
 }
 
 // @Tags mysql server

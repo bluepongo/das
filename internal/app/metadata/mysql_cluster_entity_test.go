@@ -118,6 +118,42 @@ func TestMySQLClusterInfo_GetMasterServers(t *testing.T) {
 	asst.Equal(1, masterServers[constant.ZeroInt].Identity(), "test GetMasterServers() failed", err)
 }
 
+func TestMySQLClusterInfo_GetDBs(t *testing.T) {
+	asst := assert.New(t)
+
+	mysqlClusterInfo := initNewMySQLClusterInfo()
+	dbs, err := mysqlClusterInfo.GetDBs()
+	asst.Nil(err, common.CombineMessageWithError("test GetDBs() failed", err))
+	asst.Equal(1, dbs[constant.ZeroInt].Identity(), "test GetDBs() failed", err)
+}
+
+func TestMySQLClusterInfo_GetAppOwners(t *testing.T) {
+	asst := assert.New(t)
+
+	mysqlClusterInfo := initNewMySQLClusterInfo()
+	masterServers, err := mysqlClusterInfo.GetAppOwners()
+	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
+	asst.Equal(1, masterServers[constant.ZeroInt].Identity(), "test GetAppOwners() failed", err)
+}
+
+func TestMySQLClusterInfo_GetDBOwners(t *testing.T) {
+	asst := assert.New(t)
+
+	mysqlClusterInfo := initNewMySQLClusterInfo()
+	masterServers, err := mysqlClusterInfo.GetDBOwners()
+	asst.Nil(err, common.CombineMessageWithError("test GetDBOwners() failed", err))
+	asst.Equal(1, masterServers[constant.ZeroInt].Identity(), "test GetDBOwners() failed", err)
+}
+
+func TestMySQLClusterInfo_GetAllOwners(t *testing.T) {
+	asst := assert.New(t)
+
+	mysqlClusterInfo := initNewMySQLClusterInfo()
+	masterServers, err := mysqlClusterInfo.GetAllOwners()
+	asst.Nil(err, common.CombineMessageWithError("test GetAllOwners() failed", err))
+	asst.Equal(1, masterServers[constant.ZeroInt].Identity(), "test GetAllOwners() failed", err)
+}
+
 func TestMySQLClusterInfo_Set(t *testing.T) {
 	asst := assert.New(t)
 
@@ -180,3 +216,4 @@ func TestMySQLClusterInfo_MarshalJSONWithFields(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 	asst.Equal(string(expect), string(data), "test MarshalJSONWithFields() failed")
 }
+

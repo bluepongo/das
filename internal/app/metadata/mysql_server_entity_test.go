@@ -116,6 +116,15 @@ func TestMySQLServerInfo_IsMaster(t *testing.T) {
 	asst.Equal(true, isMaster, "test IsMaster() failed")
 }
 
+func TestMySQLServerInfo_GetMySQLCluster(t *testing.T) {
+	asst := assert.New(t)
+
+	mysqlServerInfo := initNewMySQLServerInfo()
+	mysqlCluster, err := mysqlServerInfo.GetMySQLCluster()
+	asst.Nil(err, "test GetMySQLCluster() failed")
+	asst.Equal(1, mysqlCluster.Identity, "test GetMySQLCluster() failed")
+}
+
 func TestMySQLServerInfo_GetMonitorSystem(t *testing.T) {
 	asst := assert.New(t)
 

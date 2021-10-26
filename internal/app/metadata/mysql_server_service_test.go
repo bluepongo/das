@@ -85,6 +85,16 @@ func TestMySQLServerService_IsMaster(t *testing.T) {
 	asst.Equal(true, isMaster, "test IsMaster() failed")
 }
 
+func TestMySQLServerService_GetMySQLServersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	s := NewMySQLServerService(mysqlServerRepo)
+	err := s.GetMySQLClusterByID(testInitServerID)
+	asst.Nil(err, "test GetMySQLClusterByID() failed")
+	id := s.MySQLCluster[constant.ZeroInt].Identity()
+	asst.Equal(1, id, "test GetMySQLClusterByID() failed")
+}
+
 func TestMySQLServerService_Create(t *testing.T) {
 	asst := assert.New(t)
 

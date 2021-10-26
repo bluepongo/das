@@ -100,7 +100,7 @@ func (mcr *MySQLClusterRepo) GetByEnv(envID int) ([]metadata.MySQLCluster, error
 		where del_flag = 0
 		and env_id = ?;
 	`
-	log.Debugf("metadata MySQLServerRepo.GetByEnv() sql: \n%s\nplaceholders: %s", sql, envID)
+	log.Debugf("metadata MySQLClusterRepo.GetByEnv() sql: \n%s\nplaceholders: %d", sql, envID)
 
 	result, err := mcr.Execute(sql, envID)
 	if err != nil {
@@ -111,17 +111,14 @@ func (mcr *MySQLClusterRepo) GetByEnv(envID int) ([]metadata.MySQLCluster, error
 	mysqlClusterList := make([]metadata.MySQLCluster, resultNum)
 
 	for row := 0; row < resultNum; row++ {
-		mysqlClusterID, err := result.GetInt(row, constant.ZeroInt)
+		mysqlClusterInfo := NewEmptyMySQLClusterInfoWithGlobal()
+		// map to struct
+		err = result.MapToStructByRowIndex(mysqlClusterInfo, row, constant.DefaultMiddlewareTag)
 		if err != nil {
 			return nil, err
 		}
 
-		mysqlCluster, err := mcr.GetByID(mysqlClusterID)
-		if err != nil {
-			return nil, err
-		}
-
-		mysqlClusterList[row] = mysqlCluster
+		mysqlClusterList[row] = mysqlClusterInfo
 	}
 
 	return mysqlClusterList, nil
@@ -202,22 +199,150 @@ func (mcr *MySQLClusterRepo) GetID(clusterName string) (int, error) {
 
 // GetDBsByID gets the databases of the given id from the middleware
 func (mcr *MySQLClusterRepo) GetDBsByID(id int) ([]metadata.DB, error) {
-	return nil, nil
+	sql := `
+		select id, db_name, cluster_id, cluster_type, owner_id, env_id, del_flag, create_time, last_update_time
+		from t_meta_db_info
+		where del_flag = 0
+		and cluster_id = ?;
+	`
+	log.Debugf("metadata MySQLClusterRepo.GetDBsByID() sql: \n%s\nplaceholders: %d", sql, id)
+
+	result, err := mcr.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	dbList := make([]metadata.DB, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		dbInfo := NewEmptyDBInfoWithGlobal()
+		// map to struct
+		err = result.MapToStructByRowIndex(dbInfo, row, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return nil, err
+		}
+		dbList[row] = dbInfo
+	}
+	log.Debug(fmt.Sprint(dbList))
+
+	return dbList, nil
 }
 
 // GetAppOwnersByID gets the application owners of the given id from the middleware
 func (mcr *MySQLClusterRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
-	return nil, nil
+	sql := `
+		select id, user_name, department_name, employee_id, account_name, email, telephone, mobile, role, del_flag, create_time, last_update_time 
+			from t_meta_user_info
+			where del_flag = 0
+				and id in  (
+					select app.owner_id as id
+					from t_meta_app_info as app inner join t_meta_db_info as db left join t_meta_app_db_map as map
+					on app.id = map.app_id and db.id = map.db_id
+					where app.del_flag = 0 and db.del_flag = 0 and map.del_flag = 0
+						and db.cluster_id = ?
+				); 
+	`
+	log.Debugf("metadata MySQLClusterRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d", sql, id)
+
+	result, err := mcr.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	userList := make([]metadata.User, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		userInfo := NewEmptyUserInfoWithGlobal()
+		// map to struct
+		err = result.MapToStructByRowIndex(userInfo, row, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return nil, err
+		}
+		userList[row] = userInfo
+	}
+
+	return userList, nil
 }
 
 // GetDBOwnersByID gets the db owners of the given id from the middleware
 func (mcr *MySQLClusterRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
-	return nil, nil
+	sql := `
+		select id, user_name, department_name, employee_id, account_name, email, telephone, mobile, role, del_flag, create_time, last_update_time 
+			from t_meta_user_info
+			where del_flag = 0
+				and id in  (
+					select owner_id as id
+					from t_meta_db_info
+					where del_flag = 0
+						and cluster_id = ?
+				); 
+	`
+	log.Debugf("metadata MySQLClusterRepo.GetDBOwnersByID() sql: \n%s\nplaceholders: %d", sql, id)
+
+	result, err := mcr.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	userList := make([]metadata.User, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		userInfo := NewEmptyUserInfoWithGlobal()
+		// map to struct
+		err = result.MapToStructByRowIndex(userInfo, row, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return nil, err
+		}
+		userList[row] = userInfo
+	}
+
+	return userList, nil
 }
 
 // GetAllOwnersByID gets both application and db owners of the given id from the middleware
 func (mcr *MySQLClusterRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
-	return nil, nil
+	sql := `
+		select id, user_name, department_name, employee_id, account_name, email, telephone, mobile, role, del_flag, create_time, last_update_time 
+			from t_meta_user_info
+			where del_flag = 0
+				and id in  (
+					select app.owner_id as id
+					from t_meta_app_info as app inner join t_meta_db_info as db left join t_meta_app_db_map as map
+					on app.id = map.app_id and db.id = map.db_id
+					where app.del_flag = 0 and db.del_flag = 0 and map.del_flag = 0
+						and db.cluster_id = ?
+					union
+					select owner_id as id
+					from t_meta_db_info
+					where del_flag = 0
+						and cluster_id = ?
+
+				); 
+	`
+	log.Debugf("metadata MySQLClusterRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id, id)
+
+	result, err := mcr.Execute(sql, id, id)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	userList := make([]metadata.User, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		userInfo := NewEmptyUserInfoWithGlobal()
+		// map to struct
+		err = result.MapToStructByRowIndex(userInfo, row, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return nil, err
+		}
+		userList[row] = userInfo
+	}
+
+	return userList, nil
 }
 
 // Create creates data with given entity in the middleware

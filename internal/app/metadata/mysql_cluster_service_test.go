@@ -51,6 +51,56 @@ func TestMySQLClusterService_GetByID(t *testing.T) {
 	asst.Equal("1", id, "test GetByID() failed")
 }
 
+func TestMySQLClusterService_GetByName(t *testing.T) {
+	asst := assert.New(t)
+
+	s := NewMySQLClusterService(mysqlClusterRepo)
+	err := s.GetByName("name")
+	asst.Nil(err, "test GetByName() failed")
+	id := s.MySQLClusters[constant.ZeroInt].Identity()
+	asst.Equal("name", id, "test GetByName() failed")
+}
+
+func TestMySQLClusterService_GetDBsByID(t *testing.T) {
+	asst := assert.New(t)
+
+	s := NewMySQLClusterService(mysqlClusterRepo)
+	err := s.GetDBsByID(1)
+	asst.Nil(err, "test GetDBsByID() failed")
+	id := s.MySQLClusters[constant.ZeroInt].Identity()
+	asst.Equal("1", id, "test GetByID() failed")
+}
+
+func TestMySQLClusterService_GetAppOwnersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	s := NewMySQLClusterService(mysqlClusterRepo)
+	err := s.GetAppOwnersByID(1)
+	asst.Nil(err, "test GetAppOwnersByID() failed")
+	id := s.MySQLClusters[constant.ZeroInt].Identity()
+	asst.Equal("1", id, "test GetByID() failed")
+}
+
+func TestMySQLClusterService_GetDBOwnersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	s := NewMySQLClusterService(mysqlClusterRepo)
+	err := s.GetDBOwnersByID(1)
+	asst.Nil(err, "test GetDBOwnersByID() failed")
+	id := s.MySQLClusters[constant.ZeroInt].Identity()
+	asst.Equal("1", id, "test GetByID() failed")
+}
+
+func TestMySQLClusterService_GetAllOwnersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	s := NewMySQLClusterService(mysqlClusterRepo)
+	err := s.GetAllOwnersByID(1)
+	asst.Nil(err, "test GetAllOwnersByID() failed")
+	id := s.MySQLClusters[constant.ZeroInt].Identity()
+	asst.Equal("1", id, "test GetByID() failed")
+}
+
 func TestMySQLClusterService_Create(t *testing.T) {
 	asst := assert.New(t)
 

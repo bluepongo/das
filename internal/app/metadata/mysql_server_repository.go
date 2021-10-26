@@ -141,7 +141,7 @@ func (msr *MySQLServerRepo) GetByID(id int) (metadata.MySQLServer, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, fmt.Errorf("metadata MySQLServerInfo.GetByID(): data does not exists, id: %d", id)
+		return nil, fmt.Errorf("metadata MySQLServerRepo.GetByID(): data does not exists, id: %d", id)
 	case 1:
 		mysqlServerInfo := NewEmptyMySQLServerInfoWithGlobal()
 		// map to struct
@@ -152,7 +152,7 @@ func (msr *MySQLServerRepo) GetByID(id int) (metadata.MySQLServer, error) {
 
 		return mysqlServerInfo, nil
 	default:
-		return nil, fmt.Errorf("metadata MySQLServerInfo.GetByID(): duplicate key exists, id: %d", id)
+		return nil, fmt.Errorf("metadata MySQLServerRepo.GetByID(): duplicate key exists, id: %d", id)
 	}
 }
 
@@ -226,7 +226,41 @@ func (msr *MySQLServerRepo) IsMaster(hostIP string, portNum int) (bool, error) {
 
 // GetMySQLClusterByID gets the mysql cluster of the given id
 func (msr *MySQLServerRepo) GetMySQLClusterByID(id int) (metadata.MySQLCluster, error) {
-	return nil, nil
+	sql := `
+		select id, cluster_name, middleware_cluster_id, monitor_system_id,
+			owner_id, env_id, del_flag, create_time, last_update_time
+		from t_meta_mysql_cluster_info
+		where del_flag = 0
+			and id in (
+				select cluster_id
+				from t_meta_mysql_server_info
+				where del_flag = 0
+					and id = ?
+			);
+	`
+	log.Debugf("metadata MySQLServerRepo.GetMySQLClusterByID() sql: \n%s\nplaceholders: %d", sql, id)
+
+	result, err := msr.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	switch result.RowNumber() {
+	case 0:
+		return nil, fmt.Errorf("metadata MySQLServerRepo.GetMySQLClusterByID(): data does not exists, id: %d", id)
+	case 1:
+		mysqlClusterInfo := NewEmptyMySQLClusterInfoWithGlobal()
+		// map to struct
+		err = result.MapToStructByRowIndex(mysqlClusterInfo, constant.ZeroInt, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return nil, err
+		}
+		log.Debug(fmt.Sprintf("%v", mysqlClusterInfo))
+
+		return mysqlClusterInfo, nil
+	default:
+		return nil, fmt.Errorf("metadata MySQLServerRepo.GetMySQLClusterByID(): duplicate key exists, id: %d", id)
+	}
 }
 
 // GetMonitorSystem gets monitor system with given mysql server id from the mysql

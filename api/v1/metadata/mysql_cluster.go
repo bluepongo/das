@@ -25,7 +25,10 @@ const (
 	mcMonitorSystemIDStruct     = "MonitorSystemID"
 	mcOwnerIDStruct             = "OwnerID"
 	mcEnvIDStruct               = "EnvID"
-	mcMySQLServers              = "MySQLServers"
+
+	mcMySQLServers = "MySQLServers"
+	mcDBs          = "Databases"
+	mcOwners       = "Owners"
 )
 
 // @Tags mysql cluster
@@ -240,7 +243,35 @@ func GetMasterServersByID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/mysql-cluster/db/:id [get]
 func GetDBsByMySQLCLusterID(c *gin.Context) {
-
+	// get params
+	idStr := c.Param(mcIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mcIDJSON)
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewMySQLClusterServiceWithDefault()
+	// get entity
+	err = s.GetDBsByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBs, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(mcDBs)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(jsonStr)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBs, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBs, id)
 }
 
 // @Tags mysql cluster
@@ -249,7 +280,35 @@ func GetDBsByMySQLCLusterID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/mysql-cluster/app-owner/:id [get]
 func GetAppOwnersByMySQLCLusterID(c *gin.Context) {
-
+	// get params
+	idStr := c.Param(mcIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mcIDJSON)
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewMySQLClusterServiceWithDefault()
+	// get entity
+	err = s.GetAppOwnersByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppOwners, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(mcOwners)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(jsonStr)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppOwners, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppOwners, id)
 }
 
 // @Tags mysql cluster
@@ -258,7 +317,35 @@ func GetAppOwnersByMySQLCLusterID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/mysql-cluster/db-owner/:id [get]
 func GetDBOwnersByMySQLCLusterID(c *gin.Context) {
-
+	// get params
+	idStr := c.Param(mcIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mcIDJSON)
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewMySQLClusterServiceWithDefault()
+	// get entity
+	err = s.GetDBOwnersByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBOwners, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(mcOwners)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(jsonStr)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBOwners, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBOwners, id)
 }
 
 // @Tags mysql cluster
@@ -267,7 +354,35 @@ func GetDBOwnersByMySQLCLusterID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/mysql-cluster/all-owner/:id [get]
 func GetAllOwnersByMySQLCLusterID(c *gin.Context) {
-
+	// get params
+	idStr := c.Param(mcIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mcIDJSON)
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewMySQLClusterServiceWithDefault()
+	// get entity
+	err = s.GetAllOwnersByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAllOwners, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(mcOwners)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(jsonStr)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAllOwners, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllOwners, id)
 }
 
 // @Tags mysql cluster
