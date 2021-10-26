@@ -1,0 +1,54 @@
+http://localhost:6090
+
+### =============== mysql-cluster ===================
+
+### get all mysql clusters
+GET /api/v1/metadata/mysql-cluster
+Accept: application/json
+
+### get mysql cluster by env_id
+GET /api/v1/metadata/mysql-cluster/env/1
+Accept: application/json
+
+### get mysql cluster by id
+GET /api/v1/metadata/mysql-cluster/get/97
+Accept: application/json
+
+### get mysql cluster by cluster_name
+GET /api/v1/metadata/mysql-cluster/cluster-name/api_test
+Accept: application/json
+
+### get mysql_server.id of mysql cluster
+GET /api/v1/metadata/mysql-cluster/mysql-server/97
+Accept: application/json
+
+### get database of mysql cluster
+GET /api/v1/metadata/mysql-cluster/db/1
+Accept: application/json
+
+### get app owners of mysql cluster
+GET /api/v1/metadata/mysql-cluster/app-owner/1
+Accept: application/json
+
+### get database owners of mysql cluster
+GET /api/v1/metadata/mysql-cluster/db-owner/1
+Accept: application/json
+
+### get all owners(app & database) of mysql cluster
+GET /api/v1/metadata/mysql-cluster/all-owner/1
+Accept: application/json
+
+
+### add new mysql cluster
+Content-Type: application/json
+POST /api/v1/metadata/mysql-cluster
+{"cluster_name": "api_test", "env_id": 1}
+
+### update mysql cluster by id
+Content-Type: application/json
+POST /api/v1/metadata/mysql-cluster/update/97
+{"cluster_name": "test", "del_flag": 0}
+
+### delete mysql cluster by id
+Content-Type: application/json
+POST /api/v1/metadata/mysql-cluster/delete/95
