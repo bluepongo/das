@@ -53,10 +53,8 @@ func GetMySQLCluster(c *gin.Context) {
 	}
 	fmt.Println("ok")
 	// response
-
 	jsonStr := string(jsonBytes)
-	fmt.Println(msgmeta.DebugMetadataGetMySQLClusterAll, jsonStr)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLClusterAll, jsonStr).Error())
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLClusterAll, jsonBytes).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClusterAll)
 }
 
@@ -195,7 +193,7 @@ func GetMySQLServersByID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(jsonStr)
+
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLServers, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServers, id)
 }
@@ -232,7 +230,6 @@ func GetMasterServersByID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(jsonStr)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMasterServers, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMasterServers, id)
 }
@@ -269,7 +266,7 @@ func GetDBsByMySQLCLusterID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(jsonStr)
+
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBs, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBs, id)
 }
@@ -306,7 +303,6 @@ func GetAppOwnersByMySQLCLusterID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(jsonStr)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppOwners, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppOwners, id)
 }
@@ -343,7 +339,6 @@ func GetDBOwnersByMySQLCLusterID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(jsonStr)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBOwners, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBOwners, id)
 }
@@ -380,7 +375,6 @@ func GetAllOwnersByMySQLCLusterID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(jsonStr)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAllOwners, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllOwners, id)
 }
