@@ -227,16 +227,13 @@ func (msr *MySQLServerRepo) IsMaster(hostIP string, portNum int) (bool, error) {
 // GetMySQLClusterByID gets the mysql cluster of the given id
 func (msr *MySQLServerRepo) GetMySQLClusterByID(id int) (metadata.MySQLCluster, error) {
 	sql := `
-		select id, cluster_name, middleware_cluster_id, monitor_system_id,
-			owner_id, env_id, del_flag, create_time, last_update_time
-		from t_meta_mysql_cluster_info
-		where del_flag = 0
-			and id in (
-				select cluster_id
-				from t_meta_mysql_server_info
-				where del_flag = 0
-					and id = ?
-			);
+		select c.id, c.cluster_name, c.middleware_cluster_id, c.monitor_system_id,
+			c.owner_id, c.env_id, c.del_flag, c.create_time, c.last_update_time
+		from t_meta_mysql_cluster_info as c inner join t_meta_mysql_server_info as s
+		on c.id = s.cluster_id
+		where c.del_flag = 0
+			and s.del_flag = 0
+			and s.id = ?;
 	`
 	log.Debugf("metadata MySQLServerRepo.GetMySQLClusterByID() sql: \n%s\nplaceholders: %d", sql, id)
 
@@ -255,7 +252,6 @@ func (msr *MySQLServerRepo) GetMySQLClusterByID(id int) (metadata.MySQLCluster, 
 		if err != nil {
 			return nil, err
 		}
-		log.Debug(fmt.Sprintf("%v", mysqlClusterInfo))
 
 		return mysqlClusterInfo, nil
 	default:
