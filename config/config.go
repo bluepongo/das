@@ -33,8 +33,9 @@ import (
 )
 
 var (
-	ValidLogLevels  = []string{"debug", "info", "warn", "warning", "error", "fatal"}
-	ValidLogFormats = []string{"text", "json"}
+	ValidLogLevels                 = []string{"debug", "info", "warn", "warning", "error", "fatal"}
+	ValidLogFormats                = []string{"text", "json"}
+	ValidHealthcheckAlertOwnerType = []string{HealthcheckAlertOwnerTypeApp, HealthcheckAlertOwnerTypeDB, HealthcheckAlertOwnerTypeAll}
 )
 
 // SetDefaultConfig set default configuration, it is the lowest priority
@@ -86,6 +87,8 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(AlertHTTPEnabledKey, DefaultAlertHTTPEnabled)
 	viper.SetDefault(AlertHTTPURLKey, DefaultAlertHTTPURL)
 	viper.SetDefault(AlertHTTPConfigKey, DefaultAlertHTTPConfig)
+	// healthcheck
+	viper.SetDefault(HealthcheckAlertOwnerTypeKey, DefaultHealthcheckAlertOwnerType)
 	// sqladvisor
 	viper.SetDefault(SQLAdvisorSoarBinKey, DefaultSQLAdvisorSoarBin)
 	viper.SetDefault(SQLAdvisorSoarConfigKey, DefaultSQLAdvisorSoarConfig)
@@ -125,6 +128,12 @@ func ValidateConfig() (err error) {
 
 	// validate alert section
 	err = ValidateAlert()
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	// validate healthcheck section
+	err = ValidateHealthcheck()
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
@@ -488,6 +497,26 @@ func ValidateAlert() error {
 	_, err = cast.ToStringMapStringE(viper.Get(AlertHTTPConfigKey))
 	if err != nil {
 		merr = multierror.Append(merr, err)
+	}
+
+	return merr.ErrorOrNil()
+}
+
+func ValidateHealthcheck() error {
+	merr := &multierror.Error{}
+
+	// validate healthcheck.alert.ownerType
+	ownerType, err := cast.ToStringE(viper.Get(HealthcheckAlertOwnerTypeKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	valid, err := common.ElementInSlice(ValidHealthcheckAlertOwnerType, ownerType)
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+	if !valid {
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidHealthcheckAlertOwnerType, ownerType))
 	}
 
 	return merr.ErrorOrNil()
