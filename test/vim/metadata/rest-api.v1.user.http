@@ -1,49 +1,48 @@
 http://localhost:6090
 
 ### GetUser
-GET /api/v1/metadata/user
 Accept: application/json
+GET /api/v1/metadata/user
 
+Accept: application/json
 ### GetUserByName
 GET /api/v1/metadata/user/user-name/user_name
-Accept: application/json
 
+Accept: application/json
 ### GetUserByID
 GET /api/v1/metadata/user/get/5
-Accept: application/json
 
 ### GetUserByEmployeeID
-GET /api/v1/metadata/user/employee-id/employee_id
 Accept: application/json
+GET /api/v1/metadata/user/employee-id/employee_id
 
 ### GetUserByAccountName
-GET /api/v1/metadata/user/account-name/account_name
 Accept: application/json
+GET /api/v1/metadata/user/account-name/account_name
 
 ### GetUserByEmail
-GET /api/v1/metadata/user/email/email
 Accept: application/json
+GET /api/v1/metadata/user/email/email
 
 ### GetUserByTelephone
-GET /api/v1/metadata/user/telephone/telephone
 Accept: application/json
+GET /api/v1/metadata/user/telephone/telephone
 
 ### GetUserByMobile
-GET /api/v1/metadata/user/mobile/mobile
 Accept: application/json
+GET /api/v1/metadata/user/mobile/mobile
 
 ### AddUser
-POST /api/v1/metadata/user
 Content-Type: application/json
-
+POST /api/v1/metadata/user
  {"department_name": "department_name","employee_id": "employee_id21", "telephone": "telephone","role": 2,"del_flag": 0,"user_name": "user_name21","account_name": "account_na1me2","email": "emai12l","mobile": "mobile" }
 
 ### UpdateUserByID
-POST /api/v1/metadata/user/update/3
 Content-Type: application/json
+POST /api/v1/metadata/user/update/3
 
   {"department_name": "department_name","employee_id": "employee_id2", "telephone": "telephone","role": 2,"del_flag": 0,"user_name": "user_name2","account_name": "account_name2","email": "emai2l","mobile": "mobile" }
 
 ### DeleteUserByID
-POST /api/v1/metadata/user/delete/1
 Content-Type: application/json
+POST /api/v1/metadata/user/delete/1
