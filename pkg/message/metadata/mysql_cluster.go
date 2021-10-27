@@ -20,9 +20,13 @@ const (
 	DebugMetadataGetMySQLClusterByName = 100704
 	DebugMetadataGetMySQLServers       = 100705
 	DebugMetadataGetMasterServers      = 100706
-	DebugMetadataAddMySQLCluster       = 100707
-	DebugMetadataUpdateMySQLCluster    = 100708
-	DebugMetadataDeleteMySQLCluster    = 100709
+	DebugMetadataGetDBs                = 100707
+	DebugMetadataGetAppOwners          = 100708
+	DebugMetadataGetDBOwners           = 100709
+	DebugMetadataGetAllOwners          = 100710
+	DebugMetadataAddMySQLCluster       = 100711
+	DebugMetadataUpdateMySQLCluster    = 100712
+	DebugMetadataDeleteMySQLCluster    = 100713
 	// debug
 	InfoMetadataGetMySQLClusterAll    = 200701
 	InfoMetadataGetMySQLClusterByEnv  = 200702
@@ -30,9 +34,13 @@ const (
 	InfoMetadataGetMySQLClusterByName = 200704
 	InfoMetadataGetMySQLServers       = 200705
 	InfoMetadataGetMasterServers      = 200706
-	InfoMetadataAddMySQLCluster       = 200707
-	InfoMetadataUpdateMySQLCluster    = 200708
-	InfoMetadataDeleteMySQLCluster    = 200709
+	InfoMetadataGetDBs                = 200707
+	InfoMetadataGetAppOwners          = 200708
+	InfoMetadataGetDBOwners           = 200709
+	InfoMetadataGetAllOwners          = 200710
+	InfoMetadataAddMySQLCluster       = 200711
+	InfoMetadataUpdateMySQLCluster    = 200712
+	InfoMetadataDeleteMySQLCluster    = 200713
 	// error
 	ErrMetadataGetMySQLClusterAll    = 400701
 	ErrMetadataGetMySQLClusterByEnv  = 400702
@@ -40,9 +48,13 @@ const (
 	ErrMetadataGetMySQLClusterByName = 400704
 	ErrMetadataGetMySQLServers       = 400705
 	ErrMetadataGetMasterServers      = 400706
-	ErrMetadataAddMySQLCluster       = 400707
-	ErrMetadataUpdateMySQLCluster    = 400708
-	ErrMetadataDeleteMySQLCluster    = 400709
+	ErrMetadataGetDBs                = 400707
+	ErrMetadataGetAppOwners          = 400708
+	ErrMetadataGetDBOwners           = 400709
+	ErrMetadataGetAllOwners          = 400710
+	ErrMetadataAddMySQLCluster       = 400711
+	ErrMetadataUpdateMySQLCluster    = 400712
+	ErrMetadataDeleteMySQLCluster    = 400713
 )
 
 func initDebugMySQLCLusterMessage() {
@@ -70,6 +82,22 @@ func initDebugMySQLCLusterMessage() {
 		message.DefaultMessageHeader,
 		DebugMetadataGetMasterServers,
 		"metadata: get master servers from mysql cluster message: %s")
+	message.Messages[DebugMetadataGetDBs] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		DebugMetadataGetDBs,
+		"metadata: get databases from mysql cluster message: %s")
+	message.Messages[DebugMetadataGetAppOwners] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		DebugMetadataGetAppOwners,
+		"metadata: get app owners from mysql cluster message: %s")
+	message.Messages[DebugMetadataGetDBOwners] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		DebugMetadataGetDBOwners,
+		"metadata: get database owners from mysql cluster message: %s")
+	message.Messages[DebugMetadataGetAllOwners] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		DebugMetadataGetAllOwners,
+		"metadata: get all owners from mysql cluster message: %s")
 	message.Messages[DebugMetadataAddMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataAddMySQLCluster,
@@ -109,6 +137,22 @@ func initInfoMySQLCLusterMessage() {
 		message.DefaultMessageHeader,
 		InfoMetadataGetMasterServers,
 		"metadata: get master servers from mysql cluster completed. id: %d")
+	message.Messages[InfoMetadataGetDBs] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		InfoMetadataGetDBs,
+		"metadata: get databases from mysql cluster completed. id: %d")
+	message.Messages[InfoMetadataGetAppOwners] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		InfoMetadataGetAppOwners,
+		"metadata: get app owners from mysql cluster completed. id: %d")
+	message.Messages[InfoMetadataGetDBOwners] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		InfoMetadataGetDBOwners,
+		"metadata: get database owners from mysql cluster completed. id: %d")
+	message.Messages[InfoMetadataGetAllOwners] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		InfoMetadataGetAllOwners,
+		"metadata: get all owners from mysql cluster completed. id: %d")
 	message.Messages[InfoMetadataAddMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		InfoMetadataAddMySQLCluster,
@@ -148,6 +192,22 @@ func initErrorMySQLCLusterMessage() {
 		message.DefaultMessageHeader,
 		ErrMetadataGetMasterServers,
 		"metadata: get master servers from mysql cluster failed. id: %d\n%s")
+	message.Messages[ErrMetadataGetDBs] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		ErrMetadataGetDBs,
+		"metadata: get databases from mysql cluster failed. id: %d\n%s")
+	message.Messages[ErrMetadataGetAppOwners] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		ErrMetadataGetAppOwners,
+		"metadata: get app owners from mysql cluster failed. id: %d\n%s")
+	message.Messages[ErrMetadataGetDBOwners] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		ErrMetadataGetDBOwners,
+		"metadata: get database owners from mysql cluster failed. id: %d\n%s")
+	message.Messages[ErrMetadataGetAllOwners] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		ErrMetadataGetAllOwners,
+		"metadata: get all owners from mysql cluster failed. id: %d\n%s")
 	message.Messages[ErrMetadataAddMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataAddMySQLCluster,

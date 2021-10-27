@@ -1,0 +1,41 @@
+http://127.0.0.1:6090
+
+### metadata.GetApp
+Accept: application/json
+GET /api/v1/metadata/app 
+
+### metadata.GetAppByID
+Accept: application/json
+GET /api/v1/metadata/app/get/1 
+{"system_name": "1", "del_flag":0}
+
+### metadata.GetAppByName
+Accept: application/json
+GET /api/v1/metadata/app/app-name/test 
+
+### metadata.GetDBIDList !!!
+Accept: application/json
+GET /api/v1/metadata/app/dbs/17
+
+### metadata.AddApp
+Content-Type: application/json
+POST /api/v1/metadata/app 
+{"app_name": "tese","level":1,"owner_id":1,"id": 1}
+
+### metadata.UpdateAppByID
+Content-Type: application/json
+POST /api/v1/metadata/app/update/6 
+{"app_name": "tes13123","level":1,"owner_id":1}
+
+### metadata.DeleteAppByID
+POST /api/v1/metadata/app/delete/14 
+
+### metadata.AppAddDB
+Content-Type: application/json
+POST /api/v1/metadata/app/add-db/17
+{"db_id":9}
+
+### metadata.AppDeleteDB
+Content-Type: application/json
+POST /api/v1/metadata/app/delete-db/17
+{"db_id":9}

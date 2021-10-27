@@ -211,6 +211,15 @@ func TestMySQLServerRepo_IsMaster(t *testing.T) {
 	asst.Equal(true, isMaster, "test IsMaster() failed")
 }
 
+func TestMySQLServerRepo_GetMySQLClusterByID(t *testing.T) {
+	asst := assert.New(t)
+
+	entity, err := mysqlServerRepo.GetMySQLClusterByID(testInitServerID)
+	asst.Nil(err, common.CombineMessageWithError("test GetMySQLClusterByID() failed", err))
+
+	asst.Equal(1, entity.Identity(), "test GetMySQLClusterByID() failed")
+}
+
 func TestMySQLServerRepo_GetMonitorSystem(t *testing.T) {
 	asst := assert.New(t)
 
