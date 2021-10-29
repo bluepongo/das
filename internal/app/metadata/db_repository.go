@@ -192,24 +192,184 @@ func (dr *DBRepo) GetID(dbName string, clusterID int, clusterType int) (int, err
 	return result.GetInt(constant.ZeroInt, constant.ZeroInt)
 }
 
+// GetMySQLCLusterByID gets the mysql cluster of the given id from the middleware
+func (dr *DBRepo) GetMySQLCLusterByID(id int) (metadata.MySQLCluster, error) {
+	sql := `
+		select cluster.id, cluster.cluster_name, cluster.middleware_cluster_id, cluster.monitor_system_id, 
+			cluster.owner_id, cluster.env_id, cluster.del_flag, cluster.create_time, cluster.last_update_time
+		from t_meta_mysql_cluster_info as cluster
+		inner join t_meta_db_info as db
+		on cluster.id = db.cluster_id
+		where cluster.del_flag = 0 and db.del_flag = 0
+		and db.id = ?;
+			
+	`
+	log.Debugf("metadata DBRepo.GetMySQLCLusterByID() sql: \n%s\nplaceholders: %d", sql, id)
+
+	result, err := dr.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	switch result.RowNumber() {
+	case 0:
+		return nil, fmt.Errorf("metadata DBRepo.GetMySQLCLusterByID(): data does not exists, id: %d", id)
+	case 1:
+		mysqlClusterInfo := NewEmptyMySQLClusterInfoWithGlobal()
+		// map to struct
+		err = result.MapToStructByRowIndex(mysqlClusterInfo, constant.ZeroInt, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return nil, err
+		}
+		return mysqlClusterInfo, nil
+	default:
+		return nil, fmt.Errorf("metadata DBRepo.GetMySQLCLusterByID(): duplicate key exists, id: %d", id)
+	}
+}
+
 // GetAppsByID gets an apps that uses this db
 func (dr *DBRepo) GetAppsByID(dbID int) ([]metadata.App, error) {
-	return nil, nil
+	sql := `
+		select app.id, app.app_name, app.level, app.owner_id, app.del_flag, app.create_time, app.last_update_time
+		from t_meta_app_info as app
+		inner join t_meta_app_db_map as map
+		on app.id = map.app_id
+		inner join t_meta_db_info as db
+		on db.id = map.db_id
+		where app.del_flag = 0 and map.del_flag = 0 and db.del_flag = 0
+		and db.id = ?;
+	`
+	log.Debugf("metadata DBRepo.GetAppsByID() sql: \n%s\nplaceholders: %d", sql, dbID)
+
+	result, err := dr.Execute(sql, dbID)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	appList := make([]metadata.App, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		appList[row] = NewEmptyAppInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(appList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return appList, nil
 }
 
 // GetAppOwnersByID gets the application owners of the given id from the middleware
 func (dr *DBRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
-	return nil, nil
+	sql := `
+		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name, user.email, user.telephone, user.mobile, user.role, user.del_flag, user.create_time, user.last_update_time 
+			from t_meta_user_info as user 
+			inner join t_meta_app_info as app
+			on user.id = app.owner_id
+			inner join t_meta_app_db_map as map
+			on app.id = map.app_id
+			inner join t_meta_db_info as db
+			on db.id = map.db_id
+			where user.del_flag = 0 and app.del_flag = 0 and db.del_flag = 0 and map.del_flag = 0
+			and db.id = ?;
+	`
+	log.Debugf("metadata DbRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id)
+
+	result, err := dr.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	userList := make([]metadata.User, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		userList[row] = NewEmptyUserInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(userList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return userList, nil
 }
 
 // GetDBOwnersByID gets the db owners of the given id from the middleware
 func (dr *DBRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
-	return nil, nil
+	sql := `
+		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name, user.email, user.telephone, user.mobile, user.role, user.del_flag, user.create_time, user.last_update_time 
+			from t_meta_user_info as user 
+			inner join t_meta_db_info as db
+			on user.id = db.owner_id
+			where user.del_flag = 0 and db.del_flag = 0
+			and db.id = ?;
+	`
+	log.Debugf("metadata DbRepo.GetDBOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id)
+
+	result, err := dr.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	userList := make([]metadata.User, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		userList[row] = NewEmptyUserInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(userList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return userList, nil
 }
 
 // GetAllOwnersByID gets both application and db owners of the given id from the middleware
 func (dr *DBRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
-	return nil, nil
+	sql := `
+		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name, user.email, user.telephone, user.mobile, user.role, user.del_flag, user.create_time, user.last_update_time 
+			from t_meta_user_info as user 
+			inner join t_meta_app_info as app
+			on user.id = app.owner_id
+			inner join t_meta_app_db_map as map
+			on app.id = map.app_id
+			inner join t_meta_db_info as db
+			on db.id = map.db_id
+			where user.del_flag = 0 and app.del_flag = 0 and db.del_flag = 0 and map.del_flag = 0
+			and db.id = ? 
+		union
+		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name, user.email, user.telephone, user.mobile, user.role, user.del_flag, user.create_time, user.last_update_time 
+			from t_meta_user_info as user 
+			inner join t_meta_db_info as db
+			on user.id = db.owner_id
+			where user.del_flag = 0 and db.del_flag = 0
+			and db.id = ?;
+	`
+	log.Debugf("metadata DbRepo.GetAllOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id, id)
+
+	result, err := dr.Execute(sql, id, id)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	userList := make([]metadata.User, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		userList[row] = NewEmptyUserInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(userList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return userList, nil
 }
 
 // Create creates a database in the middleware

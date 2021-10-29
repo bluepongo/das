@@ -31,6 +31,12 @@ const (
 	dbOwnerIDStruct     = "OwnerID"
 	dbEnvIDStruct       = "EnvID"
 	dbAppIDListStruct   = "AppIDList"
+
+	dbMySQLClusterStruct = "MySQLCluster"
+	dbAppsStruct         = "Apps"
+	dbAppOwnersStruct    = "AppOwners"
+	dbDBOwnersStruct     = "DBOwners"
+	dbAllOwnersStruct    = "AllOwners"
 )
 
 // @Tags database
@@ -179,6 +185,35 @@ func GetDBByNameAndClusterInfo(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
 // @Router /api/v1/metadata/db/app/:id [get]
 func GetAppsByID(c *gin.Context) {
+	// get param
+	idStr := c.Param(dbIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, dbIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewDBServiceWithDefault()
+	// get entity
+	err = s.GetAppsByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppsByID, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(dbAppsStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppsByID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppsByID, id)
 
 }
 
@@ -188,7 +223,35 @@ func GetAppsByID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init","owner_id":1},{"monitor_system_id":1,"owner_id":1,"env_id":1,"create_time":"2021-02-23T04:14:23.707238+08:00","last_update_time":"2021-02-23T04:14:23.707238+08:00","id":2,"cluster_name":"newTest","middleware_cluster_id":1,"del_flag":0}]}"
 // @Router /api/v1/metadata/db/app/:id [get]
 func GetMySQLClusterByDBID(c *gin.Context) {
-
+	// get param
+	idStr := c.Param(dbIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, dbIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewDBServiceWithDefault()
+	// get entity
+	err = s.GetMySQLClusterByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByID, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(dbMySQLClusterStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLClusterByID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClusterByID, id)
 }
 
 // @Tags db
@@ -197,7 +260,35 @@ func GetMySQLClusterByDBID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/db/app-owner/:id [get]
 func GetAppOwnersByDBID(c *gin.Context) {
-
+	// get param
+	idStr := c.Param(dbIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, dbIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewDBServiceWithDefault()
+	// get entity
+	err = s.GetAppOwnersByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppOwners, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(dbAppOwnersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppOwners, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppOwners, id)
 }
 
 // @Tags db
@@ -206,7 +297,35 @@ func GetAppOwnersByDBID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/db/db-owner/:id [get]
 func GetDBOwnersByDBID(c *gin.Context) {
-
+	// get param
+	idStr := c.Param(dbIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, dbIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewDBServiceWithDefault()
+	// get entity
+	err = s.GetDBOwnersByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBOwners, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(dbDBOwnersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBOwners, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBOwners, id)
 }
 
 // @Tags db
@@ -215,7 +334,35 @@ func GetDBOwnersByDBID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/db/all-owner/:id [get]
 func GetAllOwnersByDBID(c *gin.Context) {
-
+	// get param
+	idStr := c.Param(dbIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, dbIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewDBServiceWithDefault()
+	// get entity
+	err = s.GetAllOwnersByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAllOwners, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(dbAllOwnersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAllOwners, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllOwners, id)
 }
 
 // @Tags database

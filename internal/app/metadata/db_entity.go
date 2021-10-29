@@ -151,22 +151,22 @@ func (di *DBInfo) GetApps() ([]metadata.App, error) {
 
 // GetMySQLCluster gets the mysql cluster of this db
 func (di *DBInfo) GetMySQLCluster() (metadata.MySQLCluster, error) {
-	return nil, nil
+	return di.DBRepo.GetMySQLCLusterByID(di.ID)
 }
 
 // GetAllOwners gets the application owners of this db
 func (di *DBInfo) GetAppOwners() ([]metadata.User, error) {
-	return nil, nil
+	return di.DBRepo.GetAppOwnersByID(di.ID)
 }
 
 // GetAllOwners gets the db owners of this db
 func (di *DBInfo) GetDBOwners() ([]metadata.User, error) {
-	return nil, nil
+	return di.DBRepo.GetDBOwnersByID(di.ID)
 }
 
 // GetAllOwners gets both application and db owners of this db
 func (di *DBInfo) GetAllOwners() ([]metadata.User, error) {
-	return nil, nil
+	return di.DBRepo.GetAllOwnersByID(di.ID)
 }
 
 // Set sets DB with given fields, key is the field name and value is the relevant value of the key
