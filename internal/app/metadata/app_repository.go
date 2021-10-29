@@ -145,7 +145,31 @@ func (ar *AppRepo) GetAppByName(appName string) (metadata.App, error) {
 
 // GetDBsByID gets databases that app uses
 func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
-	return nil, nil
+	sql := `select * from t_meta_db_info where id in (select db_id from t_meta_app_db_map where app_id = ?);`
+	log.Debugf("metadata AppRepo.GetDBsByID() select sql: %s", sql)
+	result, err := ar.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	// init []*DBInfo
+	dbInfoList := make([]*DBInfo, result.RowNumber())
+	for i := range dbInfoList {
+		dbInfoList[i] = NewEmptyDBInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(dbInfoList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+	// init []dependency.Entity
+	dbList := make([]metadata.DB, result.RowNumber())
+	for i := range dbList {
+		dbList[i] = dbInfoList[i]
+	}
+
+	return dbList, nil
+
 }
 
 // Create creates an app in the middleware

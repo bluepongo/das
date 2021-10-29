@@ -24,6 +24,7 @@ import (
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -288,10 +289,13 @@ func OverrideConfig() (err error) {
 	}
 
 	// override daemon
-	if daemonStr == constant.TrueString {
-		viper.Set(config.DaemonKey, true)
-	} else {
-		viper.Set(config.DaemonKey, false)
+	if daemonStr != constant.DefaultRandomString {
+		daemon, err := cast.ToBoolE(daemonStr)
+		if err != nil {
+			return err
+		}
+
+		viper.Set(config.DaemonKey, daemon)
 	}
 
 	// override log
@@ -396,10 +400,13 @@ func OverrideConfig() (err error) {
 	}
 
 	// override alert
-	if alertSMTPEnabledStr == constant.TrueString {
-		viper.Set(config.AlertSMTPEnabledKey, true)
-	} else {
-		viper.Set(config.AlertSMTPEnabledKey, false)
+	if alertSMTPEnabledStr != constant.DefaultRandomString {
+		alertSMTPEnabled, err := cast.ToBoolE(alertSMTPEnabledStr)
+		if err != nil {
+			return err
+		}
+
+		viper.Set(config.AlertSMTPEnabledKey, alertSMTPEnabled)
 	}
 	if alertSMTPAddr != constant.DefaultRandomString {
 		viper.Set(config.AlertSMTPAddrKey, alertSMTPAddr)
@@ -413,10 +420,12 @@ func OverrideConfig() (err error) {
 	if alertSMTPFrom != constant.DefaultRandomString {
 		viper.Set(config.AlertSMTPFromKey, alertSMTPFrom)
 	}
-	if alertHTTPEnabledStr == constant.TrueString {
-		viper.Set(config.AlertHTTPEnabledKey, true)
-	} else {
-		viper.Set(config.AlertHTTPEnabledKey, false)
+	if alertHTTPEnabledStr != constant.DefaultRandomString {
+		alertHTTPEnabled, err := cast.ToBoolE(alertHTTPEnabledStr)
+		if err != nil {
+			return err
+		}
+		viper.Set(config.AlertHTTPEnabledKey, alertHTTPEnabled)
 	}
 	if alertHTTPURL != constant.DefaultRandomString {
 		viper.Set(config.AlertHTTPURLKey, alertHTTPURL)

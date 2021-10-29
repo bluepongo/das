@@ -3,6 +3,7 @@ package alert
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/romberli/das/config"
@@ -12,8 +13,13 @@ import (
 )
 
 const (
-	toAddrsJSON = "to_addrs"
-	contentJSON = "content"
+	toAddrsJSON  = "to_addrs"
+	ccAddrsJSON  = "cc_addrs"
+	contentJSON  = "content"
+	subjectJSON  = "subject"
+	smtpPortJSON = "port"
+	smtpUserJSON = "user"
+	smtpPassJSON = "pass"
 )
 
 var _ alert.Service = (*Service)(nil)
@@ -53,6 +59,8 @@ func (s *Service) GetConfig() alert.Config {
 
 // SendEmail sends the email
 func (s *Service) SendEmail(toAddrs, ccAddrs, subject, content string) error {
+	urll := viper.GetString(config.AlertSMTPEnabledKey)
+	fmt.Println(urll)
 	smtpEnabled := viper.GetBool(config.AlertSMTPEnabledKey)
 	if smtpEnabled {
 		return s.sendViaSMTP(toAddrs, ccAddrs, subject, content)
@@ -68,15 +76,30 @@ func (s *Service) SendEmail(toAddrs, ccAddrs, subject, content string) error {
 
 // sendViaSMTP sends email via smtp server
 func (s *Service) sendViaSMTP(toAddrs, ccAddrs, subject, content string) error {
-	return nil
+	merr := &multierror.Error{}
+	//setup config
+	s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
+	sender := NewSMTPSenderWithDefault(s.GetConfig())
+	//send email
+	err := sender.Send()
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+	// save result
+	err = s.saveSMTP(toAddrs, ccAddrs, subject, content, fmt.Sprintln(err))
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	return merr.ErrorOrNil()
 }
 
 // sendViaHTTP sends email via http api calling
 func (s *Service) sendViaHTTP(toAddrs, ccAddrs, content string) error {
 	merr := &multierror.Error{}
 	// setup config
-	s.setupConfig(toAddrs, ccAddrs, content)
-	sender := NewHTTTPSenderWithDefault(s.GetConfig())
+	s.setupHTTPConfig(toAddrs, ccAddrs, content)
+	sender := NewHTTPSenderWithDefault(s.GetConfig())
 	// send email
 	err := sender.Send()
 	if err != nil {
@@ -91,15 +114,49 @@ func (s *Service) sendViaHTTP(toAddrs, ccAddrs, content string) error {
 	return merr.ErrorOrNil()
 }
 
-// setupConfig setups the config
-func (s *Service) setupConfig(toAddrs, ccAddrs, content string) {
+// setupHTTPConfig setups the HTTP config
+func (s *Service) setupHTTPConfig(toAddrs, ccAddrs, content string) {
 	toAddrs += constant.CommaString + ccAddrs
 	s.GetConfig().Set(toAddrsJSON, toAddrs)
+	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
 	s.GetConfig().Set(contentJSON, content)
+}
+
+func (s *Service) setupSMTPConfig(toAddrs, ccAddrs, subject, content string) {
+	// toAddrs += constant.CommaString + ccAddrs
+	s.GetConfig().Set(smtpPortJSON, viper.GetString(config.AlertSMTPPortKey))
+	s.GetConfig().Set(smtpUserJSON, viper.GetString(config.AlertSMTPUserKey))
+	s.GetConfig().Set(smtpPassJSON, viper.GetString(config.AlertSMTPPassKey))
+	s.GetConfig().Set(toAddrsJSON, toAddrs)
+	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
+	s.GetConfig().Set(subjectJSON, subject)
+	s.GetConfig().Set(contentJSON, content)
+}
+
+// saveSMTP saves the sending results which was done via smtp server to the middleware
+func (s *Service) saveSMTP(toAddrs, ccAddrs, subject, content, message string) error {
+	s.GetConfig().Set(smtpPassJSON, "****")
+	cfg, err := json.Marshal(s.GetConfig())
+	if err != nil {
+		return err
+	}
+
+	// delete the password in the config for security
+
+	return s.GetRepository().Save(
+		viper.GetString(config.AlertHTTPURLKey),
+		toAddrs,
+		ccAddrs,
+		subject,
+		content,
+		string(cfg),
+		message,
+	)
 }
 
 // saveHTTP saves the sending results which was done via calling http api to the middleware
 func (s *Service) saveHTTP(toAddrs, ccAddrs, content, message string) error {
+
 	cfg, err := json.Marshal(s.GetConfig())
 	if err != nil {
 		return err
@@ -114,9 +171,4 @@ func (s *Service) saveHTTP(toAddrs, ccAddrs, content, message string) error {
 		string(cfg),
 		message,
 	)
-}
-
-// saveSMTP saves the sending results which was done via smtp server to the middleware
-func saveSMTP(toAddrs, ccAddrs, content, message string) error {
-	return nil
 }

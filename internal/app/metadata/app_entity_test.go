@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -55,9 +56,10 @@ func TestAppEntityAll(t *testing.T) {
 	TestAppInfo_Delete(t)
 	TestAppInfo_MarshalJSON(t)
 	TestAppInfo_MarshalJSONWithFields(t)
-	TestAppInfo_GetDBIDList(t)
+	// TestAppInfo_GetDBIDList(t)
 	TestAppInfo_AddAppDB(t)
 	TestAppInfo_DeleteAppDB(t)
+	TestAppInfo_GetDBS(t)
 }
 
 func TestAppInfo_Identity(t *testing.T) {
@@ -109,6 +111,17 @@ func TestAppInfo_GetLastUpdateTime(t *testing.T) {
 	asst.True(reflect.DeepEqual(appSystemInfo.LastUpdateTime, appSystemInfo.GetLastUpdateTime()), "test GetLastUpdateTime() failed")
 }
 
+func TestAppInfo_GetDBS(t *testing.T) {
+	asst := assert.New(t)
+
+	appSystemInfo := initNewAppInfo()
+	dbs, err := appSystemInfo.GetDBs()
+	fmt.Println(dbs)
+	// asst.NotEqual(constant.ZeroInt, len(dbs), "test GetDBs() failed")
+	asst.Equal(nil, err, "test GetDBs() failed")
+
+}
+
 func TestAppInfo_Set(t *testing.T) {
 	asst := assert.New(t)
 
@@ -151,19 +164,19 @@ func TestAppInfo_MarshalJSONWithFields(t *testing.T) {
 	asst.Equal(string(expect), string(data), "test MarshalJSONWithFields() failed")
 }
 
-func TestAppInfo_GetDBIDList(t *testing.T) {
-	var dbIDList []int
+// func TestAppInfo_GetDBIDList(t *testing.T) {
+// 	var dbIDList []int
 
-	asst := assert.New(t)
+// 	asst := assert.New(t)
 
-	appSystemInfo := initNewAppInfo()
-	dbIDList, err := appSystemInfo.GetDBIDList()
-	asst.Nil(err, common.CombineMessageWithError("test GetDBIDList() failed", err))
-	defaultDBIDList := []int{1, 2}
-	for i := 0; i < len(dbIDList); i++ {
-		asst.Equal(dbIDList[i], defaultDBIDList, "test GetDBIDList() failed")
-	}
-}
+// 	appSystemInfo := initNewAppInfo()
+// 	dbIDList, err := appSystemInfo.GetDBIDList()
+// 	asst.Nil(err, common.CombineMessageWithError("test GetDBIDList() failed", err))
+// 	defaultDBIDList := []int{1, 2}
+// 	for i := 0; i < len(dbIDList); i++ {
+// 		asst.Equal(dbIDList[i], defaultDBIDList, "test GetDBIDList() failed")
+// 	}
+// }
 
 func TestAppInfo_AddAppDB(t *testing.T) {
 	var dbIDList []int
@@ -172,9 +185,10 @@ func TestAppInfo_AddAppDB(t *testing.T) {
 
 	appSystemInfo := initNewAppInfo()
 	err := appSystemInfo.AddDB(3)
-	dbIDList, err = appSystemInfo.GetDBIDList()
+
+	dbIDList, err = ETGetDBIDList(appSystemInfo)
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
-	asst.Equal(0, len(dbIDList))
+	asst.Equal(2, len(dbIDList))
 	// delete
 	err = appSystemInfo.DeleteDB(3)
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
@@ -187,10 +201,21 @@ func TestAppInfo_DeleteAppDB(t *testing.T) {
 
 	appSystemInfo := initNewAppInfo()
 	err := appSystemInfo.DeleteDB(2)
-	dbIDList, err = appSystemInfo.GetDBIDList()
+	dbIDList, err = ETGetDBIDList(appSystemInfo)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
-	asst.Equal(0, len(dbIDList))
+	asst.Equal(1, len(dbIDList))
 	// add
 	err = appSystemInfo.AddDB(2)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
+}
+
+func ETGetDBIDList(appSystemInfo *AppInfo) (dbIDList []int, err error) {
+	dbs, err := appSystemInfo.GetDBs()
+	if err != nil {
+		return nil, err
+	}
+	for _, db := range dbs {
+		dbIDList = append(dbIDList, db.Identity())
+	}
+	return dbIDList, nil
 }

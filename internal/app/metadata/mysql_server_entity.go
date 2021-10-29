@@ -178,7 +178,7 @@ func (msi *MySQLServerInfo) IsMaster() (bool, error) {
 
 // GetMySQLCluster gets mysql cluster of this server
 func (msi *MySQLServerInfo) GetMySQLCluster() (metadata.MySQLCluster, error) {
-	return msi.MySQLServerRepo.GetMySQLCluster(msi.Identity())
+	return msi.MySQLServerRepo.GetMySQLClusterByID(msi.Identity())
 }
 
 // GetMonitorSystem gets monitor system of this server

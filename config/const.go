@@ -66,9 +66,10 @@ const (
 	DefaultDBSoarMySQLPass           = "root"
 	DefaultAlertSMTPEnabled          = true
 	DefaultAlertSMTPAddr             = "smtp.163.com"
-	DefaultAlertSMTPUser             = "root"
-	DefaultAlertSMTPPass             = "root"
-	DefaultAlertSMTPFrom             = "mail@example.com"
+	DefaultAlertSMTPPort             = "465"
+	DefaultAlertSMTPUser             = "###@163.com"
+	DefaultAlertSMTPPass             = "****"
+	DefaultAlertSMTPFrom             = "###@163.com"
 	DefaultAlertHTTPEnabled          = false
 	DefaultAlertHTTPURL              = "http://127.0.0.1:8080"
 	DefaultAlertHTTPConfig           = "{}"
@@ -122,8 +123,10 @@ const (
 	DBSoarMySQLUserKey          = "db.soar.mysql.user"
 	DBSoarMySQLPassKey          = "db.soar.mysql.pass"
 	// alert
+	AlertSMTPFromName   = "DAS"
 	AlertSMTPEnabledKey = "alert.smtp.enabled"
 	AlertSMTPAddrKey    = "alert.smtp.addr"
+	AlertSMTPPortKey    = "alert.smtp.port"
 	AlertSMTPUserKey    = "alert.smtp.user"
 	AlertSMTPPassKey    = "alert.smtp.pass"
 	AlertSMTPFromKey    = "alert.smtp.from"

@@ -23,6 +23,7 @@ const (
 	DebugMetadataDeleteApp    = 100107
 	DebugMetadataAppAddDB     = 100108
 	DebugMetadataAppDeleteDB  = 100109
+	DebugMetadataGetDBsByID   = 100110
 	// info
 	InfoMetadataGetAppAll    = 200101
 	InfoMetadataGetAppByID   = 200102
@@ -33,6 +34,7 @@ const (
 	InfoMetadataDeleteApp    = 200107
 	InfoMetadataAppAddDB     = 200108
 	InfoMetadataAppDeleteDB  = 200109
+	InfoMetadataGetDBsByID   = 200110
 	// error
 	ErrMetadataGetAppAll    = 400101
 	ErrMetadataGetAppByID   = 400102
@@ -43,6 +45,7 @@ const (
 	ErrMetadataDeleteApp    = 400107
 	ErrMetadataAppAddDB     = 400108
 	ErrMetadataAppDeleteDB  = 400109
+	ErrMetadataGetDBsByID   = 400110
 )
 
 func initDebugAppMessage() {
@@ -55,6 +58,7 @@ func initDebugAppMessage() {
 	message.Messages[DebugMetadataDeleteApp] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataDeleteApp, "metadata: delete app completed. message: %s")
 	message.Messages[DebugMetadataAppAddDB] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataAppAddDB, "metadata: add map of app and database completed. message: %s")
 	message.Messages[DebugMetadataAppDeleteDB] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataAppDeleteDB, "metadata: delete map of app and database completed. message: %s")
+	message.Messages[DebugMetadataGetDBsByID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetDBsByID, "metadata: get dbs by id completed. message: %s")
 }
 
 func initInfoAppMessage() {
@@ -67,6 +71,8 @@ func initInfoAppMessage() {
 	message.Messages[InfoMetadataDeleteApp] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataDeleteApp, "metadata: delete app completed. id: %d")
 	message.Messages[InfoMetadataAppAddDB] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataAppAddDB, "metadata: add map of app and database completed. app_id: %d, db_id: %d")
 	message.Messages[InfoMetadataAppDeleteDB] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataAppDeleteDB, "metadata: delete map of app and database completed. app_id: %d, db_id: %d")
+	message.Messages[InfoMetadataGetDBsByID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetDBsByID, "metadata: get dbs by id completed. app_id: %d")
+
 }
 
 func initErrorAppMessage() {
@@ -79,4 +85,5 @@ func initErrorAppMessage() {
 	message.Messages[ErrMetadataDeleteApp] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDeleteApp, "metadata: delete app failed. id: %d\n%s")
 	message.Messages[ErrMetadataAppAddDB] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAppAddDB, "metadata: add map of app and database failed. id: %d\n%s")
 	message.Messages[ErrMetadataAppDeleteDB] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAppDeleteDB, "metadata: delete map of app and database failed. id: %d\n%s")
+	message.Messages[ErrMetadataGetDBsByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetDBsByID, "metadata: get dbs by id failed. app_id: %d\n%s")
 }

@@ -198,6 +198,10 @@ alert:
     # description: specify the username of the smtp server
     # type: string
     # default: root
+    port: "000"
+    # description: specify the port of the smtp server
+    # type: string
+    # default: 000
     user: root
     # description: specify the password of the smtp server
     # type: string

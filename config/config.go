@@ -81,6 +81,7 @@ func SetDefaultConfig(baseDir string) {
 	// alert
 	viper.SetDefault(AlertSMTPEnabledKey, DefaultAlertSMTPEnabled)
 	viper.SetDefault(AlertSMTPAddrKey, DefaultAlertSMTPAddr)
+	viper.SetDefault(AlertSMTPPortKey, DefaultAlertSMTPPort)
 	viper.SetDefault(AlertSMTPUserKey, DefaultAlertSMTPUser)
 	viper.SetDefault(AlertSMTPPassKey, DefaultAlertSMTPPass)
 	viper.SetDefault(AlertSMTPFromKey, DefaultAlertSMTPFrom)

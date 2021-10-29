@@ -47,7 +47,7 @@ func (r *Repository) Transaction() (middleware.Transaction, error) {
 // Save saves sending result into the middleware
 func (r *Repository) Save(url, toAddrs, ccAddrs, subject, content, config, message string) error {
 	sql := `
-		insert into t_alert_operation_info(url, to_addrs, ccAddrs, subject, content, config, message)
+		insert into t_alert_operation_info(url, to_addrs, cc_addrs, subject, content, config, message)
 		values(?, ?, ?, ?, ?, ?, ?);
     `
 	_, err := r.Execute(sql, url, toAddrs, ccAddrs, subject, content, config, message)

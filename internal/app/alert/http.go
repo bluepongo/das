@@ -40,23 +40,23 @@ type HTTPSender struct {
 }
 
 // NewHTTTPSender returns a new alert.Sender
-func NewHTTTPSender(client *http.Client, cfg Config, url string) alert.Sender {
-	return newHTTTPSender(client, cfg, url)
+func NewHTTPSender(client *http.Client, cfg alert.Config, url string) alert.Sender {
+	return newHTTPSender(client, cfg, url)
 }
 
 // NewHTTTPSenderWithDefault returns a new alert.Sender with default http client
-func NewHTTTPSenderWithDefault(cfg alert.Config) alert.Sender {
+func NewHTTPSenderWithDefault(cfg alert.Config) alert.Sender {
 	client := &http.Client{
 		Transport: defaultTransport,
 		Timeout:   defaultDialTimeout,
 	}
 	url := viper.GetString(config.AlertHTTPURLKey)
 
-	return newHTTTPSender(client, cfg, url)
+	return newHTTPSender(client, cfg, url)
 }
 
-// NewHTTTPSender returns a new *HTTPSender
-func newHTTTPSender(client *http.Client, cfg alert.Config, url string) *HTTPSender {
+// newHTTTPSender returns a new *HTTPSender
+func newHTTPSender(client *http.Client, cfg alert.Config, url string) *HTTPSender {
 	return &HTTPSender{
 		client: client,
 		config: cfg,
