@@ -59,8 +59,6 @@ func (s *Service) GetConfig() alert.Config {
 
 // SendEmail sends the email
 func (s *Service) SendEmail(toAddrs, ccAddrs, subject, content string) error {
-	urll := viper.GetString(config.AlertSMTPEnabledKey)
-	fmt.Println(urll)
 	smtpEnabled := viper.GetBool(config.AlertSMTPEnabledKey)
 	if smtpEnabled {
 		return s.sendViaSMTP(toAddrs, ccAddrs, subject, content)
