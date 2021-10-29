@@ -27,8 +27,8 @@ var _ metadata.MySQLServerService = (*MySQLServerService)(nil)
 // MySQLServerService implements Service interface
 type MySQLServerService struct {
 	MySQLServerRepo metadata.MySQLServerRepo
-	MySQLServers    []metadata.MySQLServer
-	MySQLCluster    metadata.MySQLCluster
+	MySQLServers    []metadata.MySQLServer `json:"mysql_servers"`
+	MySQLCluster    metadata.MySQLCluster  `json:"mysql_cluster"`
 }
 
 // NewMySQLServerService returns a new *MySQLServerService
@@ -104,9 +104,16 @@ func (mss *MySQLServerService) IsMaster(hostIP string, portNum int) (bool, error
 	return mss.MySQLServerRepo.IsMaster(hostIP, portNum)
 }
 
-// GetMySQLCluster gets the mysql cluster of the given id
+// GetMySQLClusterByID gets the mysql cluster of the given id
 func (mss *MySQLServerService) GetMySQLClusterByID(id int) error {
-	return nil
+	err := mss.GetByID(id)
+	if err != nil {
+		return err
+	}
+
+	mss.MySQLCluster, err = mss.GetMySQLServers()[constant.ZeroInt].GetMySQLCluster()
+
+	return err
 }
 
 // Create creates a new mysql server entity and insert it into the middleware

@@ -27,6 +27,7 @@ type MySQLClusterService struct {
 	MySQLClusterRepo metadata.MySQLClusterRepo
 	MySQLClusters    []metadata.MySQLCluster `json:"mysql_clusters"`
 	MySQLServers     []metadata.MySQLServer  `json:"mysql_servers"`
+	Databases        []metadata.DB           `json:"databases"`
 	Owners           []metadata.User         `json:"owners"`
 }
 
@@ -36,6 +37,7 @@ func NewMySQLClusterService(repo metadata.MySQLClusterRepo) *MySQLClusterService
 		repo,
 		[]metadata.MySQLCluster{},
 		[]metadata.MySQLServer{},
+		[]metadata.DB{},
 		[]metadata.User{},
 	}
 }
@@ -119,22 +121,34 @@ func (mcs *MySQLClusterService) GetMasterServersByID(id int) error {
 
 // GetDBsByID gets the databases of the given id
 func (mcs *MySQLClusterService) GetDBsByID(id int) error {
-	return nil
+	var err error
+	mcs.Databases, err = mcs.MySQLClusterRepo.GetDBsByID(id)
+
+	return err
 }
 
 // GetAppOwnersByID gets the application owners of the given id
 func (mcs *MySQLClusterService) GetAppOwnersByID(id int) error {
-	return nil
+	var err error
+	mcs.Owners, err = mcs.MySQLClusterRepo.GetAppOwnersByID(id)
+
+	return err
 }
 
 // GetDBOwnersByID gets the db owners of the given id
 func (mcs *MySQLClusterService) GetDBOwnersByID(id int) error {
-	return nil
+	var err error
+	mcs.Owners, err = mcs.MySQLClusterRepo.GetDBOwnersByID(id)
+
+	return err
 }
 
 // GetAllOwnersByID gets both application and db owners of the given id
 func (mcs *MySQLClusterService) GetAllOwnersByID(id int) error {
-	return nil
+	var err error
+	mcs.Owners, err = mcs.MySQLClusterRepo.GetAllOwnersByID(id)
+
+	return err
 }
 
 // Create creates a new mysql cluster entity and insert it into the middleware

@@ -5,10 +5,16 @@ import (
 
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/middleware/mysql"
-	"github.com/romberli/log"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/romberli/das/internal/dependency/metadata"
+)
+
+const (
+	addr   = "192.168.10.210:3306"
+	dbName = "das"
+	dbUser = "root"
+	dbPass = "root"
 )
 
 const (
@@ -20,16 +26,15 @@ const (
 	testUpdateClusterName      = "cluster_name_update"
 )
 
-var mysqlClusterRepo = initMySQLClusterRepo()
+var mysqlClusterRepo *MySQLClusterRepo
 
-func initMySQLClusterRepo() *MySQLClusterRepo {
+func initMySQLClusterRepo() {
 	pool, err := mysql.NewPoolWithDefault(addr, dbName, dbUser, dbPass)
 	if err != nil {
-		log.Error(common.CombineMessageWithError("initMySQLClusterRepo() failed", err))
-		return nil
+		panic(common.CombineMessageWithError("initMySQLClusterRepo() failed", err))
 	}
 
-	return NewMySQLClusterRepo(pool)
+	mysqlClusterRepo = NewMySQLClusterRepo(pool)
 }
 
 func createMySQLCluster() (metadata.MySQLCluster, error) {
@@ -179,6 +184,38 @@ func TestMySQLClusterRepo_GetID(t *testing.T) {
 	id, err := mysqlClusterRepo.GetID(testInitClusterName)
 	asst.Nil(err, common.CombineMessageWithError("test GetID() failed", err))
 	asst.NotEqual(0, id, "test GetID() failed")
+}
+
+func TestMySQLClusterRepo_GetDBsByID(t *testing.T) {
+	asst := assert.New(t)
+
+	dbs, err := mysqlClusterRepo.GetDBsByID(testInitClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBsByID() failed", err))
+	asst.NotEqual(0, len(dbs), "test GetDBsByID() failed")
+}
+
+func TestMySQLClusterRepo_GetAppOwners(t *testing.T) {
+	asst := assert.New(t)
+
+	owners, err := mysqlClusterRepo.GetAppOwnersByID(testInitClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
+	asst.NotEqual(0, len(owners), "test GetAppOwners() failed")
+}
+
+func TestMySQLClusterRepo_GetDBOwners(t *testing.T) {
+	asst := assert.New(t)
+
+	owners, err := mysqlClusterRepo.GetDBOwnersByID(testInitClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBOwners() failed", err))
+	asst.NotEqual(0, len(owners), "test GetDBOwners() failed")
+}
+
+func TestMySQLClusterRepo_GetAllOwners(t *testing.T) {
+	asst := assert.New(t)
+
+	owners, err := mysqlClusterRepo.GetAllOwnersByID(testInitClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetAllOwners() failed", err))
+	asst.NotEqual(0, len(owners), "test GetAllOwners() failed")
 }
 
 func TestMySQLClusterRepo_Create(t *testing.T) {
