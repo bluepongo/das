@@ -239,7 +239,7 @@ func (mcr *MySQLClusterRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 			and db.cluster_id = ?
 			and db.cluster_type = ?;
 	`
-	log.Debugf("metadata MySQLClusterRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d", sql, id, ClusterTypeSingle)
+	log.Debugf("metadata MySQLClusterRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id, ClusterTypeSingle)
 
 	result, err := mcr.Execute(sql, id, ClusterTypeSingle)
 	if err != nil {
@@ -307,6 +307,7 @@ func (mcr *MySQLClusterRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
 			on db.id = map.db_id
 			where user.del_flag = 0 and app.del_flag = 0 and db.del_flag = 0 and map.del_flag = 0
 			and db.cluster_id = ? 
+			and db.cluster_type = ?
 		union
 		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name, user.email, user.telephone, user.mobile, user.role, user.del_flag, user.create_time, user.last_update_time 
 			from t_meta_user_info as user 
@@ -316,7 +317,7 @@ func (mcr *MySQLClusterRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
 			and db.cluster_id = ?
 			and db.cluster_type = ?;
 	`
-	log.Debugf("metadata MySQLClusterRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id, id, ClusterTypeSingle)
+	log.Debugf("metadata MySQLClusterRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d, %d, %d", sql, id, ClusterTypeSingle, id, ClusterTypeSingle)
 
 	result, err := mcr.Execute(sql, id, id, ClusterTypeSingle)
 	if err != nil {
