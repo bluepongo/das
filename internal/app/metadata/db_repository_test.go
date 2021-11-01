@@ -55,7 +55,11 @@ func TestDBRepoAll(t *testing.T) {
 	TestDBRepo_GetByEnv(t)
 	TestDBRepo_GetByID(t)
 	TestDBRepo_GetByNameAndClusterInfo(t)
-	TestDBRepo_GetAppIDList(t)
+	TestDBRepo_GetAppsByID(t)
+	TestDBRepo_GetMySQLCLusterByID(t)
+	TestDBRepo_GetAppOwnersByID(t)
+	TestDBRepo_GetDBOwnersByID(t)
+	TestDBRepo_GetAllOwnersByID(t)
 	TestDBRepo_Create(t)
 	TestDBRepo_Update(t)
 	TestDBRepo_Delete(t)
@@ -166,12 +170,44 @@ func TestDBRepo_GetByNameAndClusterInfo(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test GetByID() failed", err))
 }
 
-func TestDBRepo_GetAppIDList(t *testing.T) {
+func TestDBRepo_GetAppsByID(t *testing.T) {
 	asst := assert.New(t)
 
-	appIDList, err := dbRepo.GetAppIDList(1)
-	asst.Nil(err, common.CombineMessageWithError("test GetAppIDList() failed", err))
-	asst.Equal(2, len(appIDList), "test GetAppIDList() failed")
+	apps, err := dbRepo.GetAppsByID(1)
+	asst.Nil(err, common.CombineMessageWithError("test GetAppsByID() failed", err))
+	asst.NotNil(apps, "test GetAppsByID() failed")
+}
+
+func TestDBRepo_GetMySQLCLusterByID(t *testing.T) {
+	asst := assert.New(t)
+
+	mysqlCLuster, err := dbRepo.GetMySQLCLusterByID(1)
+	asst.Nil(err, common.CombineMessageWithError("test GetMySQLCLusterByID() failed", err))
+	asst.NotNil(mysqlCLuster, "test GetMySQLCLusterByID() failed")
+}
+
+func TestDBRepo_GetAppOwnersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	appOwners, err := dbRepo.GetAppOwnersByID(1)
+	asst.Nil(err, common.CombineMessageWithError("test GetAppOwnersByID() failed", err))
+	asst.NotNil(appOwners, "test GetAppOwnersByID() failed")
+}
+
+func TestDBRepo_GetDBOwnersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	dbOwners, err := dbRepo.GetDBOwnersByID(1)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBOwnersByID() failed", err))
+	asst.NotNil(dbOwners, "test GetDBOwnersByID() failed")
+}
+
+func TestDBRepo_GetAllOwnersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	allOwners, err := dbRepo.GetAllOwnersByID(1)
+	asst.Nil(err, common.CombineMessageWithError("test GetAllOwnersByID() failed", err))
+	asst.NotNil(allOwners, "test GetAllOwnersByID() failed")
 }
 
 func TestDBRepo_Create(t *testing.T) {
@@ -218,9 +254,9 @@ func TestDBRepo_AddDBApp(t *testing.T) {
 
 	err := dbRepo.AddApp(1, 3)
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	appIDList, err := dbRepo.GetAppIDList(1)
+	apps, err := dbRepo.GetAppsByID(1)
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	asst.Equal(3, len(appIDList), "test AddApp() failed")
+	asst.NotNil(apps, "test AddApp() failed")
 }
 
 func TestDBRepo_DeleteDBApp(t *testing.T) {
@@ -228,7 +264,7 @@ func TestDBRepo_DeleteDBApp(t *testing.T) {
 
 	err := dbRepo.DeleteApp(1, 3)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	appIDList, err := dbRepo.GetAppIDList(1)
+	apps, err := dbRepo.GetAppsByID(1)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	asst.Equal(2, len(appIDList), "test DeleteApp() failed")
+	asst.NotNil(apps, "test DeleteApp() failed")
 }
