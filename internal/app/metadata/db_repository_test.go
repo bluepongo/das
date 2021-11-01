@@ -266,5 +266,5 @@ func TestDBRepo_DeleteDBApp(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
 	apps, err := dbRepo.GetAppsByID(1)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	asst.NotNil(apps, "test DeleteApp() failed")
+	asst.Equal(0, len(apps), "test DeleteApp() failed")
 }

@@ -205,8 +205,9 @@ func TestDBService_AddDBApp(t *testing.T) {
 
 	err := s.AddApp(1, 3)
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	apps := s.Apps
-	asst.NotNil(apps, "test AddApp() failed")
+	apps, err := s.DBRepo.GetAppsByID(1)
+	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+	asst.NotNil(apps, common.CombineMessageWithError("test AddApp() failed", err))
 }
 
 func TestDBService_DeleteDBApp(t *testing.T) {
@@ -215,8 +216,9 @@ func TestDBService_DeleteDBApp(t *testing.T) {
 	s := NewDBService(dbRepo)
 	err := s.DeleteApp(1, 3)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	apps := s.Apps
-	asst.NotNil(apps, "test DeleteApp() failed")
+	apps, err := s.DBRepo.GetAppsByID(1)
+	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
+	asst.Equal(0, len(apps), "test DeleteApp() failed")
 }
 
 func TestDBService_Marshal(t *testing.T) {
