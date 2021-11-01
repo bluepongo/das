@@ -15,7 +15,7 @@ import (
 const (
 	defaultDBInfoID                   = 1
 	defaultDBInfoDBName               = "test"
-	defaultDBInfoClusterID            = 1
+	defaultDBInfoClusterID            = 2
 	defaultDBInfoClusterType          = 1
 	defaultDBInfoOwnerID              = 1
 	defaultDBInfoEnvID                = 2

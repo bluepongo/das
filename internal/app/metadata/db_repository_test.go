@@ -16,7 +16,7 @@ const (
 	dbAddr    = "127.0.0.1:3306"
 	dbDBName  = "das"
 	dbDBUser  = "root"
-	dbDBPass  = "rootroot"
+	dbDBPass  = "mysql123"
 	newDBName = "newTest"
 )
 
