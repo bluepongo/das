@@ -120,7 +120,7 @@ func TestAppRepo_GetAll(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test GetAll() failed", err))
 	systemName := entities[0].GetAppName()
 	asst.Nil(err, common.CombineMessageWithError("test GetAll() failed", err))
-	asst.Equal("1", systemName, "test GetAll() failed")
+	asst.Equal(onlineAppName, systemName, "test GetAll() failed")
 }
 
 func TestAppRepo_GetByID(t *testing.T) {

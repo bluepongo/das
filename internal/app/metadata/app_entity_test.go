@@ -22,6 +22,8 @@ const (
 	defaultAppInfoCreateTimeString     = "2021-01-21 10:00:00.000000"
 	defaultAppInfoLastUpdateTimeString = "2021-01-21 13:00:00.000000"
 	appSystemNameJSON                  = "app_name"
+	dblistnum1                         = 1
+	dblistnum2                         = 2
 )
 
 func initNewAppInfo() *AppInfo {
@@ -172,7 +174,7 @@ func TestAppInfo_AddAppDB(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
 	dbIDList, err = entityGetDBIDList(appSystemInfo)
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
-	asst.Equal(2, len(dbIDList))
+	asst.Equal(dblistnum2, len(dbIDList))
 	// delete
 	err = appSystemInfo.DeleteDB(3)
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
@@ -189,7 +191,7 @@ func TestAppInfo_DeleteAppDB(t *testing.T) {
 
 	dbIDList, err = entityGetDBIDList(appSystemInfo)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
-	asst.Equal(1, len(dbIDList))
+	asst.Equal(dblistnum1, len(dbIDList))
 	// add
 	err = appSystemInfo.AddDB(3)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
