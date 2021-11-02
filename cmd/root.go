@@ -74,14 +74,15 @@ var (
 	dbSoarMySQLUser          string
 	dbSoarMySQLPass          string
 	// alert
-	alertSMTPEnabledStr string
-	alertSMTPURL        string
-	alertSMTPUser       string
-	alertSMTPPass       string
-	alertSMTPFrom       string
-	alertHTTPEnabledStr string
-	alertHTTPURL        string
-	alertHTTPConfig     string
+	alertSMTPEnabledStr     string
+	alertSMTPHTMLEnabledStr string
+	alertSMTPURL            string
+	alertSMTPUser           string
+	alertSMTPPass           string
+	alertSMTPFrom           string
+	alertHTTPEnabledStr     string
+	alertHTTPURL            string
+	alertHTTPConfig         string
 	// healthcheck
 	healthcheckAlertOwnerType string
 	// sqladvisor
@@ -175,6 +176,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&dbSoarMySQLPass, "db-soar-mysql-pass", constant.DefaultRandomString, fmt.Sprintf("specify soar database user password(default: %s)", config.DefaultDBSoarMySQLPass))
 	// alert
 	rootCmd.PersistentFlags().StringVar(&alertSMTPEnabledStr, "alert-smtp-enabled", constant.DefaultRandomString, fmt.Sprintf("specify if enables smtp method(default: %s)", constant.TrueString))
+	rootCmd.PersistentFlags().StringVar(&alertSMTPHTMLEnabledStr, "alert-smtp-htmlEnabled", constant.DefaultRandomString, fmt.Sprintf("specify if enables smtp html method(default: %s)", constant.TrueString))
 	rootCmd.PersistentFlags().StringVar(&alertSMTPURL, "alert-smtp-url", constant.DefaultRandomString, fmt.Sprintf("specify the url of the smtp server(default: %s)", config.DefaultAlertSMTPURL))
 	rootCmd.PersistentFlags().StringVar(&alertSMTPUser, "alert-smtp-user", constant.DefaultRandomString, fmt.Sprintf("specify the username of the smtp server(default: %s)", config.DefaultAlertSMTPUser))
 	rootCmd.PersistentFlags().StringVar(&alertSMTPPass, "alert-smtp-pass", constant.DefaultRandomString, fmt.Sprintf("specify the password of the smtp server(default: %s)", config.DefaultAlertSMTPPass))
@@ -402,6 +404,14 @@ func OverrideConfig() (err error) {
 	// override alert
 	if alertSMTPEnabledStr != constant.DefaultRandomString {
 		alertSMTPEnabled, err := cast.ToBoolE(alertSMTPEnabledStr)
+		if err != nil {
+			return err
+		}
+
+		viper.Set(config.AlertSMTPEnabledKey, alertSMTPEnabled)
+	}
+	if alertSMTPHTMLEnabledStr != constant.DefaultRandomString {
+		alertSMTPEnabled, err := cast.ToBoolE(alertSMTPHTMLEnabledStr)
 		if err != nil {
 			return err
 		}

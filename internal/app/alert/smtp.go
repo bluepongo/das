@@ -16,8 +16,9 @@ import (
 )
 
 const (
-	defaultAlertSMTPFromName    = "DAS"
-	defaultAlertSMTPContentType = "text/html; charset=UTF-8"
+	defaultAlertSMTPFromName     = "DAS"
+	defaultAlertSMTPContentHTML  = "text/html; charset=UTF-8"
+	defaultAlertSMTPContentPLAIN = "text/plain; charset=UTF-8"
 
 	headerFromStruct        = "From"
 	headerToStruct          = "To"
@@ -98,7 +99,12 @@ func (ss *SMTPSender) setHeader() map[string]string {
 	header[headerToStruct] = ss.GetConfig().Get(toAddrsJSON)
 	header[headerCcStruct] = ss.GetConfig().Get(ccAddrsJSON)
 	header[headerSubjectStruct] = ss.GetConfig().Get(subjectJSON)
-	header[headerContentTypeStruct] = defaultAlertSMTPContentType
+	if viper.GetBool(config.AlertSMTPHTMLEnabledKey) {
+		header[headerContentTypeStruct] = defaultAlertSMTPContentHTML
+	}
+	if !viper.GetBool(config.AlertSMTPHTMLEnabledKey) {
+		header[headerContentTypeStruct] = defaultAlertSMTPContentPLAIN
+	}
 	return header
 }
 

@@ -80,6 +80,7 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(DBSoarMySQLPassKey, DefaultDBPass)
 	// alert
 	viper.SetDefault(AlertSMTPEnabledKey, DefaultAlertSMTPEnabled)
+	viper.SetDefault(AlertSMTPHTMLEnabledKey, DefaultAlterSMTPHTMLEnabled)
 	viper.SetDefault(AlertSMTPURLKey, DefaultAlertSMTPURL)
 	viper.SetDefault(AlertSMTPUserKey, DefaultAlertSMTPUser)
 	viper.SetDefault(AlertSMTPPassKey, DefaultAlertSMTPPass)
@@ -452,6 +453,11 @@ func ValidateAlert() error {
 
 	// validate alert.smtp.enabled
 	_, err := cast.ToBoolE(viper.Get(AlertSMTPEnabledKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+	// validate alert.smtp.htmlEnabled
+	_, err = cast.ToBoolE(viper.Get(AlertSMTPHTMLEnabledKey))
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}

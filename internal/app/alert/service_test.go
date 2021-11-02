@@ -21,20 +21,22 @@ const (
 )
 
 const (
-	appAddr                 = "192.168.10.210:3306"
-	appDBName               = "das"
-	appDBUser               = "root"
-	appDBPass               = "root"
-	onlineAppName           = "2"
-	newAppName              = "testApp"
-	defaultID               = 1
-	defaultAlertSMTPEnabled = true
-	defaultAlertHTTPEnabled = true
+	appAddr                     = "192.168.10.210:3306"
+	appDBName                   = "das"
+	appDBUser                   = "root"
+	appDBPass                   = "root"
+	onlineAppName               = "2"
+	newAppName                  = "testApp"
+	defaultID                   = 1
+	defaultAlertSMTPEnabled     = true
+	defaultAlertSMTPHTMLEnabled = true
+	defaultAlertHTTPEnabled     = true
 )
 
 func initViper() {
 
 	viper.Set(config.AlertSMTPEnabledKey, defaultAlertSMTPEnabled)
+	viper.Set(config.AlertSMTPHTMLEnabledKey, defaultAlertSMTPHTMLEnabled)
 	viper.Set(config.AlertSMTPURLKey, url)
 	//
 	viper.Set(config.AlertSMTPUserKey, userAddrs)

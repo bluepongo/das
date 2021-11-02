@@ -65,6 +65,7 @@ const (
 	DefaultDBSoarMySQLUser           = "root"
 	DefaultDBSoarMySQLPass           = "root"
 	DefaultAlertSMTPEnabled          = true
+	DefaultAlterSMTPHTMLEnabled      = true
 	DefaultAlertSMTPURL              = ""
 	DefaultAlertSMTPUser             = ""
 	DefaultAlertSMTPPass             = ""
@@ -122,14 +123,15 @@ const (
 	DBSoarMySQLUserKey          = "db.soar.mysql.user"
 	DBSoarMySQLPassKey          = "db.soar.mysql.pass"
 	// alert
-	AlertSMTPEnabledKey = "alert.smtp.enabled"
-	AlertSMTPURLKey     = "alert.smtp.url"
-	AlertSMTPUserKey    = "alert.smtp.user"
-	AlertSMTPPassKey    = "alert.smtp.pass"
-	AlertSMTPFromKey    = "alert.smtp.from"
-	AlertHTTPEnabledKey = "alert.http.enabled"
-	AlertHTTPURLKey     = "alert.http.url"
-	AlertHTTPConfigKey  = "alert.http.config"
+	AlertSMTPEnabledKey     = "alert.smtp.enabled"
+	AlertSMTPHTMLEnabledKey = "alert.smtp.htmlEnabled"
+	AlertSMTPURLKey         = "alert.smtp.url"
+	AlertSMTPUserKey        = "alert.smtp.user"
+	AlertSMTPPassKey        = "alert.smtp.pass"
+	AlertSMTPFromKey        = "alert.smtp.from"
+	AlertHTTPEnabledKey     = "alert.http.enabled"
+	AlertHTTPURLKey         = "alert.http.url"
+	AlertHTTPConfigKey      = "alert.http.config"
 	// healthcheck
 	HealthcheckAlertOwnerTypeKey = "healthcheck.alert.ownerType"
 	// sqladvisor
