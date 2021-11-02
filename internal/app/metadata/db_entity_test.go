@@ -15,7 +15,7 @@ import (
 const (
 	defaultDBInfoID                   = 1
 	defaultDBInfoDBName               = "test"
-	defaultDBInfoClusterID            = 1
+	defaultDBInfoClusterID            = 2
 	defaultDBInfoClusterType          = 1
 	defaultDBInfoOwnerID              = 1
 	defaultDBInfoEnvID                = 2
@@ -52,6 +52,10 @@ func TestDBEntityAll(t *testing.T) {
 	TestDBInfo_GetCreateTime(t)
 	TestDBInfo_GetLastUpdateTime(t)
 	TestDBInfo_GetApps(t)
+	TestDBInfo_GetMySQLClusterByID(t)
+	TestDBInfo_GetAppOwners(t)
+	TestDBInfo_GetDBOwners(t)
+	TestDBInfo_GetAllOwners(t)
 	TestDBInfo_Set(t)
 	TestDBInfo_Delete(t)
 	TestDBInfo_AddDBApp(t)
@@ -123,6 +127,42 @@ func TestDBInfo_GetLastUpdateTime(t *testing.T) {
 	asst.True(reflect.DeepEqual(dbInfo.LastUpdateTime, dbInfo.GetLastUpdateTime()), "test GetLastUpdateTime() failed")
 }
 
+func TestDBInfo_GetMySQLClusterByID(t *testing.T) {
+	asst := assert.New(t)
+
+	dbInfo := initNewDBInfo()
+	mysqlCluster, err := dbInfo.GetMySQLCluster()
+	asst.Nil(err, common.CombineMessageWithError("test GetMySQLCLuster() failed", err))
+	asst.NotNil(mysqlCluster, "test GetMySQLCluster() failed")
+}
+
+func TestDBInfo_GetAppOwners(t *testing.T) {
+	asst := assert.New(t)
+
+	dbInfo := initNewDBInfo()
+	appOwners, err := dbInfo.GetAppOwners()
+	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
+	asst.NotNil(appOwners, "test GetAppOwners() failed")
+}
+
+func TestDBInfo_GetDBOwners(t *testing.T) {
+	asst := assert.New(t)
+
+	dbInfo := initNewDBInfo()
+	dbOwners, err := dbInfo.GetDBOwners()
+	asst.Nil(err, common.CombineMessageWithError("test GetDBOwners() failed", err))
+	asst.NotNil(dbOwners, "test GetDBOwners() failed")
+}
+
+func TestDBInfo_GetAllOwners(t *testing.T) {
+	asst := assert.New(t)
+
+	dbInfo := initNewDBInfo()
+	allOwners, err := dbInfo.GetAllOwners()
+	asst.Nil(err, common.CombineMessageWithError("test GetAllOwners() failed", err))
+	asst.NotNil(allOwners, "test GetAllOwners() failed")
+}
+
 func TestDBInfo_GetApps(t *testing.T) {
 	asst := assert.New(t)
 
@@ -130,15 +170,6 @@ func TestDBInfo_GetApps(t *testing.T) {
 	apps, err := dbInfo.GetApps()
 	asst.Nil(err, common.CombineMessageWithError("test GetApps() failed", err))
 	asst.NotEqual(0, len(apps), "test GetApps() failed")
-}
-
-func TestDBInfo_GetMySQLClusterByID(t *testing.T) {
-	asst := assert.New(t)
-
-	dbInfo := initNewDBInfo()
-	mysqlCluster, err := dbInfo.GetMySQLCLuster()
-	asst.Nil(err, common.CombineMessageWithError("test GetMySQLCLuster() failed", err))
-	asst.NotNil(mysqlCluster, "test GetMySQLCluster() failed")
 }
 
 func TestDBInfo_Set(t *testing.T) {
