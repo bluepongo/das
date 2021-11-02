@@ -75,7 +75,7 @@ var (
 	dbSoarMySQLPass          string
 	// alert
 	alertSMTPEnabledStr string
-	alertSMTPAddr       string
+	alertSMTPURL        string
 	alertSMTPUser       string
 	alertSMTPPass       string
 	alertSMTPFrom       string
@@ -175,7 +175,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&dbSoarMySQLPass, "db-soar-mysql-pass", constant.DefaultRandomString, fmt.Sprintf("specify soar database user password(default: %s)", config.DefaultDBSoarMySQLPass))
 	// alert
 	rootCmd.PersistentFlags().StringVar(&alertSMTPEnabledStr, "alert-smtp-enabled", constant.DefaultRandomString, fmt.Sprintf("specify if enables smtp method(default: %s)", constant.TrueString))
-	rootCmd.PersistentFlags().StringVar(&alertSMTPAddr, "alert-smtp-addr", constant.DefaultRandomString, fmt.Sprintf("specify the address of the smtp server(default: %s)", config.DefaultAlertSMTPAddr))
+	rootCmd.PersistentFlags().StringVar(&alertSMTPURL, "alert-smtp-url", constant.DefaultRandomString, fmt.Sprintf("specify the url of the smtp server(default: %s)", config.DefaultAlertSMTPURL))
 	rootCmd.PersistentFlags().StringVar(&alertSMTPUser, "alert-smtp-user", constant.DefaultRandomString, fmt.Sprintf("specify the username of the smtp server(default: %s)", config.DefaultAlertSMTPUser))
 	rootCmd.PersistentFlags().StringVar(&alertSMTPPass, "alert-smtp-pass", constant.DefaultRandomString, fmt.Sprintf("specify the password of the smtp server(default: %s)", config.DefaultAlertSMTPPass))
 	rootCmd.PersistentFlags().StringVar(&alertSMTPFrom, "alert-smtp-from", constant.DefaultRandomString, fmt.Sprintf("specify the from email address(default: %s)", config.DefaultAlertSMTPFrom))
@@ -408,8 +408,8 @@ func OverrideConfig() (err error) {
 
 		viper.Set(config.AlertSMTPEnabledKey, alertSMTPEnabled)
 	}
-	if alertSMTPAddr != constant.DefaultRandomString {
-		viper.Set(config.AlertSMTPAddrKey, alertSMTPAddr)
+	if alertSMTPURL != constant.DefaultRandomString {
+		viper.Set(config.AlertSMTPURLKey, alertSMTPURL)
 	}
 	if alertSMTPUser != constant.DefaultRandomString {
 		viper.Set(config.AlertSMTPUserKey, alertSMTPUser)

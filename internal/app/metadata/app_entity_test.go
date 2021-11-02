@@ -56,7 +56,6 @@ func TestAppEntityAll(t *testing.T) {
 	TestAppInfo_Delete(t)
 	TestAppInfo_MarshalJSON(t)
 	TestAppInfo_MarshalJSONWithFields(t)
-	// TestAppInfo_GetDBIDList(t)
 	TestAppInfo_AddAppDB(t)
 	TestAppInfo_DeleteAppDB(t)
 	TestAppInfo_GetDBS(t)
@@ -117,7 +116,6 @@ func TestAppInfo_GetDBS(t *testing.T) {
 	appSystemInfo := initNewAppInfo()
 	dbs, err := appSystemInfo.GetDBs()
 	fmt.Println(dbs)
-	// asst.NotEqual(constant.ZeroInt, len(dbs), "test GetDBs() failed")
 	asst.Equal(nil, err, "test GetDBs() failed")
 
 }
@@ -164,20 +162,6 @@ func TestAppInfo_MarshalJSONWithFields(t *testing.T) {
 	asst.Equal(string(expect), string(data), "test MarshalJSONWithFields() failed")
 }
 
-// func TestAppInfo_GetDBIDList(t *testing.T) {
-// 	var dbIDList []int
-
-// 	asst := assert.New(t)
-
-// 	appSystemInfo := initNewAppInfo()
-// 	dbIDList, err := appSystemInfo.GetDBIDList()
-// 	asst.Nil(err, common.CombineMessageWithError("test GetDBIDList() failed", err))
-// 	defaultDBIDList := []int{1, 2}
-// 	for i := 0; i < len(dbIDList); i++ {
-// 		asst.Equal(dbIDList[i], defaultDBIDList, "test GetDBIDList() failed")
-// 	}
-// }
-
 func TestAppInfo_AddAppDB(t *testing.T) {
 	var dbIDList []int
 
@@ -185,8 +169,8 @@ func TestAppInfo_AddAppDB(t *testing.T) {
 
 	appSystemInfo := initNewAppInfo()
 	err := appSystemInfo.AddDB(3)
-
-	dbIDList, err = ETGetDBIDList(appSystemInfo)
+	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
+	dbIDList, err = entityGetDBIDList(appSystemInfo)
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
 	asst.Equal(2, len(dbIDList))
 	// delete
@@ -200,16 +184,18 @@ func TestAppInfo_DeleteAppDB(t *testing.T) {
 	asst := assert.New(t)
 
 	appSystemInfo := initNewAppInfo()
-	err := appSystemInfo.DeleteDB(2)
-	dbIDList, err = ETGetDBIDList(appSystemInfo)
+	err := appSystemInfo.DeleteDB(3)
+	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
+
+	dbIDList, err = entityGetDBIDList(appSystemInfo)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
 	asst.Equal(1, len(dbIDList))
 	// add
-	err = appSystemInfo.AddDB(2)
+	err = appSystemInfo.AddDB(3)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
 }
 
-func ETGetDBIDList(appSystemInfo *AppInfo) (dbIDList []int, err error) {
+func entityGetDBIDList(appSystemInfo *AppInfo) (dbIDList []int, err error) {
 	dbs, err := appSystemInfo.GetDBs()
 	if err != nil {
 		return nil, err

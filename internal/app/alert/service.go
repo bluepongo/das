@@ -3,7 +3,6 @@ package alert
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/romberli/das/config"
@@ -13,13 +12,14 @@ import (
 )
 
 const (
-	toAddrsJSON  = "to_addrs"
-	ccAddrsJSON  = "cc_addrs"
-	contentJSON  = "content"
-	subjectJSON  = "subject"
-	smtpPortJSON = "port"
-	smtpUserJSON = "user"
-	smtpPassJSON = "pass"
+	toAddrsJSON          = "to_addrs"
+	ccAddrsJSON          = "cc_addrs"
+	contentJSON          = "content"
+	subjectJSON          = "subject"
+	smtpUserJSON         = "user"
+	smtpPassJSON         = "pass"
+	defaultSubjectNil    = ""
+	defaultPassEncrypted = "****"
 )
 
 var _ alert.Service = (*Service)(nil)
@@ -75,16 +75,18 @@ func (s *Service) SendEmail(toAddrs, ccAddrs, subject, content string) error {
 // sendViaSMTP sends email via smtp server
 func (s *Service) sendViaSMTP(toAddrs, ccAddrs, subject, content string) error {
 	merr := &multierror.Error{}
+	var message string
 	//setup config
-	s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
+	s.setupConfig(toAddrs, ccAddrs, subject, content)
 	sender := NewSMTPSenderWithDefault(s.GetConfig())
 	//send email
 	err := sender.Send()
 	if err != nil {
+		message = err.Error()
 		merr = multierror.Append(merr, err)
 	}
 	// save result
-	err = s.saveSMTP(toAddrs, ccAddrs, subject, content, fmt.Sprintln(err))
+	err = s.Save(toAddrs, ccAddrs, subject, content, message)
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
@@ -95,21 +97,35 @@ func (s *Service) sendViaSMTP(toAddrs, ccAddrs, subject, content string) error {
 // sendViaHTTP sends email via http api calling
 func (s *Service) sendViaHTTP(toAddrs, ccAddrs, content string) error {
 	merr := &multierror.Error{}
+	var message string
 	// setup config
-	s.setupHTTPConfig(toAddrs, ccAddrs, content)
+	s.setupConfig(toAddrs, ccAddrs, defaultSubjectNil, content)
 	sender := NewHTTPSenderWithDefault(s.GetConfig())
 	// send email
 	err := sender.Send()
 	if err != nil {
+		message = err.Error()
 		merr = multierror.Append(merr, err)
 	}
 	// save result
-	err = s.saveHTTP(toAddrs, ccAddrs, content, err.Error())
+	err = s.Save(toAddrs, ccAddrs, defaultSubjectNil, content, message)
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
 
 	return merr.ErrorOrNil()
+}
+
+// setupConfig setups config of HTTP or SMTP
+func (s *Service) setupConfig(toAddrs, ccAddrs, subject, content string) {
+	smtpEnabled := viper.GetBool(config.AlertSMTPEnabledKey)
+	httpEnabled := viper.GetBool(config.AlertHTTPEnabledKey)
+	if smtpEnabled {
+		s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
+	}
+	if !smtpEnabled && httpEnabled {
+		s.setupHTTPConfig(toAddrs, ccAddrs, content)
+	}
 }
 
 // setupHTTPConfig setups the HTTP config
@@ -120,9 +136,8 @@ func (s *Service) setupHTTPConfig(toAddrs, ccAddrs, content string) {
 	s.GetConfig().Set(contentJSON, content)
 }
 
+// setupSMTPConfig setups the SMTP config
 func (s *Service) setupSMTPConfig(toAddrs, ccAddrs, subject, content string) {
-	// toAddrs += constant.CommaString + ccAddrs
-	s.GetConfig().Set(smtpPortJSON, viper.GetString(config.AlertSMTPPortKey))
 	s.GetConfig().Set(smtpUserJSON, viper.GetString(config.AlertSMTPUserKey))
 	s.GetConfig().Set(smtpPassJSON, viper.GetString(config.AlertSMTPPassKey))
 	s.GetConfig().Set(toAddrsJSON, toAddrs)
@@ -131,9 +146,22 @@ func (s *Service) setupSMTPConfig(toAddrs, ccAddrs, subject, content string) {
 	s.GetConfig().Set(contentJSON, content)
 }
 
+// Save save the email Info
+func (s *Service) Save(toAddrs, ccAddrs, subject, content, message string) error {
+	smtpEnabled := viper.GetBool(config.AlertSMTPEnabledKey)
+	httpEnabled := viper.GetBool(config.AlertHTTPEnabledKey)
+	if smtpEnabled {
+		return s.saveSMTP(toAddrs, ccAddrs, subject, content, message)
+	}
+	if !smtpEnabled && httpEnabled {
+		return s.saveHTTP(toAddrs, ccAddrs, content, message)
+	}
+	return errors.New("none of smtp or http is enabled, can not send email")
+}
+
 // saveSMTP saves the sending results which was done via smtp server to the middleware
 func (s *Service) saveSMTP(toAddrs, ccAddrs, subject, content, message string) error {
-	s.GetConfig().Set(smtpPassJSON, "****")
+	s.GetConfig().Set(smtpPassJSON, defaultPassEncrypted)
 	cfg, err := json.Marshal(s.GetConfig())
 	if err != nil {
 		return err

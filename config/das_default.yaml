@@ -194,14 +194,10 @@ alert:
     # description: specify the address of the smtp server
     # type: string
     # default: "127.0.0.1:25"
-    addr: "127.0.0.1:25"
+    url: "127.0.0.1:25"
     # description: specify the username of the smtp server
     # type: string
     # default: root
-    port: "000"
-    # description: specify the port of the smtp server
-    # type: string
-    # default: 000
     user: root
     # description: specify the password of the smtp server
     # type: string

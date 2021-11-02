@@ -22,8 +22,8 @@ func TestSMTP_NewSMTPSender(t *testing.T) {
 	asst := assert.New(t)
 	s := initService()
 	s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
-
-	as := NewSMTPSender(s.config, url)
+	client := Dial(url)
+	as := NewSMTPSender(client, s.config, url)
 
 	asst.Equal(url, as.GetURL(), "Test for NewSMTPSender() failed")
 }
@@ -36,7 +36,7 @@ func TestSMTP_NewSMTPSenderWithDefault(t *testing.T) {
 
 	as := NewSMTPSenderWithDefault(s.config)
 
-	asst.Equal(viper.GetString(config.AlertSMTPAddrKey), as.GetURL(), "Test for NewSMTPSenderWithDefault failed")
+	asst.Equal(viper.GetString(config.AlertSMTPURLKey), as.GetURL(), "Test for NewSMTPSenderWithDefault failed")
 }
 
 func TestSMTP_GetConfig(t *testing.T) {
@@ -44,9 +44,10 @@ func TestSMTP_GetConfig(t *testing.T) {
 
 	s := initService()
 	s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
-	as := newSMTPSender(s.config, url)
+	client := Dial(url)
+	as := newSMTPSender(client, s.config, url)
 
-	asst.Equal(fmt.Sprintln(s.config), fmt.Sprintln(as.GetConfig()), "Test for GetConfig() Failed")
+	asst.Equal(fmt.Sprint(s.config), fmt.Sprint(as.GetConfig()), "Test for GetConfig() Failed")
 
 }
 
@@ -55,8 +56,9 @@ func TestSMTP_GetURL(t *testing.T) {
 
 	s := initService()
 	s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
-	as := newSMTPSender(s.config, url)
-	asst.Equal(url, fmt.Sprint(as.GetURL()), "Test for GetConfig() Failed")
+	client := Dial(url)
+	as := newSMTPSender(client, s.config, url)
+	asst.Equal(url, as.GetURL(), "Test for GetConfig() Failed")
 
 }
 
@@ -65,6 +67,7 @@ func TestSMTP_Send(t *testing.T) {
 
 	s := initService()
 	s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
-	as := newSMTPSender(s.config, url)
+	client := Dial(url)
+	as := newSMTPSender(client, s.config, url)
 	asst.Equal(nil, as.Send(), "Test SMTP_Send Failed")
 }

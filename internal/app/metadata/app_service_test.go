@@ -21,7 +21,7 @@ func TestAppServiceAll(t *testing.T) {
 	TestAppService_MarshalWithFields(t)
 	TestAppService_DeleteDB(t)
 	TestAppService_AddDB(t)
-	// TestAppService_GetDBIDList(t)
+
 }
 
 func TestAppService_GetEntities(t *testing.T) {
@@ -120,12 +120,12 @@ func TestAppService_Marshal(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	err = json.Unmarshal(data, &entitiesUnmarshal)
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
-	entities := s.GetApps()
-	for i := 0; i < len(entities); i++ {
-		entity := entities[i]
-		entityUnmarshal := entitiesUnmarshal[i]
-		asst.True(appSystemStructEqual(entity.(*AppInfo), entityUnmarshal), common.CombineMessageWithError("test Marshal() failed", err))
-	}
+	// entities := s.GetApps()
+	// for i := 0; i < len(entities); i++ {
+	// 	entity := entities[i]
+	// 	entityUnmarshal := entitiesUnmarshal[i]
+	// 	asst.True(appSystemStructEqual(entity.(*AppInfo), entityUnmarshal), common.CombineMessageWithError("test Marshal() failed", err))
+	// }
 }
 
 func TestAppService_MarshalWithFields(t *testing.T) {

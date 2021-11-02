@@ -64,20 +64,16 @@ func (ar *AppRepo) GetAll() ([]metadata.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	// init []*AppInfo
-	appInfoList := make([]*AppInfo, result.RowNumber())
-	for i := range appInfoList {
-		appInfoList[i] = NewEmptyAppInfoWithGlobal()
-	}
-	// map to struct
-	err = result.MapToStructSlice(appInfoList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
+
 	// init []dependency.Entity
 	appList := make([]metadata.App, result.RowNumber())
 	for i := range appList {
-		appList[i] = appInfoList[i]
+		appList[i] = NewEmptyAppInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(appList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
 	}
 
 	return appList, nil
@@ -152,20 +148,31 @@ func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 		return nil, err
 	}
 
-	// init []*DBInfo
-	dbInfoList := make([]*DBInfo, result.RowNumber())
-	for i := range dbInfoList {
-		dbInfoList[i] = NewEmptyDBInfoWithGlobal()
-	}
-	// map to struct
-	err = result.MapToStructSlice(dbInfoList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
+	// // init []*DBInfo
+	// dbInfoList := make([]*DBInfo, result.RowNumber())
+	// for i := range dbInfoList {
+	// 	dbInfoList[i] = NewEmptyDBInfoWithGlobal()
+	// }
+	// // map to struct
+	// err = result.MapToStructSlice(dbInfoList, constant.DefaultMiddlewareTag)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// // init []dependency.Entity
+	// dbList := make([]metadata.DB, result.RowNumber())
+	// for i := range dbList {
+	// 	dbList[i] = dbInfoList[i]
+	// }
+
 	// init []dependency.Entity
 	dbList := make([]metadata.DB, result.RowNumber())
 	for i := range dbList {
-		dbList[i] = dbInfoList[i]
+		dbList[i] = NewEmptyDBInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(dbList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
 	}
 
 	return dbList, nil

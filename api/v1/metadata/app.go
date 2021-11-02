@@ -20,12 +20,12 @@ const (
 	appIDJSON      = "id"
 	appAppNameJSON = "app_name"
 	appDBIDJSON    = "db_id"
-	appDBsJSON     = "DBs"
 
 	appAppNameStruct  = "AppName"
 	appLevelStruct    = "Level"
 	appDelFlagStruct  = "DelFlag"
 	appDBIDListStruct = "DBIDList"
+	appDBsStruct      = "DBs"
 )
 
 // @Tags application
@@ -149,7 +149,7 @@ func GetDBsByAppID(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(appDBsJSON)
+	jsonBytes, err := s.MarshalWithFields(appDBsStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
