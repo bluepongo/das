@@ -12,10 +12,10 @@ import (
 )
 
 const (
-	appAddr       = "192.168.10.210:3306"
+	appAddr       = "127.0.0.1:3306"
 	appDBName     = "das"
-	appDBUser     = "root"
-	appDBPass     = "root"
+	appDBUser     = ""
+	appDBPass     = ""
 	onlineAppName = "2"
 	newAppName    = "testApp"
 	defaultID     = 1
@@ -57,7 +57,6 @@ func TestAppRepoAll(t *testing.T) {
 	TestAppRepo_GetAll(t)
 	TestAppRepo_GetByID(t)
 	TestAppRepo_GetAppByName(t)
-	// TestAppRepo_GetDBIDList(t)
 	TestAppRepo_Create(t)
 	TestAppRepo_Update(t)
 	TestAppRepo_Delete(t)
@@ -194,22 +193,9 @@ func TestAppRepo_GetDBsByID(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test GetDBsByID() failed", err))
 	dbs, err := appRepo.GetDBsByID(defaultID)
 	asst.Nil(err, common.CombineMessageWithError("test GetDBsByID() failed", err))
-	asst.Equal(2, len(dbs), "test GetDBsByID() failed")
+	asst.Equal(3, len(dbs), "test GetDBsByID() failed")
 
 }
-
-// func TestAppRepo_GetDBIDList(t *testing.T) {
-// 	asst := assert.New(t)
-
-// 	entity, err := createApp()
-// 	asst.Nil(err, common.CombineMessageWithError("test GetDBIDList() failed", err))
-// 	dbIDList, err := RPGetDBIDList(appRepo, entity)
-// 	asst.Nil(err, common.CombineMessageWithError("test GetDBIDList() failed", err))
-// 	asst.Equal(2, len(dbIDList), "test GetDBIDList() failed")
-// 	// delete
-// 	err = deleteAppByID(entity.Identity())
-// 	asst.Nil(err, common.CombineMessageWithError("test GetAppByName() failed", err))
-// }
 
 func TestAppRepo_AddAppDB(t *testing.T) {
 	asst := assert.New(t)
@@ -218,7 +204,7 @@ func TestAppRepo_AddAppDB(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
 	err = appRepo.AddDB(entity.Identity(), 1)
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
-	dbIDList, err := RPGetDBIDList(appRepo, entity)
+	dbIDList, err := repoGetDBIDList(appRepo, entity)
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
 	asst.Equal(1, len(dbIDList), "test AddDB() failed")
 	// delete
@@ -233,7 +219,7 @@ func TestAppRepo_DeleteAppDB(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
 	err = appRepo.DeleteDB(entity.Identity(), 3)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
-	dbIDList, err := RPGetDBIDList(appRepo, entity)
+	dbIDList, err := repoGetDBIDList(appRepo, entity)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
 	asst.Equal(0, len(dbIDList), "test DeleteDB() failed")
 	// delete
@@ -241,7 +227,7 @@ func TestAppRepo_DeleteAppDB(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
 }
 
-func RPGetDBIDList(appRepo *AppRepo, entity metadata.App) (dbIDList []int, err error) {
+func repoGetDBIDList(appRepo *AppRepo, entity metadata.App) (dbIDList []int, err error) {
 	dbs, err := appRepo.GetDBsByID(entity.Identity())
 	if err != nil {
 		return nil, err

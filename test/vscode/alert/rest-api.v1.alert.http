@@ -6,8 +6,8 @@ POST http://{{baseURL}}/api/v1/alert/email
 Content-Type: application/json
 
 {
-    "to_addrs":"allinemailtest@163.com",
-    "cc_addrs":"allinemailtest@163.com",
+    "to_addrs":"####@163.com",
+    "cc_addrs":"####@163.com",
     "subject":"api_test_sub",
     "content":"api_test_con"
 }

@@ -11,31 +11,35 @@ import (
 )
 
 const (
-	url     = "smtp.163.com"
-	toAddrs = "allinemailtest@163.com"
-	ccAddrs = "allinemailtest@163.com"
-	subject = "test subject"
-	content = "test content"
+	url       = "smtp.163.com:465"
+	userAddrs = ""
+	toAddrs   = ""
+	ccAddrs   = ""
+	subject   = "test subject"
+	content   = "test content"
+	testPass  = ""
 )
 
 const (
-	appAddr       = "192.168.10.210:3306"
-	appDBName     = "das"
-	appDBUser     = "root"
-	appDBPass     = "root"
-	onlineAppName = "2"
-	newAppName    = "testApp"
-	defaultID     = 1
+	appAddr                 = "192.168.10.210:3306"
+	appDBName               = "das"
+	appDBUser               = "root"
+	appDBPass               = "root"
+	onlineAppName           = "2"
+	newAppName              = "testApp"
+	defaultID               = 1
+	defaultAlertSMTPEnabled = true
+	defaultAlertHTTPEnabled = true
 )
 
 func initViper() {
 
-	viper.Set(config.AlertSMTPEnabledKey, config.DefaultAlertSMTPEnabled)
-	viper.Set(config.AlertSMTPAddrKey, config.DefaultAlertSMTPAddr)
-	viper.Set(config.AlertSMTPPortKey, config.DefaultAlertSMTPPort)
-	viper.Set(config.AlertSMTPUserKey, "allinemailtest@163.com")
-	viper.Set(config.AlertSMTPFromKey, "allinemailtest@163.com")
-	viper.Set(config.AlertSMTPPassKey, "WYUYDXTARACJZBKX")
+	viper.Set(config.AlertSMTPEnabledKey, defaultAlertSMTPEnabled)
+	viper.Set(config.AlertSMTPURLKey, url)
+	//
+	viper.Set(config.AlertSMTPUserKey, userAddrs)
+	viper.Set(config.AlertSMTPFromKey, toAddrs)
+	viper.Set(config.AlertSMTPPassKey, testPass)
 }
 
 func initService() (s *Service) {
@@ -105,10 +109,4 @@ func TestAlertService_saveHTTP(t *testing.T) {
 	err := s.saveHTTP(toAddrs, ccAddrs, content, "test")
 	asst.Nil(err, common.CombineMessageWithError("test saveHTTP() failed", err))
 
-}
-
-func TestGetBOOL(t *testing.T) {
-	asst := assert.New(t)
-	// asst.Equal("1", viper.GetString(config.AlertHTTPURLKey), "test viper getstring failed")
-	asst.Equal(true, viper.GetBool(config.AlertSMTPEnabledKey), "test viper getbool failed")
 }
