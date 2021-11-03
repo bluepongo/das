@@ -27,6 +27,7 @@ log/
 #other
 archive/*
 release/*
+note/*
 das.pid
 http-client.env.json
 .vscode/
