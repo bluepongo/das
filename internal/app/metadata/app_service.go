@@ -68,6 +68,12 @@ func (as *AppService) GetAppByName(appName string) error {
 
 // GetDBsByID gets databases that the app uses
 func (as *AppService) GetDBsByID(id int) error {
+	dbs, err := as.AppRepo.GetDBsByID(id)
+	if err != nil {
+		return err
+	}
+
+	as.DBs = dbs
 	return nil
 }
 

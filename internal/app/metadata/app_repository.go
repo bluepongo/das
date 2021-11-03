@@ -64,20 +64,16 @@ func (ar *AppRepo) GetAll() ([]metadata.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	// init []*AppInfo
-	appInfoList := make([]*AppInfo, result.RowNumber())
-	for i := range appInfoList {
-		appInfoList[i] = NewEmptyAppInfoWithGlobal()
-	}
-	// map to struct
-	err = result.MapToStructSlice(appInfoList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
+
 	// init []dependency.Entity
 	appList := make([]metadata.App, result.RowNumber())
 	for i := range appList {
-		appList[i] = appInfoList[i]
+		appList[i] = NewEmptyAppInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(appList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
 	}
 
 	return appList, nil
@@ -145,7 +141,42 @@ func (ar *AppRepo) GetAppByName(appName string) (metadata.App, error) {
 
 // GetDBsByID gets databases that app uses
 func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
-	return nil, nil
+	sql := `select * from t_meta_db_info where id in (select db_id from t_meta_app_db_map where app_id = ?);`
+	log.Debugf("metadata AppRepo.GetDBsByID() select sql: %s", sql)
+	result, err := ar.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	// // init []*DBInfo
+	// dbInfoList := make([]*DBInfo, result.RowNumber())
+	// for i := range dbInfoList {
+	// 	dbInfoList[i] = NewEmptyDBInfoWithGlobal()
+	// }
+	// // map to struct
+	// err = result.MapToStructSlice(dbInfoList, constant.DefaultMiddlewareTag)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// // init []dependency.Entity
+	// dbList := make([]metadata.DB, result.RowNumber())
+	// for i := range dbList {
+	// 	dbList[i] = dbInfoList[i]
+	// }
+
+	// init []dependency.Entity
+	dbList := make([]metadata.DB, result.RowNumber())
+	for i := range dbList {
+		dbList[i] = NewEmptyDBInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(dbList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return dbList, nil
+
 }
 
 // Create creates an app in the middleware

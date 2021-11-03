@@ -191,10 +191,14 @@ alert:
     # type: bool
     # default: true
     enabled: true
+    # description: specify if enables smtp email content html method,it will be plain when false
+    # type: bool
+    # default: true
+    htmlEnabled: true
     # description: specify the address of the smtp server
     # type: string
     # default: "127.0.0.1:25"
-    addr: "127.0.0.1:25"
+    url: "127.0.0.1:25"
     # description: specify the username of the smtp server
     # type: string
     # default: root

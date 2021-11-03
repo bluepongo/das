@@ -25,6 +25,7 @@ const (
 	appLevelStruct    = "Level"
 	appDelFlagStruct  = "DelFlag"
 	appDBIDListStruct = "DBIDList"
+	appDBsStruct      = "DBs"
 )
 
 // @Tags application
@@ -128,7 +129,35 @@ func GetAppByName(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [1, 2]}"
 // @Router /api/vi/metadata/app/dbs/:id [get]
 func GetDBsByAppID(c *gin.Context) {
-
+	// get param
+	idStr := c.Param(appIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewAppServiceWithDefault()
+	// get entity
+	err = s.GetDBsByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBsByID, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(appDBsStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBsByID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBsByID, id)
 }
 
 // @Tags application

@@ -41,6 +41,8 @@ func (gr *GinRouter) Register() {
 	api := gr.Engine.Group("/api")
 	v1 := api.Group("/v1")
 	{
+		// alert
+		RegisterAlert(v1)
 		// metadata
 		RegisterMetadata(v1)
 		// healthcheck

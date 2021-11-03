@@ -12,9 +12,14 @@ Accept: application/json
 GET http://{{baseURL}}/api/v1/metadata/app/app-name/test
 Accept: application/json
 
-### metadata.GetDBIDList !!!
-GET http://{{baseURL}}/api/v1/metadata/app/dbs/1
+# ### metadata.GetDBIDList !!!
+# GET http://{{baseURL}}/api/v1/metadata/app/dbs/1
+# Accept: application/json
+
+### metadata.GetDBsByAppID
+GET http://{{baseURL}}/api/v1/metadata//app/db/1
 Accept: application/json
+
 
 ### metadata.AddApp
 POST http://{{baseURL}}/api/v1/metadata/app
