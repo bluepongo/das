@@ -11,45 +11,38 @@ import (
 )
 
 const (
-	url       = "smtp.163.com:465"
-	userAddrs = ""
-	toAddrs   = ""
-	ccAddrs   = ""
-	subject   = "test subject"
-	content   = "test content"
-	testPass  = ""
-)
+	// before executing unit test, please modify these test constants appropriately
+	testSMTPURL  = "smtp.163.com:465"
+	testSMTPUser = "dastest"
+	testSMTPPass = "dastest"
+	testSMTPFrom = "dastest@163.com"
 
-const (
-	appAddr                     = "192.168.10.210:3306"
-	appDBName                   = "das"
-	appDBUser                   = "root"
-	appDBPass                   = "root"
-	onlineAppName               = "2"
-	newAppName                  = "testApp"
-	defaultID                   = 1
-	defaultAlertSMTPEnabled     = true
-	defaultAlertSMTPHTMLEnabled = true
-	defaultAlertHTTPEnabled     = true
+	testToAddrs = "dastest@163.com"
+	testCCAddrs = "dastest@163.com"
+	testSubject = "test subject"
+	testContent = "test content"
+
+	testDASAddr   = "127.0.0.1:3306"
+	testDASDBName = "das"
+	testDASDBUser = "root"
+	testDASDBPass = "root"
 )
 
 func initViper() {
-
-	viper.Set(config.AlertSMTPEnabledKey, defaultAlertSMTPEnabled)
-	viper.Set(config.AlertSMTPFormatKey, defaultAlertSMTPHTMLEnabled)
-	viper.Set(config.AlertSMTPURLKey, url)
-	//
-	viper.Set(config.AlertSMTPUserKey, userAddrs)
-	viper.Set(config.AlertSMTPFromKey, toAddrs)
-	viper.Set(config.AlertSMTPPassKey, testPass)
+	viper.Set(config.AlertSMTPEnabledKey, true)
+	viper.Set(config.AlertSMTPFormatKey, config.AlertSMTPHTMLFormat)
+	viper.Set(config.AlertSMTPURLKey, testSMTPURL)
+	viper.Set(config.AlertSMTPUserKey, testSMTPUser)
+	viper.Set(config.AlertSMTPPassKey, testSMTPPass)
+	viper.Set(config.AlertSMTPFromKey, testSMTPFrom)
 }
 
 func initService() (s *Service) {
 	initViper()
-	config := NewConfigFromFile()
+	cfg := NewConfigFromFile()
 	cr := NewRepositoryWithGlobal()
-	s = newService(cr, config)
-	pool, _ := mysql.NewPoolWithDefault(appAddr, appDBName, appDBUser, appDBPass)
+	s = newService(cr, cfg)
+	pool, _ := mysql.NewPoolWithDefault(testDASAddr, testDASDBName, testDASDBUser, testDASDBPass)
 	s.Repository = NewRepository(pool)
 	return
 
@@ -68,8 +61,8 @@ func TestAlertService_SendEmail(t *testing.T) {
 	asst := assert.New(t)
 
 	s := initService()
-	s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
-	err := s.SendEmail(toAddrs, ccAddrs, subject, content)
+	s.setupSMTPConfig(testToAddrs, testCCAddrs, testSubject, testContent)
+	err := s.SendEmail(testToAddrs, testCCAddrs, testSubject, testContent)
 	asst.Nil(err, common.CombineMessageWithError("test SendEmail() failed", err))
 }
 
@@ -77,8 +70,8 @@ func TestAlertService_sendViaSMTP(t *testing.T) {
 	asst := assert.New(t)
 
 	s := initService()
-	s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
-	err := s.sendViaSMTP(toAddrs, ccAddrs, subject, content)
+	s.setupSMTPConfig(testToAddrs, testCCAddrs, testSubject, testContent)
+	err := s.sendViaSMTP(testToAddrs, testCCAddrs, testSubject, testContent)
 	asst.Nil(err, common.CombineMessageWithError("test sendViaSMTP() failed", err))
 
 }
@@ -87,8 +80,8 @@ func TestAlertService_sendViaHTTP(t *testing.T) {
 	asst := assert.New(t)
 
 	s := initService()
-	s.setupHTTPConfig(toAddrs, ccAddrs, content)
-	err := s.sendViaHTTP(toAddrs, ccAddrs, content)
+	s.setupHTTPConfig(testToAddrs, testCCAddrs, testContent)
+	err := s.sendViaHTTP(testToAddrs, testCCAddrs, testContent)
 	asst.Nil(err, common.CombineMessageWithError("test sendViaHTTP() failed", err))
 
 }
@@ -97,8 +90,8 @@ func TestAlertService_saveSMTP(t *testing.T) {
 	asst := assert.New(t)
 
 	s := initService()
-	s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
-	err := s.saveSMTP(toAddrs, ccAddrs, subject, content, "test")
+	s.setupSMTPConfig(testToAddrs, testCCAddrs, testSubject, testContent)
+	err := s.saveSMTP(testToAddrs, testCCAddrs, testSubject, testContent, "test")
 	asst.Nil(err, common.CombineMessageWithError("test saveSMTP() failed", err))
 
 }
@@ -107,8 +100,8 @@ func TestAlertService_saveHTTP(t *testing.T) {
 	asst := assert.New(t)
 
 	s := initService()
-	s.setupHTTPConfig(toAddrs, ccAddrs, content)
-	err := s.saveHTTP(toAddrs, ccAddrs, content, "test")
+	s.setupHTTPConfig(testToAddrs, testCCAddrs, testContent)
+	err := s.saveHTTP(testToAddrs, testCCAddrs, testContent, "test")
 	asst.Nil(err, common.CombineMessageWithError("test saveHTTP() failed", err))
 
 }

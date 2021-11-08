@@ -18,7 +18,7 @@ const (
 	subjectJSON          = "subject"
 	smtpUserJSON         = "user"
 	smtpPassJSON         = "pass"
-	defaultSubjectNil    = ""
+	smtpFromAddrJson     = "from_address"
 	defaultPassEncrypted = "****"
 )
 
@@ -78,9 +78,12 @@ func (s *Service) sendViaSMTP(toAddrs, ccAddrs, subject, content string) error {
 	var message string
 	// setup config
 	s.setupConfig(toAddrs, ccAddrs, subject, content)
-	sender := NewSMTPSenderWithDefault(s.GetConfig())
+	sender, err := NewSMTPSenderWithDefault(s.GetConfig())
+	if err != nil {
+		return err
+	}
 	// send email
-	err := sender.Send()
+	err = sender.Send()
 	if err != nil {
 		message = err.Error()
 		merr = multierror.Append(merr, err)
@@ -99,7 +102,7 @@ func (s *Service) sendViaHTTP(toAddrs, ccAddrs, content string) error {
 	merr := &multierror.Error{}
 	var message string
 	// setup config
-	s.setupConfig(toAddrs, ccAddrs, defaultSubjectNil, content)
+	s.setupConfig(toAddrs, ccAddrs, constant.EmptyString, content)
 	sender := NewHTTPSenderWithDefault(s.GetConfig())
 	// send email
 	err := sender.Send()
@@ -108,7 +111,7 @@ func (s *Service) sendViaHTTP(toAddrs, ccAddrs, content string) error {
 		merr = multierror.Append(merr, err)
 	}
 	// save result
-	err = s.Save(toAddrs, ccAddrs, defaultSubjectNil, content, message)
+	err = s.Save(toAddrs, ccAddrs, constant.EmptyString, content, message)
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
@@ -161,13 +164,12 @@ func (s *Service) Save(toAddrs, ccAddrs, subject, content, message string) error
 
 // saveSMTP saves the sending results which was done via smtp server to the middleware
 func (s *Service) saveSMTP(toAddrs, ccAddrs, subject, content, message string) error {
+	// encrypt password with simple string
 	s.GetConfig().Set(smtpPassJSON, defaultPassEncrypted)
 	cfg, err := json.Marshal(s.GetConfig())
 	if err != nil {
 		return err
 	}
-
-	// delete the password in the config for security
 
 	return s.GetRepository().Save(
 		viper.GetString(config.AlertHTTPURLKey),
@@ -182,7 +184,6 @@ func (s *Service) saveSMTP(toAddrs, ccAddrs, subject, content, message string) e
 
 // saveHTTP saves the sending results which was done via calling http api to the middleware
 func (s *Service) saveHTTP(toAddrs, ccAddrs, content, message string) error {
-
 	cfg, err := json.Marshal(s.GetConfig())
 	if err != nil {
 		return err

@@ -21,13 +21,13 @@ func TestRepository_Execute(t *testing.T) {
 	asst := assert.New(t)
 
 	s := initService()
-	s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
+	s.setupSMTPConfig(testToAddrs, testCCAddrs, testSubject, testContent)
 	sr := s.Repository
 	sql := `
 	insert into t_alert_operation_info(url, to_addrs, cc_addrs, subject, content, config, message)
 	values(?, ?, ?, ?, ?, ?, ?);
 `
-	_, err := sr.Execute(sql, url, toAddrs, ccAddrs, subject, content, cfg, message)
+	_, err := sr.Execute(sql, testSMTPURL, testToAddrs, testCCAddrs, testSubject, testContent, cfg, message)
 
 	asst.Nil(err, common.CombineMessageWithError("test Save() failed", err))
 
@@ -37,14 +37,13 @@ func TestRepository_Save(t *testing.T) {
 	asst := assert.New(t)
 
 	s := initService()
-	s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
+	s.setupSMTPConfig(testToAddrs, testCCAddrs, testSubject, testContent)
 	sr := s.Repository
-	err := sr.Save(url, toAddrs, ccAddrs, subject, content, cfg, message)
+	err := sr.Save(testSMTPURL, testToAddrs, testCCAddrs, testSubject, testContent, cfg, message)
 	asst.Nil(err, common.CombineMessageWithError("test Save() failed", err))
 
-	s.setupHTTPConfig(toAddrs, ccAddrs, content)
-	err = sr.Save(url, toAddrs, ccAddrs, subject, content, cfg, message)
+	s.setupHTTPConfig(testToAddrs, testCCAddrs, testContent)
+	err = sr.Save(testHTTPURL, testToAddrs, testCCAddrs, testSubject, testContent, cfg, message)
 
 	asst.Nil(err, common.CombineMessageWithError("test Save() failed", err))
-
 }

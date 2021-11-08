@@ -35,7 +35,7 @@ import (
 var (
 	ValidLogLevels                 = []string{"debug", "info", "warn", "warning", "error", "fatal"}
 	ValidLogFormats                = []string{"text", "json"}
-	ValidAlertSTMPFormat           = []string{"text", "html"}
+	ValidAlertSTMPFormat           = []string{AlertSMTPTextFormat, AlertSMTPHTMLFormat}
 	ValidHealthcheckAlertOwnerType = []string{HealthcheckAlertOwnerTypeApp, HealthcheckAlertOwnerTypeDB, HealthcheckAlertOwnerTypeAll}
 )
 

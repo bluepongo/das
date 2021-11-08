@@ -10,20 +10,21 @@ import (
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/dependency/alert"
 	"github.com/romberli/go-util/constant"
-	"github.com/romberli/log"
 	"github.com/spf13/viper"
 )
 
 const (
-	defaultAlertSMTPFromName     = "DAS"
-	defaultAlertSMTPContentHTML  = "text/html; charset=UTF-8"
-	defaultAlertSMTPContentPLAIN = "text/plain; charset=UTF-8"
+	defaultAlertSMTPFromName    = "DAS"
+	defaultAlertSMTPContentText = "text/plain; charset=UTF-8"
+	defaultAlertSMTPContentHTML = "text/html; charset=UTF-8"
 
 	headerFrom        = "From"
 	headerTo          = "To"
 	headerCc          = "Cc"
 	headerSubject     = "Subject"
 	headerContentType = "Content-Type"
+
+	crlfString = "\r\n"
 )
 
 var (
@@ -42,11 +43,33 @@ func NewSMTPSender(client *smtp.Client, cfg alert.Config, url string) alert.Send
 }
 
 // NewSMTPSenderWithDefault returns a new alert.Sender with default SMTP client
-func NewSMTPSenderWithDefault(cfg alert.Config) alert.Sender {
+func NewSMTPSenderWithDefault(cfg alert.Config) (alert.Sender, error) {
 	url := viper.GetString(config.AlertSMTPURLKey)
-	client := Dial(url)
+	host, _, _ := net.SplitHostPort(url)
+	// init tls connection
+	conn, err := tls.Dial(constant.TransportProtocolTCP, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	// get smtp client
+	client, err := smtp.NewClient(conn, host)
+	if err != nil {
+		return nil, err
+	}
+	// auth
+	err = client.Auth(
+		smtp.PlainAuth(
+			constant.EmptyString,
+			viper.GetString(config.AlertSMTPUserKey),
+			viper.GetString(config.AlertSMTPPassKey),
+			host,
+		),
+	)
+	if err != nil {
+		return nil, err
+	}
 
-	return newSMTPSender(client, cfg, url)
+	return newSMTPSender(client, cfg, url), nil
 }
 
 // newSMTPSender returns a new *SMTPSender
@@ -56,23 +79,6 @@ func newSMTPSender(client *smtp.Client, cfg alert.Config, url string) *SMTPSende
 		config: cfg,
 		url:    url,
 	}
-}
-
-// Dial return a smtp client
-func Dial(url string) *smtp.Client {
-	conn, err := tls.Dial("tcp", url, nil)
-	if err != nil {
-		log.Errorf("Dialing Error:%s", err.Error())
-		return nil
-	}
-
-	host, _, _ := net.SplitHostPort(url)
-	client, err := smtp.NewClient(conn, host)
-	if err != nil {
-		log.Errorf("Dialing Error:%s", err.Error())
-		return nil
-	}
-	return client
 }
 
 // GetClient returns the smtp client
@@ -90,94 +96,38 @@ func (ss *SMTPSender) GetURL() string {
 	return ss.url
 }
 
-// setHeader set a SMTPSender header
-func (ss *SMTPSender) setHeader() map[string]string {
-	header := make(map[string]string)
-
-	header[headerFrom] = fmt.Sprintf("%s<%s>", defaultAlertSMTPFromName, ss.GetConfig().Get(smtpUserJSON))
-	header[headerTo] = ss.GetConfig().Get(toAddrsJSON)
-	header[headerCc] = ss.GetConfig().Get(ccAddrsJSON)
-	header[headerSubject] = ss.GetConfig().Get(subjectJSON)
-	if viper.GetBool(config.AlertSMTPFormatKey) {
-		header[headerContentType] = defaultAlertSMTPContentHTML
-	}
-	if !viper.GetBool(config.AlertSMTPFormatKey) {
-		header[headerContentType] = defaultAlertSMTPContentPLAIN
-	}
-	return header
-}
-
-// makeAuth returns an SMTP Auth
-func (ss *SMTPSender) makeAuth() smtp.Auth {
-	host, _, _ := net.SplitHostPort(ss.GetURL())
-	return smtp.PlainAuth(
-		constant.EmptyString,
-		ss.GetConfig().Get(smtpUserJSON),
-		ss.GetConfig().Get(smtpPassJSON),
-		host,
+// Send sends the email via the api calling
+func (ss *SMTPSender) Send() error {
+	return ss.sendMail(
+		ss.GetConfig().Get(smtpFromAddrJson),
+		strings.Split(ss.GetConfig().Get(toAddrsJSON), constant.CommaString),
+		strings.Split(ss.GetConfig().Get(ccAddrsJSON), constant.CommaString),
+		ss.buildMessage(),
 	)
 }
 
-// spiltAddr splits multi Address
-func spiltAddr(addrs string) (addrList []string) {
-	return strings.Split(addrs, ";")
-}
-
-// makeMessage return msg
-func (ss *SMTPSender) makeMessage(header map[string]string) (msg []byte) {
-	message := constant.EmptyString
-	for k, v := range header {
-		message += fmt.Sprintf("%s: %s\r\n", k, v)
-	}
-	message += "\r\n" + ss.GetConfig().Get(contentJSON)
-	return []byte(message)
-}
-
-// Send sends the email via the api calling
-func (ss *SMTPSender) Send() error {
-	// init header
-	header := ss.setHeader()
-
-	auth := ss.makeAuth()
-	return sendMailUsingTLS(ss.GetURL(),
-		auth, ss.GetConfig().Get(smtpUserJSON),
-		spiltAddr(ss.GetConfig().Get(toAddrsJSON)),
-		spiltAddr(ss.GetConfig().Get(ccAddrsJSON)), ss.makeMessage(header))
-}
-
-// sendMailUsingTLS sends mail using TLS
-func sendMailUsingTLS(addr string, auth smtp.Auth, from string,
-	to []string, cc []string, msg []byte) (err error) {
-	// create smtp client
-	c := Dial(addr)
-
-	defer c.Close()
-	if auth != nil {
-		if ok, _ := c.Extension("AUTH"); ok {
-			if err = c.Auth(auth); err != nil {
-				log.Errorf("Error during AUTH %s", err.Error())
-				return err
-			}
-		}
-	}
-	if err = c.Mail(from); err != nil {
-		return err
-	}
-	for _, addr := range to {
-		if err = c.Rcpt(addr); err != nil {
-			return err
-		}
-	}
-	for _, addr := range cc {
-		if err = c.Rcpt(addr); err != nil {
-			return err
-		}
-	}
-	w, err := c.Data()
+// sendMail sends mail
+func (ss *SMTPSender) sendMail(from string, toList []string, ccList []string, message []byte) error {
+	err := ss.GetClient().Mail(from)
 	if err != nil {
 		return err
 	}
-	_, err = w.Write(msg)
+	for _, to := range toList {
+		if err = ss.GetClient().Rcpt(to); err != nil {
+			return err
+		}
+	}
+	for _, cc := range ccList {
+		if err = ss.GetClient().Rcpt(cc); err != nil {
+			return err
+		}
+	}
+
+	w, err := ss.GetClient().Data()
+	if err != nil {
+		return err
+	}
+	_, err = w.Write(message)
 	if err != nil {
 		return err
 	}
@@ -185,5 +135,39 @@ func sendMailUsingTLS(addr string, auth smtp.Auth, from string,
 	if err != nil {
 		return err
 	}
-	return c.Quit()
+
+	return ss.GetClient().Quit()
+}
+
+// buildMessage return msg
+func (ss *SMTPSender) buildMessage() []byte {
+	message := constant.EmptyString
+
+	for k, v := range ss.buildHeader() {
+		message += fmt.Sprintf("%s: %s\r\n", k, v)
+	}
+
+	// message += crlfString + ss.GetConfig().Get(contentJSON)
+	message += fmt.Sprintf("\r\n%s", ss.GetConfig().Get(contentJSON))
+
+	return []byte(message)
+}
+
+// buildHeader returns an SMTPSender header
+func (ss *SMTPSender) buildHeader() map[string]string {
+	header := make(map[string]string)
+
+	header[headerFrom] = fmt.Sprintf("%s<%s>", defaultAlertSMTPFromName, ss.GetConfig().Get(smtpFromAddrJson))
+	header[headerTo] = ss.GetConfig().Get(toAddrsJSON)
+	header[headerCc] = ss.GetConfig().Get(ccAddrsJSON)
+	header[headerSubject] = ss.GetConfig().Get(subjectJSON)
+
+	switch viper.GetString(config.AlertSMTPFormatKey) {
+	case config.AlertSMTPTextFormat:
+		header[headerContentType] = defaultAlertSMTPContentText
+	case config.AlertSMTPHTMLFormat:
+		header[headerContentType] = defaultAlertSMTPContentHTML
+	}
+
+	return header
 }

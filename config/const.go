@@ -65,7 +65,9 @@ const (
 	DefaultDBSoarMySQLUser           = "root"
 	DefaultDBSoarMySQLPass           = "root"
 	DefaultAlertSMTPEnabled          = true
-	DefaultAlterSMTPFormat           = "text"
+	AlertSMTPTextFormat              = "text"
+	AlertSMTPHTMLFormat              = "html"
+	DefaultAlterSMTPFormat           = AlertSMTPTextFormat
 	DefaultAlertSMTPURL              = "127.0.0.1:25"
 	DefaultAlertSMTPUser             = "root"
 	DefaultAlertSMTPPass             = "root"
