@@ -36,7 +36,7 @@ const (
 func initViper() {
 
 	viper.Set(config.AlertSMTPEnabledKey, defaultAlertSMTPEnabled)
-	viper.Set(config.AlertSMTPHTMLEnabledKey, defaultAlertSMTPHTMLEnabled)
+	viper.Set(config.AlertSMTPFormatKey, defaultAlertSMTPHTMLEnabled)
 	viper.Set(config.AlertSMTPURLKey, url)
 	//
 	viper.Set(config.AlertSMTPUserKey, userAddrs)

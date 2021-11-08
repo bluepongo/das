@@ -35,6 +35,7 @@ import (
 var (
 	ValidLogLevels                 = []string{"debug", "info", "warn", "warning", "error", "fatal"}
 	ValidLogFormats                = []string{"text", "json"}
+	ValidAlertSTMPFormat           = []string{"text", "html"}
 	ValidHealthcheckAlertOwnerType = []string{HealthcheckAlertOwnerTypeApp, HealthcheckAlertOwnerTypeDB, HealthcheckAlertOwnerTypeAll}
 )
 
@@ -80,7 +81,7 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(DBSoarMySQLPassKey, DefaultDBPass)
 	// alert
 	viper.SetDefault(AlertSMTPEnabledKey, DefaultAlertSMTPEnabled)
-	viper.SetDefault(AlertSMTPHTMLEnabledKey, DefaultAlterSMTPHTMLEnabled)
+	viper.SetDefault(AlertSMTPFormatKey, DefaultAlterSMTPFormat)
 	viper.SetDefault(AlertSMTPURLKey, DefaultAlertSMTPURL)
 	viper.SetDefault(AlertSMTPUserKey, DefaultAlertSMTPUser)
 	viper.SetDefault(AlertSMTPPassKey, DefaultAlertSMTPPass)
@@ -247,7 +248,7 @@ func ValidateServer() error {
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
-	serverAddrList := strings.Split(serverAddr, ":")
+	serverAddrList := strings.Split(serverAddr, constant.ColonString)
 
 	switch len(serverAddrList) {
 	case 2:
@@ -306,7 +307,7 @@ func ValidateDatabase() error {
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
-	dasAddr := strings.Split(dbDASAddr, ":")
+	dasAddr := strings.Split(dbDASAddr, constant.ColonString)
 	if len(dasAddr) != 2 {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbDASAddr))
 	} else {
@@ -456,10 +457,17 @@ func ValidateAlert() error {
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
-	// validate alert.smtp.htmlEnabled
-	_, err = cast.ToBoolE(viper.Get(AlertSMTPHTMLEnabledKey))
+	// validate alert.smtp.format
+	format, err := cast.ToStringE(viper.Get(AlertSMTPFormatKey))
 	if err != nil {
 		merr = multierror.Append(merr, err)
+	}
+	valid, err := common.ElementInSlice(ValidAlertSTMPFormat, format)
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+	if !valid {
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidAlertSMTPFormat, format))
 	}
 	// validate alert.smtp.addr
 	_, err = cast.ToStringE(viper.Get(AlertSMTPURLKey))

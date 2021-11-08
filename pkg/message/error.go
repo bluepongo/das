@@ -54,15 +54,16 @@ const (
 	ErrTypeConversion                    = 400047
 	ErrNotValidTimeLayout                = 400048
 	ErrNotValidTimeDuration              = 400049
-	ErrNotValidAlertHTTPURL              = 400050
-	ErrNotValidAlertConfig               = 400051
-	ErrNotValidHealthcheckAlertOwnerType = 400052
-	ErrEmptySoarBin                      = 400053
-	ErrNotValidSoarBin                   = 400054
-	ErrEmptySoarConfig                   = 400055
-	ErrNotValidSoarConfig                = 400056
-	ErrEmptySoarBlacklist                = 400057
-	ErrNotValidSoarBlacklist             = 400058
+	ErrNotValidAlertSMTPFormat           = 400050
+	ErrNotValidAlertHTTPURL              = 400051
+	ErrNotValidAlertConfig               = 400052
+	ErrNotValidHealthcheckAlertOwnerType = 400053
+	ErrEmptySoarBin                      = 400054
+	ErrNotValidSoarBin                   = 400055
+	ErrEmptySoarConfig                   = 400056
+	ErrNotValidSoarConfig                = 400057
+	ErrEmptySoarBlacklist                = 400058
+	ErrNotValidSoarBlacklist             = 400059
 )
 
 func initErrorMessage() {
@@ -70,7 +71,7 @@ func initErrorMessage() {
 	Messages[ErrEmptyLogFileName] = config.NewErrMessage(DefaultMessageHeader, ErrEmptyLogFileName, "Log file name could not be an empty string")
 	Messages[ErrNotValidLogFileName] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidLogFileName, "Log file name must be either unix or windows path format, %s is not valid")
 	Messages[ErrNotValidLogLevel] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidLogLevel, "Log level must be one of [debug, info, warn, message, fatal], %s is not valid")
-	Messages[ErrNotValidLogFormat] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidLogFormat, "Log level must be either text or json, %s is not valid")
+	Messages[ErrNotValidLogFormat] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidLogFormat, "Log format must be either text or json, %s is not valid")
 	Messages[ErrNotValidLogMaxSize] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidLogMaxSize, "Log max size must be between %d and %d, %d is not valid")
 	Messages[ErrNotValidLogMaxDays] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidLogMaxDays, "Log max days must be between %d and %d, %d is not valid")
 	Messages[ErrNotValidLogMaxBackups] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidLogMaxBackups, "Log max backups must be between %d and %d, %d is not valid")
@@ -115,6 +116,7 @@ func initErrorMessage() {
 	Messages[ErrTypeConversion] = config.NewErrMessage(DefaultMessageHeader, ErrTypeConversion, "type conversion failed.\n%s")
 	Messages[ErrNotValidTimeLayout] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidTimeLayout, "time layout must be formatted as yyyy-MM-dd HH:mm:ss, %s is not valid")
 	Messages[ErrNotValidTimeDuration] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidTimeDuration, "time duration must be formatted, e.g. such as 300ms, -1.5h or 2h45m, %s is not valid")
+	Messages[ErrNotValidAlertSMTPFormat] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidAlertSMTPFormat, "alert smtp format must be either text or html, %s is not valid")
 	Messages[ErrNotValidAlertHTTPURL] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidAlertHTTPURL, "alert http url must be a url, %s is not valid")
 	Messages[ErrNotValidAlertConfig] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidAlertConfig, "got error shen when converting to map[string]string")
 	Messages[ErrNotValidHealthcheckAlertOwnerType] = config.NewErrMessage(DefaultMessageHeader, ErrNotValidHealthcheckAlertOwnerType, "healthcheck alert owner type must be one of [app, db, all], %s is not valid")

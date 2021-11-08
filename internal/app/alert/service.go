@@ -76,10 +76,10 @@ func (s *Service) SendEmail(toAddrs, ccAddrs, subject, content string) error {
 func (s *Service) sendViaSMTP(toAddrs, ccAddrs, subject, content string) error {
 	merr := &multierror.Error{}
 	var message string
-	//setup config
+	// setup config
 	s.setupConfig(toAddrs, ccAddrs, subject, content)
 	sender := NewSMTPSenderWithDefault(s.GetConfig())
-	//send email
+	// send email
 	err := sender.Send()
 	if err != nil {
 		message = err.Error()
@@ -146,17 +146,17 @@ func (s *Service) setupSMTPConfig(toAddrs, ccAddrs, subject, content string) {
 	s.GetConfig().Set(contentJSON, content)
 }
 
-// Save save the email Info
+// Save saves the email into the middleware
 func (s *Service) Save(toAddrs, ccAddrs, subject, content, message string) error {
 	smtpEnabled := viper.GetBool(config.AlertSMTPEnabledKey)
 	httpEnabled := viper.GetBool(config.AlertHTTPEnabledKey)
 	if smtpEnabled {
 		return s.saveSMTP(toAddrs, ccAddrs, subject, content, message)
 	}
-	if !smtpEnabled && httpEnabled {
+	if httpEnabled {
 		return s.saveHTTP(toAddrs, ccAddrs, content, message)
 	}
-	return errors.New("none of smtp or http is enabled, can not send email")
+	return errors.New("none of smtp or http is enabled, can not save the email")
 }
 
 // saveSMTP saves the sending results which was done via smtp server to the middleware

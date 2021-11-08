@@ -42,7 +42,7 @@ log:
   # default: 7
   maxDays: 7
   # description: specify how many files will be kept after rotating,
-  # oldest log files will be removed automatically.
+  # the oldest log files will be removed automatically.
   # type: int
   # default: 5
   maxBackups: 5
@@ -191,10 +191,11 @@ alert:
     # type: bool
     # default: true
     enabled: true
-    # description: specify if enables smtp email content html method,it will be plain when false
-    # type: bool
-    # default: true
-    htmlEnabled: true
+    # description: specify the email content format
+    # type: string
+    # available: [text, html]
+    # default: html
+    format: html
     # description: specify the address of the smtp server
     # type: string
     # default: "127.0.0.1:25"

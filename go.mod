@@ -14,7 +14,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/hashicorp/go-version v1.2.0
 	github.com/jinzhu/now v1.1.2
-	github.com/romberli/go-util v0.3.12-0.20211026014150-d3d2c6457cf6
+	github.com/romberli/go-util v0.0.0-20211108022310-8f79dafc3b7b
 	github.com/romberli/log v1.0.20
 	github.com/spf13/cast v1.4.1
 	github.com/spf13/cobra v1.2.1
@@ -24,6 +24,4 @@ require (
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
 	go.uber.org/zap v1.19.1
-	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
-	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 )

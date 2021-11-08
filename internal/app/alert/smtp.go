@@ -3,10 +3,9 @@ package alert
 import (
 	"crypto/tls"
 	"fmt"
-	"strings"
-
 	"net"
 	"net/smtp"
+	"strings"
 
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/dependency/alert"
@@ -20,11 +19,11 @@ const (
 	defaultAlertSMTPContentHTML  = "text/html; charset=UTF-8"
 	defaultAlertSMTPContentPLAIN = "text/plain; charset=UTF-8"
 
-	headerFromStruct        = "From"
-	headerToStruct          = "To"
-	headerCcStruct          = "Cc"
-	headerSubjectStruct     = "Subject"
-	headerContentTypeStruct = "Content-Type"
+	headerFrom        = "From"
+	headerTo          = "To"
+	headerCc          = "Cc"
+	headerSubject     = "Subject"
+	headerContentType = "Content-Type"
 )
 
 var (
@@ -94,31 +93,32 @@ func (ss *SMTPSender) GetURL() string {
 // setHeader set a SMTPSender header
 func (ss *SMTPSender) setHeader() map[string]string {
 	header := make(map[string]string)
-	header[headerFromStruct] = defaultAlertSMTPFromName +
-		"<" + ss.GetConfig().Get(smtpUserJSON) + ">"
-	header[headerToStruct] = ss.GetConfig().Get(toAddrsJSON)
-	header[headerCcStruct] = ss.GetConfig().Get(ccAddrsJSON)
-	header[headerSubjectStruct] = ss.GetConfig().Get(subjectJSON)
-	if viper.GetBool(config.AlertSMTPHTMLEnabledKey) {
-		header[headerContentTypeStruct] = defaultAlertSMTPContentHTML
+
+	header[headerFrom] = fmt.Sprintf("%s<%s>", defaultAlertSMTPFromName, ss.GetConfig().Get(smtpUserJSON))
+	header[headerTo] = ss.GetConfig().Get(toAddrsJSON)
+	header[headerCc] = ss.GetConfig().Get(ccAddrsJSON)
+	header[headerSubject] = ss.GetConfig().Get(subjectJSON)
+	if viper.GetBool(config.AlertSMTPFormatKey) {
+		header[headerContentType] = defaultAlertSMTPContentHTML
 	}
-	if !viper.GetBool(config.AlertSMTPHTMLEnabledKey) {
-		header[headerContentTypeStruct] = defaultAlertSMTPContentPLAIN
+	if !viper.GetBool(config.AlertSMTPFormatKey) {
+		header[headerContentType] = defaultAlertSMTPContentPLAIN
 	}
 	return header
 }
 
-// makeAuth returns a SMTP Auth
+// makeAuth returns an SMTP Auth
 func (ss *SMTPSender) makeAuth() smtp.Auth {
-	url := ss.GetURL()
-	host, _, _ := net.SplitHostPort(url)
-	return smtp.PlainAuth(constant.EmptyString,
+	host, _, _ := net.SplitHostPort(ss.GetURL())
+	return smtp.PlainAuth(
+		constant.EmptyString,
 		ss.GetConfig().Get(smtpUserJSON),
 		ss.GetConfig().Get(smtpPassJSON),
-		host)
+		host,
+	)
 }
 
-// spiltAddr spilts multi Address
+// spiltAddr splits multi Address
 func spiltAddr(addrs string) (addrList []string) {
 	return strings.Split(addrs, ";")
 }
@@ -148,7 +148,7 @@ func (ss *SMTPSender) Send() error {
 // sendMailUsingTLS sends mail using TLS
 func sendMailUsingTLS(addr string, auth smtp.Auth, from string,
 	to []string, cc []string, msg []byte) (err error) {
-	//create smtp client
+	// create smtp client
 	c := Dial(addr)
 
 	defer c.Close()

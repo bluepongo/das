@@ -38,6 +38,6 @@ type Service interface {
 	GetConfig() Config
 	// SendEmail sends the email
 	SendEmail(toAddrs, ccAddrs, subject, content string) error
-	// Save save the email Info
+	// Save saves the email into the middleware
 	Save(toAddrs, ccAddrs, subject, content, message string) error
 }
