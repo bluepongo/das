@@ -1,7 +1,6 @@
 package metadata
 
 import (
-	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -107,25 +106,14 @@ func TestAppService_Delete(t *testing.T) {
 }
 
 func TestAppService_Marshal(t *testing.T) {
-	var entitiesUnmarshal []AppInfo
-
 	asst := assert.New(t)
 
 	s := NewAppService(appRepo)
 	err := s.GetAll()
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	data, err := s.Marshal()
-	jsonStr := string(data)
-	fmt.Println(jsonStr)
+	t.Log(string(data))
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
-	err = json.Unmarshal(data, &entitiesUnmarshal)
-	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
-	// entities := s.GetApps()
-	// for i := 0; i < len(entities); i++ {
-	// 	entity := entities[i]
-	// 	entityUnmarshal := entitiesUnmarshal[i]
-	// 	asst.True(appSystemStructEqual(entity.(*AppInfo), entityUnmarshal), common.CombineMessageWithError("test Marshal() failed", err))
-	// }
 }
 
 func TestAppService_MarshalWithFields(t *testing.T) {
@@ -135,11 +123,11 @@ func TestAppService_MarshalWithFields(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
 	s := NewAppService(appRepo)
 	err = s.GetByID(entity.Identity())
-	dataService, err := s.MarshalWithFields(appAppNameStruct)
+	dataService, err := s.MarshalWithFields(appAppsStruct)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
-	dataEntity, err := entity.MarshalJSONWithFields(appAppNameStruct)
+	dataEntity, err := entity.MarshalJSON()
 	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
-	asst.Equal(string(dataService), fmt.Sprintf("[%s]", string(dataEntity)))
+	asst.Equal(string(dataService), fmt.Sprintf(`{"apps":[%s]}`, string(dataEntity)))
 	// delete
 	err = deleteAppByID(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))

@@ -14,8 +14,8 @@ import (
 const (
 	appAddr       = "127.0.0.1:3306"
 	appDBName     = "das"
-	appDBUser     = ""
-	appDBPass     = ""
+	appDBUser     = "root"
+	appDBPass     = "root"
 	onlineAppName = "2"
 	newAppName    = "testApp"
 	defaultID     = 1
