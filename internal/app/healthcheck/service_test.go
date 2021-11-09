@@ -12,20 +12,10 @@ import (
 )
 
 const (
-	idStruct             = "id"
-	clusterIDStruct      = "ClusterID"
-	serverNameStruct     = "ServerName"
-	hostIPStruct         = "HostIP"
-	portNumStruct        = "PortNum"
-	deploymentTypeStruct = "DeploymentType"
-	versionStruct        = "Version"
-
-	defaultMySQLServerInfoClusterID      = 1
-	defaultMySQLServerInfoServerName     = "server1"
-	defaultMySQLServerInfoHostIP         = "127.0.0.1"
-	defaultMySQLServerInfoPortNum        = 3307
-	defaultMySQLServerInfoDeploymentType = 1
-	defaultMySQLServerInfoVersion        = "1.1.1"
+	testSoarBin    = "/Users/romber/work/source_code/go/src/github.com/romberli/das/bin/soar"
+	testSoarConfig = "/Users/romber/work/source_code/go/src/github.com/romberli/das/config/soar.yaml"
+	testDBUSer     = "root"
+	testDBPass     = "root"
 
 	testSMTPURL  = "smtp.163.com:465"
 	testSMTPUser = "allinemailtest@163.com"
@@ -108,6 +98,13 @@ func initViper() {
 	viper.Set(config.AlertSMTPUserKey, testSMTPUser)
 	viper.Set(config.AlertSMTPPassKey, testSMTPPass)
 	viper.Set(config.AlertSMTPFromKey, testSMTPFrom)
+
+	// sqladvisor
+	viper.Set(config.SQLAdvisorSoarBinKey, testSoarBin)
+	viper.Set(config.SQLAdvisorSoarConfigKey, testSoarConfig)
+	viper.Set(config.DBSoarMySQLUserKey, testDBUSer)
+	viper.Set(config.DBSoarMySQLPassKey, testDBPass)
+
 }
 
 func deleteHCResultByOperationID(operationID int) error {

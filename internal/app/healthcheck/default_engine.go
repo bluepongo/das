@@ -19,6 +19,7 @@ import (
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"
+	"github.com/romberli/go-util/middleware/sql/parser"
 	"github.com/romberli/log"
 	"github.com/spf13/viper"
 )
@@ -752,8 +753,21 @@ func (de *DefaultEngine) checkSlowQuery() error {
 		var advice string
 
 		// get db info
-		if sql.GetDBName() != constant.EmptyString {
-			err = dbService.GetByNameAndClusterInfo(sql.GetDBName(), clusterID, defaultClusterType)
+		dbName := sql.GetDBName()
+		if dbName == constant.EmptyString {
+			p := parser.NewParserWithDefault()
+			r, err := p.Parse(sql.GetExample())
+			if err != nil {
+				return err
+			}
+			dbNames := r.GetDBNames()
+			if len(dbNames) > constant.ZeroInt {
+				dbName = dbNames[constant.ZeroInt]
+			}
+		}
+
+		if dbName != constant.EmptyString {
+			err = dbService.GetByNameAndClusterInfo(dbName, clusterID, defaultClusterType)
 			if err != nil {
 				return err
 			}
