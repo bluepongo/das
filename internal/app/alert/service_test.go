@@ -13,7 +13,7 @@ import (
 const (
 	// before executing unit test, please modify these test constants appropriately
 	testSMTPURL  = "smtp.163.com:465"
-	testSMTPUser = "dastest"
+	testSMTPUser = "dastest@163.com"
 	testSMTPPass = "dastest"
 	testSMTPFrom = "dastest@163.com"
 

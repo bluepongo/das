@@ -143,6 +143,7 @@ func (s *Service) setupHTTPConfig(toAddrs, ccAddrs, content string) {
 func (s *Service) setupSMTPConfig(toAddrs, ccAddrs, subject, content string) {
 	s.GetConfig().Set(smtpUserJSON, viper.GetString(config.AlertSMTPUserKey))
 	s.GetConfig().Set(smtpPassJSON, viper.GetString(config.AlertSMTPPassKey))
+	s.GetConfig().Set(smtpFromAddrJson, viper.GetString(config.AlertSMTPFromKey))
 	s.GetConfig().Set(toAddrsJSON, toAddrs)
 	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
 	s.GetConfig().Set(subjectJSON, subject)
