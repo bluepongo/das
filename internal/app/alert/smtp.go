@@ -2,6 +2,7 @@ package alert
 
 import (
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"net"
 	"net/smtp"
@@ -20,11 +21,9 @@ const (
 
 	headerFrom        = "From"
 	headerTo          = "To"
-	headerCc          = "Cc"
+	headerCC          = "Cc"
 	headerSubject     = "Subject"
 	headerContentType = "Content-Type"
-
-	crlfString = "\r\n"
 )
 
 var (
@@ -98,27 +97,42 @@ func (ss *SMTPSender) GetURL() string {
 
 // Send sends the email via the api calling
 func (ss *SMTPSender) Send() error {
+	var ccList []string
+
+	toAddrs := ss.GetConfig().Get(toAddrsJSON)
+	if toAddrs == constant.EmptyString {
+		return errors.New("to address could not be empty")
+	}
+
+	ccAddrs := ss.GetConfig().Get(ccAddrsJSON)
+	if ccAddrs != constant.EmptyString {
+		ccList = strings.Split(ccAddrs, constant.CommaString)
+	}
+
 	return ss.sendMail(
 		ss.GetConfig().Get(smtpFromAddrJson),
-		strings.Split(ss.GetConfig().Get(toAddrsJSON), constant.CommaString),
-		strings.Split(ss.GetConfig().Get(ccAddrsJSON), constant.CommaString),
+		strings.Split(toAddrs, constant.CommaString),
+		ccList,
 		ss.buildMessage(),
 	)
 }
 
 // sendMail sends mail
-func (ss *SMTPSender) sendMail(from string, toList []string, ccList []string, message []byte) error {
+func (ss *SMTPSender) sendMail(from string, toList, ccList []string, message []byte) error {
 	err := ss.GetClient().Mail(from)
 	if err != nil {
 		return err
 	}
 	for _, to := range toList {
-		if err = ss.GetClient().Rcpt(to); err != nil {
+		err = ss.GetClient().Rcpt(to)
+		if err != nil {
 			return err
 		}
 	}
+	ccList = toList
 	for _, cc := range ccList {
-		if err = ss.GetClient().Rcpt(cc); err != nil {
+		err = ss.GetClient().Rcpt(cc)
+		if err != nil {
 			return err
 		}
 	}
@@ -127,6 +141,7 @@ func (ss *SMTPSender) sendMail(from string, toList []string, ccList []string, me
 	if err != nil {
 		return err
 	}
+
 	_, err = w.Write(message)
 	if err != nil {
 		return err
@@ -147,7 +162,6 @@ func (ss *SMTPSender) buildMessage() []byte {
 		message += fmt.Sprintf("%s: %s\r\n", k, v)
 	}
 
-	// message += crlfString + ss.GetConfig().Get(contentJSON)
 	message += fmt.Sprintf("\r\n%s", ss.GetConfig().Get(contentJSON))
 
 	return []byte(message)
@@ -159,7 +173,7 @@ func (ss *SMTPSender) buildHeader() map[string]string {
 
 	header[headerFrom] = fmt.Sprintf("%s<%s>", defaultAlertSMTPFromName, ss.GetConfig().Get(smtpFromAddrJson))
 	header[headerTo] = ss.GetConfig().Get(toAddrsJSON)
-	header[headerCc] = ss.GetConfig().Get(ccAddrsJSON)
+	header[headerCC] = ss.GetConfig().Get(ccAddrsJSON)
 	header[headerSubject] = ss.GetConfig().Get(subjectJSON)
 
 	switch viper.GetString(config.AlertSMTPFormatKey) {

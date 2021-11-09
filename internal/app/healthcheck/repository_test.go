@@ -22,10 +22,13 @@ import (
 
 const (
 	// modify the connection information
-	defaultDASAddr   = "192.168.10.219:3306"
+	defaultApplicationAddr = "192.168.10.219:3306"
+
+	defaultDASAddr   = "192.168.10.210:3306"
 	defaultDASDBName = "das"
-	defaultDBUser    = "root"
-	defaultDBPass    = "root"
+
+	defaultDBUser = "root"
+	defaultDBPass = "root"
 
 	defaultPrometheusUser = "admin"
 	defaultPrometheusPass = "admin"
@@ -33,9 +36,8 @@ const (
 	defaultQueryDBName = "pmm"
 
 	defaultOperationID      = 1
-	defaultMysqlServerID    = 1
+	defaultMysqlServerID    = 4
 	newResultStatus         = 1
-	accuracyReviewStruct    = "AccuracyReview"
 	newResultAccuracyReview = 1
 
 	defaultVariableName  = "datadir"
@@ -110,7 +112,7 @@ func initOperationInfo() *OperationInfo {
 }
 
 func initApplicationMySQLRepo() *ApplicationMySQLRepo {
-	conn, err := mysql.NewConn(defaultDASAddr, constant.EmptyString, defaultDBUser, defaultDBPass)
+	conn, err := mysql.NewConn(defaultApplicationAddr, constant.EmptyString, defaultDBUser, defaultDBPass)
 	if err != nil {
 		log.Error(common.CombineMessageWithError("initApplicationMySQLRepo() failed", err))
 		os.Exit(1)
@@ -122,7 +124,7 @@ func initApplicationMySQLRepo() *ApplicationMySQLRepo {
 func initPrometheusRepo() *PrometheusRepo {
 	var config prometheus.Config
 
-	addr := fmt.Sprintf("%s:%d/%s", testOperationInfo.GetMonitorSystem().GetHostIP(),
+	addr := fmt.Sprintf("%s:%d%s", testOperationInfo.GetMonitorSystem().GetHostIP(),
 		testOperationInfo.GetMonitorSystem().GetPortNum(), testOperationInfo.GetMonitorSystem().GetBaseURL())
 	switch testOperationInfo.GetMonitorSystem().GetSystemType() {
 	case 1:

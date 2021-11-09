@@ -832,5 +832,3 @@ func TestResult_MarshalJSONWithFields(t *testing.T) {
 	err = rDeleteHCResultByOperationID(defaultResultOperationID)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 }
-
-// go test ./result_test.go ./result.go ./query.go ./service.go ./default_engine.go

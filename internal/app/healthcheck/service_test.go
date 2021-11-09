@@ -26,6 +26,11 @@ const (
 	defaultMySQLServerInfoPortNum        = 3307
 	defaultMySQLServerInfoDeploymentType = 1
 	defaultMySQLServerInfoVersion        = "1.1.1"
+
+	testSMTPURL  = "smtp.163.com:465"
+	testSMTPUser = "allinemailtest@163.com"
+	testSMTPPass = "LAOMDMZSOMKCZICJ"
+	testSMTPFrom = "allinemailtest@163.com"
 )
 
 func createService() (*Service, error) {
@@ -82,6 +87,8 @@ func createService() (*Service, error) {
 }
 
 func initViper() {
+	viper.Set(config.HealthcheckAlertOwnerTypeKey, config.HealthcheckAlertOwnerTypeAll)
+
 	viper.Set(config.DBApplicationMySQLUserKey, config.DefaultDBApplicationMySQLUser)
 	viper.Set(config.DBApplicationMySQLPassKey, config.DefaultDBApplicationMySQLPass)
 
@@ -93,6 +100,14 @@ func initViper() {
 
 	viper.Set(config.DBMonitorClickhouseUserKey, config.DefaultDBMonitorClickhouseUser)
 	viper.Set(config.DBMonitorClickhousePassKey, config.DefaultDBMonitorClickhousePass)
+
+	// alert
+	viper.Set(config.AlertSMTPEnabledKey, true)
+	viper.Set(config.AlertSMTPFormatKey, config.AlertSMTPTextFormat)
+	viper.Set(config.AlertSMTPURLKey, testSMTPURL)
+	viper.Set(config.AlertSMTPUserKey, testSMTPUser)
+	viper.Set(config.AlertSMTPPassKey, testSMTPPass)
+	viper.Set(config.AlertSMTPFromKey, testSMTPFrom)
 }
 
 func deleteHCResultByOperationID(operationID int) error {

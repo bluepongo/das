@@ -1,13 +1,72 @@
 package healthcheck
 
 import (
+	"fmt"
+	"reflect"
+	"strings"
 	"time"
 
 	"github.com/romberli/das/internal/dependency/healthcheck"
 
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
+	"github.com/tidwall/pretty"
 )
+
+const (
+	dbConfigDataStruct                     = "DBConfigData"
+	avgBackupFailedRatioDataStruct         = "AvgBackupFailedRatioData"
+	avgBackupFailedRatioHighStruct         = "AvgBackupFailedRatioHigh"
+	statisticFailedRatioDataStruct         = "StatisticFailedRatioData"
+	statisticFailedRatioHighStruct         = "StatisticFailedRatioHigh"
+	cpuUsageDataStruct                     = "CPUUsageData"
+	cpuUsageHighStruct                     = "CPUUsageHigh"
+	ioUtilDataStruct                       = "IOUtilData"
+	ioUtilHighStruct                       = "IOUtilHigh"
+	diskCapacityUsageDataStruct            = "DiskCapacityUsageData"
+	diskCapacityUsageHighStruct            = "DiskCapacityUsageHigh"
+	connectionUsageDataStruct              = "ConnectionUsageData"
+	connectionUsageHighStruct              = "ConnectionUsageHigh"
+	averageActiveSessionPercentsDataStruct = "AverageActiveSessionPercentsData"
+	averageActiveSessionPercentsHighStruct = "AverageActiveSessionPercentsHigh"
+	cacheMissRatioDataStruct               = "CacheMissRatioData"
+	cacheMissRatioHighStruct               = "CacheMissRatioHigh"
+	tableRowsDataStruct                    = "TableRowsData"
+	tableRowsHighStruct                    = "TableRowsHigh"
+	tableSizeDataStruct                    = "TableSizeData"
+	tableSizeHighStruct                    = "TableSizeHigh"
+	accuracyReviewStruct                   = "AccuracyReview"
+	delFlagStruct                          = "DelFlag"
+	createTimeStruct                       = "CreateTime"
+	lastUpdateTimeStruct                   = "LastUpdateTime"
+)
+
+var ignoreList = []string{
+	dbConfigDataStruct,
+	avgBackupFailedRatioDataStruct,
+	avgBackupFailedRatioHighStruct,
+	statisticFailedRatioDataStruct,
+	statisticFailedRatioHighStruct,
+	cpuUsageDataStruct,
+	cpuUsageHighStruct,
+	ioUtilDataStruct,
+	ioUtilHighStruct,
+	diskCapacityUsageDataStruct,
+	diskCapacityUsageHighStruct,
+	connectionUsageDataStruct,
+	connectionUsageHighStruct,
+	averageActiveSessionPercentsDataStruct,
+	averageActiveSessionPercentsHighStruct,
+	cacheMissRatioDataStruct,
+	cacheMissRatioHighStruct,
+	tableRowsDataStruct,
+	tableRowsHighStruct,
+	tableSizeDataStruct,
+	tableSizeHighStruct,
+	accuracyReviewStruct,
+	delFlagStruct,
+	lastUpdateTimeStruct,
+}
 
 // Result include all data needed in healthcheck
 type Result struct {
@@ -398,6 +457,30 @@ func (r *Result) GetLastUpdateTime() time.Time {
 	return r.LastUpdateTime
 }
 
+func (r *Result) String() string {
+	r.setWithEmptyValue()
+
+	s := constant.LeftBraceString
+	inVal := reflect.ValueOf(r).Elem()
+
+	for i := 0; i < inVal.NumField(); i++ {
+		fieldType := inVal.Type().Field(i)
+		fieldVal := inVal.Field(i)
+		fieldTag := fieldType.Tag.Get(constant.DefaultMarshalTag)
+		if fieldTag != constant.EmptyString && !common.StringInSlice(ignoreList, fieldType.Name) {
+			fieldStr := fmt.Sprintf(`"%s":%v,`, fieldTag, inVal.Field(i))
+			if fieldType.Name == createTimeStruct || fieldType.Name == lastUpdateTimeStruct ||
+				fieldVal.IsZero() || fieldVal.String() == constant.NullString {
+				fieldStr = fmt.Sprintf(`"%s":"%v",`, fieldTag, fieldVal)
+			}
+
+			s += fieldStr
+		}
+	}
+
+	return string(pretty.Pretty([]byte(strings.Trim(s, constant.CommaString) + constant.RightBraceString)))
+}
+
 // Set sets health check with given fields, key is the field name and value is the relevant value of the key
 func (r *Result) Set(fields map[string]interface{}) error {
 	for fieldName, fieldValue := range fields {
@@ -418,4 +501,17 @@ func (r *Result) MarshalJSON() ([]byte, error) {
 // MarshalJSONWithFields marshals only specified field of the health check to json string
 func (r *Result) MarshalJSONWithFields(fields ...string) ([]byte, error) {
 	return common.MarshalStructWithFields(r, fields...)
+}
+
+func (r *Result) setWithEmptyValue() {
+	r.AvgBackupFailedRatioData = constant.EmptyString
+	r.StatisticFailedRatioData = constant.EmptyString
+	r.CPUUsageData = constant.EmptyString
+	r.IOUtilData = constant.EmptyString
+	r.DiskCapacityUsageData = constant.EmptyString
+	r.ConnectionUsageData = constant.EmptyString
+	r.AverageActiveSessionPercentsData = constant.EmptyString
+	r.CacheMissRatioData = constant.EmptyString
+	r.TableRowsData = constant.EmptyString
+	r.SlowQueryData = constant.EmptyString
 }

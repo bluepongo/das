@@ -319,7 +319,7 @@ func (mcr *MySQLClusterRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
 	`
 	log.Debugf("metadata MySQLClusterRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d, %d, %d", sql, id, ClusterTypeSingle, id, ClusterTypeSingle)
 
-	result, err := mcr.Execute(sql, id, id, ClusterTypeSingle)
+	result, err := mcr.Execute(sql, id, ClusterTypeSingle, id, ClusterTypeSingle)
 	if err != nil {
 		return nil, err
 	}

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/romberli/das/global"
+	_ "github.com/romberli/das/internal/app/alert"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/internal/dependency/healthcheck"
 	"github.com/romberli/go-util/common"
@@ -25,7 +26,7 @@ const (
 	applicationMysqlDBUser = "root"
 	applicationMysqlDBPass = "root"
 
-	defaultMySQLServerID = 1
+	defaultMySQLServerID = 4
 	defaultStep          = time.Minute
 )
 
@@ -62,6 +63,8 @@ func TestDefaultEngineConfig_Validate(t *testing.T) {
 }
 
 func TestDefaultEngine_Run(t *testing.T) {
+	initViper()
+
 	asst := assert.New(t)
 	startTime := time.Now().Add(-constant.Week)
 	endTime := time.Now()
@@ -70,7 +73,7 @@ func TestDefaultEngine_Run(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 
 	mysqlServerService := metadata.NewMySQLServerService(metadata.NewMySQLServerRepo(global.DASMySQLPool))
-	err = mysqlServerService.GetByID(1)
+	err = mysqlServerService.GetByID(defaultMySQLServerID)
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))

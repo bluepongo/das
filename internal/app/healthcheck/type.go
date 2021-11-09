@@ -46,7 +46,7 @@ const (
 	dbConfigReportHostValid                = constant.EmptyString
 	dbConfigReportPortValid                = constant.EmptyString
 	dbConfigInnodbFlushMethodValid         = "O_DIRECT"
-	dbConfigInnodbMonitorEnableValid       = "all"
+	dbConfigInnodbMonitorEnableValid       = "ALL"
 	dbConfigInnodbPrintAllDeadlocksValid   = "ON"
 	dbConfigSlowQueryLogValid              = "ON"
 	dbConfigPerformanceSchemaValid         = "ON"

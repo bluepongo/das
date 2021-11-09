@@ -883,10 +883,14 @@ func (de *DefaultEngine) sendEmail() error {
 	if err != nil {
 		return err
 	}
-	resultBytes, err := de.getResult().MarshalJSON()
+
+	result, err := de.getDASRepo().GetResultByOperationID(de.getOperationInfo().GetOperationID())
+	if err != nil {
+		return err
+	}
 	alertService := alert.NewServiceWithDefault(alert.NewConfigFromFile())
 
-	return alertService.SendEmail(toAddrs, constant.EmptyString, defaultAlertSubject, string(resultBytes))
+	return alertService.SendEmail(toAddrs, constant.EmptyString, defaultAlertSubject, result.String())
 }
 
 // getToAddrs gets to addrs that will send email to
