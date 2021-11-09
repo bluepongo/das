@@ -112,14 +112,19 @@ func (ss *SMTPSender) sendMail(from string, toList []string, ccList []string, me
 	if err != nil {
 		return err
 	}
+	if len(toList) == 0 {
+		return fmt.Errorf("Email toList cant be null")
+	}
 	for _, to := range toList {
 		if err = ss.GetClient().Rcpt(to); err != nil {
 			return err
 		}
 	}
-	for _, cc := range ccList {
-		if err = ss.GetClient().Rcpt(cc); err != nil {
-			return err
+	if len(ccList) > 0 {
+		for _, cc := range ccList {
+			if err = ss.GetClient().Rcpt(cc); err != nil {
+				return err
+			}
 		}
 	}
 
