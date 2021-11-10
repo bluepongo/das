@@ -22,6 +22,8 @@ type Query interface {
 	GetAvgExecTime() float64
 	// GetRowsExaminedMax returns the maximum row examined
 	GetRowsExaminedMax() int
+	// SetDBName sets db name to the query
+	SetDBName(dbName string)
 }
 
 type DASRepo interface {

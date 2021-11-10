@@ -25,8 +25,9 @@ const (
 	mysql57           = "5.7"
 	performanceSchema = "performance_schema"
 	informationSchema = "information_schema"
-	deviceLabel       = "device"
-	mountPointLabel   = "mountpoint"
+
+	deviceLabel     = "device"
+	mountPointLabel = "mountpoint"
 
 	dataDirVariable   = "datadir"
 	binlogDirVariable = "log_bin_base"

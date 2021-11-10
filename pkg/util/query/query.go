@@ -8,6 +8,7 @@ import (
 	"github.com/romberli/das/pkg/message"
 	msgquery "github.com/romberli/das/pkg/message/query"
 	"github.com/romberli/go-util/constant"
+	"github.com/romberli/go-util/middleware/sql/parser"
 )
 
 const (
@@ -66,4 +67,18 @@ func GetConfig(dataMap map[string]string) (*query.Config, error) {
 	}
 
 	return config, nil
+}
+
+func GetDBName(sql string) (string, error) {
+	p := parser.NewParserWithDefault()
+	r, err := p.Parse(sql)
+	if err != nil {
+		return constant.EmptyString, err
+	}
+
+	if len(r.GetDBNames()) > constant.ZeroInt {
+		return r.GetDBNames()[constant.ZeroInt], nil
+	}
+
+	return constant.EmptyString, nil
 }

@@ -16,10 +16,10 @@ import (
 	depquery "github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
+	util "github.com/romberli/das/pkg/util/query"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"
-	"github.com/romberli/go-util/middleware/sql/parser"
 	"github.com/romberli/log"
 	"github.com/spf13/viper"
 )
@@ -49,6 +49,8 @@ const (
 
 var (
 	_ healthcheck.Engine = (*DefaultEngine)(nil)
+
+	ignoreDBList = []string{"information_schema", "performance_schema", "mysql", "test", "sys"}
 )
 
 // DefaultEngine work for health check module
@@ -689,6 +691,7 @@ func (de *DefaultEngine) checkSlowQuery() error {
 	}
 
 	var (
+		i                                int
 		slowQueryRowsExaminedHighSum     int
 		slowQueryRowsExaminedHighCount   int
 		slowQueryRowsExaminedMediumSum   int
@@ -709,9 +712,17 @@ func (de *DefaultEngine) checkSlowQuery() error {
 
 	slowQueryRowsExaminedConfig := de.getItemConfig(defaultSlowQueryRowsExaminedItemName)
 
-	for i, slowQuery := range slowQueries {
+	for _, slowQuery := range slowQueries {
 		if i < defaultSlowQueryTopSQLNum {
-			topSQLList = append(topSQLList, slowQuery)
+			dbName, err := util.GetDBName(slowQuery.GetExample())
+			if err != nil {
+				return err
+			}
+			if !common.StringInSlice(ignoreDBList, dbName) {
+				slowQuery.SetDBName(dbName)
+				topSQLList = append(topSQLList, slowQuery)
+				i++
+			}
 		}
 		if slowQuery.GetRowsExaminedMax() >= int(slowQueryRowsExaminedConfig.GetHighWatermark()) {
 			// slow query rows examined high
@@ -753,21 +764,8 @@ func (de *DefaultEngine) checkSlowQuery() error {
 		var advice string
 
 		// get db info
-		dbName := sql.GetDBName()
-		if dbName == constant.EmptyString {
-			p := parser.NewParserWithDefault()
-			r, err := p.Parse(sql.GetExample())
-			if err != nil {
-				return err
-			}
-			dbNames := r.GetDBNames()
-			if len(dbNames) > constant.ZeroInt {
-				dbName = dbNames[constant.ZeroInt]
-			}
-		}
-
-		if dbName != constant.EmptyString {
-			err = dbService.GetByNameAndClusterInfo(dbName, clusterID, defaultClusterType)
+		if sql.GetDBName() != constant.EmptyString {
+			err = dbService.GetByNameAndClusterInfo(sql.GetDBName(), clusterID, defaultClusterType)
 			if err != nil {
 				return err
 			}

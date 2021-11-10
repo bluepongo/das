@@ -80,6 +80,11 @@ func (q *Query) GetRowsExaminedMax() int {
 	return q.RowsExaminedMax
 }
 
+// SetDBName sets db name to the query
+func (q *Query) SetDBName(dbName string) {
+	q.DBName = dbName
+}
+
 // Querier include config of query and connection pool of DAS repo
 type Querier struct {
 	config  *Config
