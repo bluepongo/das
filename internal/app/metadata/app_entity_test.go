@@ -13,31 +13,29 @@ import (
 )
 
 const (
-	defaultAppInfoID                   = 1
-	defaultAppInfoAppName              = "dfname"
-	defaultAppInfoLevel                = 1
-	defaultAppInfoOwnerID              = 8
-	defaultAppInfoOwnerGroup           = "k"
-	defaultAppInfoDelFlag              = 0
-	defaultAppInfoCreateTimeString     = "2021-01-21 10:00:00.000000"
-	defaultAppInfoLastUpdateTimeString = "2021-01-21 13:00:00.000000"
-	appSystemNameJSON                  = "app_name"
-	dblistnum1                         = 1
-	dblistnum2                         = 2
+	testAppAppID                = 1
+	testAppAppName              = "app1"
+	testAppLevel                = 1
+	testAppOwnerID              = 1
+	testAppDelFlag              = 0
+	testAppCreateTimeString     = "2021-01-21 10:00:00.000000"
+	testAppLastUpdateTimeString = "2021-01-21 13:00:00.000000"
+	testAppAppNameJSON          = "app_name"
 )
 
 func initNewAppInfo() *AppInfo {
 	now.TimeFormats = append(now.TimeFormats, constant.DefaultTimeLayout)
 
-	createTime, _ := now.Parse(defaultAppInfoCreateTimeString)
-	lastUpdateTime, _ := now.Parse(defaultAppInfoLastUpdateTimeString)
+	createTime, _ := now.Parse(testAppCreateTimeString)
+	lastUpdateTime, _ := now.Parse(testAppLastUpdateTimeString)
 	return NewAppInfo(
-		appRepo,
-		defaultAppInfoID,
-		defaultAppInfoAppName,
-		defaultAppInfoLevel,
-		defaultAppInfoOwnerID,
-		defaultAppInfoDelFlag, createTime,
+		testAppRepo,
+		testAppAppID,
+		testAppAppName,
+		testAppLevel,
+		testAppOwnerID,
+		testAppDelFlag,
+		createTime,
 		lastUpdateTime,
 	)
 }
@@ -67,28 +65,28 @@ func TestAppInfo_Identity(t *testing.T) {
 	asst := assert.New(t)
 
 	appSystemInfo := initNewAppInfo()
-	asst.Equal(defaultAppInfoID, appSystemInfo.Identity(), "test Identity() failed")
+	asst.Equal(testAppAppID, appSystemInfo.Identity(), "test Identity() failed")
 }
 
 func TestAppInfo_GetAppName(t *testing.T) {
 	asst := assert.New(t)
 
 	appSystemInfo := initNewAppInfo()
-	asst.Equal(defaultAppInfoAppName, appSystemInfo.GetAppName(), "test GetAppName() failed")
+	asst.Equal(testAppAppName, appSystemInfo.GetAppName(), "test GetAppName() failed")
 }
 
 func TestAppInfo_GetLevel(t *testing.T) {
 	asst := assert.New(t)
 
 	appSystemInfo := initNewAppInfo()
-	asst.Equal(defaultAppInfoLevel, appSystemInfo.GetLevel(), "test GetLevel() failed")
+	asst.Equal(testAppLevel, appSystemInfo.GetLevel(), "test GetLevel() failed")
 }
 
 func TestAppInfo_GetOwnerID(t *testing.T) {
 	asst := assert.New(t)
 
 	appSystemInfo := initNewAppInfo()
-	asst.Equal(defaultAppInfoOwnerID, appSystemInfo.GetOwnerID(), "test GetLevel() failed")
+	asst.Equal(testAppOwnerID, appSystemInfo.GetOwnerID(), "test GetLevel() failed")
 }
 
 func TestAppInfo_GetDelFlag(t *testing.T) {
@@ -150,7 +148,7 @@ func TestAppInfo_MarshalJSON(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
 	err = json.Unmarshal(data, &appSystemInfoUnmarshal)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
-	asst.True(appSystemStructEqual(appSystemInfo, appSystemInfoUnmarshal), "test MarshalJSON() failed")
+	asst.True(appSystemStructEqual(appSystemInfo, appSystemInfoUnmarshal), common.CombineMessageWithError("test MarshalJSON() failed", err))
 }
 
 func TestAppInfo_MarshalJSONWithFields(t *testing.T) {
@@ -159,41 +157,37 @@ func TestAppInfo_MarshalJSONWithFields(t *testing.T) {
 	appSystemInfo := initNewAppInfo()
 	data, err := appSystemInfo.MarshalJSONWithFields(appAppNameStruct)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
-	expect, err := json.Marshal(map[string]interface{}{appSystemNameJSON: defaultAppInfoAppName})
+	expect, err := json.Marshal(map[string]interface{}{testAppAppNameJSON: testAppAppName})
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
-	asst.Equal(string(expect), string(data), "test MarshalJSONWithFields() failed")
+	asst.Equal(string(expect), string(data), common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 }
 
 func TestAppInfo_AddAppDB(t *testing.T) {
-	var dbIDList []int
-
 	asst := assert.New(t)
 
 	appSystemInfo := initNewAppInfo()
-	err := appSystemInfo.AddDB(3)
+	err := appSystemInfo.AddDB(2)
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
-	dbIDList, err = entityGetDBIDList(appSystemInfo)
+	dbs, err := appSystemInfo.GetDBs()
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
-	asst.Equal(dblistnum2, len(dbIDList))
+	asst.Equal(2, len(dbs), common.CombineMessageWithError("test AddDB() failed", err))
 	// delete
-	err = appSystemInfo.DeleteDB(3)
+	err = appSystemInfo.DeleteDB(2)
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
 }
 
 func TestAppInfo_DeleteAppDB(t *testing.T) {
-	var dbIDList []int
-
 	asst := assert.New(t)
 
 	appSystemInfo := initNewAppInfo()
-	err := appSystemInfo.DeleteDB(3)
-	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
-
-	dbIDList, err = entityGetDBIDList(appSystemInfo)
+	err := appSystemInfo.DeleteDB(1)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
-	asst.Equal(dblistnum1, len(dbIDList))
+
+	dbs, err := appSystemInfo.GetDBs()
+	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
+	asst.Zero(len(dbs), common.CombineMessageWithError("test DeleteDB() failed", err))
 	// add
-	err = appSystemInfo.AddDB(3)
+	err = appSystemInfo.AddDB(1)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
 }
 

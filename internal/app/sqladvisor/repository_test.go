@@ -10,35 +10,33 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func init() {
-	initDASMySQLPool()
-}
-
 const (
-	defaultDASMySQLAddr = "192.168.137.11:3306"
-	defaultDASMySQLName = "das"
-	defaultDASMySQLUser = "root"
-	defaultDASMySQLPass = "root"
+	testDASMySQLAddr = "192.168.10.210:3306"
+	testDASMySQLName = "das"
+	testDASMySQLUser = "root"
+	testDASMySQLPass = "root"
 
-	defaultDBID    = 1
-	defaultSQLText = "select * from t_meta_db_info where create_time<'2021-01-01';"
-	defaultAdvice  = "[\n {\n  \"ID\": \"B95017DB61875675\",\n  \"Fingerprint\": \"select * from t_meta_db_info where create_time\\u003c?\",\n  \"Score\": 95,\n  \"Sample\": \"select * from t_meta_db_info where create_time\\u003c'2021-01-01'\",\n  \"Explain\": null,\n  \"HeuristicRules\": [\n    {\n      \"Item\": \"COL.001\",\n      \"Severity\": \"L1\",\n      \"Summary\": \"不建议使用 SELECT * 类型查询\",\n      \"Content\": \"当表结构变更时，使用 * 通配符选择所有列将导致查询的含义和行为会发生更改，可能导致查询返回更多的数据。\",\n      \"Case\": \"select * from tbl where id=1\",\n      \"Position\": 0\n    }\n  ],\n  \"IndexRules\": null,\n  \"Tables\": [\n    \"`soar`.`t_meta_db_info`\"\n  ]\n}\n]"
-	defaultMessage = ""
+	testDBID    = 2
+	testSQLText = "select * from t_meta_db_info where create_time<'2021-01-01';"
+	testAdvice  = "[\n {\n  \"ID\": \"B95017DB61875675\",\n  \"Fingerprint\": \"select * from t_meta_db_info where create_time\\u003c?\",\n  \"Score\": 95,\n  \"Sample\": \"select * from t_meta_db_info where create_time\\u003c'2021-01-01'\",\n  \"Explain\": null,\n  \"HeuristicRules\": [\n    {\n      \"Item\": \"COL.001\",\n      \"Severity\": \"L1\",\n      \"Summary\": \"不建议使用 SELECT * 类型查询\",\n      \"Content\": \"当表结构变更时，使用 * 通配符选择所有列将导致查询的含义和行为会发生更改，可能导致查询返回更多的数据。\",\n      \"Case\": \"select * from tbl where id=1\",\n      \"Position\": 0\n    }\n  ],\n  \"IndexRules\": null,\n  \"Tables\": [\n    \"`soar`.`t_meta_db_info`\"\n  ]\n}\n]"
+	testMessage = ""
 )
 
-var repository = initRepository()
+var repository *Repository
 
-func initDASMySQLPool() *mysql.Pool {
+func init() {
+	initDASMySQLPool()
+	repository = initRepository()
+}
+
+func initDASMySQLPool() {
 	var err error
 
-	global.DASMySQLPool, err = mysql.NewPoolWithDefault(defaultDASMySQLAddr, defaultDASMySQLName, defaultDASMySQLUser, defaultDASMySQLPass)
+	global.DASMySQLPool, err = mysql.NewPoolWithDefault(testDASMySQLAddr, testDASMySQLName, testDASMySQLUser, testDASMySQLPass)
 	log.Infof("pool: %v, error: %v", global.DASMySQLPool, err)
 	if err != nil {
 		log.Error(common.CombineMessageWithError("initRepository() failed", err))
-		return nil
 	}
-
-	return global.DASMySQLPool
 }
 
 func initRepository() *Repository {
@@ -71,8 +69,8 @@ func TestRepository_Execute(t *testing.T) {
 func TestRepository_Save(t *testing.T) {
 	asst := assert.New(t)
 
-	err := deleteResult()
-	err = repository.Save(defaultDBID, defaultSQLText, defaultAdvice, defaultMessage)
+	// err := deleteResult()
+	err := repository.Save(testDBID, testSQLText, testAdvice, testMessage)
 	asst.Nil(err, "test Save() failed")
-	err = deleteResult()
+	// err = deleteResult()
 }

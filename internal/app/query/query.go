@@ -121,9 +121,7 @@ func (q *Querier) GetByMySQLClusterID(mysqlClusterID int) ([]query.Query, error)
 
 	var queries []query.Query
 	for _, mysqlServer := range mysqlServers {
-		mysqlServerID := mysqlServer.Identity()
-		// dispatch to GetByMySQLServerID()
-		qs, err := q.GetByMySQLServerID(mysqlServerID)
+		qs, err := q.GetByMySQLServerID(mysqlServer.Identity())
 		if err != nil {
 			return nil, err
 		}
@@ -272,9 +270,8 @@ func (q *Querier) getMonitorSystemByMySQLServerID(mysqlServerID int) (depmeta.Mo
 		return nil, err
 	}
 	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
-	mysqlClusterID := mysqlServer.GetClusterID()
 
-	return q.getMonitorSystemByMySQLClusterID(mysqlClusterID)
+	return q.getMonitorSystemByMySQLClusterID(mysqlServer.GetClusterID())
 }
 
 func (q *Querier) getMonitorRepo(monitorSystem depmeta.MonitorSystem) (query.MonitorRepo, error) {

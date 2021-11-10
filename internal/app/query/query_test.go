@@ -17,13 +17,11 @@ import (
 
 const (
 	// modify the connection information
-	queryTestDBAddr   = "192.168.10.220:3306"
-	queryTestDBDBName = "das"
-	queryTestDBDBUser = "root"
-	queryTestDBDBPass = "root"
-)
+	testDBAddr   = "192.168.10.210:3306"
+	testDBDBName = "das"
+	testDBDBUser = "root"
+	testDBDBPass = "root"
 
-const (
 	defaultQueryInfoSQLID           = "sql_id"
 	defaultQueryInfoFingerprint     = "fingerprint"
 	defaultQueryInfoExample         = "example"
@@ -32,16 +30,6 @@ const (
 	defaultQueryInfoTotalExecTime   = 2.1
 	defaultQueryInfoAvgExecTime     = 3.2
 	defaultQueryInfoRowsExaminedMax = 4
-
-	defaultQuerierPMM1MySQLClusterID = 1
-	defaultQuerierPMM1MySQLServerID  = 2
-	defaultQuerierPMM1DBID           = 1
-	defaultQuerierPMM1SQLID          = "999ECD050D719733"
-
-	defaultQuerierPMM2MySQLClusterID = 3
-	defaultQuerierPMM2MySQLServerID  = 4
-	defaultQuerierPMM2DBID           = 2
-	defaultQuerierPMM2SQLID          = "999ECD050D719733"
 )
 
 var pmmVersion = 0
@@ -64,7 +52,7 @@ func init() {
 }
 
 func initGlobalMySQLPool() error {
-	cfg := mysql.NewConfig(queryTestDBAddr, queryTestDBDBName, queryTestDBDBUser, queryTestDBDBPass)
+	cfg := mysql.NewConfig(testDBAddr, testDBDBName, testDBDBUser, testDBDBPass)
 	poolConfig := mysql.NewPoolConfigWithConfig(cfg, mysql.DefaultMaxConnections, mysql.DefaultInitConnections,
 		mysql.DefaultMaxIdleConnections, mysql.DefaultMaxIdleTime, mysql.DefaultKeepAliveInterval)
 	log.Debugf("pool config: %v", poolConfig)
@@ -169,9 +157,9 @@ func TestQuerier_GetByMySQLClusterID(t *testing.T) {
 	querierMySQLClusterID := 0
 	switch pmmVersion {
 	case 1:
-		querierMySQLClusterID = defaultQuerierPMM1MySQLClusterID
+		querierMySQLClusterID = testPMM1MySQLClusterID
 	case 2:
-		querierMySQLClusterID = defaultQuerierPMM2MySQLClusterID
+		querierMySQLClusterID = testPMM2MySQLClusterID
 	default:
 		err := fmt.Errorf("PMM with version:%d is not supported for now", pmmVersion)
 		asst.Nil(err, common.CombineMessageWithError("test GetByMySQLClusterID() failed", err))
@@ -189,9 +177,9 @@ func TestQuerier_GetByMySQLServerID(t *testing.T) {
 	querierMySQLServerID := 0
 	switch pmmVersion {
 	case 1:
-		querierMySQLServerID = defaultQuerierPMM1MySQLServerID
+		querierMySQLServerID = testPMM1MySQLServerID
 	case 2:
-		querierMySQLServerID = defaultQuerierPMM2MySQLServerID
+		querierMySQLServerID = testPMM2MySQLServerID
 	default:
 		err := fmt.Errorf("PMM with version:%d is not supported for now", pmmVersion)
 		asst.Nil(err, common.CombineMessageWithError("test GetByMySQLServerID() failed", err))
@@ -211,11 +199,11 @@ func TestQuerier_GetByDBID(t *testing.T) {
 	querierMySQLServerID := 0
 	switch pmmVersion {
 	case 1:
-		querierMySQLServerID = defaultQuerierPMM1MySQLServerID
-		querierDBID = defaultQuerierPMM1DBID
+		querierMySQLServerID = testPMM1MySQLServerID
+		querierDBID = testPMM1DBID
 	case 2:
-		querierMySQLServerID = defaultQuerierPMM1MySQLServerID
-		querierDBID = defaultQuerierPMM2DBID
+		querierMySQLServerID = testPMM2MySQLServerID
+		querierDBID = testPMM2DBID
 	default:
 		err := fmt.Errorf("PMM with version:%d is not supported for now", pmmVersion)
 		asst.Nil(err, common.CombineMessageWithError("test GetByDBID() failed", err))
@@ -230,15 +218,15 @@ func TestQuerier_GetByDBID(t *testing.T) {
 func TestQuerier_GetBySQLID(t *testing.T) {
 	asst := assert.New(t)
 
-	querierSQLID := ""
+	var querierSQLID string
 	querierMySQLServerID := 0
 	switch pmmVersion {
 	case 1:
-		querierMySQLServerID = defaultQuerierPMM1MySQLServerID
-		querierSQLID = defaultQuerierPMM1SQLID
+		querierMySQLServerID = testPMM1MySQLServerID
+		querierSQLID = testPMM1SQLID
 	case 2:
-		querierMySQLServerID = defaultQuerierPMM1MySQLServerID
-		querierSQLID = defaultQuerierPMM2SQLID
+		querierMySQLServerID = testPMM2MySQLServerID
+		querierSQLID = testPMM2SQLID
 	default:
 		err := fmt.Errorf("PMM with version:%d is not supported for now", pmmVersion)
 		asst.Nil(err, common.CombineMessageWithError("test GetByDBID() failed", err))

@@ -7,18 +7,20 @@ import (
 )
 
 const (
-	defaultSoarBin    = "/Users/romber/work/source_code/go/src/github.com/romberli/das/bin/soar"
-	defaultConfigFile = "/Users/romber/work/source_code/go/src/github.com/romberli/das/config/soar.yaml"
+	testSoarBin    = "/Users/romber/work/source_code/go/src/github.com/romberli/das/bin/soar"
+	testConfigFile = "/Users/romber/work/source_code/go/src/github.com/romberli/das/config/soar.yaml"
 
-	defaultFingerprint = "select * from t_meta_db_info where create_time<?"
-	defaultSQLID       = "B95017DB61875675"
+	testFingerprint = "select * from t_meta_db_info where create_time<?"
+	testSQLID       = "B95017DB61875675"
 )
 
-var service = createService()
+var service *Service
 
-func createService() *Service {
-	return NewService(defaultSoarBin, defaultConfigFile)
+func init() {
+	initDASMySQLPool()
+	service = NewService(testSoarBin, testConfigFile)
 }
+
 func TestService_All(t *testing.T) {
 	TestService_GetFingerprint(t)
 	TestService_GetFingerprint(t)
@@ -29,21 +31,21 @@ func TestService_All(t *testing.T) {
 func TestService_GetFingerprint(t *testing.T) {
 	asst := assert.New(t)
 
-	fingerprint := service.GetFingerprint(defaultSQLText)
-	asst.Equal(defaultFingerprint, fingerprint, "test GetFingerprint() failed")
+	fingerprint := service.GetFingerprint(testSQLText)
+	asst.Equal(testFingerprint, fingerprint, "test GetFingerprint() failed")
 }
 
 func TestService_GetSQLID(t *testing.T) {
 	asst := assert.New(t)
 
-	sqlID := service.GetSQLID(defaultSQLText)
-	asst.Equal(defaultSQLID, sqlID, "test GetSQLID() failed")
+	sqlID := service.GetSQLID(testSQLText)
+	asst.Equal(testSQLID, sqlID, "test GetSQLID() failed")
 }
 
 func TestService_Advise(t *testing.T) {
 	asst := assert.New(t)
 
-	advice, err := service.Advise(defaultDBID, defaultSQLText)
+	advice, err := service.Advise(testDBID, testSQLText)
 	asst.Nil(err, "test Advise() failed")
 	asst.NotEmpty(advice, "test Advise() failed")
 }

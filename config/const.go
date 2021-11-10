@@ -58,7 +58,7 @@ const (
 	DefaultDBMonitorClickhouseUser   = ""
 	DefaultDBMonitorClickhousePass   = ""
 	DefaultDBMonitorMySQLUser        = "root"
-	DefaultDBMonitorMySQLPass        = ""
+	DefaultDBMonitorMySQLPass        = "root"
 	DefaultDBApplicationMySQLUser    = "root"
 	DefaultDBApplicationMySQLPass    = "root"
 	DefaultDBSoarMySQLName           = "soar"
