@@ -20,7 +20,7 @@ type AppService struct {
 
 // NewAppService returns a new *AppService
 func NewAppService(repo metadata.AppRepo) *AppService {
-	return &AppService{repo, []metadata.App{}, []metadata.DB{}}
+	return &AppService{AppRepo: repo}
 }
 
 // NewAppServiceWithDefault returns a new *AppService with default repository
@@ -33,10 +33,16 @@ func (as *AppService) GetApps() []metadata.App {
 	return as.Apps
 }
 
+// GetApps returns dbs of the service
+func (as *AppService) GetDBs() []metadata.DB {
+	return as.DBs
+}
+
 // GetAll gets all apps from the middleware
 func (as *AppService) GetAll() error {
 	var err error
 
+	as.Apps = nil
 	as.Apps, err = as.AppRepo.GetAll()
 
 	return err
@@ -49,6 +55,7 @@ func (as *AppService) GetByID(id int) error {
 		return err
 	}
 
+	as.Apps = nil
 	as.Apps = append(as.Apps, entity)
 
 	return err
@@ -61,6 +68,7 @@ func (as *AppService) GetAppByName(appName string) error {
 		return err
 	}
 
+	as.Apps = nil
 	as.Apps = append(as.Apps, app)
 
 	return nil
@@ -73,6 +81,7 @@ func (as *AppService) GetDBsByID(id int) error {
 		return err
 	}
 
+	as.DBs = nil
 	as.DBs = dbs
 	return nil
 }
@@ -101,6 +110,7 @@ func (as *AppService) Create(fields map[string]interface{}) error {
 		return err
 	}
 
+	as.Apps = nil
 	as.Apps = append(as.Apps, app)
 	return nil
 }

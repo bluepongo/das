@@ -148,22 +148,6 @@ func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 		return nil, err
 	}
 
-	// // init []*DBInfo
-	// dbInfoList := make([]*DBInfo, result.RowNumber())
-	// for i := range dbInfoList {
-	// 	dbInfoList[i] = NewEmptyDBInfoWithGlobal()
-	// }
-	// // map to struct
-	// err = result.MapToStructSlice(dbInfoList, constant.DefaultMiddlewareTag)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// // init []dependency.Entity
-	// dbList := make([]metadata.DB, result.RowNumber())
-	// for i := range dbList {
-	// 	dbList[i] = dbInfoList[i]
-	// }
-
 	// init []dependency.Entity
 	dbList := make([]metadata.DB, result.RowNumber())
 	for i := range dbList {

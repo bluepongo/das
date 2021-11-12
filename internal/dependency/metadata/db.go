@@ -87,8 +87,14 @@ type DBRepo interface {
 }
 
 type DBService interface {
-	// GetDBs returns databases of the service
+	// GetDBs returns the databases of the service
 	GetDBs() []DB
+	// GetMySQLCluster returns the mysql cluster of the service
+	GetMySQLCluster() MySQLCluster
+	// GetApps returns the apps of the service
+	GetApps() []App
+	// GetOwners returns the owners of the service
+	GetOwners() []User
 	// GetAll gets all databases from the middleware
 	GetAll() error
 	// GetByEnv gets databases of given env id
