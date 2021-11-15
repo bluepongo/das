@@ -172,8 +172,8 @@ db:
       addr: "127.0.0.1:3306"
       # description: database name
       # type: string
-      # default: das
-      name: das
+      # default: soar
+      name: soar
       # description: database username
       # type: string
       # default: root
