@@ -76,9 +76,9 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(DBApplicationMySQLUserKey, DefaultDBApplicationMySQLUser)
 	viper.SetDefault(DBApplicationMySQLPassKey, DefaultDBApplicationMySQLPass)
 	viper.SetDefault(DBSoarMySQLAddrKey, fmt.Sprintf("%s:%d", constant.DefaultLocalHostIP, constant.DefaultMySQLPort))
-	viper.SetDefault(DBSoarMySQLNameKey, DefaultDBName)
-	viper.SetDefault(DBSoarMySQLUserKey, DefaultDBUser)
-	viper.SetDefault(DBSoarMySQLPassKey, DefaultDBPass)
+	viper.SetDefault(DBSoarMySQLNameKey, DefaultDBSoarMySQLName)
+	viper.SetDefault(DBSoarMySQLUserKey, DefaultDBSoarMySQLUser)
+	viper.SetDefault(DBSoarMySQLPassKey, DefaultDBSoarMySQLPass)
 	// alert
 	viper.SetDefault(AlertSMTPEnabledKey, DefaultAlertSMTPEnabled)
 	viper.SetDefault(AlertSMTPFormatKey, DefaultAlterSMTPFormat)
