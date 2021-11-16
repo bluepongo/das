@@ -61,6 +61,7 @@ func GetByMySQLClusterID(c *gin.Context) {
 	jsonBytes, err := service.Marshal()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
 	}
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgquery.DebugQueryGetByMySQLClusterID, mysqlClusterID, jsonStr).Error())
@@ -110,6 +111,7 @@ func GetByMySQLServerID(c *gin.Context) {
 	jsonBytes, err := service.Marshal()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
 	}
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgquery.DebugQueryGetByMySQLServerID, mysqlServerID, jsonStr).Error())
