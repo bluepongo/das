@@ -208,7 +208,7 @@ func (dr *DASRepo) InitOperation(mysqlServerID int, startTime, endTime time.Time
 // UpdateOperationStatus updates the status and message by the operationID in the middleware
 func (dr *DASRepo) UpdateOperationStatus(operationID int, status int, message string) error {
 	sql := `update t_hc_operation_info set status = ?, message = ? where id = ?;`
-	log.Debugf("healthCheck DASRepo.UpdateOperationStatus() update sql: \n%s\nplaceholders: %s, %s, %s", sql, operationID, status, message)
+	log.Debugf("healthCheck DASRepo.UpdateOperationStatus() update sql: \n%s\nplaceholders: %s, %s, %s", sql, status, message, operationID)
 	_, err := dr.Execute(sql, status, message, operationID)
 
 	return err

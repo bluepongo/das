@@ -1,6 +1,3 @@
-@baseURL = 127.0.0.1:6090
-
-
 ### alert.SendEmail
 POST http://{{baseURL}}/api/v1/alert/email
 Content-Type: application/json

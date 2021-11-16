@@ -20,6 +20,7 @@ import (
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"
+	"github.com/romberli/go-util/middleware/sql/statement"
 	"github.com/romberli/log"
 	"github.com/spf13/viper"
 )
@@ -31,7 +32,7 @@ const (
 	defaultHundred                              = 100
 	defaultDBConfigItemName                     = "db_config"
 	defaultAvgBackupFailedRatioItemName         = "avg_backup_failed_ratio"
-	defaultStatisticItemName                    = "statistics_failed_ratio"
+	defaultStatisticFailedRatioItemName         = "statistics_failed_ratio"
 	defaultCPUUsageItemName                     = "cpu_usage"
 	defaultIOUtilItemName                       = "io_util"
 	defaultDiskCapacityUsageItemName            = "disk_capacity_usage"
@@ -152,6 +153,7 @@ func (de *DefaultEngine) Run() {
 			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 			return
 		}
+		return
 	}
 
 	// update operation status
@@ -424,7 +426,7 @@ func (de *DefaultEngine) CheckAvgBackupFailedRatio() error {
 		return err
 	}
 	// parse data
-	de.result.AvgBackupFailedRatioScore, de.result.AvgBackupFailedRatioData, de.result.AvgBackupFailedRatioHigh, err = de.parsePrometheusDatas(defaultCPUUsageItemName, datas)
+	de.result.AvgBackupFailedRatioScore, de.result.AvgBackupFailedRatioData, de.result.AvgBackupFailedRatioHigh, err = de.parsePrometheusDatas(defaultAvgBackupFailedRatioItemName, datas)
 	if err != nil {
 		return err
 	}
@@ -440,7 +442,7 @@ func (de *DefaultEngine) CheckStatisticFailedRatio() error {
 		return err
 	}
 	// parse data
-	de.result.StatisticFailedRatioScore, de.result.StatisticFailedRatioData, de.result.StatisticFailedRatioHigh, err = de.parsePrometheusDatas(defaultCPUUsageItemName, datas)
+	de.result.StatisticFailedRatioScore, de.result.StatisticFailedRatioData, de.result.StatisticFailedRatioHigh, err = de.parsePrometheusDatas(defaultStatisticFailedRatioItemName, datas)
 	if err != nil {
 		return err
 	}
@@ -713,6 +715,9 @@ func (de *DefaultEngine) checkSlowQuery() error {
 	slowQueryRowsExaminedConfig := de.getItemConfig(defaultSlowQueryRowsExaminedItemName)
 
 	for _, slowQuery := range slowQueries {
+		if statement.GetType(slowQuery.GetExample()) == statement.Unknown {
+			continue
+		}
 		if i < defaultSlowQueryTopSQLNum {
 			dbName, err := util.GetDBName(slowQuery.GetExample())
 			if err != nil {
@@ -798,7 +803,7 @@ func (de *DefaultEngine) checkSlowQuery() error {
 func (de *DefaultEngine) summarize() {
 	de.result.WeightedAverageScore = (de.result.DBConfigScore*de.getItemConfig(defaultDBConfigItemName).GetItemWeight() +
 		de.result.AvgBackupFailedRatioScore*de.getItemConfig(defaultAvgBackupFailedRatioItemName).GetItemWeight() +
-		de.result.StatisticFailedRatioScore*de.getItemConfig(defaultStatisticItemName).GetItemWeight() +
+		de.result.StatisticFailedRatioScore*de.getItemConfig(defaultStatisticFailedRatioItemName).GetItemWeight() +
 		de.result.CPUUsageScore*de.getItemConfig(defaultCPUUsageItemName).GetItemWeight() +
 		de.result.IOUtilScore*de.getItemConfig(defaultIOUtilItemName).GetItemWeight() +
 		de.result.DiskCapacityUsageScore*de.getItemConfig(defaultDiskCapacityUsageItemName).GetItemWeight() +

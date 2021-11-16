@@ -1,8 +1,6 @@
 package query
 
 import (
-	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +8,7 @@ import (
 	"github.com/romberli/das/pkg/message"
 	msgquery "github.com/romberli/das/pkg/message/query"
 	"github.com/romberli/das/pkg/resp"
-	util "github.com/romberli/das/pkg/util/query"
+	utilquery "github.com/romberli/das/pkg/util/query"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/log"
 )
@@ -40,25 +38,18 @@ func GetByMySQLClusterID(c *gin.Context) {
 		return
 	}
 
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
-		return
-	}
-	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
+	var rd *utilquery.Range
+	// bind json
+	err = c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-
-	// get config
-	config, err := util.GetConfig(dataMap)
+	config, err := rd.GetConfig()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-
 	// init server
 	service := query.NewServiceWithDefault(config)
 	err = service.GetByMySQLClusterID(mysqlClusterID)
@@ -66,7 +57,6 @@ func GetByMySQLClusterID(c *gin.Context) {
 		resp.ResponseNOK(c, msgquery.ErrQueryGetByMySQLClusterID, mysqlClusterID, err.Error())
 		return
 	}
-
 	// marshal
 	jsonBytes, err := service.Marshal()
 	if err != nil {
@@ -96,26 +86,18 @@ func GetByMySQLServerID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
-
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
-		return
-	}
-	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
+	var rd *utilquery.Range
+	// bind json
+	err = c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-
-	// get config
-	config, err := util.GetConfig(dataMap)
+	config, err := rd.GetConfig()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-
 	// init service
 	service := query.NewServiceWithDefault(config)
 	err = service.GetByMySQLServerID(mysqlServerID)
@@ -154,41 +136,21 @@ func GetByDBID(c *gin.Context) {
 		return
 	}
 
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
-		return
-	}
-	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
+	var rd *utilquery.ServerRange
+	// bind json
+	err = c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-
-	// get config
-	config, err := util.GetConfig(dataMap)
+	config, err := rd.GetConfig()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-
-	// get mysqlServerID
-
-	mysqlServerIDStr, exists := dataMap[mysqlServerIDJSON]
-	if !exists {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, fmt.Errorf("%s not exists", mysqlServerIDJSON))
-	}
-
-	mysqlServerID, err := strconv.Atoi(mysqlServerIDStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err)
-		return
-	}
-
 	// init service
 	service := query.NewServiceWithDefault(config)
-	err = service.GetByDBID(mysqlServerID, dbID) //
+	err = service.GetByDBID(rd.MysqlServerID, dbID)
 	if err != nil {
 		resp.ResponseNOK(c, msgquery.DebugQueryGetByDBID, dbID, err.Error())
 		return
@@ -218,43 +180,23 @@ func GetBySQLID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, sqlIDJSON)
 		return
 	}
-
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
-		return
-	}
-	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
+	var rd *utilquery.ServerRange
+	// bind json
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-
-	// get mysqlServerID
-
-	mysqlServerIDStr, exists := dataMap[mysqlServerIDJSON]
-	if !exists {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, fmt.Errorf("%s not exists", mysqlServerIDStr))
-	}
-
-	mysqlServerID, err := strconv.Atoi(mysqlServerIDStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err)
-		return
-	}
-
-	// get config
-	config, err := util.GetConfig(dataMap)
+	config, err := rd.GetConfig()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		return
 	}
-
 	// init service
 	service := query.NewServiceWithDefault(config)
-	err = service.GetBySQLID(mysqlServerID, sqlIDStr)
+	err = service.GetBySQLID(rd.MysqlServerID, sqlIDStr)
 	if err != nil {
-		resp.ResponseNOK(c, msgquery.DebugQueryGetBySQLID, mysqlServerID, sqlIDStr, err.Error())
+		resp.ResponseNOK(c, msgquery.DebugQueryGetBySQLID, rd.MysqlServerID, sqlIDStr, err.Error())
 		return
 	}
 
@@ -264,7 +206,7 @@ func GetBySQLID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 	}
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgquery.DebugQueryGetBySQLID, mysqlServerID, sqlIDStr).Error())
+	log.Debug(message.NewMessage(msgquery.DebugQueryGetBySQLID, rd.MysqlServerID, sqlIDStr).Error())
 
 	// response
 	resp.ResponseOK(c, jsonStr, msgquery.InfoQueryGetBySQLID, sqlIDStr)

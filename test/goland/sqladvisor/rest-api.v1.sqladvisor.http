@@ -1,6 +1,4 @@
 ### sqladvisor.GetFingerprint
-@baseURL = 127.0.0.1:6090
-
 GET http://{{baseURL}}/api/v1/sqladvisor/fingerprint/
 Content-Type: application/json
 

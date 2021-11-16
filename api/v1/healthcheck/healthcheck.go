@@ -10,18 +10,13 @@ import (
 	"github.com/romberli/das/pkg/message"
 	msghealth "github.com/romberli/das/pkg/message/healthcheck"
 	"github.com/romberli/das/pkg/resp"
+	utilhealth "github.com/romberli/das/pkg/util/healthcheck"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/log"
 )
 
 const (
 	operationIDJSON = "operation_id"
-	serverIDJSON    = "server_id"
-	hostIPJSON      = "host_ip"
-	portNumJSON     = "port_num"
-	startTimeJSON   = "start_time"
-	endTimeJSON     = "end_time"
-	stepJSON        = "step"
 	reviewJSON      = "review"
 )
 
@@ -68,62 +63,32 @@ func GetResultByOperationID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": "healthcheck started."}"
 // @Router /api/v1/healthcheck/check [post]
 func Check(c *gin.Context) {
-	// get data
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
-		return
-	}
-	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
+	var rd *utilhealth.Check
+	// bind json
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	mysqlServerIDStr, mysqlServerIDExists := dataMap[serverIDJSON]
-	if !mysqlServerIDExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, serverIDJSON)
-		return
-	}
-	mysqlServerID, err := strconv.Atoi(mysqlServerIDStr)
+	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.StartTime, time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err.Error())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.StartTime)
 		return
 	}
-	startTimeStr, startTimeExists := dataMap[startTimeJSON]
-	if !startTimeExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, startTimeJSON)
-		return
-	}
-	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, startTimeStr, time.Local)
+	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.EndTime, time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, startTimeStr)
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.EndTime)
 		return
 	}
-	endTimeStr, endTimeExists := dataMap[endTimeJSON]
-	if !endTimeExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, endTimeJSON)
-		return
-	}
-	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, endTimeStr, time.Local)
+	step, err := time.ParseDuration(rd.Step)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, endTimeStr)
-		return
-	}
-	stepStr, stepExists := dataMap[stepJSON]
-	if !stepExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, stepJSON)
-		return
-	}
-	step, err := time.ParseDuration(stepStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, step)
+		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, rd.Step)
 		return
 	}
 	// init service
 	s := healthcheck.NewServiceWithDefault()
 	// check health
-	err = s.Check(mysqlServerID, startTime, endTime, step)
+	err = s.Check(rd.ServerID, startTime, endTime, step)
 	if err != nil {
 		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err.Error())
 		return
@@ -139,64 +104,32 @@ func Check(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": ""}"
 // @Router /api/v1/healthcheck/check/host-info [post]
 func CheckByHostInfo(c *gin.Context) {
-	// get data
-	data, err := c.GetRawData()
+	var rd *utilhealth.CheckByHostInfo
+	// bind json
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
+	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.StartTime, time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err.Error())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.StartTime)
 		return
 	}
-	hostIP, hostIPExists := dataMap[hostIPJSON]
-	if !hostIPExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, hostIPJSON)
-		return
-	}
-	portNumStr, portNumExists := dataMap[portNumJSON]
-	if !portNumExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, portNumJSON)
-		return
-	}
-	portNum, err := strconv.Atoi(portNumStr)
+	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.EndTime, time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.EndTime)
 		return
 	}
-	startTimeStr, startTimeExists := dataMap[startTimeJSON]
-	if !startTimeExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, startTimeJSON)
-		return
-	}
-	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, startTimeStr, time.Local)
+	step, err := time.ParseDuration(rd.Step)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, startTimeStr)
-	}
-	endTimeStr, endTimeExists := dataMap[endTimeJSON]
-	if !endTimeExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, endTimeJSON)
+		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, rd.Step)
 		return
-	}
-	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, endTimeStr, time.Local)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, endTimeStr)
-	}
-	stepStr, stepExists := dataMap[stepJSON]
-	if !stepExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, stepJSON)
-		return
-	}
-	step, err := time.ParseDuration(stepStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, step)
 	}
 	// init service
 	s := healthcheck.NewServiceWithDefault()
 	// get entities
-	err = s.CheckByHostInfo(hostIP, portNum, startTime, endTime, step)
+	err = s.CheckByHostInfo(rd.HostIP, rd.PortNum, startTime, endTime, step)
 	if err != nil {
 		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, err.Error())
 		return
