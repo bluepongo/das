@@ -17,7 +17,7 @@ import (
 
 const (
 	// modify the connection information
-	testDBAddr   = "192.168.10.210:3306"
+	testDBAddr   = "192.168.10.219:3306"
 	testDBDBName = "das"
 	testDBDBUser = "root"
 	testDBDBPass = "root"

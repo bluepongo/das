@@ -24,7 +24,7 @@ const (
 	// modify the connection information
 	defaultApplicationAddr = "192.168.10.219:3306"
 
-	defaultDASAddr   = "192.168.10.210:3306"
+	defaultDASAddr   = "192.168.10.219:3306"
 	defaultDASDBName = "das"
 
 	defaultDBUser = "root"

@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	testDASMySQLAddr = "192.168.10.210:3306"
+	testDASMySQLAddr = "192.168.10.219:3306"
 	testDASMySQLName = "das"
 	testDASMySQLUser = "root"
 	testDASMySQLPass = "root"

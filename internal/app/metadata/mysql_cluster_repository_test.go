@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	addr   = "192.168.10.210:3306"
+	addr   = "192.168.10.219:3306"
 	dbName = "das"
 	dbUser = "root"
 	dbPass = "root"

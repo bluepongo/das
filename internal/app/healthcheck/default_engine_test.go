@@ -21,7 +21,7 @@ const (
 	defaultEngineConfigDBUser = "root"
 	defaultEngineConfigDBPass = "root"
 
-	applicationMysqlAddr   = "192.168.10.210:3306"
+	applicationMysqlAddr   = "192.168.10.219:3306"
 	applicationMysqlDBName = "performance_schema"
 	applicationMysqlDBUser = "root"
 	applicationMysqlDBPass = "root"
