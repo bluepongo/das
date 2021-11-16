@@ -175,7 +175,7 @@ func AddApp(c *gin.Context) {
 		return
 	}
 	// unmarshal data
-	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.AppInfo{}, constant.DefaultMiddlewareTag)
+	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.AppInfo{}, constant.DefaultJSONTag)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
@@ -235,7 +235,7 @@ func UpdateAppByID(c *gin.Context) {
 		return
 	}
 	// unmarshal data
-	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.AppInfo{}, constant.DefaultMiddlewareTag)
+	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.AppInfo{}, constant.DefaultJSONTag)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return

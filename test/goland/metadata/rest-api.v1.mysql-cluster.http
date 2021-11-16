@@ -14,7 +14,7 @@ Accept: application/json
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/cluster-name/api_test
 Accept: application/json
 
-### get mysql_server.id of mysql cluster
+### get mysql servers of mysql cluster
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/mysql-server/97
 Accept: application/json
 

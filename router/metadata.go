@@ -25,6 +25,7 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.GET("/db/get/:id", metadata.GetDBByID)
 		metadataGroup.GET("/db/name-and-cluster-info", metadata.GetDBByNameAndClusterInfo)
 		metadataGroup.GET("/db/app/:id", metadata.GetAppsByID)
+		metadataGroup.GET("/db/mysql-cluster/:id", metadata.GetMySQLClusterByDBID)
 		metadataGroup.GET("/db/app-owner/:id", metadata.GetAppOwnersByDBID)
 		metadataGroup.GET("/db/db-owner/:id", metadata.GetDBOwnersByDBID)
 		metadataGroup.GET("/db/all-owner/:id", metadata.GetAllOwnersByDBID)

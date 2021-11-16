@@ -18,12 +18,9 @@ import (
 )
 
 const (
-	dbIDJSON          = "id"
-	dbEnvIDJSON       = "env_id"
-	dbAppIDJSON       = "app_id"
-	dbDBNameJSON      = "db_name"
-	dbClusterIDJSON   = "cluster_id"
-	dbClusterTypeJSON = "cluster_type"
+	dbIDJSON    = "id"
+	dbEnvIDJSON = "env_id"
+	dbAppIDJSON = "app_id"
 
 	dbDBNameStruct      = "DBName"
 	dbClusterIDStruct   = "ClusterID"
@@ -221,7 +218,7 @@ func GetAppsByID(c *gin.Context) {
 // @Summary get mysql cluster by id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init","owner_id":1},{"monitor_system_id":1,"owner_id":1,"env_id":1,"create_time":"2021-02-23T04:14:23.707238+08:00","last_update_time":"2021-02-23T04:14:23.707238+08:00","id":2,"cluster_name":"newTest","middleware_cluster_id":1,"del_flag":0}]}"
-// @Router /api/v1/metadata/db/app/:id [get]
+// @Router /api/v1/metadata/db/mysql-cluster/:id [get]
 func GetMySQLClusterByDBID(c *gin.Context) {
 	// get param
 	idStr := c.Param(dbIDJSON)
