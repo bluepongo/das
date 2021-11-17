@@ -31,7 +31,6 @@ const (
 var testDBInfo *DBInfo
 
 func init() {
-	testDBRepo = NewDBRepoWithGlobal()
 	testDBInfo = initNewDBInfo()
 }
 

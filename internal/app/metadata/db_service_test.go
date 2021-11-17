@@ -11,6 +11,7 @@ import (
 var testDBService *DBService
 
 func init() {
+	initDASMySQLPool()
 	testDBService = NewDBServiceWithDefault()
 }
 

@@ -12,7 +12,6 @@ var testAppService *AppService
 
 func init() {
 	initDASMySQLPool()
-	testAppRepo = NewAppRepoWithGlobal()
 	testAppService = NewAppServiceWithDefault()
 }
 

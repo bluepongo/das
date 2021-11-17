@@ -29,7 +29,6 @@ var testAppInfo *AppInfo
 
 func init() {
 	initDASMySQLPool()
-	testAppRepo = NewAppRepoWithGlobal()
 	testAppInfo = initNewAppInfo()
 }
 
