@@ -318,7 +318,7 @@ func DeleteMiddlewareServerByID(c *gin.Context) {
 	// update entities
 	err = s.Delete(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMiddlewareServer, fields[middlewareClusterNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMiddlewareServer, fields[middlewareClusterClusterNameStruct], err.Error())
 		return
 	}
 	// marshal service
@@ -330,5 +330,5 @@ func DeleteMiddlewareServerByID(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataDeleteMiddlewareServer, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteMiddlewareServer, fields[middlewareClusterNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteMiddlewareServer, fields[middlewareClusterClusterNameStruct])
 }
