@@ -17,7 +17,7 @@ var _ metadata.MiddlewareClusterService = (*MiddlewareClusterService)(nil)
 type MiddlewareClusterService struct {
 	metadata.MiddlewareClusterRepo
 	MiddlewareClusters []metadata.MiddlewareCluster `json:"middleware_clusters"`
-	MiddlewareServers  []metadata.MiddlewareServer  `json:"middleware_server_list"`
+	MiddlewareServers  []metadata.MiddlewareServer  `json:"middleware_servers"`
 }
 
 // NewMiddlewareClusterService returns a new *MiddlewareClusterService

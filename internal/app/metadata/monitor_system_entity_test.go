@@ -1,7 +1,6 @@
 package metadata
 
 import (
-	"encoding/json"
 	"reflect"
 	"testing"
 
@@ -12,36 +11,45 @@ import (
 )
 
 const (
-	defaultMonitorSystemInfoID                   = 1
-	defaultMonitorSystemInfoSystemName           = "monitor_system"
-	defaultMonitorSystemInfoSystemType           = 1
-	defaultMonitorSystemInfoHostIP               = "0.0.0.0"
-	defaultMonitorSystemInfoPortNum              = 3306
-	defaultMonitorSystemInfoPortNumSlow          = 3307
-	defaultMonitorSystemInfoBaseUrl              = "http://127.0.0.1/prometheus/api/v1/"
-	defaultMonitorSystemInfoEnvID                = 1
-	defaultMonitorSystemInfoDelFlag              = 0
-	defaultMonitorSystemInfoCreateTimeString     = "2021-01-21 10:00:00.000000"
-	defaultMonitorSystemInfoLastUpdateTimeString = "2021-01-21 13:00:00.000000"
-	monitorSystemNameJSON                        = "system_name"
+	testMonitorSystemID                   = 1
+	testMonitorSystemSystemName           = "pmm2"
+	testMonitorSystemSystemType           = 2
+	testMonitorSystemHostIP               = "192.168.10.219"
+	testMonitorSystemPortNum              = 80
+	testMonitorSystemPortNumSlow          = 9000
+	testMonitorSystemBaseUrl              = "/prometheus"
+	testMonitorSystemEnvID                = 1
+	testMonitorSystemDelFlag              = 0
+	testMonitorSystemCreateTimeString     = "2021-01-21 10:00:00.000000"
+	testMonitorSystemLastUpdateTimeString = "2021-01-21 13:00:00.000000"
 )
+
+var testMonitorSystemInfo *MonitorSystemInfo
+
+func init() {
+	initDASMySQLPool()
+	testMonitorSystemInfo = initNewMonitorSystemInfo()
+}
 
 func initNewMonitorSystemInfo() *MonitorSystemInfo {
 	now.TimeFormats = append(now.TimeFormats, constant.DefaultTimeLayout)
 
-	createTime, _ := now.Parse(defaultMonitorSystemInfoCreateTimeString)
-	lastUpdateTime, _ := now.Parse(defaultMonitorSystemInfoLastUpdateTimeString)
-	return NewMonitorSystemInfo(monitorSystemRepo, defaultMonitorSystemInfoID, defaultMonitorSystemInfoSystemName,
-		defaultMonitorSystemInfoSystemType, defaultMonitorSystemInfoHostIP, defaultMonitorSystemInfoPortNum,
-		defaultMonitorSystemInfoPortNumSlow, defaultMonitorSystemInfoBaseUrl, defaultMonitorSystemInfoEnvID,
-		defaultMonitorSystemInfoDelFlag, createTime, lastUpdateTime)
-}
-
-func monitorSystemEqual(a, b *MonitorSystemInfo) bool {
-	return a.ID == b.ID && a.MonitorSystemName == b.MonitorSystemName && a.MonitorSystemType == b.MonitorSystemType &&
-		a.MonitorSystemHostIP == b.MonitorSystemHostIP && a.MonitorSystemPortNum == b.MonitorSystemPortNum &&
-		a.MonitorSystemPortNumSlow == b.MonitorSystemPortNumSlow && a.BaseURL == b.BaseURL && a.EnvID == b.EnvID &&
-		a.DelFlag == b.DelFlag && a.CreateTime == b.CreateTime && a.LastUpdateTime == b.LastUpdateTime
+	createTime, _ := now.Parse(testMonitorSystemCreateTimeString)
+	lastUpdateTime, _ := now.Parse(testMonitorSystemLastUpdateTimeString)
+	return NewMonitorSystemInfo(
+		testMonitorSystemRepo,
+		testMonitorSystemID,
+		testMonitorSystemSystemName,
+		testMonitorSystemSystemType,
+		testMonitorSystemHostIP,
+		testMonitorSystemPortNum,
+		testMonitorSystemPortNumSlow,
+		testMonitorSystemBaseUrl,
+		testMonitorSystemEnvID,
+		testMonitorSystemDelFlag,
+		createTime,
+		lastUpdateTime,
+	)
 }
 
 func TestMonitorSystemEntityAll(t *testing.T) {
@@ -66,70 +74,70 @@ func TestMonitorSystemInfo_Identity(t *testing.T) {
 	asst := assert.New(t)
 
 	monitorSystemInfo := initNewMonitorSystemInfo()
-	asst.Equal(defaultMonitorSystemInfoID, monitorSystemInfo.Identity(), "test Identity() failed")
+	asst.Equal(testMonitorSystemID, monitorSystemInfo.Identity(), "test Identity() failed")
 }
 
 func TestMonitorSystemInfo_GetMonitorSystemName(t *testing.T) {
 	asst := assert.New(t)
 
 	monitorSystemInfo := initNewMonitorSystemInfo()
-	asst.Equal(defaultMonitorSystemInfoSystemName, monitorSystemInfo.GetSystemName(), "test GetSystemName() failed")
+	asst.Equal(testMonitorSystemSystemName, monitorSystemInfo.GetSystemName(), "test GetSystemName() failed")
 }
 
 func TestMonitorSystemInfo_GetMonitorSystemType(t *testing.T) {
 	asst := assert.New(t)
 
 	monitorSystemInfo := initNewMonitorSystemInfo()
-	asst.Equal(defaultMonitorSystemInfoSystemType, monitorSystemInfo.GetSystemType(), "test GetSystemType() failed")
+	asst.Equal(testMonitorSystemSystemType, monitorSystemInfo.GetSystemType(), "test GetSystemType() failed")
 }
 
 func TestMonitorSystemInfo_GetMonitorSystemHostIP(t *testing.T) {
 	asst := assert.New(t)
 
 	monitorSystemInfo := initNewMonitorSystemInfo()
-	asst.Equal(defaultMonitorSystemInfoHostIP, monitorSystemInfo.GetHostIP(), "test GetHostIP() failed")
+	asst.Equal(testMonitorSystemHostIP, monitorSystemInfo.GetHostIP(), "test GetHostIP() failed")
 }
 
 func TestMonitorSystemInfo_GetMonitorSystemPortNum(t *testing.T) {
 	asst := assert.New(t)
 
 	monitorSystemInfo := initNewMonitorSystemInfo()
-	asst.Equal(defaultMonitorSystemInfoPortNum, monitorSystemInfo.GetPortNum(), "test GetPortNum() failed")
+	asst.Equal(testMonitorSystemPortNum, monitorSystemInfo.GetPortNum(), "test GetPortNum() failed")
 }
 
 func TestMonitorSystemInfo_GetMonitorSystemPortNumSlow(t *testing.T) {
 	asst := assert.New(t)
 
 	monitorSystemInfo := initNewMonitorSystemInfo()
-	asst.Equal(defaultMonitorSystemInfoPortNumSlow, monitorSystemInfo.GetPortNumSlow(), "test GetPortNumSlow() failed")
+	asst.Equal(testMonitorSystemPortNumSlow, monitorSystemInfo.GetPortNumSlow(), "test GetPortNumSlow() failed")
 }
 
 func TestMonitorSystemInfo_GetBaseURL(t *testing.T) {
 	asst := assert.New(t)
 
 	monitorSystemInfo := initNewMonitorSystemInfo()
-	asst.Equal(defaultMonitorSystemInfoBaseUrl, monitorSystemInfo.GetBaseURL(), "test GetBaseURL() failed")
+	asst.Equal(testMonitorSystemBaseUrl, monitorSystemInfo.GetBaseURL(), "test GetBaseURL() failed")
 }
 
 func TestMonitorSystemInfo_GetEnvID(t *testing.T) {
 	asst := assert.New(t)
 
 	monitorSystemInfo := initNewMonitorSystemInfo()
-	asst.Equal(defaultMonitorSystemInfoEnvID, monitorSystemInfo.GetEnvID(), "test GetEnvID() failed")
+	asst.Equal(testMonitorSystemEnvID, monitorSystemInfo.GetEnvID(), "test GetEnvID() failed")
 }
 
 func TestMonitorSystemInfo_GetDelFlag(t *testing.T) {
 	asst := assert.New(t)
 
 	monitorSystemInfo := initNewMonitorSystemInfo()
-	asst.Equal(defaultMonitorSystemInfoDelFlag, monitorSystemInfo.GetDelFlag(), "test GetDelFlag() failed")
+	asst.Equal(testMonitorSystemDelFlag, monitorSystemInfo.GetDelFlag(), "test GetDelFlag() failed")
 }
 
 func TestMonitorSystemInfo_GetCreateTime(t *testing.T) {
 	asst := assert.New(t)
 
 	monitorSystemInfo := initNewMonitorSystemInfo()
-	asst.True(reflect.DeepEqual(monitorSystemInfo.CreateTime, monitorSystemInfo.GetCreateTime()), "test GetCreateTime failed")
+	asst.True(reflect.DeepEqual(monitorSystemInfo.CreateTime, monitorSystemInfo.GetCreateTime()), "test GetCreateTime() failed")
 }
 
 func TestMonitorSystemInfo_GetLastUpdateTime(t *testing.T) {
@@ -142,41 +150,36 @@ func TestMonitorSystemInfo_GetLastUpdateTime(t *testing.T) {
 func TestMonitorSystemInfo_Set(t *testing.T) {
 	asst := assert.New(t)
 
-	monitorSystemInfo := initNewMonitorSystemInfo()
-	newMonitorSystemName := "new_monitor_system"
-	err := monitorSystemInfo.Set(map[string]interface{}{"MonitorSystemName": newMonitorSystemName})
-	asst.Nil(err, common.CombineMessageWithError("test Get() failed", err))
-	asst.Equal(newMonitorSystemName, monitorSystemInfo.MonitorSystemName, "test Set() failed")
+	err := testMonitorSystemInfo.Set(map[string]interface{}{monitorSystemSystemNameStruct: testMonitorSystemUpdateSystemName})
+	asst.Nil(err, common.CombineMessageWithError("test Set() failed", err))
+	asst.Equal(testMonitorSystemUpdateSystemName, testMonitorSystemInfo.GetSystemName(), "test Set() failed")
+	err = testMonitorSystemInfo.Set(map[string]interface{}{monitorSystemSystemNameStruct: testMonitorSystemSystemName})
+	asst.Nil(err, common.CombineMessageWithError("test Set() failed", err))
+	asst.Equal(testMonitorSystemSystemName, testMonitorSystemInfo.GetSystemName(), "test Set() failed")
 }
 
 func TestMonitorSystemInfo_Delete(t *testing.T) {
 	asst := assert.New(t)
 
-	monitorSystemInfo := initNewMonitorSystemInfo()
-	monitorSystemInfo.Delete()
-	asst.Equal(1, monitorSystemInfo.DelFlag, "test Delete() failed")
+	testMonitorSystemInfo.Delete()
+	asst.Equal(1, testMonitorSystemInfo.GetDelFlag(), "test Delete() failed")
+	err := testMonitorSystemInfo.Set(map[string]interface{}{monitorSystemDelFlagStruct: constant.ZeroInt})
+	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
+	asst.Equal(constant.ZeroInt, testMonitorSystemInfo.GetDelFlag(), "test Delete() failed")
 }
 
 func TestMonitorSystemInfo_MarshalJSON(t *testing.T) {
-	var monitorSystemInfoUnmarshal *MonitorSystemInfo
-
 	asst := assert.New(t)
 
-	monitorSystemInfo := initNewMonitorSystemInfo()
-	data, err := monitorSystemInfo.MarshalJSON()
+	jsonBytes, err := testMonitorSystemInfo.MarshalJSON()
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
-	err = json.Unmarshal(data, &monitorSystemInfoUnmarshal)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
-	asst.True(monitorSystemEqual(monitorSystemInfo, monitorSystemInfoUnmarshal), "test MarshalJSON() failed")
+	t.Log(string(jsonBytes))
 }
 
 func TestMonitorSystemInfo_MarshalJSONWithFields(t *testing.T) {
 	asst := assert.New(t)
 
-	monitorSystemInfo := initNewMonitorSystemInfo()
-	data, err := monitorSystemInfo.MarshalJSONWithFields(monitorSystemNameStruct)
+	jsonBytes, err := testMonitorSystemInfo.MarshalJSONWithFields(monitorSystemSystemNameStruct)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
-	expect, err := json.Marshal(map[string]interface{}{monitorSystemNameJSON: "monitor_system"})
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
-	asst.Equal(string(expect), string(data), "test MarshalJSONWithFields() failed")
+	t.Log(string(jsonBytes))
 }

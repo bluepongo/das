@@ -11,22 +11,23 @@ import (
 )
 
 const (
-	monitorSystemNameStruct        = "MonitorSystemName"
-	monitorSystemTypeStruct        = "MonitorSystemType"
+	monitorSystemSystemNameStruct  = "MonitorSystemName"
+	monitorSystemSystemTypeStruct  = "MonitorSystemType"
 	monitorSystemHostIPStruct      = "MonitorSystemHostIP"
 	monitorSystemPortNumStruct     = "MonitorSystemPortNum"
 	monitorSystemPortNumSlowStruct = "MonitorSystemPortNumSlow"
 	monitorSystemBaseUrlStruct     = "BaseURL"
 	monitorSystemEnvIDStruct       = "EnvID"
-)
+	monitorSystemDelFlagStruct     = "DelFlag"
 
-const monitorSystemsStruct = "MonitorSystems"
+	monitorSystemMonitorSystemsStruct = "MonitorSystems"
+)
 
 var _ metadata.MonitorSystemService = (*MonitorSystemService)(nil)
 
 type MonitorSystemService struct {
 	metadata.MonitorSystemRepo
-	MonitorSystems []metadata.MonitorSystem `json:"monitorSystems"`
+	MonitorSystems []metadata.MonitorSystem `json:"monitor_systems"`
 }
 
 // NewMonitorSystemService returns a new *MonitorSystemService
@@ -60,6 +61,7 @@ func (mss *MonitorSystemService) GetByID(id int) error {
 		return err
 	}
 
+	mss.MonitorSystems = nil
 	mss.MonitorSystems = append(mss.MonitorSystems, monitorSystem)
 
 	return err
@@ -81,6 +83,7 @@ func (mss *MonitorSystemService) GetByHostInfo(hostIP string, portNum int) error
 		return err
 	}
 
+	mss.MonitorSystems = nil
 	mss.MonitorSystems = append(mss.MonitorSystems, monitorSystem)
 
 	return err
@@ -89,8 +92,8 @@ func (mss *MonitorSystemService) GetByHostInfo(hostIP string, portNum int) error
 // Create creates an new monitor system in the middleware
 func (mss *MonitorSystemService) Create(fields map[string]interface{}) error {
 	// generate new map
-	_, monitorSystemNameExists := fields[monitorSystemNameStruct]
-	_, systemTypeExists := fields[monitorSystemTypeStruct]
+	_, monitorSystemNameExists := fields[monitorSystemSystemNameStruct]
+	_, systemTypeExists := fields[monitorSystemSystemTypeStruct]
 	_, hostIPExists := fields[monitorSystemHostIPStruct]
 	_, portNumExists := fields[monitorSystemPortNumStruct]
 	_, portNumSlowExists := fields[monitorSystemPortNumSlowStruct]
@@ -98,7 +101,7 @@ func (mss *MonitorSystemService) Create(fields map[string]interface{}) error {
 	_, envIDExists := fields[monitorSystemEnvIDStruct]
 	if !monitorSystemNameExists || !systemTypeExists || !hostIPExists || !portNumExists || !portNumSlowExists || !baseUrlExists || !envIDExists {
 		return message.NewMessage(message.ErrFieldNotExists, fmt.Sprintf("%s and %s and %s and %s and %s and %s and %s",
-			monitorSystemNameStruct, monitorSystemTypeStruct, monitorSystemHostIPStruct, monitorSystemPortNumStruct,
+			monitorSystemSystemNameStruct, monitorSystemSystemTypeStruct, monitorSystemHostIPStruct, monitorSystemPortNumStruct,
 			monitorSystemPortNumSlowStruct, monitorSystemBaseUrlStruct, monitorSystemEnvIDStruct))
 	}
 
@@ -112,6 +115,8 @@ func (mss *MonitorSystemService) Create(fields map[string]interface{}) error {
 	if err != nil {
 		return err
 	}
+
+	mss.MonitorSystems = nil
 	mss.MonitorSystems = append(mss.MonitorSystems, monitorSystem)
 
 	return nil
@@ -141,7 +146,7 @@ func (mss *MonitorSystemService) Delete(id int) error {
 
 // Marshal marshals MonitorSystemService.MonitorSystems to json bytes
 func (mss *MonitorSystemService) Marshal() ([]byte, error) {
-	return mss.MarshalWithFields(monitorSystemsStruct)
+	return mss.MarshalWithFields(monitorSystemMonitorSystemsStruct)
 }
 
 // MarshalWithFields marshals only specified fields of the MonitorSystemService to json bytes
