@@ -34,10 +34,12 @@ func init() {
 func initDASMySQLPool() {
 	var err error
 
-	global.DASMySQLPool, err = mysql.NewPoolWithDefault(testDASMySQLAddr, testDASMySQLName, testDASMySQLUser, testDASMySQLPass)
-	log.Infof("pool: %v, error: %v", global.DASMySQLPool, err)
-	if err != nil {
-		log.Error(common.CombineMessageWithError("initRepository() failed", err))
+	if global.DASMySQLPool == nil {
+		global.DASMySQLPool, err = mysql.NewPoolWithDefault(testDASMySQLAddr, testDASMySQLName, testDASMySQLUser, testDASMySQLPass)
+		log.Infof("pool: %v, error: %v", global.DASMySQLPool, err)
+		if err != nil {
+			log.Error(common.CombineMessageWithError("initRepository() failed", err))
+		}
 	}
 }
 

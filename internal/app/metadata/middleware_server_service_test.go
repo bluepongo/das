@@ -28,9 +28,9 @@ func TestMiddlewareServerService_GetMiddlewareServers(t *testing.T) {
 
 	s := NewMiddlewareServerService(middlewareServerRepo)
 	err := s.GetAll()
-	asst.Nil(err, "test GetMiddlewareServers() failed")
+	asst.Nil(err, "test GetMiddlewareServersByID() failed")
 	entities := s.GetMiddlewareServers()
-	asst.Greater(len(entities), constant.ZeroInt, "test GetMiddlewareServers() failed")
+	asst.Greater(len(entities), constant.ZeroInt, "test GetMiddlewareServersByID() failed")
 }
 
 func TestMiddlewareServerService_GetAll(t *testing.T) {

@@ -177,13 +177,13 @@ func GetMiddlewareServerIDList(c *gin.Context) {
 	// init service
 	s := metadata.NewMiddlewareClusterServiceWithDefault()
 	// get entity
-	_, err = s.GetMiddlewareServerIDList(id)
+	_, err = s.GetMiddlewareServers(id)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareServerIDList, id, err.Error())
 		return
 	}
 	// marshal service
-	jsonBytes, err := json.Marshal(s.MiddlewareServerList)
+	jsonBytes, err := json.Marshal(s.MiddlewareServers)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
