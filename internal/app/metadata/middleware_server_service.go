@@ -10,7 +10,7 @@ import (
 	"github.com/romberli/das/pkg/message"
 )
 
-const middlewareServersStruct = "MiddlewareServers"
+const middlewareServerMiddlewareServersStruct = "MiddlewareServers"
 
 var _ metadata.MiddlewareServerService = (*MiddlewareServerService)(nil)
 
@@ -37,6 +37,7 @@ func (mss *MiddlewareServerService) GetMiddlewareServers() []metadata.Middleware
 // GetAll gets all middleware servers from the middleware
 func (mss *MiddlewareServerService) GetAll() error {
 	var err error
+
 	mss.MiddlewareServers, err = mss.MiddlewareServerRepo.GetAll()
 
 	return err
@@ -45,7 +46,9 @@ func (mss *MiddlewareServerService) GetAll() error {
 // GetByClusterID gets middleware servers with given cluster id
 func (mss *MiddlewareServerService) GetByClusterID(clusterID int) error {
 	var err error
+
 	mss.MiddlewareServers, err = mss.MiddlewareServerRepo.GetByClusterID(clusterID)
+
 	return err
 }
 
@@ -56,6 +59,7 @@ func (mss *MiddlewareServerService) GetByID(id int) error {
 		return err
 	}
 
+	mss.MiddlewareServers = nil
 	mss.MiddlewareServers = append(mss.MiddlewareServers, middlewareServer)
 
 	return err
@@ -67,7 +71,10 @@ func (mss *MiddlewareServerService) GetByHostInfo(hostIP string, portNum int) er
 	if err != nil {
 		return err
 	}
+
+	mss.MiddlewareServers = nil
 	mss.MiddlewareServers = append(mss.MiddlewareServers, middlewareServer)
+
 	return err
 }
 
@@ -75,12 +82,12 @@ func (mss *MiddlewareServerService) GetByHostInfo(hostIP string, portNum int) er
 func (mss *MiddlewareServerService) Create(fields map[string]interface{}) error {
 	// generate new map
 	_, clusterIDExists := fields[middlewareServerClusterIDStruct]
-	_, serverNameExists := fields[middlewareServerNameStruct]
+	_, serverNameExists := fields[middlewareServerServerNameStruct]
 	_, middlewareRoleExists := fields[middlewareServerMiddlewareRoleStruct]
 	_, hostIPExists := fields[middlewareServerHostIPStruct]
 	_, portNumExists := fields[middlewareServerPortNumStruct]
 	if !clusterIDExists || !serverNameExists || !middlewareRoleExists || !hostIPExists || !portNumExists {
-		return message.NewMessage(message.ErrFieldNotExists, fmt.Sprintf("%s, %s, %s, %s and %s", middlewareServerClusterIDStruct, middlewareServerNameStruct, middlewareServerMiddlewareRoleStruct, middlewareServerHostIPStruct, middlewareServerPortNumStruct))
+		return message.NewMessage(message.ErrFieldNotExists, fmt.Sprintf("%s, %s, %s, %s and %s", middlewareServerClusterIDStruct, middlewareServerServerNameStruct, middlewareServerMiddlewareRoleStruct, middlewareServerHostIPStruct, middlewareServerPortNumStruct))
 	}
 	// create a new entity
 	middlewareServerInfo, err := NewMiddlewareServerInfoWithMapAndRandom(fields)
@@ -93,7 +100,9 @@ func (mss *MiddlewareServerService) Create(fields map[string]interface{}) error 
 		return err
 	}
 
+	mss.MiddlewareServers = nil
 	mss.MiddlewareServers = append(mss.MiddlewareServers, middlewareServer)
+
 	return nil
 }
 
@@ -106,6 +115,7 @@ func (mss *MiddlewareServerService) Update(id int, fields map[string]interface{}
 	if err != nil {
 		return err
 	}
+
 	err = mss.MiddlewareServers[constant.ZeroInt].Set(fields)
 	if err != nil {
 		return err
@@ -121,7 +131,7 @@ func (mss *MiddlewareServerService) Delete(id int) error {
 
 // Marshal marshals MiddlewareServerService.MiddlewareServers to json bytes
 func (mss *MiddlewareServerService) Marshal() ([]byte, error) {
-	return mss.MarshalWithFields(middlewareServersStruct)
+	return mss.MarshalWithFields(middlewareServerMiddlewareServersStruct)
 }
 
 // MarshalWithFields marshals only specified fields of the MiddlewareServerService to json bytes

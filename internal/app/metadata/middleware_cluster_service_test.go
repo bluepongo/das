@@ -142,7 +142,7 @@ func TestMiddlewareClusterService_MarshalWithFields(t *testing.T) {
 
 	err := testMiddlewareClusterService.GetByID(testMiddlewareClusterClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
-	jsonBytes, err := testMiddlewareClusterService.MarshalWithFields(middlewareClusterClusterNameStruct)
+	jsonBytes, err := testMiddlewareClusterService.MarshalWithFields(middlewareClusterMiddlewareClustersStruct)
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	t.Log(string(jsonBytes))
 }
