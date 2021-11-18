@@ -165,7 +165,7 @@ func TestMySQLClusterInfo_MarshalJSON(t *testing.T) {
 	asst := assert.New(t)
 
 	jsonBytes, err := testMySQLClusterInfo.MarshalJSON()
-	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
 	t.Log(string(jsonBytes))
 }
 
@@ -173,6 +173,6 @@ func TestMySQLClusterInfo_MarshalJSONWithFields(t *testing.T) {
 	asst := assert.New(t)
 
 	jsonBytes, err := testMySQLClusterInfo.MarshalJSONWithFields(mysqlClusterClusterNameStruct)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 	t.Log(string(jsonBytes))
 }
