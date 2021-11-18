@@ -26,7 +26,6 @@ import (
 )
 
 const (
-	defaultDBConfigScore                        = 5
 	defaultMinScore                             = 0
 	defaultMaxScore                             = 100.0
 	defaultHundred                              = 100

@@ -142,7 +142,7 @@ func TestMiddlewareServerInfo_MarshalJSON(t *testing.T) {
 	asst := assert.New(t)
 
 	jsonBytes, err := testMiddlewareServerInfo.MarshalJSON()
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	t.Log(string(jsonBytes))
 }
 
@@ -150,6 +150,6 @@ func TestMiddlewareServerInfo_MarshalJSONWithFields(t *testing.T) {
 	asst := assert.New(t)
 
 	jsonBytes, err := testMiddlewareServerInfo.MarshalJSONWithFields(middlewareServerServerNameStruct)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
 	t.Log(string(jsonBytes))
 }

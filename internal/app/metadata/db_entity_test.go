@@ -229,18 +229,18 @@ func TestDBInfo_MarshalJSON(t *testing.T) {
 	asst := assert.New(t)
 
 	data, err := testDBInfo.MarshalJSON()
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	err = json.Unmarshal(data, &dbInfoUnmarshal)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
-	asst.True(dbEqual(testDBInfo, dbInfoUnmarshal), "test MarshalJSON() failed")
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
+	asst.True(dbEqual(testDBInfo, dbInfoUnmarshal), "test Marshal() failed")
 }
 
 func TestDBInfo_MarshalJSONWithFields(t *testing.T) {
 	asst := assert.New(t)
 
 	data, err := testDBInfo.MarshalJSONWithFields(dbDBNameStruct)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
 	expect, err := json.Marshal(map[string]interface{}{testDBDBNameJSON: testDBDBName})
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
-	asst.Equal(string(expect), string(data), "test MarshalJSONWithFields() failed")
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
+	asst.Equal(string(expect), string(data), "test MarshalWithFields() failed")
 }

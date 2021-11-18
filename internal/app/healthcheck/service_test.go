@@ -208,24 +208,24 @@ func TestService_MarshalJSON(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := createService()
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
-	_, err = service.MarshalJSON()
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
+	_, err = service.Marshal()
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	// delete
 	err = deleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 }
 
 func TestService_MarshalJSONWithFields(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := createService()
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields(fields ...string) failed", err))
-	_, err = service.MarshalJSONWithFields("ID", "operationID", "WeightedAverageScore", "DBConfigScore", "DBConfigData", "DBConfigAdvice", "CPUUsageScore", "CPUUsageData", "CPUUsageHigh", "IOUtilScore", "IOUtilData", "IOUtilHigh", "DiskCapacityUsageScore", "DiskCapacityUsageData", "DiskCapacityUsageHigh", "ConnectionUsageScore", "ConnectionUsageData", "ConnectionUsageHigh", "AverageActiveSessionPercentsScore", "AverageActiveSessionPercentsData", "AverageActiveSessionPercentsHigh", "CacheMissRatioScore", "CacheMissRatioData", "CacheMissRatioHigh", "TableSizeScore", "TableSizeData", "TableSizeHigh", "SlowQueryScore", "SlowQueryData", "SlowQueryAdvice")
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields(fields ...string) failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields(fields ...string) failed", err))
+	_, err = service.MarshalWithFields("ID", "operationID", "WeightedAverageScore", "DBConfigScore", "DBConfigData", "DBConfigAdvice", "CPUUsageScore", "CPUUsageData", "CPUUsageHigh", "IOUtilScore", "IOUtilData", "IOUtilHigh", "DiskCapacityUsageScore", "DiskCapacityUsageData", "DiskCapacityUsageHigh", "ConnectionUsageScore", "ConnectionUsageData", "ConnectionUsageHigh", "AverageActiveSessionPercentsScore", "AverageActiveSessionPercentsData", "AverageActiveSessionPercentsHigh", "CacheMissRatioScore", "CacheMissRatioData", "CacheMissRatioHigh", "TableSizeScore", "TableSizeData", "TableSizeHigh", "SlowQueryScore", "SlowQueryData", "SlowQueryAdvice")
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields(fields ...string) failed", err))
 	// delete
 	err = deleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields(fields ...string) failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields(fields ...string) failed", err))
 }
 
 // go test ./service_test.go ./service.go ./query.go ./default_engine.go ./result.go

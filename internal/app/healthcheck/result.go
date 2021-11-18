@@ -41,7 +41,7 @@ const (
 	lastUpdateTimeStruct                   = "LastUpdateTime"
 )
 
-var ignoreList = []string{
+var defaultIgnoreList = []string{
 	dbConfigDataStruct,
 	avgBackupFailedRatioDataStruct,
 	avgBackupFailedRatioHighStruct,
@@ -459,24 +459,7 @@ func (r *Result) GetLastUpdateTime() time.Time {
 
 func (r *Result) String() string {
 	r.setWithEmptyValue()
-
-	s := constant.LeftBraceString
-	inVal := reflect.ValueOf(r).Elem()
-
-	for i := 0; i < inVal.NumField(); i++ {
-		fieldType := inVal.Type().Field(i)
-		fieldVal := inVal.Field(i)
-		fieldTag := fieldType.Tag.Get(constant.DefaultMarshalTag)
-		if fieldTag != constant.EmptyString && !common.StringInSlice(ignoreList, fieldType.Name) {
-			fieldStr := fmt.Sprintf(`"%s":%v,`, fieldTag, inVal.Field(i))
-			if fieldType.Name == createTimeStruct || fieldType.Name == lastUpdateTimeStruct ||
-				fieldVal.IsZero() || fieldVal.String() == constant.NullString {
-				fieldStr = fmt.Sprintf(`"%s":"%v",`, fieldTag, fieldVal)
-			}
-
-			s += fieldStr
-		}
-	}
+	s := r.getString(defaultIgnoreList)
 
 	return string(pretty.Pretty([]byte(strings.Trim(s, constant.CommaString) + constant.RightBraceString)))
 }
@@ -495,7 +478,8 @@ func (r *Result) Set(fields map[string]interface{}) error {
 
 // MarshalJSON marshals health check to json string
 func (r *Result) MarshalJSON() ([]byte, error) {
-	return common.MarshalStructWithTag(r, constant.DefaultMarshalTag)
+	// return common.MarshalStructWithTag(r, constant.DefaultMarshalTag)
+	return []byte(r.getString(nil)), nil
 }
 
 // MarshalJSONWithFields marshals only specified field of the health check to json string
@@ -514,4 +498,26 @@ func (r *Result) setWithEmptyValue() {
 	r.CacheMissRatioData = constant.EmptyString
 	r.TableRowsData = constant.EmptyString
 	r.SlowQueryData = constant.EmptyString
+}
+
+func (r *Result) getString(ignoreList []string) string {
+	s := constant.LeftBraceString
+	inVal := reflect.ValueOf(r).Elem()
+
+	for i := 0; i < inVal.NumField(); i++ {
+		fieldType := inVal.Type().Field(i)
+		fieldVal := inVal.Field(i)
+		fieldTag := fieldType.Tag.Get(constant.DefaultMarshalTag)
+		if fieldTag != constant.EmptyString && !common.StringInSlice(ignoreList, fieldType.Name) {
+			fieldStr := fmt.Sprintf(`"%s":%v,`, fieldTag, inVal.Field(i))
+			if fieldType.Name == createTimeStruct || fieldType.Name == lastUpdateTimeStruct ||
+				fieldVal.IsZero() || fieldVal.String() == constant.NullString {
+				fieldStr = fmt.Sprintf(`"%s":"%v",`, fieldTag, fieldVal)
+			}
+
+			s += fieldStr
+		}
+	}
+
+	return s
 }

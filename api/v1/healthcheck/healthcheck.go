@@ -46,7 +46,7 @@ func GetResultByOperationID(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalJSON()
+	jsonBytes, err := s.Marshal()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return

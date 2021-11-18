@@ -807,28 +807,28 @@ func TestResult_MarshalJSON(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := rCreateService()
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	err = service.GetResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	result := service.GetResult()
 	_, err = result.MarshalJSON()
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	// delete
 	err = rDeleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 }
 
 func TestResult_MarshalJSONWithFields(t *testing.T) {
 	asst := assert.New(t)
 
 	service, err := rCreateService()
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
 	err = service.GetResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
 	result := service.GetResult()
 	_, err = result.MarshalJSONWithFields("ID", "operationID", "WeightedAverageScore", "DBConfigScore", "DBConfigData", "DBConfigAdvice", "CPUUsageScore", "CPUUsageData", "CPUUsageHigh", "IOUtilScore", "IOUtilData", "IOUtilHigh", "DiskCapacityUsageScore", "DiskCapacityUsageData", "DiskCapacityUsageHigh", "ConnectionUsageScore", "ConnectionUsageData", "ConnectionUsageHigh", "AverageActiveSessionPercentsScore", "AverageActiveSessionPercentsData", "AverageActiveSessionPercentsHigh", "CacheMissRatioScore", "CacheMissRatioData", "CacheMissRatioHigh", "TableSizeScore", "TableSizeData", "TableSizeHigh", "SlowQueryScore", "SlowQueryData", "SlowQueryAdvice")
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
 	// delete
 	err = rDeleteHCResultByOperationID(defaultResultOperationID)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
 }

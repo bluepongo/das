@@ -80,10 +80,10 @@ type Service interface {
 	CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration) error
 	// ReviewAccuracy reviews the accuracy of the check
 	ReviewAccuracy(id, review int) error
-	// MarshalJSON marshals Service to json string
-	MarshalJSON() ([]byte, error)
-	// MarshalJSON marshals only specified field of the Service to json string
-	MarshalJSONWithFields(fields ...string) ([]byte, error)
+	// Marshal marshals Service to json string
+	Marshal() ([]byte, error)
+	// MarshalWithFields marshals only specified field of the Service to json string
+	MarshalWithFields(fields ...string) ([]byte, error)
 }
 
 type Engine interface {

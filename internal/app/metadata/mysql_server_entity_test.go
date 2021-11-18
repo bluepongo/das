@@ -130,7 +130,7 @@ func TestMySQLServerInfo_MarshalJSON(t *testing.T) {
 	asst := assert.New(t)
 
 	jsonBytes, err := testMySQLServerInfo.MarshalJSON()
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	t.Log(string(jsonBytes))
 }
 
@@ -138,6 +138,6 @@ func TestMySQLServerInfo_MarshalJSONWithFields(t *testing.T) {
 	asst := assert.New(t)
 
 	jsonBytes, err := testMySQLServerInfo.MarshalJSONWithFields(mysqlServerServerNameStruct)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
 	t.Log(string(jsonBytes))
 }

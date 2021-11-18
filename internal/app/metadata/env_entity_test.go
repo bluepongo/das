@@ -104,7 +104,7 @@ func TestEnvInfo_MarshalJSON(t *testing.T) {
 	asst := assert.New(t)
 
 	jsonBytes, err := testEnvInfo.MarshalJSON()
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	t.Log(string(jsonBytes))
 }
 
@@ -112,8 +112,8 @@ func TestEnvInfo_MarshalJSONWithFields(t *testing.T) {
 	asst := assert.New(t)
 
 	jsonBytes, err := testEnvInfo.MarshalJSONWithFields(envEnvNameStruct)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
 	expect, err := json.Marshal(map[string]interface{}{testEnvEnvNameJSON: testEnvEnvName})
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
-	asst.Equal(string(expect), string(jsonBytes), "test MarshalJSONWithFields() failed")
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
+	asst.Equal(string(expect), string(jsonBytes), "test MarshalWithFields() failed")
 }

@@ -133,7 +133,7 @@ func TestMiddlewareClusterInfo_MarshalJSON(t *testing.T) {
 	asst := assert.New(t)
 
 	jsonBytes, err := testMiddlewareClusterInfo.MarshalJSON()
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	t.Log(string(jsonBytes))
 }
 
@@ -141,6 +141,6 @@ func TestMiddlewareClusterInfo_MarshalJSONWithFields(t *testing.T) {
 	asst := assert.New(t)
 
 	jsonBytes, err := testMiddlewareClusterInfo.MarshalJSONWithFields(middlewareClusterClusterNameStruct)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	t.Log(string(jsonBytes))
 }

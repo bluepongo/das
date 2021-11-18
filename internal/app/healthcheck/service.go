@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	resultStruct                   = "Result"
+	healthcheckResultStruct        = "Result"
 	defaultMonitorClickhouseDBName = "pmm"
 	defaultMonitorMySQLDBName      = "pmm"
 	defaultSuccessStatus           = 2
@@ -245,12 +245,12 @@ func (s *Service) ReviewAccuracy(id, review int) error {
 	return s.DASRepo.UpdateAccuracyReviewByOperationID(id, review)
 }
 
-// MarshalJSON marshals Service to json bytes
-func (s *Service) MarshalJSON() ([]byte, error) {
-	return s.MarshalJSONWithFields(resultStruct)
+// Marshal marshals Service to json bytes
+func (s *Service) Marshal() ([]byte, error) {
+	return s.MarshalWithFields(healthcheckResultStruct)
 }
 
-// MarshalJSONWithFields marshals only specified fields of the Service to json bytes
-func (s *Service) MarshalJSONWithFields(fields ...string) ([]byte, error) {
-	return common.MarshalStructWithFields(s.Result, fields...)
+// MarshalWithFields marshals only specified fields of the Service to json bytes
+func (s *Service) MarshalWithFields(fields ...string) ([]byte, error) {
+	return common.MarshalStructWithFields(s, fields...)
 }
