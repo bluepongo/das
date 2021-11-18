@@ -104,7 +104,6 @@ func TestMiddlewareServerService_Delete(t *testing.T) {
 
 	entity, err := testCreateMiddlewareServer()
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
-	// delete
 	err = testMiddlewareServerService.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
 }

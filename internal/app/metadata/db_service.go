@@ -56,7 +56,6 @@ func (ds *DBService) GetOwners() []metadata.User {
 func (ds *DBService) GetAll() error {
 	var err error
 
-	ds.DBs = nil
 	ds.DBs, err = ds.DBRepo.GetAll()
 
 	return err
@@ -66,7 +65,6 @@ func (ds *DBService) GetAll() error {
 func (ds *DBService) GetByEnv(envID int) error {
 	var err error
 
-	ds.DBs = nil
 	ds.DBs, err = ds.DBRepo.GetByEnv(envID)
 
 	return err
@@ -102,7 +100,6 @@ func (ds *DBService) GetByNameAndClusterInfo(name string, clusterID, clusterType
 func (ds *DBService) GetMySQLClusterByID(id int) error {
 	var err error
 
-	ds.MySQLCluster = nil
 	ds.MySQLCluster, err = ds.DBRepo.GetMySQLCLusterByID(id)
 
 	return err
@@ -112,7 +109,6 @@ func (ds *DBService) GetMySQLClusterByID(id int) error {
 func (ds *DBService) GetAppsByID(dbID int) error {
 	var err error
 
-	ds.Apps = nil
 	ds.Apps, err = ds.DBRepo.GetAppsByID(dbID)
 
 	return err
@@ -122,7 +118,6 @@ func (ds *DBService) GetAppsByID(dbID int) error {
 func (ds *DBService) GetAppOwnersByID(id int) error {
 	var err error
 
-	ds.Owners = nil
 	ds.Owners, err = ds.DBRepo.GetAppOwnersByID(id)
 
 	return err
@@ -132,7 +127,6 @@ func (ds *DBService) GetAppOwnersByID(id int) error {
 func (ds *DBService) GetDBOwnersByID(id int) error {
 	var err error
 
-	ds.Owners = nil
 	ds.Owners, err = ds.DBRepo.GetAppOwnersByID(id)
 
 	return err
@@ -142,7 +136,6 @@ func (ds *DBService) GetDBOwnersByID(id int) error {
 func (ds *DBService) GetAllOwnersByID(id int) error {
 	var err error
 
-	ds.Owners = nil
 	ds.Owners, err = ds.DBRepo.GetAllOwnersByID(id)
 
 	return err

@@ -24,16 +24,15 @@ var testMiddlewareClusterInfo *MiddlewareClusterInfo
 
 func init() {
 	initDASMySQLPool()
-	testMiddlewareClusterInfo = initNewMiddlewareClusterInfo()
+	testMiddlewareClusterInfo = testInitNewMiddlewareClusterInfo()
 }
 
-func initNewMiddlewareClusterInfo() *MiddlewareClusterInfo {
+func testInitNewMiddlewareClusterInfo() *MiddlewareClusterInfo {
 	now.TimeFormats = append(now.TimeFormats, constant.DefaultTimeLayout)
 
 	createTime, _ := now.Parse(testMiddlewareClusterCreateTimeString)
 	lastUpdateTime, _ := now.Parse(testMiddlewareClusterLastUpdateTimeString)
-	return NewMiddlewareClusterInfo(
-		testMiddlewareClusterRepo,
+	return NewMiddlewareClusterInfoWithGlobal(
 		testMiddlewareClusterClusterID,
 		testMiddlewareClusterClusterName,
 		testMiddlewareClusterOwnerID,

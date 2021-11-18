@@ -11,15 +11,6 @@ import (
 )
 
 const (
-	monitorSystemSystemNameStruct  = "MonitorSystemName"
-	monitorSystemSystemTypeStruct  = "MonitorSystemType"
-	monitorSystemHostIPStruct      = "MonitorSystemHostIP"
-	monitorSystemPortNumStruct     = "MonitorSystemPortNum"
-	monitorSystemPortNumSlowStruct = "MonitorSystemPortNumSlow"
-	monitorSystemBaseUrlStruct     = "BaseURL"
-	monitorSystemEnvIDStruct       = "EnvID"
-	monitorSystemDelFlagStruct     = "DelFlag"
-
 	monitorSystemMonitorSystemsStruct = "MonitorSystems"
 )
 

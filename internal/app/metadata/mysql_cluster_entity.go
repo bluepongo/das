@@ -9,6 +9,15 @@ import (
 	"github.com/romberli/das/internal/dependency/metadata"
 )
 
+const (
+	mysqlClusterClusterNameStruct         = "ClusterName"
+	mysqlCLusterMiddlewareClusterIDStruct = "MiddlewareClusterID"
+	mysqlClusterMonitorSystemIDStruct     = "MonitorSystemID"
+	mysqlClusterOwnerIDStruct             = "OwnerID"
+	mysqlClusterEnvIDStruct               = "EnvID"
+	mysqlClusterDelFlagStruct             = "DelFlag"
+)
+
 var _ metadata.MySQLCluster = (*MySQLClusterInfo)(nil)
 
 // MySQLClusterInfo is a struct map to table in the database

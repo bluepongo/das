@@ -24,13 +24,14 @@ var testEnvInfo *EnvInfo
 
 func init() {
 	initDASMySQLPool()
-	testEnvInfo = initNewEnvInfo()
+	testEnvInfo = testInitNewEnvInfo()
 }
 
-func initNewEnvInfo() *EnvInfo {
+func testInitNewEnvInfo() *EnvInfo {
 	now.TimeFormats = append(now.TimeFormats, constant.DefaultTimeLayout)
 	createTime, _ := now.Parse(testEnvCreateTimeString)
 	lastUpdateTime, _ := now.Parse(testEnvLastUpdateTimeString)
+
 	return NewEnvInfoWithGlobal(testEnvEnvID, testEnvEnvName, testEnvDelFlag, createTime, lastUpdateTime)
 }
 

@@ -80,6 +80,8 @@ type MySQLServerRepo interface {
 type MySQLServerService interface {
 	// GetMySQLServers returns mysql servers of the service
 	GetMySQLServers() []MySQLServer
+	// GetMySQLCluster returns the mysql cluster of the service
+	GetMySQLCluster() MySQLCluster
 	// GetAll gets all mysql servers from the mysql
 	GetAll() error
 	// GetByClusterID gets mysql servers with given cluster id

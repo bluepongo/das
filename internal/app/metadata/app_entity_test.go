@@ -29,16 +29,15 @@ var testAppInfo *AppInfo
 
 func init() {
 	initDASMySQLPool()
-	testAppInfo = initNewAppInfo()
+	testAppInfo = testInitNewAppInfo()
 }
 
-func initNewAppInfo() *AppInfo {
+func testInitNewAppInfo() *AppInfo {
 	now.TimeFormats = append(now.TimeFormats, constant.DefaultTimeLayout)
 
 	createTime, _ := now.Parse(testAppCreateTimeString)
 	lastUpdateTime, _ := now.Parse(testAppLastUpdateTimeString)
-	return NewAppInfo(
-		testAppRepo,
+	return NewAppInfoWithGlobal(
 		testAppAppID,
 		testAppAppName,
 		testAppLevel,

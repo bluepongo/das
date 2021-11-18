@@ -9,6 +9,18 @@ import (
 	"github.com/romberli/das/internal/dependency/metadata"
 )
 
+const (
+	userUserNameStruct       = "UserName"
+	userDepartmentNameStruct = "DepartmentName"
+	userEmployeeIDStruct     = "EmployeeID"
+	userAccountNameStruct    = "AccountName"
+	userEmailStruct          = "Email"
+	userTelephoneStruct      = "Telephone"
+	userMobileStruct         = "Mobile"
+	userRoleStruct           = "Role"
+	userDelFlagStruct        = "DelFlag"
+)
+
 var _ metadata.User = (*UserInfo)(nil)
 
 // UserInfo create userinfo struct
@@ -160,11 +172,6 @@ func (ui *UserInfo) GetRole() int {
 // GetDelFlag returns the delete flag
 func (ui *UserInfo) GetDelFlag() int {
 	return ui.DelFlag
-}
-
-// Get returns value of given field
-func (ui *UserInfo) Get(field string) (interface{}, error) {
-	return common.GetValueOfStruct(ui, field)
 }
 
 // Set sets entity with given fields, key is the field name and value is the relevant value of the key

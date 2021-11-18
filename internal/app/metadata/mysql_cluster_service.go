@@ -11,14 +11,11 @@ import (
 )
 
 const (
-	clusterNameStruct         = "ClusterName"
-	middlewareClusterIDStruct = "MiddlewareClusterID"
-	monitorSystemIDStruct     = "MonitorSystemID"
-	ownerIDStruct             = "OwnerID"
-	envIDStruct               = "EnvID"
+	mysqlClusterMySQLClustersStruct = "MySQLClusters"
+	mysqlClusterMySQLServersStruct  = "MySQLServers"
+	mysqlClusterDBs                 = "DBs"
+	mysqlClusterOwners              = "Owners"
 )
-
-const mcMySQLClustersStruct = "MySQLClusters"
 
 var _ metadata.MySQLClusterService = (*MySQLClusterService)(nil)
 
@@ -27,7 +24,7 @@ type MySQLClusterService struct {
 	MySQLClusterRepo metadata.MySQLClusterRepo
 	MySQLClusters    []metadata.MySQLCluster `json:"mysql_clusters"`
 	MySQLServers     []metadata.MySQLServer  `json:"mysql_servers"`
-	Databases        []metadata.DB           `json:"databases"`
+	DBs              []metadata.DB           `json:"dbs"`
 	Owners           []metadata.User         `json:"owners"`
 }
 
@@ -47,19 +44,30 @@ func NewMySQLClusterServiceWithDefault() *MySQLClusterService {
 	return NewMySQLClusterService(NewMySQLClusterRepoWithGlobal())
 }
 
-// GetMySQLClusters returns entities of the service
+// GetMySQLClusters returns the mysql clusters of the service
 func (mcs *MySQLClusterService) GetMySQLClusters() []metadata.MySQLCluster {
-	mysqlClusterList := make([]metadata.MySQLCluster, len(mcs.MySQLClusters))
-	for i := range mysqlClusterList {
-		mysqlClusterList[i] = mcs.MySQLClusters[i]
-	}
+	return mcs.MySQLClusters
+}
 
-	return mysqlClusterList
+// GetMySQLServers returns the mysql servers of the service
+func (mcs *MySQLClusterService) GetMySQLServers() []metadata.MySQLServer {
+	return mcs.MySQLServers
+}
+
+// GetDBs returns the dbs of the service
+func (mcs *MySQLClusterService) GetDBs() []metadata.DB {
+	return mcs.DBs
+}
+
+// GetOwners returns the owners of the service
+func (mcs *MySQLClusterService) GetOwners() []metadata.User {
+	return mcs.Owners
 }
 
 // GetAll gets all mysql cluster entities from the middleware
 func (mcs *MySQLClusterService) GetAll() error {
 	var err error
+
 	mcs.MySQLClusters, err = mcs.MySQLClusterRepo.GetAll()
 
 	return err
@@ -81,6 +89,7 @@ func (mcs *MySQLClusterService) GetByID(id int) error {
 		return err
 	}
 
+	mcs.MySQLClusters = nil
 	mcs.MySQLClusters = append(mcs.MySQLClusters, mysqlCluster)
 
 	return err
@@ -90,6 +99,7 @@ func (mcs *MySQLClusterService) GetByID(id int) error {
 func (mcs *MySQLClusterService) GetByName(clusterName string) error {
 	mysqlCluster, err := mcs.MySQLClusterRepo.GetByName(clusterName)
 
+	mcs.MySQLClusters = nil
 	mcs.MySQLClusters = append(mcs.MySQLClusters, mysqlCluster)
 
 	return err
@@ -122,7 +132,7 @@ func (mcs *MySQLClusterService) GetMasterServersByID(id int) error {
 // GetDBsByID gets the databases of the given id
 func (mcs *MySQLClusterService) GetDBsByID(id int) error {
 	var err error
-	mcs.Databases, err = mcs.MySQLClusterRepo.GetDBsByID(id)
+	mcs.DBs, err = mcs.MySQLClusterRepo.GetDBsByID(id)
 
 	return err
 }
@@ -130,6 +140,7 @@ func (mcs *MySQLClusterService) GetDBsByID(id int) error {
 // GetAppOwnersByID gets the application owners of the given id
 func (mcs *MySQLClusterService) GetAppOwnersByID(id int) error {
 	var err error
+
 	mcs.Owners, err = mcs.MySQLClusterRepo.GetAppOwnersByID(id)
 
 	return err
@@ -138,6 +149,7 @@ func (mcs *MySQLClusterService) GetAppOwnersByID(id int) error {
 // GetDBOwnersByID gets the db owners of the given id
 func (mcs *MySQLClusterService) GetDBOwnersByID(id int) error {
 	var err error
+
 	mcs.Owners, err = mcs.MySQLClusterRepo.GetDBOwnersByID(id)
 
 	return err
@@ -146,6 +158,7 @@ func (mcs *MySQLClusterService) GetDBOwnersByID(id int) error {
 // GetAllOwnersByID gets both application and db owners of the given id
 func (mcs *MySQLClusterService) GetAllOwnersByID(id int) error {
 	var err error
+
 	mcs.Owners, err = mcs.MySQLClusterRepo.GetAllOwnersByID(id)
 
 	return err
@@ -154,16 +167,16 @@ func (mcs *MySQLClusterService) GetAllOwnersByID(id int) error {
 // Create creates a new mysql cluster entity and insert it into the middleware
 func (mcs *MySQLClusterService) Create(fields map[string]interface{}) error {
 	// generate new map
-	_, clusterNameExists := fields[clusterNameStruct]
-	_, envIDExists := fields[envIDStruct]
+	_, clusterNameExists := fields[mysqlClusterClusterNameStruct]
+	_, envIDExists := fields[mysqlClusterEnvIDStruct]
 
 	if !clusterNameExists || !envIDExists {
 		return message.NewMessage(
 			message.ErrFieldNotExists,
 			fmt.Sprintf(
 				"%s and %s",
-				clusterNameStruct,
-				envIDStruct))
+				mysqlClusterClusterNameStruct,
+				mysqlClusterEnvIDStruct))
 	}
 
 	// create a new entity
@@ -177,7 +190,9 @@ func (mcs *MySQLClusterService) Create(fields map[string]interface{}) error {
 		return err
 	}
 
+	mcs.MySQLClusters = nil
 	mcs.MySQLClusters = append(mcs.MySQLClusters, mysqlCluster)
+
 	return nil
 }
 
@@ -205,7 +220,7 @@ func (mcs *MySQLClusterService) Delete(id int) error {
 
 // Marshal marshals service.Envs
 func (mcs *MySQLClusterService) Marshal() ([]byte, error) {
-	return mcs.MarshalWithFields(mcMySQLClustersStruct)
+	return mcs.MarshalWithFields(mysqlClusterMySQLClustersStruct)
 }
 
 // MarshalWithFields marshals service.Envs with given fields

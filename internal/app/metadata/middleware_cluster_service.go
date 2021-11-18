@@ -48,7 +48,6 @@ func (mcs *MiddlewareClusterService) GetMiddlewareServers() []metadata.Middlewar
 func (mcs *MiddlewareClusterService) GetAll() error {
 	var err error
 
-	mcs.MiddlewareClusters = nil
 	mcs.MiddlewareClusters, err = mcs.MiddlewareClusterRepo.GetAll()
 
 	return err
@@ -58,7 +57,6 @@ func (mcs *MiddlewareClusterService) GetAll() error {
 func (mcs *MiddlewareClusterService) GetByEnv(envID int) error {
 	var err error
 
-	mcs.MiddlewareClusters = nil
 	mcs.MiddlewareClusters, err = mcs.MiddlewareClusterRepo.GetByEnv(envID)
 
 	return err
@@ -96,7 +94,6 @@ func (mcs *MiddlewareClusterService) GetMiddlewareServersByID(clusterID int) err
 		return err
 	}
 
-	mcs.MiddlewareServers = nil
 	mcs.MiddlewareServers, err = middlewareCluster.GetMiddlewareServers()
 
 	return err

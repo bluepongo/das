@@ -26,16 +26,15 @@ var testMiddlewareServerInfo *MiddlewareServerInfo
 
 func init() {
 	initDASMySQLPool()
-	testMiddlewareServerInfo = initNewMiddlewareServerInfo()
+	testMiddlewareServerInfo = testInitNewMiddlewareServerInfo()
 }
 
-func initNewMiddlewareServerInfo() *MiddlewareServerInfo {
+func testInitNewMiddlewareServerInfo() *MiddlewareServerInfo {
 	now.TimeFormats = append(now.TimeFormats, constant.DefaultTimeLayout)
 
 	createTime, _ := now.Parse(testMiddlewareServerCreateTimeString)
 	lastUpdateTime, _ := now.Parse(testMiddlewareServerLastUpdateTimeString)
-	return NewMiddlewareServerInfo(
-		testMiddlewareServerRepo,
+	return NewMiddlewareServerInfoWithGlobal(
 		testMiddlewareServerID,
 		testMiddlewareServerClusterID,
 		testMiddlewareServerServerName,

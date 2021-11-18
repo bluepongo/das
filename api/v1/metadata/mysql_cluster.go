@@ -27,7 +27,7 @@ const (
 	mcEnvIDStruct               = "EnvID"
 
 	mcMySQLServers = "MySQLServers"
-	mcDBs          = "Databases"
+	mcDBs          = "DBs"
 	mcOwners       = "Owners"
 )
 

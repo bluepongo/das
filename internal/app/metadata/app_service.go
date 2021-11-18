@@ -42,7 +42,6 @@ func (as *AppService) GetDBs() []metadata.DB {
 func (as *AppService) GetAll() error {
 	var err error
 
-	as.Apps = nil
 	as.Apps, err = as.AppRepo.GetAll()
 
 	return err
@@ -76,14 +75,11 @@ func (as *AppService) GetAppByName(appName string) error {
 
 // GetDBsByID gets databases that the app uses
 func (as *AppService) GetDBsByID(id int) error {
-	dbs, err := as.AppRepo.GetDBsByID(id)
-	if err != nil {
-		return err
-	}
+	var err error
 
-	as.DBs = nil
-	as.DBs = dbs
-	return nil
+	as.DBs, err = as.AppRepo.GetDBsByID(id)
+
+	return err
 }
 
 // Create creates an app in the middleware
@@ -112,6 +108,7 @@ func (as *AppService) Create(fields map[string]interface{}) error {
 
 	as.Apps = nil
 	as.Apps = append(as.Apps, app)
+
 	return nil
 }
 

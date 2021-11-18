@@ -31,17 +31,26 @@ const (
 var testDBInfo *DBInfo
 
 func init() {
-	testDBInfo = initNewDBInfo()
+	testDBInfo = testInitNewDBInfo()
 }
 
-func initNewDBInfo() *DBInfo {
+func testInitNewDBInfo() *DBInfo {
 	now.TimeFormats = append(now.TimeFormats, constant.DefaultTimeLayout)
 
 	createTime, _ := now.Parse(testDBCreateTimeString)
 	lastUpdateTime, _ := now.Parse(testDBLastUpdateTimeString)
-	return NewDBInfo(testDBRepo, testDBDBID, testDBDBName, testDBClusterID,
-		testDBClusterType, testDBOwnerID, testDBEnvID, testDBDelFlag,
-		createTime, lastUpdateTime)
+
+	return NewDBInfoWithGlobal(
+		testDBDBID,
+		testDBDBName,
+		testDBClusterID,
+		testDBClusterType,
+		testDBOwnerID,
+		testDBEnvID,
+		testDBDelFlag,
+		createTime,
+		lastUpdateTime,
+	)
 }
 
 func dbEqual(a, b *DBInfo) bool {

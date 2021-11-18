@@ -10,17 +10,7 @@ import (
 	"github.com/romberli/das/pkg/message"
 )
 
-const (
-	clusterIDStruct      = "ClusterID"
-	serverNameStruct     = "ServerName"
-	serviceNameStruct    = "ServiceName"
-	hostIPStruct         = "HostIP"
-	portNumStruct        = "PortNum"
-	deploymentTypeStruct = "DeploymentType"
-	versionStruct        = "Version"
-)
-
-const msMySQLServersStruct = "MySQLServers"
+const mysqlServerMySQLServersStruct = "MySQLServers"
 
 var _ metadata.MySQLServerService = (*MySQLServerService)(nil)
 
@@ -45,19 +35,20 @@ func NewMySQLServerServiceWithDefault() *MySQLServerService {
 	return NewMySQLServerService(NewMySQLServerRepoWithGlobal())
 }
 
-// GetMySQLServers returns entities of the service
+// GetMySQLServers returns the mysql servers of the service
 func (mss *MySQLServerService) GetMySQLServers() []metadata.MySQLServer {
-	entityList := make([]metadata.MySQLServer, len(mss.MySQLServers))
-	for i := range entityList {
-		entityList[i] = mss.MySQLServers[i]
-	}
+	return mss.MySQLServers
+}
 
-	return entityList
+// GetMySQLCluster returns the mysql cluster of the service
+func (mss *MySQLServerService) GetMySQLCluster() metadata.MySQLCluster {
+	return mss.MySQLCluster
 }
 
 // GetAll gets all mysql server entities from the middleware
 func (mss *MySQLServerService) GetAll() error {
 	var err error
+
 	mss.MySQLServers, err = mss.MySQLServerRepo.GetAll()
 
 	return err
@@ -65,12 +56,12 @@ func (mss *MySQLServerService) GetAll() error {
 
 // GetByClusterID gets mysql servers with given cluster id
 func (mss *MySQLServerService) GetByClusterID(clusterID int) error {
-	mysqlServers, err := mss.MySQLServerRepo.GetByClusterID(clusterID)
+	var err error
+
+	mss.MySQLServers, err = mss.MySQLServerRepo.GetByClusterID(clusterID)
 	if err != nil {
 		return err
 	}
-
-	mss.MySQLServers = mysqlServers
 
 	return nil
 }
@@ -82,6 +73,7 @@ func (mss *MySQLServerService) GetByID(id int) error {
 		return err
 	}
 
+	mss.MySQLServers = nil
 	mss.MySQLServers = append(mss.MySQLServers, entity)
 
 	return nil
@@ -94,6 +86,7 @@ func (mss *MySQLServerService) GetByHostInfo(hostIP string, portNum int) error {
 		return err
 	}
 
+	mss.MySQLServers = nil
 	mss.MySQLServers = append(mss.MySQLServers, mysqlServer)
 
 	return nil
@@ -119,12 +112,12 @@ func (mss *MySQLServerService) GetMySQLClusterByID(id int) error {
 // Create creates a new mysql server entity and insert it into the middleware
 func (mss *MySQLServerService) Create(fields map[string]interface{}) error {
 	// generate new map
-	_, clusterIDExists := fields[clusterIDStruct]
-	_, serverNameExists := fields[serverNameStruct]
-	_, ServiceNameExists := fields[serviceNameStruct]
-	_, hostIPExists := fields[hostIPStruct]
-	_, portNumExists := fields[portNumStruct]
-	_, deploymentTypeExists := fields[deploymentTypeStruct]
+	_, clusterIDExists := fields[mysqlServerClusterIDStruct]
+	_, serverNameExists := fields[mysqlServerServerNameStruct]
+	_, ServiceNameExists := fields[mysqlServerServiceNameStruct]
+	_, hostIPExists := fields[mysqlServerHostIPStruct]
+	_, portNumExists := fields[mysqlServerPortNumStruct]
+	_, deploymentTypeExists := fields[mysqlServerDeploymentTypeStruct]
 
 	if !clusterIDExists || !serverNameExists || !ServiceNameExists || !hostIPExists || !portNumExists ||
 		!deploymentTypeExists {
@@ -132,12 +125,14 @@ func (mss *MySQLServerService) Create(fields map[string]interface{}) error {
 			message.ErrFieldNotExists,
 			fmt.Sprintf(
 				"%s and %s and %s and %s and %s and %s",
-				clusterIDStruct,
-				serverNameStruct,
-				serviceNameStruct,
-				hostIPStruct,
-				portNumStruct,
-				deploymentTypeStruct))
+				mysqlServerClusterIDStruct,
+				mysqlServerServerNameStruct,
+				mysqlServerServiceNameStruct,
+				mysqlServerHostIPStruct,
+				mysqlServerPortNumStruct,
+				mysqlServerDeploymentTypeStruct,
+			),
+		)
 	}
 
 	// create a new entity
@@ -151,7 +146,9 @@ func (mss *MySQLServerService) Create(fields map[string]interface{}) error {
 		return err
 	}
 
+	mss.MySQLServers = nil
 	mss.MySQLServers = append(mss.MySQLServers, entity)
+
 	return nil
 }
 
@@ -179,7 +176,7 @@ func (mss *MySQLServerService) Delete(id int) error {
 
 // Marshal marshals service.Envs
 func (mss *MySQLServerService) Marshal() ([]byte, error) {
-	return mss.MarshalWithFields(msMySQLServersStruct)
+	return mss.MarshalWithFields(mysqlServerMySQLServersStruct)
 }
 
 // MarshalWithFields marshals service.Envs with given fields

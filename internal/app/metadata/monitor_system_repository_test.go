@@ -43,6 +43,7 @@ func testCreateMonitorSystem() (metadata.MonitorSystem, error) {
 
 func TestMonitorSystemRepoAll(t *testing.T) {
 	TestMonitorSystemRepo_Execute(t)
+	TestMonitorSystemRepo_Transaction(t)
 	TestMonitorSystemRepo_GetAll(t)
 	TestMonitorSystemRepo_GetByEnv(t)
 	TestMonitorSystemRepo_GetByID(t)

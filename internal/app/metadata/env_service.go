@@ -36,7 +36,6 @@ func (es *EnvService) GetEnvs() []metadata.Env {
 func (es *EnvService) GetAll() error {
 	var err error
 
-	es.Envs = nil
 	es.Envs, err = es.EnvRepo.GetAll()
 
 	return err
