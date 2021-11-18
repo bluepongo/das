@@ -21,11 +21,10 @@ const (
 	appAppNameJSON = "app_name"
 	appDBIDJSON    = "db_id"
 
-	appAppNameStruct  = "AppName"
-	appLevelStruct    = "Level"
-	appDelFlagStruct  = "DelFlag"
-	appDBIDListStruct = "DBIDList"
-	appDBsStruct      = "DBs"
+	appAppNameStruct = "AppName"
+	appLevelStruct   = "Level"
+	appDelFlagStruct = "DelFlag"
+	appDBsStruct     = "DBs"
 )
 
 // @Tags application
@@ -349,7 +348,7 @@ func AppAddDB(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(appDBIDListStruct)
+	jsonBytes, err := s.MarshalWithFields(appDBsStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
@@ -402,7 +401,7 @@ func AppDeleteDB(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(appDBIDListStruct)
+	jsonBytes, err := s.MarshalWithFields(appDBsStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return

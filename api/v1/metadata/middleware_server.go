@@ -269,9 +269,9 @@ func UpdateMiddlewareServerByID(c *gin.Context) {
 	_, middlewareServerMiddlewareRoleExists := fields[middlewareServerMiddlewareRoleStruct]
 	_, middlewareServerHostIPExists := fields[middlewareServerHostIPStruct]
 	_, middlewareServerPortNumExists := fields[middlewareServerPortNumStruct]
-	_, delFlagExists := fields[delFlagStruct]
+	_, delFlagExists := fields[envDelFlagStruct]
 	if !middlewareServerClusterIDExists && !middlewareServerNameExists && !middlewareServerMiddlewareRoleExists && !middlewareServerHostIPExists && !middlewareServerPortNumExists && !delFlagExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", middlewareServerNameStruct, delFlagStruct))
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", middlewareServerNameStruct, envDelFlagStruct))
 		return
 	}
 	// init service

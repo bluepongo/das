@@ -10,12 +10,7 @@ import (
 	"github.com/romberli/das/pkg/message"
 )
 
-const (
-	mysqlClusterMySQLClustersStruct = "MySQLClusters"
-	mysqlClusterMySQLServersStruct  = "MySQLServers"
-	mysqlClusterDBs                 = "DBs"
-	mysqlClusterOwners              = "Owners"
-)
+const mysqlClusterMySQLClustersStruct = "MySQLClusters"
 
 var _ metadata.MySQLClusterService = (*MySQLClusterService)(nil)
 

@@ -278,9 +278,9 @@ func UpdateMiddlewareClusterByID(c *gin.Context) {
 	_, middlewareClusterNameExists := fields[middlewareClusterClusterNameStruct]
 	_, middlewareClusterOwnerIDExists := fields[middlewareClusterOwnerIDStruct]
 	_, middlewareClusterEnvIDExists := fields[middlewareClusterEnvIDStruct]
-	_, delFlagExists := fields[delFlagStruct]
+	_, delFlagExists := fields[envDelFlagStruct]
 	if !middlewareClusterNameExists && !middlewareClusterEnvIDExists && !middlewareClusterOwnerIDExists && !delFlagExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s %s %s and %s", middlewareClusterClusterNameStruct, middlewareClusterOwnerIDStruct, middlewareClusterEnvIDStruct, delFlagStruct))
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s %s %s and %s", middlewareClusterClusterNameStruct, middlewareClusterOwnerIDStruct, middlewareClusterEnvIDStruct, envDelFlagStruct))
 		return
 	}
 	// init service

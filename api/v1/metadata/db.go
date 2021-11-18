@@ -27,7 +27,6 @@ const (
 	dbClusterTypeStruct = "ClusterType"
 	dbOwnerIDStruct     = "OwnerID"
 	dbEnvIDStruct       = "EnvID"
-	dbAppIDListStruct   = "AppIDList"
 
 	dbMySQLClusterStruct = "MySQLCluster"
 	dbAppsStruct         = "Apps"
@@ -447,11 +446,11 @@ func UpdateDBByID(c *gin.Context) {
 	_, clusterTypeExists := fields[dbClusterTypeStruct]
 	_, ownerIDExists := fields[dbOwnerIDStruct]
 	_, envIDExists := fields[dbEnvIDStruct]
-	_, delFlagExists := fields[delFlagStruct]
+	_, delFlagExists := fields[envDelFlagStruct]
 	if !dbNameExists && !clusterIDExists && !clusterTypeExists && !ownerIDExists && !envIDExists && !delFlagExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists,
 			fmt.Sprintf("%s, %s, %s, %s, %s, %s",
-				dbDBNameStruct, dbClusterIDStruct, dbClusterTypeStruct, dbOwnerIDStruct, dbEnvIDStruct, delFlagStruct))
+				dbDBNameStruct, dbClusterIDStruct, dbClusterTypeStruct, dbOwnerIDStruct, dbEnvIDStruct, envDelFlagStruct))
 		return
 	}
 	// init service
@@ -553,7 +552,7 @@ func DBAddApp(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(dbAppIDListStruct)
+	jsonBytes, err := s.MarshalWithFields(dbAppsStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
@@ -606,7 +605,7 @@ func DBDeleteApp(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(dbAppIDListStruct)
+	jsonBytes, err := s.MarshalWithFields(dbAppsStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return

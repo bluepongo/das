@@ -267,11 +267,11 @@ func UpdateMonitorSystemByID(c *gin.Context) {
 	_, portNumSlowExists := fields[monitorSystemPortNumSlowStruct]
 	_, baseUrlExists := fields[monitorSystemBaseUrlStruct]
 	_, envIdExists := fields[monitorSystemEnvIDStruct]
-	_, delFlagExists := fields[delFlagStruct]
+	_, delFlagExists := fields[envDelFlagStruct]
 	if !systemNameExists && !systemTypeExists && !hostIpExists && !portNumExists && !portNumSlowExists && !baseUrlExists && !envIdExists && !delFlagExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s and %s and %s and %s and %s and %s and %s",
 			monitorSystemNameStruct, monitorSystemTypeStruct, monitorSystemHostIPStruct, monitorSystemPortNumStruct,
-			monitorSystemPortNumSlowStruct, monitorSystemBaseUrlStruct, monitorSystemEnvIDStruct, delFlagStruct))
+			monitorSystemPortNumSlowStruct, monitorSystemBaseUrlStruct, monitorSystemEnvIDStruct, envDelFlagStruct))
 		return
 	}
 	// init service
