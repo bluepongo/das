@@ -126,6 +126,11 @@ func (mss *MiddlewareServerService) Update(id int, fields map[string]interface{}
 
 // Delete deletes the middleware server of given id in the middleware
 func (mss *MiddlewareServerService) Delete(id int) error {
+	err := mss.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return mss.MiddlewareServerRepo.Delete(id)
 }
 

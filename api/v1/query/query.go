@@ -152,7 +152,7 @@ func GetByDBID(c *gin.Context) {
 	}
 	// init service
 	service := query.NewServiceWithDefault(config)
-	err = service.GetByDBID(rd.MysqlServerID, dbID)
+	err = service.GetByDBID(rd.GetMySQLServerID(), dbID)
 	if err != nil {
 		resp.ResponseNOK(c, msgquery.DebugQueryGetByDBID, dbID, err.Error())
 		return
@@ -196,9 +196,9 @@ func GetBySQLID(c *gin.Context) {
 	}
 	// init service
 	service := query.NewServiceWithDefault(config)
-	err = service.GetBySQLID(rd.MysqlServerID, sqlIDStr)
+	err = service.GetBySQLID(rd.GetMySQLServerID(), sqlIDStr)
 	if err != nil {
-		resp.ResponseNOK(c, msgquery.DebugQueryGetBySQLID, rd.MysqlServerID, sqlIDStr, err.Error())
+		resp.ResponseNOK(c, msgquery.DebugQueryGetBySQLID, rd.GetMySQLServerID(), sqlIDStr, err.Error())
 		return
 	}
 
@@ -208,7 +208,7 @@ func GetBySQLID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 	}
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgquery.DebugQueryGetBySQLID, rd.MysqlServerID, sqlIDStr).Error())
+	log.Debug(message.NewMessage(msgquery.DebugQueryGetBySQLID, rd.GetMySQLServerID(), sqlIDStr).Error())
 
 	// response
 	resp.ResponseOK(c, jsonStr, msgquery.InfoQueryGetBySQLID, sqlIDStr)

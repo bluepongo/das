@@ -132,6 +132,11 @@ func (mss *MonitorSystemService) Update(id int, fields map[string]interface{}) e
 
 // Delete deletes the monitor system of given id in the middleware
 func (mss *MonitorSystemService) Delete(id int) error {
+	err := mss.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return mss.MonitorSystemRepo.Delete(id)
 }
 

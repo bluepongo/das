@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	utilmeta "github.com/romberli/das/pkg/util/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/log"
@@ -143,29 +144,20 @@ func GetMySQLServerByID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"cluster_id":1,"deployment_type":1,"host_ip":"host_ip_init","port_num":3306,"version":"1.1.1","del_flag":0,"create_time":"2021-02-23T23:43:37.236228+08:00","last_update_time":"2021-02-23T23:43:37.236228+08:00","id":1}]}"
 // @Router /api/v1/metadata/mysql-server/host-info [get]
 func GetMySQLServerByHostInfo(c *gin.Context) {
-	// get param
-	hostIP := c.Query(mysqlServerHostIPJSON)
-	if hostIP == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerHostIPJSON)
-		return
-	}
-	portNumStr := c.Query(mysqlServerPortNumJSON)
-	if portNumStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerPortNumJSON)
-		return
-	}
-	portNum, err := strconv.Atoi(portNumStr)
+	var rd *utilmeta.HostInfo
+	// bind json
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
-
 	}
+
 	// init service
 	s := metadata.NewMySQLServerServiceWithDefault()
 	// get entity
-	err = s.GetByHostInfo(hostIP, portNum)
+	err = s.GetByHostInfo(rd.GetHostIP(), rd.GetPortNum())
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLServerByHostInfo, hostIP, portNum, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLServerByHostInfo, rd.GetHostIP(), rd.GetPortNum(), err.Error())
 		return
 	}
 	// marshal service
@@ -177,7 +169,7 @@ func GetMySQLServerByHostInfo(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLServerByHostInfo, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerByHostInfo, hostIP, portNum)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerByHostInfo, rd.GetHostIP(), rd.GetPortNum())
 }
 
 // @Tags mysql server

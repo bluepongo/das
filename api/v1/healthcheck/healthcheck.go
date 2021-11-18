@@ -70,25 +70,25 @@ func Check(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.StartTime, time.Local)
+	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetStartTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.StartTime)
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetStartTime())
 		return
 	}
-	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.EndTime, time.Local)
+	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetEndTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.EndTime)
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetEndTime())
 		return
 	}
-	step, err := time.ParseDuration(rd.Step)
+	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, rd.Step)
+		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, rd.GetStep())
 		return
 	}
 	// init service
 	s := healthcheck.NewServiceWithDefault()
 	// check health
-	err = s.Check(rd.ServerID, startTime, endTime, step)
+	err = s.Check(rd.GetServerID(), startTime, endTime, step)
 	if err != nil {
 		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err.Error())
 		return
@@ -111,25 +111,25 @@ func CheckByHostInfo(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.StartTime, time.Local)
+	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetStartTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.StartTime)
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetStartTime())
 		return
 	}
-	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.EndTime, time.Local)
+	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetEndTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.EndTime)
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetEndTime())
 		return
 	}
-	step, err := time.ParseDuration(rd.Step)
+	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, rd.Step)
+		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, rd.GetStep())
 		return
 	}
 	// init service
 	s := healthcheck.NewServiceWithDefault()
 	// get entities
-	err = s.CheckByHostInfo(rd.HostIP, rd.PortNum, startTime, endTime, step)
+	err = s.CheckByHostInfo(rd.GetHostIP(), rd.GetPortNum(), startTime, endTime, step)
 	if err != nil {
 		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, err.Error())
 		return

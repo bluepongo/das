@@ -1,31 +1,39 @@
 ### get all monitor systems
 GET http://{{baseURL}}/api/v1/metadata/monitor-system
-Accept: application/json
+Content-Type: application/json
 
 ### get all monitor systems by env_id
 GET http://{{baseURL}}/api/v1/metadata/monitor-system/env/1
-Accept: application/json
+Content-Type: application/json
 
 ### get monitor system by id
 GET http://{{baseURL}}/api/v1/metadata/monitor-system/get/1
-Accept: application/json
+Content-Type: application/json
 
 ### get all monitor systems by host-info
-GET http://{{baseURL}}/api/v1/metadata/monitor-system/host-info?hostIp=127.0.0.1&portNum=3307
-Accept: application/json
+GET http://{{baseURL}}/api/v1/metadata/monitor-system
+Content-Type: application/json
+
+{"host_ip": "192.168.10.219", "port_num": 80}
 
 ### add new monitor system
 POST http://{{baseURL}}/api/v1/metadata/monitor-system
 Content-Type: application/json
 
-{"system_name": "ms4", "system_type":1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3308, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1}
+{"system_name": "new_monitor_system", "system_type":2, "host_ip": "192.168.10.219", "port_num": 8080, "port_num_slow": 9000, "base_url": "/prometheus", "env_id": 1}
 
 ### update monitor system by id
 POST http://{{baseURL}}/api/v1/metadata/monitor-system/update/1
 Content-Type: application/json
 
-{"system_name": "ms8", "port_num": 3300, "del_flag": 1}
+{"system_name": "update_monitor_system", "port_num": 3300}
+
+### update monitor system by id
+POST http://{{baseURL}}/api/v1/metadata/monitor-system/update/1
+Content-Type: application/json
+
+{"system_name": "pmm2", "port_num": 80}
 
 ### delete monitor system by id
-POST http://{{baseURL}}/api/v1/metadata/monitor-system/delete/2
+POST http://{{baseURL}}/api/v1/metadata/monitor-system/delete/18
 Content-Type: application/json

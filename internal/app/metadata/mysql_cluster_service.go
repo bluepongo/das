@@ -210,6 +210,11 @@ func (mcs *MySQLClusterService) Update(id int, fields map[string]interface{}) er
 
 // Delete deletes the mysql cluster entity that contains the given id in the middleware
 func (mcs *MySQLClusterService) Delete(id int) error {
+	err := mcs.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return mcs.MySQLClusterRepo.Delete(id)
 }
 

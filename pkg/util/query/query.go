@@ -15,20 +15,56 @@ type Range struct {
 	Offset    int    `json:"offset" bind:"required"`
 }
 
+func (r *Range) GetStartTime() string {
+	return r.StartTime
+}
+
+func (r *Range) GetEndTime() string {
+	return r.EndTime
+}
+
+func (r *Range) GetLimit() int {
+	return r.Limit
+}
+
+func (r *Range) GetOffset() int {
+	return r.Offset
+}
+
 func (r *Range) GetConfig() (*query.Config, error) {
-	return getConfig(r.StartTime, r.EndTime, r.Limit, r.Offset)
+	return getConfig(r.GetStartTime(), r.GetEndTime(), r.GetLimit(), r.GetOffset())
 }
 
 type ServerRange struct {
-	MysqlServerID int    `json:"mysql_server_id" bind:"required"`
+	MySQLServerID int    `json:"mysql_server_id" bind:"required"`
 	StartTime     string `json:"start_time" bind:"required"`
 	EndTime       string `json:"end_time" bind:"required"`
 	Limit         int    `json:"limit" bind:"required"`
 	Offset        int    `json:"offset" bind:"required"`
 }
 
+func (sr *ServerRange) GetMySQLServerID() int {
+	return sr.MySQLServerID
+}
+
+func (sr *ServerRange) GetStartTime() string {
+	return sr.StartTime
+}
+
+func (sr *ServerRange) GetEndTime() string {
+	return sr.EndTime
+}
+
+func (sr *ServerRange) GetLimit() int {
+	return sr.Limit
+}
+
+func (sr *ServerRange) GetOffset() int {
+	return sr.Offset
+}
+
 func (sr *ServerRange) GetConfig() (*query.Config, error) {
-	return getConfig(sr.StartTime, sr.EndTime, sr.Limit, sr.Offset)
+	return getConfig(sr.GetStartTime(), sr.GetEndTime(), sr.GetLimit(), sr.GetOffset())
 }
 
 func getConfig(startTime, endTime string, limit, offset int) (*query.Config, error) {

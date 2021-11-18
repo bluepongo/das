@@ -171,6 +171,11 @@ func (mss *MySQLServerService) Update(id int, fields map[string]interface{}) err
 
 // Delete deletes the mysql server entity that contains the given id in the middleware
 func (mss *MySQLServerService) Delete(id int) error {
+	err := mss.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return mss.MySQLServerRepo.Delete(id)
 }
 

@@ -183,6 +183,11 @@ func (us *UserService) Update(id int, fields map[string]interface{}) error {
 
 // Delete deletes the user of given id in the middleware
 func (us *UserService) Delete(id int) error {
+	err := us.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return us.UserRepo.Delete(id)
 }
 

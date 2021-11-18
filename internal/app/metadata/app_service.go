@@ -131,6 +131,11 @@ func (as *AppService) Update(id int, fields map[string]interface{}) error {
 
 // Delete deletes the app of given id in the middleware
 func (as *AppService) Delete(id int) error {
+	err := as.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return as.AppRepo.Delete(id)
 }
 

@@ -188,6 +188,11 @@ func (ds *DBService) Update(id int, fields map[string]interface{}) error {
 
 // Delete deletes the database of given id in the middleware
 func (ds *DBService) Delete(id int) error {
+	err := ds.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return ds.DBRepo.Delete(id)
 }
 

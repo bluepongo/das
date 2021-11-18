@@ -130,6 +130,11 @@ func (es *EnvService) Update(id int, fields map[string]interface{}) error {
 
 // Delete deletes the environment of given id in the middleware
 func (es *EnvService) Delete(id int) error {
+	err := es.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return es.EnvRepo.Delete(id)
 }
 

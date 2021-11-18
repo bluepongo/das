@@ -14,7 +14,7 @@ const (
 	testUserUpdateUserName = "test_update_user_name"
 	testUserNewEmployeeID  = "200001"
 	testUserNewAccountName = "test_new_account_name"
-	testUserNewEmail       = "test_new_email@163.com"
+	testUserNewEmail       = "test_new_account_name@163.com"
 	testUserNewTelephone   = "02112345678"
 	testUserNewMobile      = "13112345678"
 )

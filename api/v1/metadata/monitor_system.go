@@ -10,10 +10,10 @@ import (
 	"github.com/romberli/log"
 
 	"github.com/romberli/das/internal/app/metadata"
-	msgmeta "github.com/romberli/das/pkg/message/metadata"
-
 	"github.com/romberli/das/pkg/message"
+	msgmeta "github.com/romberli/das/pkg/message/metadata"
 	"github.com/romberli/das/pkg/resp"
+	utilmeta "github.com/romberli/das/pkg/util/metadata"
 )
 
 const (
@@ -139,25 +139,20 @@ func GetMonitorSystemByID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router /api/v1/metadata/monitor-system/host-info [get]
 func GetMonitorSystemByHostInfo(c *gin.Context) {
-	// get param
-	hostIP := c.Query("hostIp")
-	portNumStr := c.Query("portNum")
-	if hostIP == constant.EmptyString || portNumStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", monitorSystemHostIPJSON, monitorSystemPortNumJSON))
-		return
-	}
-	portNum, err := strconv.Atoi(portNumStr)
+	var rd *utilmeta.HostInfo
+	// bind json
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
 
 	// init service
 	s := metadata.NewMonitorSystemServiceWithDefault()
 	// get entity
-	err = s.GetByHostInfo(hostIP, portNum)
+	err = s.GetByHostInfo(rd.GetHostIP(), rd.GetPortNum())
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMonitorSystemByHostInfo, hostIP, portNum, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMonitorSystemByHostInfo, rd.GetHostIP(), rd.GetPortNum(), err.Error())
 		return
 	}
 	// marshal service
@@ -169,7 +164,7 @@ func GetMonitorSystemByHostInfo(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMonitorSystemByHostInfo, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMonitorSystemByHostInfo, hostIP, portNum)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMonitorSystemByHostInfo, rd.GetHostIP(), rd.GetPortNum())
 }
 
 // @Tags monitor system
