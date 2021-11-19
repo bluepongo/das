@@ -19,7 +19,7 @@ const (
 var testMySQLServerRepo *MySQLServerRepo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testMySQLServerRepo = NewMySQLServerRepoWithGlobal()
 }
 

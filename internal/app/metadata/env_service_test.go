@@ -11,7 +11,7 @@ import (
 var testEnvService *EnvService
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testEnvService = NewEnvServiceWithDefault()
 }
 

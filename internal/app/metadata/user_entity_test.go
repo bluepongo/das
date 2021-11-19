@@ -28,7 +28,7 @@ const (
 var testUserInfo *UserInfo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testUserInfo = testInitNewUserInfo()
 }
 

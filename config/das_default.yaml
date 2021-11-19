@@ -237,6 +237,13 @@ healthcheck:
     # default: "all"
     ownerType: all
 
+# query configuration
+query:
+  # description: specify min rows examined, slow queries which scanned less than this value will be ignored
+  # type: int
+  # default: 100000
+  minRowsExamined: 100000
+
 # sqladvisor configuration
 sqladvisor:
   # soar configuration

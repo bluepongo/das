@@ -79,6 +79,7 @@ const (
 	HealthcheckAlertOwnerTypeDB      = "db"
 	HealthcheckAlertOwnerTypeAll     = "all"
 	DefaultHealthcheckAlertOwnerType = HealthcheckAlertOwnerTypeAll
+	DefaultQueryMinRowsExamined      = 100000
 	DefaultSQLAdvisorSoarBin         = "./soar"
 	DefaultSQLAdvisorSoarConfig      = "./soar.yaml"
 	DefaultSQLAdvisorSoarBlacklist   = "./soar.blacklist"
@@ -136,9 +137,11 @@ const (
 	AlertHTTPConfigKey  = "alert.http.config"
 	// healthcheck
 	HealthcheckAlertOwnerTypeKey = "healthcheck.alert.ownerType"
+	// query
+	QueryMinRowsExaminedKey = "query.minRowsExamined"
 	// sqladvisor
-	SQLAdvisorSoarBinKey       = "sqladvisor.soar.Bin"
-	SQLAdvisorSoarConfigKey    = "sqladvisor.soar.Config"
+	SQLAdvisorSoarBinKey       = "sqladvisor.soar.bin"
+	SQLAdvisorSoarConfigKey    = "sqladvisor.soar.config"
 	SQLAdvisorSoarSamplingKey  = "sqladvisor.soar.sampling"
 	SQLAdvisorSoarProfilingKey = "sqladvisor.soar.profiling"
 	SQLAdvisorSoarTraceKey     = "sqladvisor.soar.trace"

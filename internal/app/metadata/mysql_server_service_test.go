@@ -11,7 +11,7 @@ import (
 var testMySQLServerService *MySQLServerService
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testMySQLServerService = NewMySQLServerServiceWithDefault()
 }
 

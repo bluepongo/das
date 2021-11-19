@@ -16,8 +16,11 @@ import (
 )
 
 const (
-	operationIDJSON = "operation_id"
-	reviewJSON      = "review"
+	operationIDJSON            = "operation_id"
+	reviewJSON                 = "review"
+	checkRespMessage           = `{"code": 0, "message": "healthcheck started"}`
+	checkByHostInfoRespMessage = `{"code": 0, "message": "healthcheck by host info started"}`
+	reviewAccuracyRespMessage  = `{"code": 0, "message": "reviewed accuracy"}`
 )
 
 // @Tags healthcheck
@@ -93,9 +96,9 @@ func Check(c *gin.Context) {
 		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err.Error())
 		return
 	}
-	respMessage := "healthcheck started"
-	log.Debug(message.NewMessage(msghealth.DebugHealthcheckCheck, respMessage).Error())
-	resp.ResponseOK(c, respMessage, msghealth.InfoHealthcheckCheck)
+
+	log.Debug(message.NewMessage(msghealth.DebugHealthcheckCheck, checkRespMessage).Error())
+	resp.ResponseOK(c, checkRespMessage, msghealth.InfoHealthcheckCheck)
 }
 
 // @Tags healthcheck
@@ -134,9 +137,9 @@ func CheckByHostInfo(c *gin.Context) {
 		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, err.Error())
 		return
 	}
-	respMessage := "healthcheck by host info started"
-	log.Debug(message.NewMessage(msghealth.DebugHealthcheckCheckByHostInfo, respMessage).Error())
-	resp.ResponseOK(c, respMessage, msghealth.InfoHealthcheckCheckByHostInfo)
+
+	log.Debug(message.NewMessage(msghealth.DebugHealthcheckCheckByHostInfo, checkByHostInfoRespMessage).Error())
+	resp.ResponseOK(c, checkByHostInfoRespMessage, msghealth.InfoHealthcheckCheckByHostInfo)
 }
 
 // @Tags healthcheck
@@ -175,7 +178,7 @@ func ReviewAccuracy(c *gin.Context) {
 		resp.ResponseNOK(c, msghealth.ErrHealthcheckReviewAccuracy, operationID, err.Error())
 		return
 	}
-	respMessage := "reviewed accuracy"
-	log.Debug(message.NewMessage(msghealth.DebugHealthcheckReviewAccuracy, respMessage).Error())
-	resp.ResponseOK(c, respMessage, msghealth.InfoHealthcheckReviewAccuracy)
+
+	log.Debug(message.NewMessage(msghealth.DebugHealthcheckReviewAccuracy, reviewAccuracyRespMessage).Error())
+	resp.ResponseOK(c, reviewAccuracyRespMessage, msghealth.InfoHealthcheckReviewAccuracy)
 }

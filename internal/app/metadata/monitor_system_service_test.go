@@ -11,7 +11,7 @@ import (
 var testMonitorSystemService *MonitorSystemService
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testMonitorSystemService = NewMonitorSystemServiceWithDefault()
 }
 

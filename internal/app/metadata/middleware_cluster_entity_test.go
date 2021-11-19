@@ -23,7 +23,7 @@ const (
 var testMiddlewareClusterInfo *MiddlewareClusterInfo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testMiddlewareClusterInfo = testInitNewMiddlewareClusterInfo()
 }
 

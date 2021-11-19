@@ -27,7 +27,7 @@ const (
 var testMySQLServerInfo *MySQLServerInfo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testMySQLServerInfo = testInitNewMySQLServerInfo()
 }
 

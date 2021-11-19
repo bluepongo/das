@@ -22,7 +22,7 @@ const (
 var testEnvInfo *EnvInfo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testEnvInfo = testInitNewEnvInfo()
 }
 

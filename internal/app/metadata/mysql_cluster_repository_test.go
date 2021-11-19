@@ -18,7 +18,7 @@ const (
 var testMySQLClusterRepo *MySQLClusterRepo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testMySQLClusterRepo = NewMySQLClusterRepoWithGlobal()
 }
 

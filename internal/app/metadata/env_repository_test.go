@@ -18,7 +18,7 @@ const (
 var testEnvRepo *EnvRepo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testEnvRepo = NewEnvRepoWithGlobal()
 }
 

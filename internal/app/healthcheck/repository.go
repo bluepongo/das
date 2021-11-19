@@ -304,12 +304,12 @@ func (dr *DASRepo) loadEngineConfig() (DefaultEngineConfig, error) {
 }
 
 type ApplicationMySQLRepo struct {
-	operationInfo *OperationInfo
+	operationInfo healthcheck.OperationInfo
 	conn          *mysql.Conn
 }
 
 // NewApplicationMySQLRepo returns a new *ApplicationMySQLRepo
-func NewApplicationMySQLRepo(operationInfo *OperationInfo, conn *mysql.Conn) *ApplicationMySQLRepo {
+func NewApplicationMySQLRepo(operationInfo healthcheck.OperationInfo, conn *mysql.Conn) *ApplicationMySQLRepo {
 	return &ApplicationMySQLRepo{
 		operationInfo: operationInfo,
 		conn:          conn,
@@ -317,7 +317,7 @@ func NewApplicationMySQLRepo(operationInfo *OperationInfo, conn *mysql.Conn) *Ap
 }
 
 // GetOperationInfo returns the operation information
-func (amr *ApplicationMySQLRepo) GetOperationInfo() *OperationInfo {
+func (amr *ApplicationMySQLRepo) GetOperationInfo() healthcheck.OperationInfo {
 	return amr.operationInfo
 }
 
@@ -407,12 +407,12 @@ func (amr *ApplicationMySQLRepo) GetLargeTables() ([]healthcheck.Table, error) {
 }
 
 type PrometheusRepo struct {
-	operationInfo *OperationInfo
+	operationInfo healthcheck.OperationInfo
 	conn          *prometheus.Conn
 }
 
 // NewPrometheusRepo returns a new *PrometheusRepo
-func NewPrometheusRepo(operationInfo *OperationInfo, conn *prometheus.Conn) *PrometheusRepo {
+func NewPrometheusRepo(operationInfo healthcheck.OperationInfo, conn *prometheus.Conn) *PrometheusRepo {
 	return &PrometheusRepo{
 		operationInfo: operationInfo,
 		conn:          conn,
@@ -420,7 +420,7 @@ func NewPrometheusRepo(operationInfo *OperationInfo, conn *prometheus.Conn) *Pro
 }
 
 // GetOperationInfo returns the operation information
-func (pr *PrometheusRepo) GetOperationInfo() *OperationInfo {
+func (pr *PrometheusRepo) GetOperationInfo() healthcheck.OperationInfo {
 	return pr.operationInfo
 }
 
@@ -695,12 +695,12 @@ func (pr *PrometheusRepo) execute(query string) ([]healthcheck.PrometheusData, e
 }
 
 type MySQLQueryRepo struct {
-	operationInfo *OperationInfo
+	operationInfo healthcheck.OperationInfo
 	conn          *mysql.Conn
 }
 
 // NewMySQLQueryRepo returns the new *MySQLQueryRepo
-func NewMySQLQueryRepo(operationInfo *OperationInfo, conn *mysql.Conn) *MySQLQueryRepo {
+func NewMySQLQueryRepo(operationInfo healthcheck.OperationInfo, conn *mysql.Conn) *MySQLQueryRepo {
 	return &MySQLQueryRepo{
 		operationInfo: operationInfo,
 		conn:          conn,
@@ -708,7 +708,7 @@ func NewMySQLQueryRepo(operationInfo *OperationInfo, conn *mysql.Conn) *MySQLQue
 }
 
 // GetOperationInfo returns the operation information
-func (mqr *MySQLQueryRepo) GetOperationInfo() *OperationInfo {
+func (mqr *MySQLQueryRepo) GetOperationInfo() healthcheck.OperationInfo {
 	return mqr.operationInfo
 }
 
@@ -754,12 +754,12 @@ func (mqr *MySQLQueryRepo) getPMMVersion() int {
 }
 
 type ClickhouseQueryRepo struct {
-	operationInfo *OperationInfo
+	operationInfo healthcheck.OperationInfo
 	conn          *clickhouse.Conn
 }
 
 // NewClickhouseQueryRepo returns the new *ClickhouseQueryRepo
-func NewClickhouseQueryRepo(operationInfo *OperationInfo, conn *clickhouse.Conn) *ClickhouseQueryRepo {
+func NewClickhouseQueryRepo(operationInfo healthcheck.OperationInfo, conn *clickhouse.Conn) *ClickhouseQueryRepo {
 	return &ClickhouseQueryRepo{
 		operationInfo: operationInfo,
 		conn:          conn,
@@ -767,7 +767,7 @@ func NewClickhouseQueryRepo(operationInfo *OperationInfo, conn *clickhouse.Conn)
 }
 
 // GetOperationInfo returns the operation information
-func (cqr *ClickhouseQueryRepo) GetOperationInfo() *OperationInfo {
+func (cqr *ClickhouseQueryRepo) GetOperationInfo() healthcheck.OperationInfo {
 	return cqr.operationInfo
 }
 

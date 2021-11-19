@@ -28,7 +28,7 @@ const (
 var testAppInfo *AppInfo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testAppInfo = testInitNewAppInfo()
 }
 

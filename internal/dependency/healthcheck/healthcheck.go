@@ -70,6 +70,10 @@ type QueryRepo interface {
 type Service interface {
 	// GetDASRepo returns the das repository
 	GetDASRepo() DASRepo
+	// GetOperationInfo returns the operation information
+	GetOperationInfo() OperationInfo
+	// GetEngine returns the healthcheck engine
+	GetEngine() Engine
 	// GetResult returns the result
 	GetResult() Result
 	// GetResultByOperationID gets the result by operation id from the middleware
@@ -87,6 +91,8 @@ type Service interface {
 }
 
 type Engine interface {
+	// GetOperationInfo returns the operation information
+	GetOperationInfo() OperationInfo
 	// Run checks the server health status
 	Run()
 }

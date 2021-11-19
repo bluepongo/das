@@ -11,7 +11,7 @@ import (
 var testMiddlewareServerService *MiddlewareServerService
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testMiddlewareServerService = NewMiddlewareServerServiceWithDefault()
 }
 

@@ -19,7 +19,7 @@ const (
 var testDBRepo *DBRepo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testDBRepo = NewDBRepoWithGlobal()
 }
 

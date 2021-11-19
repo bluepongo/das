@@ -11,7 +11,7 @@ import (
 var testUserService *UserService
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testUserService = NewUserServiceWithDefault()
 }
 

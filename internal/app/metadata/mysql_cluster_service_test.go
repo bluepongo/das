@@ -11,7 +11,7 @@ import (
 var testMySQLClusterService *MySQLClusterService
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testMySQLClusterService = NewMySQLClusterServiceWithDefault()
 }
 

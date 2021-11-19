@@ -14,58 +14,60 @@ import (
 )
 
 const (
-	dbConfigDataStruct                     = "DBConfigData"
-	avgBackupFailedRatioDataStruct         = "AvgBackupFailedRatioData"
-	avgBackupFailedRatioHighStruct         = "AvgBackupFailedRatioHigh"
-	statisticFailedRatioDataStruct         = "StatisticFailedRatioData"
-	statisticFailedRatioHighStruct         = "StatisticFailedRatioHigh"
-	cpuUsageDataStruct                     = "CPUUsageData"
-	cpuUsageHighStruct                     = "CPUUsageHigh"
-	ioUtilDataStruct                       = "IOUtilData"
-	ioUtilHighStruct                       = "IOUtilHigh"
-	diskCapacityUsageDataStruct            = "DiskCapacityUsageData"
-	diskCapacityUsageHighStruct            = "DiskCapacityUsageHigh"
-	connectionUsageDataStruct              = "ConnectionUsageData"
-	connectionUsageHighStruct              = "ConnectionUsageHigh"
-	averageActiveSessionPercentsDataStruct = "AverageActiveSessionPercentsData"
-	averageActiveSessionPercentsHighStruct = "AverageActiveSessionPercentsHigh"
-	cacheMissRatioDataStruct               = "CacheMissRatioData"
-	cacheMissRatioHighStruct               = "CacheMissRatioHigh"
-	tableRowsDataStruct                    = "TableRowsData"
-	tableRowsHighStruct                    = "TableRowsHigh"
-	tableSizeDataStruct                    = "TableSizeData"
-	tableSizeHighStruct                    = "TableSizeHigh"
-	accuracyReviewStruct                   = "AccuracyReview"
-	delFlagStruct                          = "DelFlag"
-	createTimeStruct                       = "CreateTime"
-	lastUpdateTimeStruct                   = "LastUpdateTime"
+	resultIDStruct                               = "ID"
+	resultOperationIDStruct                      = "OperationID"
+	resultDBConfigDataStruct                     = "DBConfigData"
+	resultAvgBackupFailedRatioDataStruct         = "AvgBackupFailedRatioData"
+	resultAvgBackupFailedRatioHighStruct         = "AvgBackupFailedRatioHigh"
+	resultStatisticFailedRatioDataStruct         = "StatisticFailedRatioData"
+	resultStatisticFailedRatioHighStruct         = "StatisticFailedRatioHigh"
+	resultCPUUsageDataStruct                     = "CPUUsageData"
+	resultCPUUsageHighStruct                     = "CPUUsageHigh"
+	resultIOUtilDataStruct                       = "IOUtilData"
+	resultIOUtilHighStruct                       = "IOUtilHigh"
+	resultDiskCapacityUsageDataStruct            = "DiskCapacityUsageData"
+	resultDiskCapacityUsageHighStruct            = "DiskCapacityUsageHigh"
+	resultConnectionUsageDataStruct              = "ConnectionUsageData"
+	resultConnectionUsageHighStruct              = "ConnectionUsageHigh"
+	resultAverageActiveSessionPercentsDataStruct = "AverageActiveSessionPercentsData"
+	resultAverageActiveSessionPercentsHighStruct = "AverageActiveSessionPercentsHigh"
+	resultCacheMissRatioDataStruct               = "CacheMissRatioData"
+	resultCacheMissRatioHighStruct               = "CacheMissRatioHigh"
+	resultTableRowsDataStruct                    = "TableRowsData"
+	resultTableRowsHighStruct                    = "TableRowsHigh"
+	resultTableSizeDataStruct                    = "TableSizeData"
+	resultTableSizeHighStruct                    = "TableSizeHigh"
+	resultAccuracyReviewStruct                   = "AccuracyReview"
+	resultDelFlagStruct                          = "DelFlag"
+	resultCreateTimeStruct                       = "CreateTime"
+	resultLastUpdateTimeStruct                   = "LastUpdateTime"
 )
 
 var defaultIgnoreList = []string{
-	dbConfigDataStruct,
-	avgBackupFailedRatioDataStruct,
-	avgBackupFailedRatioHighStruct,
-	statisticFailedRatioDataStruct,
-	statisticFailedRatioHighStruct,
-	cpuUsageDataStruct,
-	cpuUsageHighStruct,
-	ioUtilDataStruct,
-	ioUtilHighStruct,
-	diskCapacityUsageDataStruct,
-	diskCapacityUsageHighStruct,
-	connectionUsageDataStruct,
-	connectionUsageHighStruct,
-	averageActiveSessionPercentsDataStruct,
-	averageActiveSessionPercentsHighStruct,
-	cacheMissRatioDataStruct,
-	cacheMissRatioHighStruct,
-	tableRowsDataStruct,
-	tableRowsHighStruct,
-	tableSizeDataStruct,
-	tableSizeHighStruct,
-	accuracyReviewStruct,
-	delFlagStruct,
-	lastUpdateTimeStruct,
+	resultDBConfigDataStruct,
+	resultAvgBackupFailedRatioDataStruct,
+	resultAvgBackupFailedRatioHighStruct,
+	resultStatisticFailedRatioDataStruct,
+	resultStatisticFailedRatioHighStruct,
+	resultCPUUsageDataStruct,
+	resultCPUUsageHighStruct,
+	resultIOUtilDataStruct,
+	resultIOUtilHighStruct,
+	resultDiskCapacityUsageDataStruct,
+	resultDiskCapacityUsageHighStruct,
+	resultConnectionUsageDataStruct,
+	resultConnectionUsageHighStruct,
+	resultAverageActiveSessionPercentsDataStruct,
+	resultAverageActiveSessionPercentsHighStruct,
+	resultCacheMissRatioDataStruct,
+	resultCacheMissRatioHighStruct,
+	resultTableRowsDataStruct,
+	resultTableRowsHighStruct,
+	resultTableSizeDataStruct,
+	resultTableSizeHighStruct,
+	resultAccuracyReviewStruct,
+	resultDelFlagStruct,
+	resultLastUpdateTimeStruct,
 }
 
 // Result include all data needed in healthcheck
@@ -510,7 +512,7 @@ func (r *Result) getString(ignoreList []string) string {
 		fieldTag := fieldType.Tag.Get(constant.DefaultMarshalTag)
 		if fieldTag != constant.EmptyString && !common.StringInSlice(ignoreList, fieldType.Name) {
 			fieldStr := fmt.Sprintf(`"%s":%v,`, fieldTag, inVal.Field(i))
-			if fieldType.Name == createTimeStruct || fieldType.Name == lastUpdateTimeStruct ||
+			if fieldType.Name == resultCreateTimeStruct || fieldType.Name == resultLastUpdateTimeStruct ||
 				fieldVal.IsZero() || fieldVal.String() == constant.NullString {
 				fieldStr = fmt.Sprintf(`"%s":"%v",`, fieldTag, fieldVal)
 			}

@@ -85,6 +85,8 @@ var (
 	alertHTTPConfig     string
 	// healthcheck
 	healthcheckAlertOwnerType string
+	// query
+	queryMinRowsExamined int
 	// sqladvisor
 	sqladvisorSoarBin          string
 	sqladvisorSoarConfig       string
@@ -186,6 +188,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&alertHTTPConfig, "alert-http-config", constant.DefaultRandomString, fmt.Sprintf("specify alert api parameters(default: %s)", config.DefaultAlertHTTPConfig))
 	// healthcheck
 	rootCmd.PersistentFlags().StringVar(&healthcheckAlertOwnerType, "healthcheck-alert-owner-type", constant.DefaultRandomString, fmt.Sprintf("specify healthcheck alert owner type(default: %s)", config.DefaultHealthcheckAlertOwnerType))
+	// query
+	rootCmd.PersistentFlags().IntVar(&queryMinRowsExamined, "query-min-rows-examined", constant.DefaultRandomInt, fmt.Sprintf("specify query min rows examined(default: %d", config.DefaultQueryMinRowsExamined))
 	// sqladvisor
 	rootCmd.PersistentFlags().StringVar(&sqladvisorSoarBin, "sqladvisor-soar-bin", constant.DefaultRandomString, fmt.Sprintf("specify binary path of soar(default: %s)", config.DefaultSQLAdvisorSoarBin))
 	rootCmd.PersistentFlags().StringVar(&sqladvisorSoarConfig, "sqladvisor-soar-config", constant.DefaultRandomString, fmt.Sprintf("specify config file path of soar(default: %s)", config.DefaultSQLAdvisorSoarConfig))
@@ -442,6 +446,11 @@ func OverrideConfig() (err error) {
 	// override healthcheck
 	if healthcheckAlertOwnerType != constant.DefaultRandomString {
 		viper.Set(config.HealthcheckAlertOwnerTypeKey, healthcheckAlertOwnerType)
+	}
+
+	// override query
+	if queryMinRowsExamined != constant.DefaultRandomInt {
+		viper.Set(config.QueryMinRowsExaminedKey, queryMinRowsExamined)
 	}
 
 	// override sqladvisor

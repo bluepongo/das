@@ -18,7 +18,7 @@ const (
 var testMiddlewareClusterRepo *MiddlewareClusterRepo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testMiddlewareClusterRepo = NewMiddlewareClusterRepoWithGlobal()
 }
 

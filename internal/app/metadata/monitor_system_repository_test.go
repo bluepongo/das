@@ -19,7 +19,7 @@ const (
 var testMonitorSystemRepo *MonitorSystemRepo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testMonitorSystemRepo = NewMonitorSystemRepoWithGlobal()
 }
 

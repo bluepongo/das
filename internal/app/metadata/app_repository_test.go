@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"os"
 	"testing"
 
 	"github.com/romberli/das/global"
@@ -27,18 +28,18 @@ const (
 var testAppRepo *AppRepo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testAppRepo = NewAppRepoWithGlobal()
 }
 
-func initDASMySQLPool() {
+func testInitDASMySQLPool() {
 	var err error
 
 	if global.DASMySQLPool == nil {
 		global.DASMySQLPool, err = mysql.NewPoolWithDefault(testDASMySQLAddr, testDASMySQLName, testDASMySQLUser, testDASMySQLPass)
-		log.Infof("pool: %v, error: %v", global.DASMySQLPool, err)
 		if err != nil {
-			log.Error(common.CombineMessageWithError("initRepository() failed", err))
+			log.Error(common.CombineMessageWithError("testInitDASMySQLPool() failed", err))
+			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 	}
 }

@@ -7,9 +7,8 @@ import (
 )
 
 const (
-	defaultLimit    = 5
-	defaultOffset   = 0
-	minRowsExamined = 100000
+	defaultLimit  = 5
+	defaultOffset = 0
 
 	maxDuration = 30 * constant.Day
 	maxLimit    = 100

@@ -1,10 +1,10 @@
 ### query.GetByMySQLClusterID
-GET http://{{baseURL}}/api/v1/query/cluster/3
+GET http://{{baseURL}}/api/v1/query/cluster/1
 Accept: application/json
 
 {
-    "start_time": "2021-08-29 09:02:22.346672",
-    "end_time": "2021-10-02 10:18:40.467998",
+    "start_time": "2021-11-11 09:02:22.346672",
+    "end_time": "2021-11-18 10:18:40.467998",
     "limit": 5,
     "offset": 0
 }

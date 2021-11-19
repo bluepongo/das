@@ -55,7 +55,7 @@ var (
 
 // DefaultEngine work for health check module
 type DefaultEngine struct {
-	operationInfo        *OperationInfo
+	operationInfo        healthcheck.OperationInfo
 	engineConfig         DefaultEngineConfig
 	result               *Result
 	mountPoints          []string
@@ -67,7 +67,7 @@ type DefaultEngine struct {
 }
 
 // NewDefaultEngine returns a new *DefaultEngine
-func NewDefaultEngine(operationInfo *OperationInfo,
+func NewDefaultEngine(operationInfo healthcheck.OperationInfo,
 	dasRepo healthcheck.DASRepo,
 	applicationMySQLRepo healthcheck.ApplicationMySQLRepo,
 	prometheusRepo healthcheck.PrometheusRepo,
@@ -83,8 +83,8 @@ func NewDefaultEngine(operationInfo *OperationInfo,
 	}
 }
 
-// getOperationInfo returns the operation information
-func (de *DefaultEngine) getOperationInfo() *OperationInfo {
+// GetOperationInfo returns the operation information
+func (de *DefaultEngine) GetOperationInfo() healthcheck.OperationInfo {
 	return de.operationInfo
 }
 
@@ -147,7 +147,7 @@ func (de *DefaultEngine) Run() {
 	if err != nil {
 		log.Error(message.NewMessage(msghc.ErrHealthcheckDefaultEngineRun, err.Error()).Error())
 		// update status
-		updateErr := de.getDASRepo().UpdateOperationStatus(de.operationInfo.operationID, defaultFailedStatus, err.Error())
+		updateErr := de.getDASRepo().UpdateOperationStatus(de.GetOperationInfo().GetOperationID(), defaultFailedStatus, err.Error())
 		if updateErr != nil {
 			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 			return
@@ -156,8 +156,8 @@ func (de *DefaultEngine) Run() {
 	}
 
 	// update operation status
-	msg := fmt.Sprintf("healthcheck completed successfully. engine: default, operation_id: %d", de.operationInfo.operationID)
-	updateErr := de.getDASRepo().UpdateOperationStatus(de.operationInfo.operationID, defaultSuccessStatus, msg)
+	msg := fmt.Sprintf("healthcheck completed successfully. engine: default, operation_id: %d", de.GetOperationInfo().GetOperationID())
+	updateErr := de.getDASRepo().UpdateOperationStatus(de.GetOperationInfo().GetOperationID(), defaultSuccessStatus, msg)
 	if updateErr != nil {
 		log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 	}
@@ -296,8 +296,8 @@ func (de *DefaultEngine) preRun() error {
 		}
 	}
 	// init default report host and port
-	dbConfigVariableNames[dbConfigReportHost] = de.getOperationInfo().GetMySQLServer().GetHostIP()
-	dbConfigVariableNames[dbConfigReportPort] = strconv.Itoa(de.getOperationInfo().GetMySQLServer().GetPortNum())
+	dbConfigVariableNames[dbConfigReportHost] = de.GetOperationInfo().GetMySQLServer().GetHostIP()
+	dbConfigVariableNames[dbConfigReportPort] = strconv.Itoa(de.GetOperationInfo().GetMySQLServer().GetPortNum())
 
 	return nil
 }
@@ -761,7 +761,7 @@ func (de *DefaultEngine) checkSlowQuery() error {
 	}
 
 	// sql tuning
-	clusterID := de.operationInfo.mysqlServer.GetClusterID()
+	clusterID := de.GetOperationInfo().GetMySQLServer().GetClusterID()
 	// init db service
 	dbService := metadata.NewDBServiceWithDefault()
 	for _, sql := range topSQLList {
@@ -900,7 +900,7 @@ func (de *DefaultEngine) sendEmail() error {
 		return err
 	}
 
-	result, err := de.getDASRepo().GetResultByOperationID(de.getOperationInfo().GetOperationID())
+	result, err := de.getDASRepo().GetResultByOperationID(de.GetOperationInfo().GetOperationID())
 	if err != nil {
 		return err
 	}
@@ -911,7 +911,7 @@ func (de *DefaultEngine) sendEmail() error {
 
 // getToAddrs gets to addrs that will send email to
 func (de *DefaultEngine) getToAddrs() (string, error) {
-	mysqlCluster, err := de.getOperationInfo().GetMySQLServer().GetMySQLCluster()
+	mysqlCluster, err := de.GetOperationInfo().GetMySQLServer().GetMySQLCluster()
 	if err != nil {
 		return constant.EmptyString, err
 	}

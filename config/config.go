@@ -91,6 +91,8 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(AlertHTTPConfigKey, DefaultAlertHTTPConfig)
 	// healthcheck
 	viper.SetDefault(HealthcheckAlertOwnerTypeKey, DefaultHealthcheckAlertOwnerType)
+	// query
+	viper.SetDefault(QueryMinRowsExaminedKey, DefaultQueryMinRowsExamined)
 	// sqladvisor
 	viper.SetDefault(SQLAdvisorSoarBinKey, DefaultSQLAdvisorSoarBin)
 	viper.SetDefault(SQLAdvisorSoarConfigKey, DefaultSQLAdvisorSoarConfig)
@@ -136,6 +138,12 @@ func ValidateConfig() (err error) {
 
 	// validate healthcheck section
 	err = ValidateHealthcheck()
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	// validate query section
+	err = ValidateQuery()
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
@@ -516,6 +524,7 @@ func ValidateAlert() error {
 	return merr.ErrorOrNil()
 }
 
+// ValidateHealthcheck validates if health check section is valid
 func ValidateHealthcheck() error {
 	merr := &multierror.Error{}
 
@@ -531,6 +540,19 @@ func ValidateHealthcheck() error {
 	}
 	if !valid {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidHealthcheckAlertOwnerType, ownerType))
+	}
+
+	return merr.ErrorOrNil()
+}
+
+// ValidateQuery validates if query section is valid
+func ValidateQuery() error {
+	merr := &multierror.Error{}
+
+	// validate query.minRowsExamined
+	_, err := cast.ToIntE(viper.Get(QueryMinRowsExaminedKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
 	}
 
 	return merr.ErrorOrNil()

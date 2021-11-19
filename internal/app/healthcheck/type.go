@@ -53,6 +53,7 @@ const (
 )
 
 var (
+	_ healthcheck.OperationInfo  = (*OperationInfo)(nil)
 	_ healthcheck.Variable       = (*GlobalVariable)(nil)
 	_ healthcheck.Table          = (*Table)(nil)
 	_ healthcheck.PrometheusData = (*PrometheusData)(nil)
@@ -99,26 +100,32 @@ func NewOperationInfo(operationID int, mysqlServer metadata.MySQLServer, Monitor
 	}
 }
 
+// GetOperationID returns the operation identity
 func (oi *OperationInfo) GetOperationID() int {
 	return oi.operationID
 }
 
+// GetMySQLServer returns the mysql server
 func (oi *OperationInfo) GetMySQLServer() metadata.MySQLServer {
 	return oi.mysqlServer
 }
 
+// GetMonitorSystem returns the monitor system
 func (oi *OperationInfo) GetMonitorSystem() metadata.MonitorSystem {
 	return oi.monitorSystem
 }
 
+// GetStartTime returns the start time
 func (oi *OperationInfo) GetStartTime() time.Time {
 	return oi.startTime
 }
 
+// GetEndTime returns the end time
 func (oi *OperationInfo) GetEndTime() time.Time {
 	return oi.endTime
 }
 
+// GetStep returns the step
 func (oi *OperationInfo) GetStep() time.Duration {
 	return oi.step
 }

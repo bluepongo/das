@@ -61,8 +61,13 @@ func (s *Service) GetDASRepo() healthcheck.DASRepo {
 }
 
 // GetOperationInfo returns the operation information
-func (s *Service) GetOperationInfo() *OperationInfo {
+func (s *Service) GetOperationInfo() healthcheck.OperationInfo {
 	return s.OperationInfo
+}
+
+// GetEngine returns the healthcheck engine
+func (s *Service) GetEngine() healthcheck.Engine {
+	return s.Engine
 }
 
 // GetResult returns the healthcheck result

@@ -27,7 +27,7 @@ const (
 var testMySQLClusterInfo *MySQLClusterInfo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	initDBApplicationUserAndPass()
 	testMySQLClusterInfo = testInitNewMySQLClusterInfo()
 }

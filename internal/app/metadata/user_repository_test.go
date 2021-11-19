@@ -22,7 +22,7 @@ const (
 var testUserRepo *UserRepo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testUserRepo = NewUserRepoWithGlobal()
 }
 

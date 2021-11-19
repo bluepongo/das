@@ -11,7 +11,7 @@ import (
 var testAppService *AppService
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testAppService = NewAppServiceWithDefault()
 }
 

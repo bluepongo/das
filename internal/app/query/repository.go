@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/romberli/das/config"
 	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/go-util/common"
@@ -12,6 +13,7 @@ import (
 	"github.com/romberli/go-util/middleware/clickhouse"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -312,7 +314,7 @@ func (mr *MySQLRepo) GetByServiceNames(serviceName []string) ([]query.Query, err
 	return mr.execute(sql,
 		mr.getConfig().GetStartTime().Format(constant.DefaultTimeLayout),
 		mr.getConfig().GetEndTime().Format(constant.DefaultTimeLayout),
-		minRowsExamined,
+		getMinRowsExamined(),
 		mr.getConfig().GetLimit(),
 		mr.getConfig().GetOffset(),
 	)
@@ -336,7 +338,7 @@ func (mr *MySQLRepo) GetByDBName(serviceName, dbName string) ([]query.Query, err
 		dbName,
 		mr.getConfig().GetStartTime().Format(constant.DefaultTimeLayout),
 		mr.getConfig().GetEndTime().Format(constant.DefaultTimeLayout),
-		minRowsExamined,
+		getMinRowsExamined(),
 		mr.getConfig().GetLimit(),
 		mr.getConfig().GetOffset())
 }
@@ -430,12 +432,12 @@ func (cr *ClickhouseRepo) GetByServiceNames(serviceNames []string) ([]query.Quer
 		sql,
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
-		minRowsExamined,
+		getMinRowsExamined(),
 		cr.getConfig().GetLimit(),
 		cr.getConfig().GetOffset(),
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
-		minRowsExamined,
+		getMinRowsExamined(),
 	)
 }
 
@@ -458,14 +460,14 @@ func (cr *ClickhouseRepo) GetByDBName(serviceName, dbName string) ([]query.Query
 		dbName,
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
-		minRowsExamined,
+		getMinRowsExamined(),
 		cr.getConfig().GetLimit(),
 		cr.getConfig().GetOffset(),
 		dbName,
 		dbName,
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
-		minRowsExamined,
+		getMinRowsExamined(),
 	)
 }
 
@@ -487,13 +489,13 @@ func (cr *ClickhouseRepo) GetBySQLID(serviceName, sqlID string) (query.Query, er
 		sqlID,
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
-		minRowsExamined,
+		getMinRowsExamined(),
 		cr.getConfig().GetLimit(),
 		cr.getConfig().GetOffset(),
 		sqlID,
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
-		minRowsExamined,
+		getMinRowsExamined(),
 	)
 	if len(queries) == 0 {
 		return nil, fmt.Errorf("sql(id=%s) in service(name=%s) is not found", sqlID, serviceName)
@@ -522,4 +524,8 @@ func (cr *ClickhouseRepo) execute(command string, args ...interface{}) ([]query.
 	}
 
 	return queries, nil
+}
+
+func getMinRowsExamined() int {
+	return viper.GetInt(config.QueryMinRowsExaminedKey)
 }

@@ -27,7 +27,7 @@ const (
 var testMonitorSystemInfo *MonitorSystemInfo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testMonitorSystemInfo = testInitNewMonitorSystemInfo()
 }
 

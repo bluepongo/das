@@ -25,7 +25,7 @@ const (
 var testMiddlewareServerInfo *MiddlewareServerInfo
 
 func init() {
-	initDASMySQLPool()
+	testInitDASMySQLPool()
 	testMiddlewareServerInfo = testInitNewMiddlewareServerInfo()
 }
 

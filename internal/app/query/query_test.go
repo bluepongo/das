@@ -32,7 +32,7 @@ const (
 	defaultQueryInfoRowsExaminedMax = 4
 )
 
-var pmmVersion = 0
+var pmmVersion int
 
 func init() {
 	viper.Set(config.DBMonitorMySQLUserKey, config.DefaultDBMonitorMySQLUser)
@@ -40,6 +40,8 @@ func init() {
 
 	viper.Set(config.DBMonitorClickhouseUserKey, config.DefaultDBMonitorClickhouseUser)
 	viper.Set(config.DBMonitorClickhousePassKey, config.DefaultDBMonitorClickhousePass)
+
+	viper.Set(config.QueryMinRowsExaminedKey, 1)
 
 	// pmmVersion = 1
 	pmmVersion = 2
