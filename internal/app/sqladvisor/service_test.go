@@ -3,13 +3,11 @@ package sqladvisor
 import (
 	"testing"
 
+	"github.com/romberli/go-util/common"
 	"github.com/stretchr/testify/assert"
 )
 
 const (
-	testSoarBin    = "/Users/romber/work/source_code/go/src/github.com/romberli/das/bin/soar"
-	testConfigFile = "/Users/romber/work/source_code/go/src/github.com/romberli/das/config/soar.yaml"
-
 	testFingerprint = "select * from t_meta_db_info where create_time<?"
 	testSQLID       = "B95017DB61875675"
 )
@@ -17,8 +15,10 @@ const (
 var service *Service
 
 func init() {
-	initDASMySQLPool()
-	service = NewService(testSoarBin, testConfigFile)
+	testInitDASMySQLPool()
+	testInitViper()
+
+	service = NewServiceWithDefault()
 }
 
 func TestService_All(t *testing.T) {
@@ -46,6 +46,7 @@ func TestService_Advise(t *testing.T) {
 	asst := assert.New(t)
 
 	advice, err := service.Advise(testDBID, testSQLText)
-	asst.Nil(err, "test Advise() failed")
+	asst.Nil(err, common.CombineMessageWithError("test Advise() failed", err))
 	asst.NotEmpty(advice, "test Advise() failed")
+	t.Log(advice)
 }

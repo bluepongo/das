@@ -15,7 +15,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-const logExpression = `^\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}\.\d{3}`
+const (
+	logExp               = `^\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}\.\d{3}`
+	errExp               = `\[1;31m\[E]|\[1;31m\[F]`
+	defaultLogMessageLen = 3
+)
 
 var _ sqladvisor.Advisor = (*DefaultAdvisor)(nil)
 
@@ -146,7 +150,7 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 	)
 
 	isLogMsg := true
-	regExp, err := regexp.Compile(logExpression)
+	regExp, err := regexp.Compile(logExp)
 	if err != nil {
 		return constant.EmptyString, constant.EmptyString, err
 	}
@@ -160,9 +164,12 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 		if isLogMsg {
 			message += line + constant.CRLFString
 			stringList := strings.Split(line, constant.SpaceString)
-			if len(stringList) >= 3 {
-				logLevel := string(stringList[2][1])
-				if logLevel == "E" || logLevel == "F" {
+			if len(stringList) >= defaultLogMessageLen {
+				errExp, err := regexp.Compile(errExp)
+				if err != nil {
+					return constant.EmptyString, constant.EmptyString, err
+				}
+				if errExp.Match([]byte(stringList[2])) {
 					errMsg += line + constant.CRLFString
 				}
 			}
