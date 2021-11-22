@@ -16,7 +16,7 @@ const (
 	testUserDepartmentName       = "arch"
 	testUserEmployeeID           = "100001"
 	testUserAccountName          = "zs001"
-	testUserEmail                = "rombertmp@163.com"
+	testUserEmail                = "allinemailtest@163.com"
 	testUserTelephone            = "01012345678"
 	testUserMobile               = "13012345678"
 	testUserRole                 = 3

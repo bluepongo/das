@@ -19,7 +19,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/account-name/zs001
 Content-Type: application/json
 
 ### GetUserByEmail
-GET http://{{baseURL}}/api/v1/metadata/user/email/rombertmp@163.com
+GET http://{{baseURL}}/api/v1/metadata/user/email/allinemailtest@163.com
 Content-Type: application/json
 
 ### GetUserByTelephone
@@ -66,7 +66,7 @@ Content-Type: application/json
   "department_name": "arch",
   "employee_id": "100001",
   "account_name": "zs001",
-  "email": "rombertmp@163.com"
+  "email": "allinemailtest@163.com"
 }
 
 ### DeleteUserByID

@@ -19,11 +19,11 @@ const (
 	defaultAlertSMTPContentText = "text/plain; charset=UTF-8"
 	defaultAlertSMTPContentHTML = "text/html; charset=UTF-8"
 
-	headerFrom        = "From"
-	headerTo          = "To"
-	headerCC          = "Cc"
-	headerSubject     = "Subject"
-	headerContentType = "Content-Type"
+	smtpHeaderFrom        = "From"
+	smtpHeaderTo          = "To"
+	smtpHeaderCC          = "Cc"
+	smtpHeaderSubject     = "Subject"
+	smtpHeaderContentType = "Content-Type"
 )
 
 var (
@@ -171,16 +171,16 @@ func (ss *SMTPSender) buildMessage() []byte {
 func (ss *SMTPSender) buildHeader() map[string]string {
 	header := make(map[string]string)
 
-	header[headerFrom] = fmt.Sprintf("%s<%s>", defaultAlertSMTPFromName, ss.GetConfig().Get(smtpFromAddrJson))
-	header[headerTo] = ss.GetConfig().Get(toAddrsJSON)
-	header[headerCC] = ss.GetConfig().Get(ccAddrsJSON)
-	header[headerSubject] = ss.GetConfig().Get(subjectJSON)
+	header[smtpHeaderFrom] = fmt.Sprintf("%s<%s>", defaultAlertSMTPFromName, ss.GetConfig().Get(smtpFromAddrJson))
+	header[smtpHeaderTo] = ss.GetConfig().Get(toAddrsJSON)
+	header[smtpHeaderCC] = ss.GetConfig().Get(ccAddrsJSON)
+	header[smtpHeaderSubject] = ss.GetConfig().Get(subjectJSON)
 
 	switch viper.GetString(config.AlertSMTPFormatKey) {
 	case config.AlertSMTPTextFormat:
-		header[headerContentType] = defaultAlertSMTPContentText
+		header[smtpHeaderContentType] = defaultAlertSMTPContentText
 	case config.AlertSMTPHTMLFormat:
-		header[headerContentType] = defaultAlertSMTPContentHTML
+		header[smtpHeaderContentType] = defaultAlertSMTPContentHTML
 	}
 
 	return header
