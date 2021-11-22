@@ -41,13 +41,6 @@ func testInitDASMySQLPool() {
 	}
 }
 
-func deleteResult() error {
-	sql := `delete from t_sa_operation_info;`
-	_, err := testRepo.Execute(sql)
-
-	return err
-}
-
 func TestRepositoryAll(t *testing.T) {
 	TestRepository_Execute(t)
 	TestRepository_Save(t)
