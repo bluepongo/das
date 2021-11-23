@@ -2,7 +2,6 @@ package healthcheck
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/go-version"
@@ -644,13 +643,7 @@ func (pr *PrometheusRepo) getServiceName() string {
 
 // getNodeName returns the node name
 func (pr *PrometheusRepo) getNodeName() string {
-	serviceName := pr.getServiceName()
-	strList := strings.Split(serviceName, constant.ColonString)
-	if len(strList) > constant.ZeroInt {
-		return strList[constant.ZeroInt]
-	}
-
-	return serviceName[:strings.LastIndex(serviceName, constant.DashString)]
+	return pr.GetOperationInfo().GetMySQLServer().GetServerName()
 }
 
 // getPMMVersion returns the pmm version
