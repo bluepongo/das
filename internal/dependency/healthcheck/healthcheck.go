@@ -54,7 +54,7 @@ type PrometheusRepo interface {
 	GetDiskCapacityUsage(mountPoints []string) ([]PrometheusData, error)
 	// GetConnectionUsage gets the connection usage
 	GetConnectionUsage() ([]PrometheusData, error)
-	// GetActiveSessionPercents gets the active session number
+	// GetAverageActiveSessionPercents gets the average active session percents
 	GetAverageActiveSessionPercents() ([]PrometheusData, error)
 	// GetCacheMissRatio gets the cache miss ratio
 	GetCacheMissRatio() ([]PrometheusData, error)

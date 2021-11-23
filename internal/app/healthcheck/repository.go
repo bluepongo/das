@@ -591,7 +591,7 @@ func (pr *PrometheusRepo) GetConnectionUsage() ([]healthcheck.PrometheusData, er
 	return pr.execute(prometheusQuery)
 }
 
-// GetActiveSessionPercents gets the active session number
+// GetAverageActiveSessionPercents gets the average active session percents
 func (pr *PrometheusRepo) GetAverageActiveSessionPercents() ([]healthcheck.PrometheusData, error) {
 	var prometheusQuery string
 
