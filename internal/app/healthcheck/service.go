@@ -111,9 +111,9 @@ func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime
 // initiating is synchronous, actual running is asynchronous
 func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) error {
 	// init
-	err := s.init(mysqlServerID, startTime, endTime, step)
+	operationID, err := s.init(mysqlServerID, startTime, endTime, step)
 	if err != nil {
-		updateErr := s.DASRepo.UpdateOperationStatus(s.OperationInfo.operationID, defaultFailedStatus, err.Error())
+		updateErr := s.DASRepo.UpdateOperationStatus(operationID, defaultFailedStatus, err.Error())
 		if updateErr != nil {
 			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 		}
@@ -127,24 +127,24 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 }
 
 // init initiates healthcheck operation and engine
-func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step time.Duration) error {
-	// check if operation with the same mysql server id is still running
-	isRunning, err := s.DASRepo.IsRunning(mysqlServerID)
-	if err != nil {
-		return err
-	}
-	if isRunning {
-		return fmt.Errorf("healthcheck of mysql server is still running. mysql server id: %d", mysqlServerID)
-	}
+func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
 	// insert operation message
 	operationID, err := s.DASRepo.InitOperation(mysqlServerID, startTime, endTime, step)
 	if err != nil {
-		return err
+		return operationID, err
+	}
+	// check if operation with the same mysql server id is still running
+	isRunning, err := s.DASRepo.IsRunning(mysqlServerID)
+	if err != nil {
+		return operationID, err
+	}
+	if isRunning {
+		return operationID, fmt.Errorf("healthcheck of mysql server is still running. mysql server id: %d", mysqlServerID)
 	}
 	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
 	err = mysqlServerService.GetByID(mysqlServerID)
 	if err != nil {
-		return err
+		return operationID, err
 	}
 	// get mysql server
 	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
@@ -157,7 +157,7 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 	mysqlServerAddr := fmt.Sprintf("%s:%d", mysqlServer.GetHostIP(), mysqlServer.GetPortNum())
 	applicationMySQLConn, err := mysql.NewConn(mysqlServerAddr, constant.EmptyString, s.getApplicationMySQLUser(), s.getApplicationMySQLPass())
 	if err != nil {
-		return err
+		return operationID, err
 	}
 	// init application mysql repository
 	applicationMySQLRepo := NewApplicationMySQLRepo(s.GetOperationInfo(), applicationMySQLConn)
@@ -178,7 +178,7 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 		// init mysql connection
 		conn, err := mysql.NewConn(slowQueryAddr, defaultMonitorMySQLDBName, s.getMonitorMySQLUser(), s.getMonitorMySQLPass())
 		if err != nil {
-			return err
+			return operationID, err
 		}
 		queryRepo = NewMySQLQueryRepo(s.GetOperationInfo(), conn)
 	case 2:
@@ -188,21 +188,21 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 		// init clickhouse connection
 		conn, err := clickhouse.NewConnWithDefault(slowQueryAddr, defaultMonitorClickhouseDBName, s.getMonitorClickhouseUser(), s.getMonitorClickhousePass())
 		if err != nil {
-			return err
+			return operationID, err
 		}
 		queryRepo = NewClickhouseQueryRepo(s.GetOperationInfo(), conn)
 	default:
-		return fmt.Errorf("healthcheck: monitor system type should be either 1 or 2, %d is not valid", monitorSystem.GetSystemType())
+		return operationID, fmt.Errorf("healthcheck: monitor system type should be either 1 or 2, %d is not valid", monitorSystem.GetSystemType())
 	}
 
 	prometheusConn, err := prometheus.NewConnWithConfig(prometheusConfig)
 	if err != nil {
-		return err
+		return operationID, err
 	}
 	prometheusRepo := NewPrometheusRepo(s.GetOperationInfo(), prometheusConn)
 	s.Engine = NewDefaultEngine(s.GetOperationInfo(), s.GetDASRepo(), applicationMySQLRepo, prometheusRepo, queryRepo)
 
-	return nil
+	return operationID, nil
 }
 
 // getApplicationMySQLUser returns application mysql username

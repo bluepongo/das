@@ -185,24 +185,12 @@ func (dr *DASRepo) InitOperation(mysqlServerID int, startTime, endTime time.Time
 	log.Debugf("healthCheck DASRepo.InitOperation() insert sql: \n%s\nplaceholders: %s, %s, %s, %s",
 		sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
 
-	_, err := dr.Execute(sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
-	if err != nil {
-		return constant.ZeroInt, err
-	}
-
-	sql = `
-		select id from t_hc_operation_info where del_flag = 0 and 
-		mysql_server_id = ? and start_time = ? and end_time = ? and step = ?;
-	`
-	log.Debugf("healthCheck DASRepo.InitOperation() select sql: \n%s\nplaceholders: %s, %s, %s, %s",
-		sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
-
 	result, err := dr.Execute(sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
 	if err != nil {
 		return constant.ZeroInt, err
 	}
 
-	return result.GetInt(constant.ZeroInt, constant.ZeroInt)
+	return result.LastInsertID()
 }
 
 // UpdateOperationStatus updates the status and message by the operationID in the middleware
