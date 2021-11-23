@@ -34,13 +34,13 @@ const (
 func initServiceDebugMessage() {
 	message.Messages[DebugHealthcheckGetResultByOperationID] = config.NewErrMessage(
 		message.DefaultMessageHeader, DebugHealthcheckGetResultByOperationID,
-		"healthcheck: get result by operation id message: %s")
+		"healthcheck: get result by operation id completed. message: %s")
 	message.Messages[DebugHealthcheckCheck] = config.NewErrMessage(
 		message.DefaultMessageHeader, DebugHealthcheckCheck,
-		"healthcheck: check message: operation id: %d")
+		"healthcheck: check started. operation id: %d")
 	message.Messages[DebugHealthcheckCheckByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader, DebugHealthcheckCheckByHostInfo,
-		"healthcheck: check by host info message: operation id: %d")
+		"healthcheck: check by host info started. operation id: %d")
 	message.Messages[DebugHealthcheckReviewAccuracy] = config.NewErrMessage(
 		message.DefaultMessageHeader, DebugHealthcheckReviewAccuracy,
 		"healthcheck: review accuracy message: %s")
@@ -52,10 +52,10 @@ func initServiceInfoMessage() {
 		"healthcheck: get result by operation id completed. operation_id: %d")
 	message.Messages[InfoHealthcheckCheck] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckCheck,
-		"healthcheck: check completed. operation id: %d")
+		"healthcheck: check started. operation id: %d")
 	message.Messages[InfoHealthcheckCheckByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckCheckByHostInfo,
-		"healthcheck: check by host info completed. operation id: %d")
+		"healthcheck: check by host info started. operation id: %d")
 	message.Messages[InfoHealthcheckReviewAccuracy] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckReviewAccuracy,
 		"healthcheck: review accuracy completed. %s")
