@@ -79,7 +79,7 @@ func (s *Service) GetResult() healthcheck.Result {
 func (s *Service) GetResultByOperationID(id int) error {
 	var err error
 
-	s.Result, err = s.DASRepo.GetResultByOperationID(id)
+	s.Result, err = s.GetDASRepo().GetResultByOperationID(id)
 	if err != nil {
 		return err
 	}
