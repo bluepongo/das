@@ -40,7 +40,7 @@ type ApplicationMySQLRepo interface {
 }
 
 type PrometheusRepo interface {
-	// GetMountPoint gets the mount points from the prometheus
+	// GetFileSystems gets the file systems from the prometheus
 	GetFileSystems() ([]FileSystem, error)
 	// GetAvgBackupFailedRatio gets the average backup failed ratio
 	GetAvgBackupFailedRatio() ([]PrometheusData, error)
