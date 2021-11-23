@@ -2,6 +2,7 @@ package healthcheck
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -18,8 +19,8 @@ import (
 const (
 	operationIDJSON            = "operation_id"
 	reviewJSON                 = "review"
-	checkRespMessage           = `{"code": 0, "message": "healthcheck started"}`
-	checkByHostInfoRespMessage = `{"code": 0, "message": "healthcheck by host info started"}`
+	checkRespMessage           = `{"code": 0, "operation_id: %d", message": "healthcheck started"}`
+	checkByHostInfoRespMessage = `{"code": 0, "operation_id: %d", "message": "healthcheck by host info started"}`
 	reviewAccuracyRespMessage  = `{"code": 0, "message": "reviewed accuracy"}`
 )
 
@@ -91,14 +92,14 @@ func Check(c *gin.Context) {
 	// init service
 	s := healthcheck.NewServiceWithDefault()
 	// check health
-	err = s.Check(rd.GetServerID(), startTime, endTime, step)
+	operationID, err := s.Check(rd.GetServerID(), startTime, endTime, step)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, operationID, err.Error())
 		return
 	}
 
-	log.Debug(message.NewMessage(msghealth.DebugHealthcheckCheck, checkRespMessage).Error())
-	resp.ResponseOK(c, checkRespMessage, msghealth.InfoHealthcheckCheck)
+	log.Debug(message.NewMessage(msghealth.DebugHealthcheckCheck, operationID).Error())
+	resp.ResponseOK(c, fmt.Sprintf(checkRespMessage, operationID), msghealth.InfoHealthcheckCheck, operationID)
 }
 
 // @Tags healthcheck
@@ -132,14 +133,14 @@ func CheckByHostInfo(c *gin.Context) {
 	// init service
 	s := healthcheck.NewServiceWithDefault()
 	// get entities
-	err = s.CheckByHostInfo(rd.GetHostIP(), rd.GetPortNum(), startTime, endTime, step)
+	operationID, err := s.CheckByHostInfo(rd.GetHostIP(), rd.GetPortNum(), startTime, endTime, step)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, operationID, err.Error())
 		return
 	}
 
-	log.Debug(message.NewMessage(msghealth.DebugHealthcheckCheckByHostInfo, checkByHostInfoRespMessage).Error())
-	resp.ResponseOK(c, checkByHostInfoRespMessage, msghealth.InfoHealthcheckCheckByHostInfo)
+	log.Debug(message.NewMessage(msghealth.DebugHealthcheckCheckByHostInfo, operationID).Error())
+	resp.ResponseOK(c, fmt.Sprintf(checkByHostInfoRespMessage, operationID), msghealth.InfoHealthcheckCheckByHostInfo, operationID)
 }
 
 // @Tags healthcheck

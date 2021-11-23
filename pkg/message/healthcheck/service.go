@@ -37,10 +37,10 @@ func initServiceDebugMessage() {
 		"healthcheck: get result by operation id message: %s")
 	message.Messages[DebugHealthcheckCheck] = config.NewErrMessage(
 		message.DefaultMessageHeader, DebugHealthcheckCheck,
-		"healthcheck: check message: %s")
+		"healthcheck: check message: operation id: %d")
 	message.Messages[DebugHealthcheckCheckByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader, DebugHealthcheckCheckByHostInfo,
-		"healthcheck: check by host info message: %s")
+		"healthcheck: check by host info message: operation id: %d")
 	message.Messages[DebugHealthcheckReviewAccuracy] = config.NewErrMessage(
 		message.DefaultMessageHeader, DebugHealthcheckReviewAccuracy,
 		"healthcheck: review accuracy message: %s")
@@ -52,10 +52,10 @@ func initServiceInfoMessage() {
 		"healthcheck: get result by operation id completed. operation_id: %d")
 	message.Messages[InfoHealthcheckCheck] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckCheck,
-		"healthcheck: check completed. %s")
+		"healthcheck: check completed. operation id: %d")
 	message.Messages[InfoHealthcheckCheckByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckCheckByHostInfo,
-		"healthcheck: check by host info completed. %s")
+		"healthcheck: check by host info completed. operation id: %d")
 	message.Messages[InfoHealthcheckReviewAccuracy] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckReviewAccuracy,
 		"healthcheck: review accuracy completed. %s")
@@ -67,16 +67,16 @@ func initServiceErrorMessage() {
 		"default engine run failed.\n%s")
 	message.Messages[ErrHealthcheckGetResultByOperationID] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckGetResultByOperationID,
-		"healthcheck: get result by operation id failed. operation_id: %d\n%s")
+		"healthcheck: get result by operation id failed. operation id: %d\n%s")
 	message.Messages[ErrHealthcheckCheck] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCheck,
-		"healthcheck: check failed.\n%s")
+		"healthcheck: check failed. operation id: %d\n%s")
 	message.Messages[ErrHealthcheckCheckByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCheckByHostInfo,
-		"healthcheck: check by host info failed. host info %s.\n%s")
+		"healthcheck: check by host info failed. operation id: %d.\n%s")
 	message.Messages[ErrHealthcheckReviewAccuracy] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckReviewAccuracy,
-		"healthcheck: review accuracy failed.operation id: %d.\n%s")
+		"healthcheck: review accuracy failed. operation id: %d.\n%s")
 	message.Messages[ErrHealthcheckCloseConnection] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCloseConnection,
 		"healthcheck: close middleware connection failed.\n%s")

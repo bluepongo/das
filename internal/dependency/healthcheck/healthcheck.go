@@ -79,9 +79,9 @@ type Service interface {
 	// GetResultByOperationID gets the result by operation id from the middleware
 	GetResultByOperationID(id int) error
 	// Check checks the server health status
-	Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) error
+	Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error)
 	// Check checks the server health status
-	CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration) error
+	CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration) (int, error)
 	// ReviewAccuracy reviews the accuracy of the check
 	ReviewAccuracy(id, review int) error
 	// Marshal marshals Service to json string

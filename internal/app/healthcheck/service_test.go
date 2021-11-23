@@ -57,28 +57,28 @@ func TestServiceAll(t *testing.T) {
 func TestService_GetResult(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
 	asst.Nil(err, common.CombineMessageWithError("test GetResult() failed", err))
 	time.Sleep(testSleepTime)
-	err = testService.GetResultByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = testService.GetResultByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test GetResult() failed", err))
 	t.Log(testService.GetResult().String())
 	// delete
-	err = deleteByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = deleteByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test GetResult() failed", err))
 }
 
 func TestService_GetResultByOperationID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
 	asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))
 	time.Sleep(testSleepTime)
-	err = testService.GetResultByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = testService.GetResultByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))
 	t.Log(testService.GetResult().String())
 	// delete
-	err = deleteByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = deleteByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))
 }
 
@@ -86,21 +86,21 @@ func TestService_GetResultByOperationID(t *testing.T) {
 func TestService_Check(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
 	asst.Nil(err, common.CombineMessageWithError("test Check() failed", err))
 	time.Sleep(testSleepTime)
-	err = testService.GetResultByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = testService.GetResultByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test Check() failed", err))
 	t.Log(testService.GetResult().String())
 	// delete
-	err = deleteByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = deleteByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test Check() failed", err))
 }
 
 func TestService_CheckByHostInfo(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testService.CheckByHostInfo(
+	operationID, err := testService.CheckByHostInfo(
 		testOperationInfo.GetMySQLServer().GetHostIP(),
 		testOperationInfo.GetMySQLServer().GetPortNum(),
 		time.Now().Add(-constant.Week),
@@ -109,57 +109,57 @@ func TestService_CheckByHostInfo(t *testing.T) {
 	)
 	asst.Nil(err, common.CombineMessageWithError("test CheckByHostInfo() failed", err))
 	time.Sleep(testSleepTime)
-	err = testService.GetResultByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = testService.GetResultByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test CheckByHostInfo() failed", err))
 	t.Log(testService.GetResult().String())
 	// delete
-	err = deleteByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = deleteByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test CheckByHostInfo() failed", err))
 }
 
 func TestService_ReviewAccuracy(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
 	asst.Nil(err, common.CombineMessageWithError("test ReviewAccuracy() failed", err))
 	time.Sleep(testSleepTime)
-	err = testService.ReviewAccuracy(testService.GetOperationInfo().GetOperationID(), testResultUpdateAccuracyReview)
+	err = testService.ReviewAccuracy(operationID, testResultUpdateAccuracyReview)
 	asst.Nil(err, common.CombineMessageWithError("test ReviewAccuracy() failed", err))
-	err = testService.GetResultByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = testService.GetResultByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test ReviewAccuracy() failed", err))
 	asst.Equal(testResultUpdateAccuracyReview, testService.GetResult().GetAccuracyReview(), "test ReviewAccuracy() failed")
 	// delete
-	err = deleteByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = deleteByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test ReviewAccuracy() failed", err))
 }
 
 func TestService_Marshal(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	time.Sleep(testSleepTime)
-	err = testService.GetResultByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = testService.GetResultByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	_, err = testService.Marshal()
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	// t.Log(jsonBytes)
 	// delete
-	err = deleteByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = deleteByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 }
 
 func TestService_MarshalWithFields(t *testing.T) {
 	asst := assert.New(t)
-	err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
 	asst.Nil(err, common.CombineMessageWithError("test healthcheckResultStruct() failed", err))
 	time.Sleep(testSleepTime)
-	err = testService.GetResultByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = testService.GetResultByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test healthcheckResultStruct() failed", err))
 	_, err = testService.MarshalWithFields(healthcheckResultStruct)
 	asst.Nil(err, common.CombineMessageWithError("test healthcheckResultStruct() failed", err))
 	// t.Log(jsonBytes)
 	// delete
-	err = deleteByOperationID(testService.GetOperationInfo().GetOperationID())
+	err = deleteByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test healthcheckResultStruct() failed", err))
 }

@@ -89,27 +89,28 @@ func (s *Service) GetResultByOperationID(id int) error {
 
 // Check performs healthcheck on the mysql server with given mysql server id,
 // initiating is synchronous, actual running is asynchronous
-func (s *Service) Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) error {
+func (s *Service) Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
 	return s.check(mysqlServerID, startTime, endTime, step)
 }
 
 // CheckByHostInfo performs healthcheck on the mysql server with given mysql server id,
 // initiating is synchronous, actual running is asynchronous
-func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration) error {
+func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration) (int, error) {
 	// init mysql server service
 	mss := metadata.NewMySQLServerServiceWithDefault()
 	// get entities
 	err := mss.GetByHostInfo(hostIP, portNum)
 	if err != nil {
-		return err
+		return constant.ZeroInt, err
 	}
 	mysqlServerID := mss.GetMySQLServers()[constant.ZeroInt].Identity()
+
 	return s.check(mysqlServerID, startTime, endTime, step)
 }
 
 // check performs healthcheck on the mysql server with given mysql server id,
 // initiating is synchronous, actual running is asynchronous
-func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) error {
+func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
 	// init
 	operationID, err := s.init(mysqlServerID, startTime, endTime, step)
 	if err != nil {
@@ -118,12 +119,12 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 		}
 
-		return err
+		return operationID, err
 	}
 	// run asynchronously
 	go s.GetEngine().Run()
 
-	return nil
+	return operationID, nil
 }
 
 // init initiates healthcheck operation and engine
