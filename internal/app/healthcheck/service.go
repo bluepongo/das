@@ -103,7 +103,7 @@ func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime
 	if err != nil {
 		return err
 	}
-	mysqlServerID := mss.MySQLServers[0].Identity()
+	mysqlServerID := mss.GetMySQLServers()[constant.ZeroInt].Identity()
 	return s.check(mysqlServerID, startTime, endTime, step)
 }
 
@@ -113,7 +113,7 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 	// init
 	operationID, err := s.init(mysqlServerID, startTime, endTime, step)
 	if err != nil {
-		updateErr := s.DASRepo.UpdateOperationStatus(operationID, defaultFailedStatus, err.Error())
+		updateErr := s.GetDASRepo().UpdateOperationStatus(operationID, defaultFailedStatus, err.Error())
 		if updateErr != nil {
 			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 		}
@@ -121,7 +121,7 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 		return err
 	}
 	// run asynchronously
-	go s.Engine.Run()
+	go s.GetEngine().Run()
 
 	return nil
 }
@@ -129,12 +129,12 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 // init initiates healthcheck operation and engine
 func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
 	// insert operation message
-	operationID, err := s.DASRepo.InitOperation(mysqlServerID, startTime, endTime, step)
+	operationID, err := s.GetDASRepo().InitOperation(mysqlServerID, startTime, endTime, step)
 	if err != nil {
 		return operationID, err
 	}
 	// check if operation with the same mysql server id is still running
-	isRunning, err := s.DASRepo.IsRunning(mysqlServerID)
+	isRunning, err := s.GetDASRepo().IsRunning(mysqlServerID)
 	if err != nil {
 		return operationID, err
 	}
@@ -247,7 +247,7 @@ func (s *Service) getMonitorMySQLPass() string {
 
 // ReviewAccuracy updates accuracy review with given operation id
 func (s *Service) ReviewAccuracy(id, review int) error {
-	return s.DASRepo.UpdateAccuracyReviewByOperationID(id, review)
+	return s.GetDASRepo().UpdateAccuracyReviewByOperationID(id, review)
 }
 
 // Marshal marshals Service to json bytes
