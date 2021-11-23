@@ -35,7 +35,7 @@ type ApplicationMySQLRepo interface {
 	GetVariables(items []string) ([]Variable, error)
 	// GetMySQLDirs gets the mysql data directory and binlog directory
 	GetMySQLDirs() ([]string, error)
-	// GetTables gets the tables
+	// GetLargeTables gets the tables
 	GetLargeTables() ([]Table, error)
 }
 
@@ -48,7 +48,7 @@ type PrometheusRepo interface {
 	GetStatisticFailedRatio() ([]PrometheusData, error)
 	// GetCPUUsage gets the cpu usage
 	GetCPUUsage() ([]PrometheusData, error)
-	// CheckIOUtil gets the io util
+	// GetIOUtil gets the io util
 	GetIOUtil() ([]PrometheusData, error)
 	// GetDiskCapacityUsage gets the disk capacity usage
 	GetDiskCapacityUsage(mountPoints []string) ([]PrometheusData, error)
