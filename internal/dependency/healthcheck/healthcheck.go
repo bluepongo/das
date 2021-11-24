@@ -37,6 +37,8 @@ type ApplicationMySQLRepo interface {
 	GetMySQLDirs() ([]string, error)
 	// GetLargeTables gets the tables
 	GetLargeTables() ([]Table, error)
+	// GetDBName gets the db name of given table names
+	GetDBName(tableNames []string) (string, error)
 }
 
 type PrometheusRepo interface {

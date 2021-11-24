@@ -393,6 +393,27 @@ func (amr *ApplicationMySQLRepo) GetLargeTables() ([]healthcheck.Table, error) {
 	return tables, nil
 }
 
+// GetDBName gets the db name of given table names
+func (amr *ApplicationMySQLRepo) GetDBName(tableNames []string) (string, error) {
+	if len(tableNames) == constant.ZeroInt {
+		return constant.EmptyString, nil
+	}
+
+	sql := `select table_schema from information_schema.tables where table_name = (%s);`
+	inClause, err := middleware.ConvertSliceToString(tableNames)
+	if err != nil {
+		return constant.EmptyString, err
+	}
+	sql = fmt.Sprintf(sql, inClause)
+
+	result, err := amr.getConnection().Execute(sql)
+	if err != nil {
+		return constant.EmptyString, err
+	}
+
+	return result.GetString(constant.ZeroInt, constant.ZeroInt)
+}
+
 type PrometheusRepo struct {
 	operationInfo healthcheck.OperationInfo
 	conn          *prometheus.Conn

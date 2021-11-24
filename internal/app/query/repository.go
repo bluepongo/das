@@ -109,7 +109,6 @@ const (
                sm.total_exec_time,
                sm.avg_exec_time,
                sm.rows_examined_max
-        
         from (
                  select queryid                                               as sql_id,
                         sum(num_queries)                                      as exec_count,
@@ -147,7 +146,6 @@ const (
                sm.total_exec_time,
                sm.avg_exec_time,
                sm.rows_examined_max
-        
         from (
                  select queryid                                               as sql_id,
                         sum(num_queries)                                      as exec_count,
@@ -187,7 +185,6 @@ const (
                sm.total_exec_time,
                sm.avg_exec_time,
                sm.rows_examined_max
-        
         from (
                  select queryid                                               as sql_id,
                         sum(num_queries)                                      as exec_count,

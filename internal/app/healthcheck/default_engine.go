@@ -727,6 +727,16 @@ func (de *DefaultEngine) checkSlowQuery() error {
 			if err != nil {
 				return err
 			}
+			if dbName == constant.EmptyString {
+				tableNames, err := util.GetTableNames(slowQuery.GetExample())
+				if err != nil {
+					return err
+				}
+				dbName, err = de.getApplicationMySQLRepo().GetDBName(tableNames)
+				if err != nil {
+					return err
+				}
+			}
 			if !common.StringInSlice(ignoreDBList, dbName) {
 				slowQuery.SetDBName(dbName)
 				topSQLList = append(topSQLList, slowQuery)

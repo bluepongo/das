@@ -93,3 +93,13 @@ func GetDBName(sql string) (string, error) {
 
 	return constant.EmptyString, nil
 }
+
+func GetTableNames(sql string) ([]string, error) {
+	p := parser.NewParserWithDefault()
+	r, err := p.Parse(sql)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.GetTableNames(), nil
+}
