@@ -159,19 +159,27 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 	if err != nil {
 		return operationID, err
 	}
+	// get dbs
 	dbs, err := mysqlCluster.GetDBs()
 	if err != nil {
 		return operationID, err
 	}
-
+	// get apps
 	var apps []depmeta.App
 	for _, db := range dbs {
 		applications, err := db.GetApps()
 		if err != nil {
 			return operationID, err
 		}
-
-		apps = append(apps, applications...)
+		for _, application := range applications {
+			exists, err := common.ElementInSlice(apps, application)
+			if err != nil {
+				return operationID, err
+			}
+			if !exists {
+				apps = append(apps, applications...)
+			}
+		}
 	}
 	// init operation information
 	s.OperationInfo = NewOperationInfo(operationID, apps, mysqlServer, monitorSystem, startTime, endTime, step)
