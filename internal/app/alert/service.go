@@ -173,7 +173,7 @@ func (s *Service) saveSMTP(toAddrs, ccAddrs, subject, content, message string) e
 	}
 
 	return s.GetRepository().Save(
-		viper.GetString(config.AlertHTTPURLKey),
+		viper.GetString(config.AlertSMTPURLKey),
 		toAddrs,
 		ccAddrs,
 		subject,
