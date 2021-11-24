@@ -400,7 +400,11 @@ func (amr *ApplicationMySQLRepo) GetDBName(tableNames []string) (string, error) 
 	}
 
 	sql := `select table_schema from information_schema.tables where table_name in (%s);`
-	inClause, err := middleware.ConvertSliceToString(tableNames)
+	interfaces, err := common.ConvertInterfaceToSliceInterface(tableNames)
+	if err != nil {
+		return constant.EmptyString, err
+	}
+	inClause, err := middleware.ConvertSliceToString(interfaces)
 	if err != nil {
 		return constant.EmptyString, err
 	}
