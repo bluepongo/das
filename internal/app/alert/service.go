@@ -3,6 +3,7 @@ package alert
 import (
 	"encoding/json"
 	"errors"
+	"strings"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/romberli/das/config"
@@ -144,9 +145,7 @@ func (s *Service) setupSMTPConfig(toAddrs, ccAddrs, subject, content string) {
 
 // setupHTTPConfig setups the HTTP config
 func (s *Service) setupHTTPConfig(toAddrs, ccAddrs, content string) {
-	toAddrs += constant.CommaString + ccAddrs
-	s.GetConfig().Set(toAddrsJSON, toAddrs)
-	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
+	s.GetConfig().Set(toAddrsJSON, strings.Trim(toAddrs+constant.CommaString+ccAddrs, constant.CommaString))
 	s.GetConfig().Set(contentJSON, content)
 }
 
