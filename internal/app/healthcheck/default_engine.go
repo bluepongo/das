@@ -46,6 +46,7 @@ const (
 	defaultClusterType                          = 1
 
 	defaultAlertSubjectTemplate = "das healthcheck - %s "
+	httpSystemNameJSON          = "system_name"
 	httpHostIPJSON              = "host_ip"
 	httpEventIDJSON             = "event_id"
 	httpAlertTimeJSON           = "alert_time"
@@ -910,6 +911,7 @@ func (de *DefaultEngine) sendEmail() error {
 	}
 
 	cfg := alert.NewConfigFromFile()
+	cfg.Set(httpSystemNameJSON, de.GetOperationInfo().GetAppName())
 	cfg.Set(httpHostIPJSON, de.GetOperationInfo().GetMySQLServer().GetHostIP())
 	cfg.Set(httpEventIDJSON, strconv.Itoa(de.GetOperationInfo().GetOperationID()))
 	cfg.Set(httpAlertTimeJSON, time.Now().Format(constant.TimeLayoutSecond))
