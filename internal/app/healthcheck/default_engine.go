@@ -948,8 +948,15 @@ func (de *DefaultEngine) getToAddrs() (string, error) {
 		return constant.EmptyString, err
 	}
 
+	smtpEnabled := viper.GetBool(config.AlertSMTPEnabledKey)
+	httpEnabled := viper.GetBool(config.AlertHTTPEnabledKey)
 	for _, owner := range owners {
-		toAddrs += owner.GetEmail() + constant.CommaString
+		if smtpEnabled {
+			toAddrs += owner.GetEmail() + constant.CommaString
+		}
+		if !smtpEnabled && httpEnabled {
+			toAddrs += fmt.Sprintf("%s(%s),", owner.GetUserName(), owner.GetAccountName())
+		}
 	}
 
 	return strings.Trim(toAddrs, constant.CommaString), nil

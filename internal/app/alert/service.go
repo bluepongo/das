@@ -131,14 +131,6 @@ func (s *Service) setupConfig(toAddrs, ccAddrs, subject, content string) {
 	}
 }
 
-// setupHTTPConfig setups the HTTP config
-func (s *Service) setupHTTPConfig(toAddrs, ccAddrs, content string) {
-	toAddrs += constant.CommaString + ccAddrs
-	s.GetConfig().Set(toAddrsJSON, toAddrs)
-	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
-	s.GetConfig().Set(contentJSON, content)
-}
-
 // setupSMTPConfig setups the SMTP config
 func (s *Service) setupSMTPConfig(toAddrs, ccAddrs, subject, content string) {
 	s.GetConfig().Set(smtpUserJSON, viper.GetString(config.AlertSMTPUserKey))
@@ -147,6 +139,14 @@ func (s *Service) setupSMTPConfig(toAddrs, ccAddrs, subject, content string) {
 	s.GetConfig().Set(toAddrsJSON, toAddrs)
 	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
 	s.GetConfig().Set(subjectJSON, subject)
+	s.GetConfig().Set(contentJSON, content)
+}
+
+// setupHTTPConfig setups the HTTP config
+func (s *Service) setupHTTPConfig(toAddrs, ccAddrs, content string) {
+	toAddrs += constant.CommaString + ccAddrs
+	s.GetConfig().Set(toAddrsJSON, toAddrs)
+	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
 	s.GetConfig().Set(contentJSON, content)
 }
 
