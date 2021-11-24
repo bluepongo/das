@@ -146,6 +146,7 @@ func (s *Service) setupSMTPConfig(toAddrs, ccAddrs, subject, content string) {
 // setupHTTPConfig setups the HTTP config
 func (s *Service) setupHTTPConfig(toAddrs, ccAddrs, content string) {
 	s.GetConfig().Set(toAddrsJSON, strings.Trim(toAddrs+constant.CommaString+ccAddrs, constant.CommaString))
+	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
 	s.GetConfig().Set(contentJSON, content)
 }
 
