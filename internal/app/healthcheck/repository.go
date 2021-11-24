@@ -404,7 +404,7 @@ func (amr *ApplicationMySQLRepo) GetDBName(tableNames []string) (string, error) 
 	if err != nil {
 		return constant.EmptyString, err
 	}
-	inClause, err := middleware.ConvertSliceToString(interfaces)
+	inClause, err := middleware.ConvertSliceToString(interfaces...)
 	if err != nil {
 		return constant.EmptyString, err
 	}
