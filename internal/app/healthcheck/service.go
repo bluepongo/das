@@ -7,6 +7,7 @@ import (
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/internal/dependency/healthcheck"
+	depmeta "github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
 	"github.com/romberli/go-util/common"
@@ -151,8 +152,29 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
 	// get monitor system
 	monitorSystem, err := mysqlServer.GetMonitorSystem()
+	if err != nil {
+		return operationID, err
+	}
+	mysqlCluster, err := mysqlServer.GetMySQLCluster()
+	if err != nil {
+		return operationID, err
+	}
+	dbs, err := mysqlCluster.GetDBs()
+	if err != nil {
+		return operationID, err
+	}
+
+	var apps []depmeta.App
+	for _, db := range dbs {
+		applications, err := db.GetApps()
+		if err != nil {
+			return operationID, err
+		}
+
+		apps = append(apps, applications...)
+	}
 	// init operation information
-	s.OperationInfo = NewOperationInfo(operationID, mysqlServer, monitorSystem, startTime, endTime, step)
+	s.OperationInfo = NewOperationInfo(operationID, apps, mysqlServer, monitorSystem, startTime, endTime, step)
 
 	// init application mysql connection
 	mysqlServerAddr := fmt.Sprintf("%s:%d", mysqlServer.GetHostIP(), mysqlServer.GetPortNum())

@@ -9,6 +9,8 @@ import (
 type OperationInfo interface {
 	// GetOperationID returns the operation identity
 	GetOperationID() int
+	// GetApps returns the apps
+	GetApps() []metadata.App
 	// GetMySQLServer returns the mysql server
 	GetMySQLServer() metadata.MySQLServer
 	// GetMonitorSystem returns the monitor system
@@ -19,6 +21,8 @@ type OperationInfo interface {
 	GetEndTime() time.Time
 	// GetStep returns the step
 	GetStep() time.Duration
+	// GetAppName returns the app name in string, it will concat all the app names with comma
+	GetAppName() string
 }
 
 type ItemConfig interface {

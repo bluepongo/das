@@ -43,8 +43,6 @@ const (
 	defaultSlowQueryRowsExaminedItemName        = "slow_query_rows_examined"
 	defaultSlowQueryTopSQLNum                   = 3
 	defaultClusterType                          = 1
-
-	defaultAlertSubject = "das healthcheck result"
 )
 
 var (
@@ -906,7 +904,12 @@ func (de *DefaultEngine) sendEmail() error {
 	}
 	alertService := alert.NewServiceWithDefault(alert.NewConfigFromFile())
 
-	return alertService.SendEmail(toAddrs, constant.EmptyString, defaultAlertSubject, result.String())
+	return alertService.SendEmail(
+		toAddrs,
+		constant.EmptyString,
+		de.GetOperationInfo().GetAppName(),
+		result.String(),
+	)
 }
 
 // getToAddrs gets to addrs that will send email to
