@@ -13,6 +13,7 @@ import (
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/dependency/alert"
 	"github.com/romberli/go-util/constant"
+	"github.com/romberli/log"
 	"github.com/spf13/viper"
 )
 
@@ -86,6 +87,7 @@ func (hs *HTTPSender) Send() error {
 	if err != nil {
 		return err
 	}
+	log.Infof("http body: %s", string(reqBody))
 	// call http api
 	resp, err := hs.GetClient().Post(hs.GetURL(), defaultContentType, bytes.NewBuffer(reqBody))
 	if err != nil {
