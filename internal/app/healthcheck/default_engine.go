@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/romberli/das/config"
@@ -43,6 +44,11 @@ const (
 	defaultSlowQueryRowsExaminedItemName        = "slow_query_rows_examined"
 	defaultSlowQueryTopSQLNum                   = 3
 	defaultClusterType                          = 1
+
+	defaultAlertSubjectTemplate = "das healthcheck - %s "
+	httpHostIPJSON              = "host_ip"
+	httpEventIDJSON             = "event_id"
+	httpAlertTimeJSON           = "alert_time"
 )
 
 var (
@@ -902,12 +908,17 @@ func (de *DefaultEngine) sendEmail() error {
 	if err != nil {
 		return err
 	}
-	alertService := alert.NewServiceWithDefault(alert.NewConfigFromFile())
+
+	cfg := alert.NewConfigFromFile()
+	cfg.Set(httpHostIPJSON, de.GetOperationInfo().GetMySQLServer().GetHostIP())
+	cfg.Set(httpEventIDJSON, strconv.Itoa(de.GetOperationInfo().GetOperationID()))
+	cfg.Set(httpAlertTimeJSON, time.Now().Format(constant.TimeLayoutSecond))
+	alertService := alert.NewServiceWithDefault(cfg)
 
 	return alertService.SendEmail(
 		toAddrs,
 		constant.EmptyString,
-		de.GetOperationInfo().GetAppName(),
+		fmt.Sprintf(defaultAlertSubjectTemplate, de.GetOperationInfo().GetAppName()),
 		result.String(),
 	)
 }

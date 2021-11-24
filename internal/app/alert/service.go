@@ -3,7 +3,6 @@ package alert
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/romberli/das/config"
@@ -17,13 +16,10 @@ const (
 	ccAddrsJSON          = "cc_addrs"
 	contentJSON          = "content"
 	subjectJSON          = "subject"
-	systemNameJSON       = "system_name"
 	smtpUserJSON         = "user"
 	smtpPassJSON         = "pass"
 	smtpFromAddrJson     = "from_address"
 	defaultPassEncrypted = "****"
-
-	defaultAlertSubjectTemplate = "DAS healthcheck - %s"
 )
 
 var _ alert.Service = (*Service)(nil)
@@ -70,7 +66,7 @@ func (s *Service) SendEmail(toAddrs, ccAddrs, subject, content string) error {
 
 	httpEnabled := viper.GetBool(config.AlertHTTPEnabledKey)
 	if httpEnabled {
-		return s.sendViaHTTP(toAddrs, ccAddrs, subject, content)
+		return s.sendViaHTTP(toAddrs, ccAddrs, content)
 	}
 
 	return errors.New("none of smtp or http is enabled, can not send email")
@@ -102,11 +98,11 @@ func (s *Service) sendViaSMTP(toAddrs, ccAddrs, subject, content string) error {
 }
 
 // sendViaHTTP sends email via http api calling
-func (s *Service) sendViaHTTP(toAddrs, ccAddrs, subject, content string) error {
+func (s *Service) sendViaHTTP(toAddrs, ccAddrs, content string) error {
 	merr := &multierror.Error{}
 	var message string
 	// setup config
-	s.setupConfig(toAddrs, ccAddrs, subject, content)
+	s.setupConfig(toAddrs, ccAddrs, constant.EmptyString, content)
 	sender := NewHTTPSenderWithDefault(s.GetConfig())
 	// send email
 	err := sender.Send()
@@ -131,8 +127,16 @@ func (s *Service) setupConfig(toAddrs, ccAddrs, subject, content string) {
 		s.setupSMTPConfig(toAddrs, ccAddrs, subject, content)
 	}
 	if !smtpEnabled && httpEnabled {
-		s.setupHTTPConfig(toAddrs, ccAddrs, subject, content)
+		s.setupHTTPConfig(toAddrs, ccAddrs, content)
 	}
+}
+
+// setupHTTPConfig setups the HTTP config
+func (s *Service) setupHTTPConfig(toAddrs, ccAddrs, content string) {
+	toAddrs += constant.CommaString + ccAddrs
+	s.GetConfig().Set(toAddrsJSON, toAddrs)
+	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
+	s.GetConfig().Set(contentJSON, content)
 }
 
 // setupSMTPConfig setups the SMTP config
@@ -142,16 +146,7 @@ func (s *Service) setupSMTPConfig(toAddrs, ccAddrs, subject, content string) {
 	s.GetConfig().Set(smtpFromAddrJson, viper.GetString(config.AlertSMTPFromKey))
 	s.GetConfig().Set(toAddrsJSON, toAddrs)
 	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
-	s.GetConfig().Set(subjectJSON, fmt.Sprintf(defaultAlertSubjectTemplate, subject))
-	s.GetConfig().Set(contentJSON, content)
-}
-
-// setupHTTPConfig setups the HTTP config
-func (s *Service) setupHTTPConfig(toAddrs, ccAddrs, systemName, content string) {
-	toAddrs += constant.CommaString + ccAddrs
-	s.GetConfig().Set(toAddrsJSON, toAddrs)
-	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
-	s.GetConfig().Set(systemNameJSON, systemName)
+	s.GetConfig().Set(subjectJSON, subject)
 	s.GetConfig().Set(contentJSON, content)
 }
 
@@ -163,7 +158,7 @@ func (s *Service) Save(toAddrs, ccAddrs, subject, content, message string) error
 		return s.saveSMTP(toAddrs, ccAddrs, subject, content, message)
 	}
 	if httpEnabled {
-		return s.saveHTTP(toAddrs, ccAddrs, subject, content, message)
+		return s.saveHTTP(toAddrs, ccAddrs, content, message)
 	}
 	return errors.New("none of smtp or http is enabled, can not save the email")
 }
@@ -178,7 +173,7 @@ func (s *Service) saveSMTP(toAddrs, ccAddrs, subject, content, message string) e
 	}
 
 	return s.GetRepository().Save(
-		viper.GetString(config.AlertSMTPURLKey),
+		viper.GetString(config.AlertHTTPURLKey),
 		toAddrs,
 		ccAddrs,
 		subject,
@@ -189,7 +184,7 @@ func (s *Service) saveSMTP(toAddrs, ccAddrs, subject, content, message string) e
 }
 
 // saveHTTP saves the sending results which was done via calling http api to the middleware
-func (s *Service) saveHTTP(toAddrs, ccAddrs, subject, content, message string) error {
+func (s *Service) saveHTTP(toAddrs, ccAddrs, content, message string) error {
 	cfg, err := json.Marshal(s.GetConfig())
 	if err != nil {
 		return err
@@ -199,7 +194,7 @@ func (s *Service) saveHTTP(toAddrs, ccAddrs, subject, content, message string) e
 		viper.GetString(config.AlertHTTPURLKey),
 		toAddrs,
 		ccAddrs,
-		subject,
+		constant.DefaultRandomString,
 		content,
 		string(cfg),
 		message,
