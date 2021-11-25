@@ -181,7 +181,7 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 	}
 
 	if errMsg != constant.EmptyString {
-		return constant.EmptyString, constant.EmptyString, errors.New(fmt.Sprintf("parse result failed. error:\n%s", errMsg))
+		return advice, message, errors.New(fmt.Sprintf("parse result failed. error:\n%s", errMsg))
 	}
 
 	return advice, message, nil

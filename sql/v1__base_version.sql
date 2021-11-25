@@ -257,7 +257,7 @@ CREATE TABLE `t_hc_operation_info` (
 CREATE TABLE `t_sa_operation_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `db_id` int(11) NOT NULL COMMENT '数据库ID',
-  `sql_text` varchar(1000) NOT NULL COMMENT 'sql文本',
+  `sql_text` varchar(4000) NOT NULL COMMENT 'sql文本',
   `advice` mediumtext DEFAULT NULL COMMENT '优化建议',
   `message` mediumtext DEFAULT NULL COMMENT '执行日志',
   `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
