@@ -154,6 +154,10 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 	if err != nil {
 		return constant.EmptyString, constant.EmptyString, err
 	}
+	errExpression, err := regexp.Compile(errExp)
+	if err != nil {
+		return constant.EmptyString, constant.EmptyString, err
+	}
 
 	lines := strings.Split(result, constant.CRLFString)
 	for _, line := range lines {
@@ -165,11 +169,7 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 			message += line + constant.CRLFString
 			stringList := strings.Split(line, constant.SpaceString)
 			if len(stringList) >= defaultLogMessageLen {
-				errExp, err := regexp.Compile(errExp)
-				if err != nil {
-					return constant.EmptyString, constant.EmptyString, err
-				}
-				if errExp.Match([]byte(stringList[2])) {
+				if errExpression.Match([]byte(stringList[2])) {
 					errMsg += line + constant.CRLFString
 				}
 			}
