@@ -150,7 +150,7 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 	)
 
 	isLogMsg := true
-	regExp, err := regexp.Compile(logExp)
+	logExpression, err := regexp.Compile(logExp)
 	if err != nil {
 		return constant.EmptyString, constant.EmptyString, err
 	}
@@ -162,7 +162,7 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 	lines := strings.Split(result, constant.CRLFString)
 	for _, line := range lines {
 		if isLogMsg {
-			isLogMsg = regExp.Match([]byte(line))
+			isLogMsg = logExpression.Match([]byte(line))
 		}
 
 		if isLogMsg {
