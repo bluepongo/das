@@ -16,12 +16,25 @@ import (
 )
 
 const (
+	u003cCode = "\\u003c"
+	u003eCode = "\\u003e"
+
+	u003cString = "<"
+	u003eString = ">"
+
 	logExp               = `^\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}\.\d{3}`
 	errExp               = `\[1;31m\[E]|\[1;31m\[F]`
 	defaultLogMessageLen = 3
 )
 
-var _ sqladvisor.Advisor = (*DefaultAdvisor)(nil)
+var (
+	_ sqladvisor.Advisor = (*DefaultAdvisor)(nil)
+
+	repMap = map[string]string{
+		u003cCode: u003cString,
+		u003eCode: u003eString,
+	}
+)
 
 type DefaultAdvisor struct {
 	parser     *parser.Parser
@@ -158,6 +171,11 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 
 	lines := strings.Split(result, constant.CRLFString)
 	for _, line := range lines {
+		// replace unicode characters
+		for key, value := range repMap {
+			line = strings.ReplaceAll(line, key, value)
+		}
+
 		if isLogMsg {
 			isLogMsg = logExpression.Match([]byte(line))
 		}
