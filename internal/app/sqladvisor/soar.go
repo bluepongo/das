@@ -75,8 +75,8 @@ func (da *DefaultAdvisor) Advise(dbID int, sqlText string) (string, string, erro
 // advise parses the sql text and returns the tuning advice,
 // note that only the first sql statement in the sql text will be advised
 func (da *DefaultAdvisor) adviseWithDefault(dbID int, sqlText string) (string, string, error) {
-	user := viper.GetString(config.DBSoarMySQLUserKey)
-	pass := viper.GetString(config.DBSoarMySQLPassKey)
+	user := viper.GetString(config.DBApplicationMySQLUserKey)
+	pass := viper.GetString(config.DBApplicationMySQLPassKey)
 
 	return da.advise(dbID, sqlText, user, pass)
 }
