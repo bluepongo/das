@@ -1,6 +1,7 @@
 package query
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/romberli/das/config"
@@ -283,14 +284,18 @@ func (q *Querier) getMonitorRepo(monitorSystem depmeta.MonitorSystem) (query.Mon
 		// pmm 1.x
 		mysqlConn, err := mysql.NewConn(addr, pmmMySQLDBName, q.getMonitorMySQLUser(), q.getMonitorMySQLPass())
 		if err != nil {
-			return nil, err
+			return nil, errors.New(
+				fmt.Sprintf("create monitor mysql connection failed. addr: %s, user: %s. error:\n%s",
+					addr, q.getMonitorMySQLUser(), err.Error()))
 		}
 		monitorRepo = NewMySQLRepo(q.getConfig(), mysqlConn)
 	case 2:
 		// pmm 2.x
 		clickhouseConn, err := clickhouse.NewConnWithDefault(addr, pmmClickhouseDBName, q.getMonitorClickhouseUser(), q.getMonitorClickhousePass())
 		if err != nil {
-			return nil, err
+			return nil, errors.New(
+				fmt.Sprintf("create monitor clickhouse connection failed. addr: %s, user: %s. error:\n%s",
+					addr, q.getMonitorClickhouseUser(), err.Error()))
 		}
 		monitorRepo = NewClickHouseRepo(q.getConfig(), clickhouseConn)
 	default:
