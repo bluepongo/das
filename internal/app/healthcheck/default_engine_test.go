@@ -19,10 +19,8 @@ const (
 	testHealthcheckResultAccuracyReview = 1
 	testHealthcheckStep                 = time.Minute
 
-	testSoarBin    = "/Users/romber/work/source_code/go/src/github.com/romberli/das/bin/soar"
-	testSoarConfig = "/Users/romber/work/source_code/go/src/github.com/romberli/das/config/soar.yaml"
-	testDBUSer     = "root"
-	testDBPass     = "root"
+	testSoarBin    = "../../../bin/soar"
+	testSoarConfig = "../../../config/soar.yaml"
 
 	testSMTPURL  = "smtp.163.com:465"
 	testSMTPUser = "allinemailtest@163.com"
@@ -54,8 +52,6 @@ func testInitViper() {
 	// sqladvisor
 	viper.Set(config.SQLAdvisorSoarBinKey, testSoarBin)
 	viper.Set(config.SQLAdvisorSoarConfigKey, testSoarConfig)
-	viper.Set(config.DBSoarMySQLUserKey, testDBUSer)
-	viper.Set(config.DBSoarMySQLPassKey, testDBPass)
 }
 
 func TestDefaultEngineAll(t *testing.T) {
@@ -102,6 +98,7 @@ func TestDefaultEngine_Run(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 	operationInfo := NewOperationInfo(
 		id,
+		testOperationInfo.GetApps(),
 		testOperationInfo.GetMySQLServer(),
 		testOperationInfo.GetMonitorSystem(),
 		testOperationInfo.GetStartTime(),

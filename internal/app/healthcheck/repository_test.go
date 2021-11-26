@@ -10,6 +10,7 @@ import (
 	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/internal/dependency/healthcheck"
+	depmeta "github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"
@@ -74,9 +75,41 @@ func testInitOperationInfo() *OperationInfo {
 		log.Error(common.CombineMessageWithError("testInitOperationInfo() failed", err))
 		os.Exit(constant.DefaultAbnormalExitCode)
 	}
+	// get mysql cluster
+	mysqlCluster, err := mysqlServer.GetMySQLCluster()
+	if err != nil {
+		log.Error(common.CombineMessageWithError("testInitOperationInfo() failed", err))
+		os.Exit(constant.DefaultAbnormalExitCode)
+	}
+	// get dbs
+	dbs, err := mysqlCluster.GetDBs()
+	if err != nil {
+		log.Error(common.CombineMessageWithError("testInitOperationInfo() failed", err))
+		os.Exit(constant.DefaultAbnormalExitCode)
+	}
+	// get apps
+	var apps []depmeta.App
+	for _, db := range dbs {
+		applications, err := db.GetApps()
+		if err != nil {
+			log.Error(common.CombineMessageWithError("testInitOperationInfo() failed", err))
+			os.Exit(constant.DefaultAbnormalExitCode)
+		}
+		for _, application := range applications {
+			exists, err := common.ElementInSlice(apps, application)
+			if err != nil {
+				log.Error(common.CombineMessageWithError("testInitOperationInfo() failed", err))
+				os.Exit(constant.DefaultAbnormalExitCode)
+			}
+			if !exists {
+				apps = append(apps, applications...)
+			}
+		}
+	}
 
 	return &OperationInfo{
 		operationID:   testHealthcheckOperationID,
+		apps:          apps,
 		mysqlServer:   mysqlServer,
 		monitorSystem: monitorSystem,
 		startTime:     time.Now().Add(-constant.Week),

@@ -156,6 +156,7 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 	if err != nil {
 		return operationID, err
 	}
+	// get mysql cluster
 	mysqlCluster, err := mysqlServer.GetMySQLCluster()
 	if err != nil {
 		return operationID, err

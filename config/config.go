@@ -75,10 +75,6 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(DBMonitorMySQLPassKey, DefaultDBMonitorMySQLPass)
 	viper.SetDefault(DBApplicationMySQLUserKey, DefaultDBApplicationMySQLUser)
 	viper.SetDefault(DBApplicationMySQLPassKey, DefaultDBApplicationMySQLPass)
-	viper.SetDefault(DBSoarMySQLAddrKey, fmt.Sprintf("%s:%d", constant.DefaultLocalHostIP, constant.DefaultMySQLPort))
-	viper.SetDefault(DBSoarMySQLNameKey, DefaultDBSoarMySQLName)
-	viper.SetDefault(DBSoarMySQLUserKey, DefaultDBSoarMySQLUser)
-	viper.SetDefault(DBSoarMySQLPassKey, DefaultDBSoarMySQLPass)
 	// alert
 	viper.SetDefault(AlertSMTPEnabledKey, DefaultAlertSMTPEnabled)
 	viper.SetDefault(AlertSMTPFormatKey, DefaultAlterSMTPFormat)
@@ -437,21 +433,22 @@ func ValidateDatabase() error {
 			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbSoarAddr))
 		}
 	}
-	// validate db.soar.mysql.name
-	_, err = cast.ToStringE(viper.Get(DBSoarMySQLNameKey))
-	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	// validate db.soar.mysql.user
-	_, err = cast.ToStringE(viper.Get(DBSoarMySQLUserKey))
-	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	// validate db.soar.mysql.pass
-	_, err = cast.ToStringE(viper.Get(DBSoarMySQLPassKey))
-	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
+	// todo remove
+	// // validate db.soar.mysql.name
+	// _, err = cast.ToStringE(viper.Get(DBSoarMySQLNameKey))
+	// if err != nil {
+	// 	merr = multierror.Append(merr, err)
+	// }
+	// // validate db.soar.mysql.user
+	// _, err = cast.ToStringE(viper.Get(DBSoarMySQLUserKey))
+	// if err != nil {
+	// 	merr = multierror.Append(merr, err)
+	// }
+	// // validate db.soar.mysql.pass
+	// _, err = cast.ToStringE(viper.Get(DBSoarMySQLPassKey))
+	// if err != nil {
+	// 	merr = multierror.Append(merr, err)
+	// }
 
 	return merr.ErrorOrNil()
 }

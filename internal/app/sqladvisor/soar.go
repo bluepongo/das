@@ -99,14 +99,15 @@ func (da *DefaultAdvisor) advise(dbID int, sqlText, user, pass string) (string, 
 	return da.parseResult(result)
 }
 
-// getOnlineDSN returns the online dsn which will be used by soar
+// getOnlineDSNWithDefault returns the online dsn which will be used by soar with default username and password
 func (da *DefaultAdvisor) getOnlineDSNWithDefault(dbID int) (string, error) {
-	user := viper.GetString(config.DBSoarMySQLUserKey)
-	pass := viper.GetString(config.DBSoarMySQLPassKey)
+	user := viper.GetString(config.DBApplicationMySQLUserKey)
+	pass := viper.GetString(config.DBApplicationMySQLPassKey)
 
 	return da.getOnlineDSN(dbID, user, pass)
 }
 
+// getOnlineDSN returns the online dsn which will be used by soar
 func (da *DefaultAdvisor) getOnlineDSN(dbID int, user, pass string) (string, error) {
 	// get db service
 	dbService := metadata.NewDBServiceWithDefault()
@@ -135,10 +136,6 @@ func (da *DefaultAdvisor) getOnlineDSN(dbID int, user, pass string) (string, err
 	portNum := mysqlServer.GetPortNum()
 
 	return fmt.Sprintf("%s:%s@%s:%d/%s", user, pass, hostIP, portNum, dbName), nil
-}
-
-func (da *DefaultAdvisor) getDBSoarMySQLUser() string {
-	return viper.GetString(config.DBSoarMySQLUserKey)
 }
 
 // parseResult parses result, it will split the advice information and the log information

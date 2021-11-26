@@ -121,10 +121,6 @@ const (
 	DBMonitorClickhousePassKey  = "db.monitor.clickhouse.pass"
 	DBMonitorMySQLUserKey       = "db.monitor.mysql.user"
 	DBMonitorMySQLPassKey       = "db.monitor.mysql.pass"
-	DBSoarMySQLAddrKey          = "db.soar.mysql.addr"
-	DBSoarMySQLNameKey          = "db.soar.mysql.name"
-	DBSoarMySQLUserKey          = "db.soar.mysql.user"
-	DBSoarMySQLPassKey          = "db.soar.mysql.pass"
 	// alert
 	AlertSMTPEnabledKey = "alert.smtp.enabled"
 	AlertSMTPFormatKey  = "alert.smtp.format"
