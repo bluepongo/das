@@ -17,7 +17,6 @@ const (
 		  and table_rows > ?
 		order by table_rows desc;
     `
-
 	// Prometheus API
 	PrometheusAvgBackupFailedRatioV1 = `
 		1-(sum(mysqldumpbackup{instance=~"%s",type="status"})/count(mysqldumpbackup{instance=~"%s",type="status"})+
