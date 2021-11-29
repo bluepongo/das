@@ -15,6 +15,7 @@ import (
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/log"
 	"github.com/spf13/viper"
+	"github.com/tidwall/pretty"
 )
 
 const (
@@ -103,13 +104,12 @@ func (hs *HTTPSender) Send() error {
 
 // buildRequestBody builds the http request body, for now, it basically marshals the config
 func (hs *HTTPSender) buildRequestBody() ([]byte, error) {
-	// jsonBytes, err := json.MarshalIndent(hs.GetConfig(), constant.EmptyString, defaultIndentString)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	//
-	// return jsonBytes, nil
-	return []byte(hs.GetConfig().String()), nil
+	jsonBytes, err := json.MarshalIndent(hs.GetConfig(), constant.EmptyString, constant.DefaultIndentString)
+	if err != nil {
+		return nil, err
+	}
+
+	return pretty.Pretty(jsonBytes), nil
 }
 
 // parseResponse parses the http response to find out if sending email completed successfully

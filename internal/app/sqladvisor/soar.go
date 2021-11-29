@@ -16,8 +16,10 @@ import (
 )
 
 const (
-	u003cCode = "\\u003c"
-	u003eCode = "\\u003e"
+	u003cCode  = "\\u003c"
+	u003eCode  = "\\u003e"
+	crlfString = "\\n"
+	tabString  = "\\t"
 
 	u003cString = "<"
 	u003eString = ">"
@@ -31,8 +33,10 @@ var (
 	_ sqladvisor.Advisor = (*DefaultAdvisor)(nil)
 
 	repMap = map[string]string{
-		u003cCode: u003cString,
-		u003eCode: u003eString,
+		u003cCode:  u003cString,
+		u003eCode:  u003eString,
+		crlfString: constant.CRLFString,
+		tabString:  constant.TabString,
 	}
 )
 
@@ -171,7 +175,7 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 
 	lines := strings.Split(result, constant.CRLFString)
 	for _, line := range lines {
-		// replace unicode characters
+		// replace some characters
 		for key, value := range repMap {
 			line = strings.ReplaceAll(line, key, value)
 		}
