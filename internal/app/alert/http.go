@@ -83,10 +83,7 @@ func (hs *HTTPSender) GetURL() string {
 // Send sends the email via http api calling
 func (hs *HTTPSender) Send() error {
 	// get request body
-	reqBody, err := hs.buildRequestBody()
-	if err != nil {
-		return err
-	}
+	reqBody := hs.buildRequestBody()
 	log.Infof("http body: %s", string(reqBody))
 	// call http api
 	resp, err := hs.GetClient().Post(hs.GetURL(), defaultContentType, bytes.NewBuffer(reqBody))
@@ -101,8 +98,8 @@ func (hs *HTTPSender) Send() error {
 }
 
 // buildRequestBody builds the http request body, for now, it basically marshals the config
-func (hs *HTTPSender) buildRequestBody() ([]byte, error) {
-	return json.Marshal(hs.GetConfig())
+func (hs *HTTPSender) buildRequestBody() []byte {
+	return []byte(hs.GetConfig().String())
 }
 
 // parseResponse parses the http response to find out if sending email completed successfully
