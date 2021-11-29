@@ -7,10 +7,7 @@ import (
 	"github.com/romberli/das/config"
 	"github.com/romberli/go-util/constant"
 	"github.com/spf13/viper"
-	"github.com/tidwall/pretty"
 )
-
-const configContentJSON = "content"
 
 type Response struct {
 	Code    int    `json:"code"`
@@ -61,14 +58,11 @@ func (c Config) Delete(key string) {
 
 // String returns the string value of the config
 func (c Config) String() string {
-	s := constant.LeftBraceString
+	s := constant.LeftBraceString + constant.CRLFString
 
 	for key, value := range c {
-		if key != configContentJSON {
-			value = fmt.Sprintf(`"%s"`, value)
-		}
-		s += fmt.Sprintf(`"%s":%s,`, key, value)
+		s += fmt.Sprintf(`    "%s": "%s",`, key, value) + constant.CRLFString
 	}
 
-	return string(pretty.Pretty([]byte(strings.Trim(s, constant.CommaString) + constant.RightBraceString)))
+	return strings.Trim(s, constant.CommaString) + constant.RightBraceString
 }
