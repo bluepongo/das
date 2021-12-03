@@ -41,12 +41,12 @@ type HTTPSender struct {
 	url    string
 }
 
-// NewHTTTPSender returns a new alert.Sender
+// NewHTTPSender returns a new alert.Sender
 func NewHTTPSender(client *http.Client, cfg alert.Config, url string) alert.Sender {
 	return newHTTPSender(client, cfg, url)
 }
 
-// NewHTTTPSenderWithDefault returns a new alert.Sender with default http client
+// NewHTTPSenderWithDefault returns a new alert.Sender with default http client
 func NewHTTPSenderWithDefault(cfg alert.Config) alert.Sender {
 	client := &http.Client{
 		Transport: defaultTransport,
@@ -57,7 +57,7 @@ func NewHTTPSenderWithDefault(cfg alert.Config) alert.Sender {
 	return newHTTPSender(client, cfg, url)
 }
 
-// newHTTTPSender returns a new *HTTPSender
+// newHTTPSender returns a new *HTTPSender
 func newHTTPSender(client *http.Client, cfg alert.Config, url string) *HTTPSender {
 	return &HTTPSender{
 		client: client,
