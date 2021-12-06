@@ -9,6 +9,10 @@ type Result interface {
 	Identity() int
 	// GetOperationID returns the operation id
 	GetOperationID() int
+	// GetHostIP returns the host ip
+	GetHostIP() string
+	// GetPortNum returns the port number
+	GetPortNum() int
 	// GetWeightedAverageScore returns the weighted average score
 	GetWeightedAverageScore() int
 	// GetDBConfigScore returns the database configuration score

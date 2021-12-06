@@ -80,7 +80,7 @@ func NewDefaultEngine(operationInfo healthcheck.OperationInfo,
 	return &DefaultEngine{
 		operationInfo:        operationInfo,
 		engineConfig:         NewEmptyDefaultEngineConfig(),
-		result:               NewEmptyResultWithOperationID(operationInfo.GetOperationID()),
+		result:               NewEmptyResultWithOperationIDAndHostInfo(operationInfo.GetOperationID(), operationInfo.GetMySQLServer().GetHostIP(), operationInfo.GetMySQLServer().GetPortNum()),
 		dasRepo:              dasRepo,
 		applicationMySQLRepo: applicationMySQLRepo,
 		prometheusRepo:       prometheusRepo,

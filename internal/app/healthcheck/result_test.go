@@ -11,6 +11,8 @@ import (
 
 const (
 	testResultOperationID                       = testHealthcheckOperationID
+	testResultHostIP                            = "192.168.10.219"
+	testResultPortNum                           = 3306
 	testResultWeightedAverageScore              = 1
 	testResultDBConfigScore                     = 1
 	testResultDBConfigData                      = "db config data"
@@ -66,6 +68,8 @@ func testInitResult() *Result {
 	return NewResult(
 		testDASRepo,
 		testResultOperationID,
+		testResultHostIP,
+		testResultPortNum,
 		testResultWeightedAverageScore,
 		testResultDBConfigScore,
 		testResultDBConfigData,
@@ -166,6 +170,18 @@ func TestResult_GetOperationID(t *testing.T) {
 	asst := assert.New(t)
 
 	asst.Equal(testResultOperationID, testResult.GetOperationID(), "test GetOperationID() failed")
+}
+
+func TestResult_GetHostIP(t *testing.T) {
+	asst := assert.New(t)
+
+	asst.Equal(testResultHostIP, testResult.GetHostIP(), "test GetHostIP() failed")
+}
+
+func TestResult_GetPortNum(t *testing.T) {
+	asst := assert.New(t)
+
+	asst.Equal(testResultPortNum, testResult.GetPortNum(), "test GetPortNum() failed")
 }
 
 func TestResult_GetWeightedAverageScore(t *testing.T) {

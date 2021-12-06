@@ -24,7 +24,7 @@ const (
 
 	testSMTPURL  = "smtp.163.com:465"
 	testSMTPUser = "allinemailtest@163.com"
-	testSMTPPass = "LAOMDMZSOMKCZICJ"
+	testSMTPPass = "EHEBEAVXSVLXEMFM"
 	testSMTPFrom = "allinemailtest@163.com"
 )
 
