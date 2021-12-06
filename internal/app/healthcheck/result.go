@@ -14,11 +14,9 @@ import (
 )
 
 const (
-	resultIDStruct                               = "ID"
 	resultOperationIDStruct                      = "OperationID"
-	resultHostIPStruct                           = "HostIP"
-	resultPortNumStruct                          = "Port"
 	resultDBConfigDataStruct                     = "DBConfigData"
+	resultDBConfigAdviceStruct                   = "DBConfigAdvice"
 	resultAvgBackupFailedRatioDataStruct         = "AvgBackupFailedRatioData"
 	resultAvgBackupFailedRatioHighStruct         = "AvgBackupFailedRatioHigh"
 	resultStatisticFailedRatioDataStruct         = "StatisticFailedRatioData"
@@ -39,6 +37,7 @@ const (
 	resultTableRowsHighStruct                    = "TableRowsHigh"
 	resultTableSizeDataStruct                    = "TableSizeData"
 	resultTableSizeHighStruct                    = "TableSizeHigh"
+	resultSlowQueryAdvice                        = "SlowQueryAdvice"
 	resultAccuracyReviewStruct                   = "AccuracyReview"
 	resultDelFlagStruct                          = "DelFlag"
 	resultCreateTimeStruct                       = "CreateTime"
@@ -523,21 +522,28 @@ func (r *Result) setWithEmptyValue() {
 }
 
 func (r *Result) getString(ignoreList []string) string {
+	var fieldStrTemplate string
+
 	s := constant.LeftBraceString
 	inVal := reflect.ValueOf(r).Elem()
 
 	for i := 0; i < inVal.NumField(); i++ {
 		fieldType := inVal.Type().Field(i)
-		fieldVal := inVal.Field(i)
 		fieldTag := fieldType.Tag.Get(constant.DefaultMarshalTag)
 		if fieldTag != constant.EmptyString && !common.StringInSlice(ignoreList, fieldType.Name) {
-			fieldStr := fmt.Sprintf(`"%s":%v,`, fieldTag, inVal.Field(i))
-			if fieldType.Name == resultCreateTimeStruct || fieldType.Name == resultLastUpdateTimeStruct ||
-				fieldVal.IsZero() || fieldVal.String() == constant.NullString {
-				fieldStr = fmt.Sprintf(`"%s":"%v",`, fieldTag, fieldVal)
+			fieldStrTemplate = `"%s":"%s",`
+
+			switch fieldType.Type.Kind() {
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+				reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+				fieldStrTemplate = `"%s":%d,`
+			case reflect.Bool, reflect.String:
+				if fieldType.Name == resultDBConfigAdviceStruct || fieldType.Name == resultSlowQueryAdvice {
+					fieldStrTemplate = `"%s":%s,`
+				}
 			}
 
-			s += fieldStr
+			s += fmt.Sprintf(fieldStrTemplate, fieldTag, inVal.Field(i))
 		}
 	}
 
