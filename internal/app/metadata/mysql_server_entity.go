@@ -9,6 +9,17 @@ import (
 	"github.com/romberli/das/internal/dependency/metadata"
 )
 
+const (
+	mysqlServerClusterIDStruct      = "ClusterID"
+	mysqlServerServerNameStruct     = "ServerName"
+	mysqlServerServiceNameStruct    = "ServiceName"
+	mysqlServerHostIPStruct         = "HostIP"
+	mysqlServerPortNumStruct        = "PortNum"
+	mysqlServerDeploymentTypeStruct = "DeploymentType"
+	mysqlServerVersionStruct        = "Version"
+	mysqlServerDelFlagStruct        = "DelFlag"
+)
+
 var _ metadata.MySQLServer = (*MySQLServerInfo)(nil)
 
 // MySQLServerInfo is a struct map to table in the database

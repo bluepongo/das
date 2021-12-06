@@ -79,6 +79,8 @@ type UserService interface {
 	GetByName(userName string) error
 	// GetByID gets a user by the identity
 	GetByID(id int) error
+	// GetByEmployeeID gets a user of given employee id
+	GetByEmployeeID(employeeID string) error
 	// GetByAccountName gets a user of given account name
 	GetByAccountName(accountName string) error
 	// GetByEmail gets a user of given email
@@ -100,6 +102,4 @@ type UserService interface {
 	Marshal() ([]byte, error)
 	// MarshalWithFields marshals only specified fields of the UserService to json bytes
 	MarshalWithFields(fields ...string) ([]byte, error)
-	// GetByEmployeeID gets a user of given employee id
-	GetByEmployeeID(employeeID string) error
 }

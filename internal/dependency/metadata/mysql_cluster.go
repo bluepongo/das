@@ -82,8 +82,14 @@ type MySQLClusterRepo interface {
 
 // MySQLClusterService is the service interface
 type MySQLClusterService interface {
-	// GetMySQLClusters returns mysql clusters of the service
+	// GetMySQLClusters returns the mysql clusters of the service
 	GetMySQLClusters() []MySQLCluster
+	// GetMySQLServers returns the mysql servers of the service
+	GetMySQLServers() []MySQLServer
+	// GetDBs returns the dbs of the service
+	GetDBs() []DB
+	// GetOwners returns the owners of the service
+	GetOwners() []User
 	// GetAll gets all mysql clusters from the middleware
 	GetAll() error
 	// GetByEnv gets mysql clusters of given env id

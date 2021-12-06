@@ -227,17 +227,31 @@ func (mcr *MySQLClusterRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 // GetAppOwnersByID gets the application owners of the given id from the middleware
 func (mcr *MySQLClusterRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 	sql := `
-		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name, user.email, user.telephone, user.mobile, user.role, user.del_flag, user.create_time, user.last_update_time 
-			from t_meta_user_info as user 
-			inner join t_meta_app_info as app
-			on user.id = app.owner_id
-			inner join t_meta_app_db_map as map
-			on app.id = map.app_id
-			inner join t_meta_db_info as db
-			on db.id = map.db_id
-			where user.del_flag = 0 and app.del_flag = 0 and db.del_flag = 0 and map.del_flag = 0
-			and db.cluster_id = ?
-			and db.cluster_type = ?;
+		select distinct user.id,
+						user.user_name,
+						user.department_name,
+						user.employee_id,
+						user.account_name,
+						user.email,
+						user.telephone,
+						user.mobile,
+						user.role,
+						user.del_flag,
+						user.create_time,
+						user.last_update_time
+		from t_meta_user_info as user
+				 inner join t_meta_app_info as app
+							on user.id = app.owner_id
+				 inner join t_meta_app_db_map as map
+							on app.id = map.app_id
+				 inner join t_meta_db_info as db
+							on db.id = map.db_id
+		where user.del_flag = 0
+		  and app.del_flag = 0
+		  and db.del_flag = 0
+		  and map.del_flag = 0
+		  and db.cluster_id = ?
+		  and db.cluster_type = ?;
 	`
 	log.Debugf("metadata MySQLClusterRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id, ClusterTypeSingle)
 
@@ -264,13 +278,25 @@ func (mcr *MySQLClusterRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 // GetDBOwnersByID gets the db owners of the given id from the middleware
 func (mcr *MySQLClusterRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
 	sql := `
-		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name, user.email, user.telephone, user.mobile, user.role, user.del_flag, user.create_time, user.last_update_time 
-			from t_meta_user_info as user 
-			inner join t_meta_db_info as db
-			on user.id = db.owner_id
-			where user.del_flag = 0 and db.del_flag = 0
-			and db.cluster_id = ?
-			and db.cluster_type = ?;
+		select distinct user.id,
+						user.user_name,
+						user.department_name,
+						user.employee_id,
+						user.account_name,
+						user.email,
+						user.telephone,
+						user.mobile,
+						user.role,
+						user.del_flag,
+						user.create_time,
+						user.last_update_time
+		from t_meta_user_info as user
+				 inner join t_meta_db_info as db
+							on user.id = db.owner_id
+		where user.del_flag = 0
+		  and db.del_flag = 0
+		  and db.cluster_id = ?
+		  and db.cluster_type = ?;
 	`
 	log.Debugf("metadata MySQLClusterRepo.GetDBOwnersByID() sql: \n%s\nplaceholders: %d", sql, id, ClusterTypeSingle)
 
@@ -297,29 +323,55 @@ func (mcr *MySQLClusterRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
 // GetAllOwnersByID gets both application and db owners of the given id from the middleware
 func (mcr *MySQLClusterRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
 	sql := `
-		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name, user.email, user.telephone, user.mobile, user.role, user.del_flag, user.create_time, user.last_update_time 
-			from t_meta_user_info as user 
-			inner join t_meta_app_info as app
-			on user.id = app.owner_id
-			inner join t_meta_app_db_map as map
-			on app.id = map.app_id
-			inner join t_meta_db_info as db
-			on db.id = map.db_id
-			where user.del_flag = 0 and app.del_flag = 0 and db.del_flag = 0 and map.del_flag = 0
-			and db.cluster_id = ? 
-			and db.cluster_type = ?
+		select user.id,
+			   user.user_name,
+			   user.department_name,
+			   user.employee_id,
+			   user.account_name,
+			   user.email,
+			   user.telephone,
+			   user.mobile,
+			   user.role,
+			   user.del_flag,
+			   user.create_time,
+			   user.last_update_time
+		from t_meta_user_info as user
+				 inner join t_meta_app_info as app
+							on user.id = app.owner_id
+				 inner join t_meta_app_db_map as map
+							on app.id = map.app_id
+				 inner join t_meta_db_info as db
+							on db.id = map.db_id
+		where user.del_flag = 0
+		  and app.del_flag = 0
+		  and db.del_flag = 0
+		  and map.del_flag = 0
+		  and db.cluster_id = ?
+		  and db.cluster_type = ?
 		union
-		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name, user.email, user.telephone, user.mobile, user.role, user.del_flag, user.create_time, user.last_update_time 
-			from t_meta_user_info as user 
-			inner join t_meta_db_info as db
-			on user.id = db.owner_id
-			where user.del_flag = 0 and db.del_flag = 0
-			and db.cluster_id = ?
-			and db.cluster_type = ?;
+		select user.id,
+			   user.user_name,
+			   user.department_name,
+			   user.employee_id,
+			   user.account_name,
+			   user.email,
+			   user.telephone,
+			   user.mobile,
+			   user.role,
+			   user.del_flag,
+			   user.create_time,
+			   user.last_update_time
+		from t_meta_user_info as user
+				 inner join t_meta_db_info as db
+							on user.id = db.owner_id
+		where user.del_flag = 0
+		  and db.del_flag = 0
+		  and db.cluster_id = ?
+		  and db.cluster_type = ?;
 	`
 	log.Debugf("metadata MySQLClusterRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d, %d, %d", sql, id, ClusterTypeSingle, id, ClusterTypeSingle)
 
-	result, err := mcr.Execute(sql, id, id, ClusterTypeSingle)
+	result, err := mcr.Execute(sql, id, ClusterTypeSingle, id, ClusterTypeSingle)
 	if err != nil {
 		return nil, err
 	}

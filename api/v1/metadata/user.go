@@ -98,9 +98,9 @@ func GetUserByName(c *gin.Context) {
 // @Router /api/v1/metadata/user/get/:id [get]
 func GetUserByID(c *gin.Context) {
 	// get param
-	idStr := c.Param(idJSON)
+	idStr := c.Param(envIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, idJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 		return
 	}
 	id, err := strconv.Atoi(idStr)
@@ -363,9 +363,9 @@ func UpdateUserByID(c *gin.Context) {
 	var fields map[string]interface{}
 
 	// get params
-	idStr := c.Param(idJSON)
+	idStr := c.Param(envIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, idJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 	}
 	id, err := strconv.Atoi(idStr)
 	data, err := c.GetRawData()
@@ -387,9 +387,9 @@ func UpdateUserByID(c *gin.Context) {
 	_, mobileExists := fields[mobileStruct]
 	_, telephoneExists := fields[telephoneStruct]
 	_, roleExists := fields[roleStruct]
-	_, delFlagExists := fields[delFlagStruct]
+	_, delFlagExists := fields[envDelFlagStruct]
 	if !userNameExists && !departmentNameExists && !employeeIDExists && !accountNameExists && !emailExists && !telephoneExists && !roleExists && !delFlagExists && !mobileExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", userNameStruct, delFlagStruct))
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", userNameStruct, envDelFlagStruct))
 		return
 	}
 	// init service
@@ -421,9 +421,9 @@ func DeleteUserByID(c *gin.Context) {
 	var fields map[string]interface{}
 
 	// get params
-	idStr := c.Param(idJSON)
+	idStr := c.Param(envIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, idJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 		return
 	}
 	id, err := strconv.Atoi(idStr)

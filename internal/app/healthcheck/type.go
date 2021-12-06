@@ -1,6 +1,7 @@
 package healthcheck
 
 import (
+	"strings"
 	"time"
 
 	"github.com/romberli/das/internal/dependency/healthcheck"
@@ -46,13 +47,14 @@ const (
 	dbConfigReportHostValid                = constant.EmptyString
 	dbConfigReportPortValid                = constant.EmptyString
 	dbConfigInnodbFlushMethodValid         = "O_DIRECT"
-	dbConfigInnodbMonitorEnableValid       = "all"
+	dbConfigInnodbMonitorEnableValid       = "ALL"
 	dbConfigInnodbPrintAllDeadlocksValid   = "ON"
 	dbConfigSlowQueryLogValid              = "ON"
 	dbConfigPerformanceSchemaValid         = "ON"
 )
 
 var (
+	_ healthcheck.OperationInfo  = (*OperationInfo)(nil)
 	_ healthcheck.Variable       = (*GlobalVariable)(nil)
 	_ healthcheck.Table          = (*Table)(nil)
 	_ healthcheck.PrometheusData = (*PrometheusData)(nil)
@@ -80,6 +82,7 @@ var (
 
 type OperationInfo struct {
 	operationID   int
+	apps          []metadata.App
 	mysqlServer   metadata.MySQLServer
 	monitorSystem metadata.MonitorSystem
 	startTime     time.Time
@@ -88,9 +91,10 @@ type OperationInfo struct {
 }
 
 // NewOperationInfo returns a new *OperationInfo
-func NewOperationInfo(operationID int, mysqlServer metadata.MySQLServer, MonitorSystem metadata.MonitorSystem, startTime, endTime time.Time, step time.Duration) *OperationInfo {
+func NewOperationInfo(operationID int, apps []metadata.App, mysqlServer metadata.MySQLServer, MonitorSystem metadata.MonitorSystem, startTime, endTime time.Time, step time.Duration) *OperationInfo {
 	return &OperationInfo{
 		operationID:   operationID,
+		apps:          apps,
 		mysqlServer:   mysqlServer,
 		monitorSystem: MonitorSystem,
 		startTime:     startTime,
@@ -99,28 +103,50 @@ func NewOperationInfo(operationID int, mysqlServer metadata.MySQLServer, Monitor
 	}
 }
 
+// GetOperationID returns the operation identity
 func (oi *OperationInfo) GetOperationID() int {
 	return oi.operationID
 }
 
+// GetApps returns the apps
+func (oi *OperationInfo) GetApps() []metadata.App {
+	return oi.apps
+}
+
+// GetMySQLServer returns the mysql server
 func (oi *OperationInfo) GetMySQLServer() metadata.MySQLServer {
 	return oi.mysqlServer
 }
 
+// GetMonitorSystem returns the monitor system
 func (oi *OperationInfo) GetMonitorSystem() metadata.MonitorSystem {
 	return oi.monitorSystem
 }
 
+// GetStartTime returns the start time
 func (oi *OperationInfo) GetStartTime() time.Time {
 	return oi.startTime
 }
 
+// GetEndTime returns the end time
 func (oi *OperationInfo) GetEndTime() time.Time {
 	return oi.endTime
 }
 
+// GetStep returns the step
 func (oi *OperationInfo) GetStep() time.Duration {
 	return oi.step
+}
+
+// GetAppName returns the app name in string, it will concat all the app names with comma
+func (oi *OperationInfo) GetAppName() string {
+	var name string
+
+	for _, app := range oi.GetApps() {
+		name += app.GetAppName() + constant.CommaString
+	}
+
+	return strings.Trim(name, constant.CommaString)
 }
 
 // DefaultItemConfig include all data for a item

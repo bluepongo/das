@@ -1,7 +1,8 @@
 package query
 
 import (
-	"github.com/romberli/das/internal/dependency/metadata"
+	"time"
+
 	"github.com/romberli/go-util/middleware"
 )
 
@@ -22,6 +23,8 @@ type Query interface {
 	GetAvgExecTime() float64
 	// GetRowsExaminedMax returns the maximum row examined
 	GetRowsExaminedMax() int
+	// SetDBName sets db name to the query
+	SetDBName(dbName string)
 }
 
 type DASRepo interface {
@@ -29,10 +32,8 @@ type DASRepo interface {
 	Execute(command string, args ...interface{}) (middleware.Result, error)
 	// Transaction returns a middleware.Transaction that could execute multiple commands as a transaction
 	Transaction() (middleware.Transaction, error)
-	// GetMonitorSystemByDBID gets the monitor system information by the db identity
-	GetMonitorSystemByDBID(dbID int) (metadata.MonitorSystem, error)
-	// GetMonitorSystemByMySQLServerID gets the monitor system information by the mysql server identity
-	GetMonitorSystemByMySQLServerID(mysqlServerID int) (metadata.MonitorSystem, error)
+	// Save saves sql information into the middleware
+	Save(mysqlClusterID, mysqlServerID, dbID int, sqlID string, startTime, endTime time.Time, limit, offset int) error
 }
 
 type MonitorRepo interface {

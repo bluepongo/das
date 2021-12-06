@@ -1,7 +1,6 @@
 package metadata
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -17,13 +16,14 @@ import (
 )
 
 const (
-	middlewareClusterIDJSON    = "id"
-	middlewareClusterNameJSON  = "cluster_name"
-	middlewareClusterEnvIDJSON = "env_id"
+	middlewareClusterIDJSON          = "id"
+	middlewareClusterClusterNameJSON = "cluster_name"
+	middlewareClusterEnvIDJSON       = "env_id"
 
-	middlewareClusterNameStruct    = "ClusterName"
-	middlewareClusterOwnerIDStruct = "OwnerID"
-	middlewareClusterEnvIDStruct   = "EnvID"
+	middlewareClusterClusterNameStruct       = "ClusterName"
+	middlewareClusterOwnerIDStruct           = "OwnerID"
+	middlewareClusterEnvIDStruct             = "EnvID"
+	middlewareClusterMiddlewareServersStruct = "MiddlewareServers"
 )
 
 // @Tags middleware cluster
@@ -133,9 +133,9 @@ func GetMiddlewareClusterByID(c *gin.Context) {
 // @Router /api/v1/metadata/middleware-cluster/cluster-name/:cluster_name [get]
 func GetMiddlewareClusterByName(c *gin.Context) {
 	// get params
-	middlewareClusterName := c.Param(middlewareClusterNameJSON)
+	middlewareClusterName := c.Param(middlewareClusterClusterNameJSON)
 	if middlewareClusterName == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareClusterNameJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareClusterClusterNameJSON)
 		return
 	}
 	// init service
@@ -159,11 +159,11 @@ func GetMiddlewareClusterByName(c *gin.Context) {
 }
 
 // @Tags application
-// @Summary get middleware server id list by cluster id
+// @Summary get middleware servers by cluster id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [1,2]}"
 // @Router /api/vi/metadata/middleware-server/:id [get]
-func GetMiddlewareServerIDList(c *gin.Context) {
+func GetMiddlewareServers(c *gin.Context) {
 	// get params
 	idStr := c.Param(middlewareClusterIDJSON)
 	if idStr == constant.EmptyString {
@@ -177,21 +177,21 @@ func GetMiddlewareServerIDList(c *gin.Context) {
 	// init service
 	s := metadata.NewMiddlewareClusterServiceWithDefault()
 	// get entity
-	_, err = s.GetMiddlewareServerIDList(id)
+	err = s.GetMiddlewareServersByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareServerIDList, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareServers, id, err.Error())
 		return
 	}
 	// marshal service
-	jsonBytes, err := json.Marshal(s.MiddlewareServerList)
+	jsonBytes, err := s.MarshalWithFields(middlewareClusterMiddlewareServersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMiddlewareServerIDList, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMiddlewareServerIDList, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMiddlewareServers, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMiddlewareServers, id)
 
 }
 
@@ -215,9 +215,9 @@ func AddMiddlewareCluster(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	_, ok := fields[middlewareClusterNameStruct]
+	_, ok := fields[middlewareClusterClusterNameStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareClusterNameStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareClusterClusterNameStruct)
 		return
 	}
 	_, ok = fields[middlewareClusterEnvIDStruct]
@@ -230,7 +230,7 @@ func AddMiddlewareCluster(c *gin.Context) {
 	// insert into middleware
 	err = s.Create(fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddMiddlewareCluster, fields[middlewareClusterNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddMiddlewareCluster, fields[middlewareClusterClusterNameStruct], err.Error())
 		return
 	}
 	// marshal service
@@ -242,7 +242,7 @@ func AddMiddlewareCluster(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAddMiddlewareCluster, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddMiddlewareCluster, fields[middlewareClusterNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddMiddlewareCluster, fields[middlewareClusterClusterNameStruct])
 }
 
 // @Tags middleware cluster
@@ -275,12 +275,12 @@ func UpdateMiddlewareClusterByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	_, middlewareClusterNameExists := fields[middlewareClusterNameStruct]
+	_, middlewareClusterNameExists := fields[middlewareClusterClusterNameStruct]
 	_, middlewareClusterOwnerIDExists := fields[middlewareClusterOwnerIDStruct]
 	_, middlewareClusterEnvIDExists := fields[middlewareClusterEnvIDStruct]
-	_, delFlagExists := fields[delFlagStruct]
+	_, delFlagExists := fields[envDelFlagStruct]
 	if !middlewareClusterNameExists && !middlewareClusterEnvIDExists && !middlewareClusterOwnerIDExists && !delFlagExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s %s %s and %s", middlewareClusterNameStruct, middlewareClusterOwnerIDStruct, middlewareClusterEnvIDStruct, delFlagStruct))
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s %s %s and %s", middlewareClusterClusterNameStruct, middlewareClusterOwnerIDStruct, middlewareClusterEnvIDStruct, envDelFlagStruct))
 		return
 	}
 	// init service
@@ -327,7 +327,7 @@ func DeleteMiddlewareClusterByID(c *gin.Context) {
 	// update entities
 	err = s.Delete(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMiddlewareCluster, fields[middlewareClusterNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMiddlewareCluster, fields[middlewareClusterClusterNameStruct], err.Error())
 		return
 	}
 	// marshal service
@@ -339,5 +339,5 @@ func DeleteMiddlewareClusterByID(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataDeleteMiddlewareCluster, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteMiddlewareCluster, fields[middlewareClusterNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteMiddlewareCluster, fields[middlewareClusterClusterNameStruct])
 }

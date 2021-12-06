@@ -3,6 +3,7 @@ package alert
 import (
 	"encoding/json"
 	"errors"
+	"strings"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/romberli/das/config"
@@ -131,14 +132,6 @@ func (s *Service) setupConfig(toAddrs, ccAddrs, subject, content string) {
 	}
 }
 
-// setupHTTPConfig setups the HTTP config
-func (s *Service) setupHTTPConfig(toAddrs, ccAddrs, content string) {
-	toAddrs += constant.CommaString + ccAddrs
-	s.GetConfig().Set(toAddrsJSON, toAddrs)
-	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
-	s.GetConfig().Set(contentJSON, content)
-}
-
 // setupSMTPConfig setups the SMTP config
 func (s *Service) setupSMTPConfig(toAddrs, ccAddrs, subject, content string) {
 	s.GetConfig().Set(smtpUserJSON, viper.GetString(config.AlertSMTPUserKey))
@@ -147,6 +140,12 @@ func (s *Service) setupSMTPConfig(toAddrs, ccAddrs, subject, content string) {
 	s.GetConfig().Set(toAddrsJSON, toAddrs)
 	s.GetConfig().Set(ccAddrsJSON, ccAddrs)
 	s.GetConfig().Set(subjectJSON, subject)
+	s.GetConfig().Set(contentJSON, content)
+}
+
+// setupHTTPConfig setups the HTTP config
+func (s *Service) setupHTTPConfig(toAddrs, ccAddrs, content string) {
+	s.GetConfig().Set(toAddrsJSON, strings.Trim(toAddrs+constant.CommaString+ccAddrs, constant.CommaString))
 	s.GetConfig().Set(contentJSON, content)
 }
 
@@ -173,7 +172,7 @@ func (s *Service) saveSMTP(toAddrs, ccAddrs, subject, content, message string) e
 	}
 
 	return s.GetRepository().Save(
-		viper.GetString(config.AlertHTTPURLKey),
+		viper.GetString(config.AlertSMTPURLKey),
 		toAddrs,
 		ccAddrs,
 		subject,

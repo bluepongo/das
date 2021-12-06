@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/romberli/das/config"
 	"github.com/romberli/das/global"
-	"github.com/romberli/das/internal/app/metadata"
-	demetadata "github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
@@ -14,35 +13,36 @@ import (
 	"github.com/romberli/go-util/middleware/clickhouse"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
+	"github.com/spf13/viper"
 )
 
 const (
 	mysqlQueryWithServiceNames = `
         select qc.checksum as sql_id,
-               qc.fingerprint,
-               qe.query    as example,
-               qe.db       as db_name,
-               m.exec_count,
-               m.total_exec_time,
-               m.avg_exec_time,
-               m.rows_examined_max
-        from (
-                 select qcm.query_class_id,
-                        sum(qcm.query_count)                                        as exec_count,
-                        truncate(sum(qcm.query_time_sum), 2)                        as total_exec_time,
-                        truncate(sum(qcm.query_time_sum) / sum(qcm.query_count), 2) as avg_exec_time,
-                        qcm.rows_examined_max
-                 from query_class_metrics qcm
-                          inner join instances i on qcm.instance_id = i.instance_id
-                 where i.name in (%s)
-                   and qcm.start_ts >= ?
-                   and qcm.start_ts < ?
+			   qc.fingerprint,
+			   qe.query    as example,
+			   qe.db       as db_name,
+			   m.exec_count,
+			   m.total_exec_time,
+			   m.avg_exec_time,
+			   m.rows_examined_max
+		from (
+				 select qcm.query_class_id,
+						sum(qcm.query_count)                                        as exec_count,
+						truncate(sum(qcm.query_time_sum), 2)                        as total_exec_time,
+						truncate(sum(qcm.query_time_sum) / sum(qcm.query_count), 2) as avg_exec_time,
+						max(qcm.rows_examined_max)                                  as rows_examined_max
+				 from query_class_metrics qcm
+						  inner join instances i on qcm.instance_id = i.instance_id
+				 where i.name in (%s)
+				   and qcm.start_ts >= ?
+				   and qcm.start_ts < ?
 				   and qcm.rows_examined_max >= ?
-                 group by qcm.query_class_id
-                 order by qcm.rows_examined_max desc
-                  limit ? offset ?) m
-                 inner join query_classes qc on m.query_class_id = qc.query_class_id
-                 left join query_examples qe on m.query_class_id = qe.query_class_id;
+				 group by qcm.query_class_id
+				 order by rows_examined_max desc
+				 limit ? offset ?) m
+				 inner join query_classes qc on m.query_class_id = qc.query_class_id
+				 left join query_examples qe on m.query_class_id = qe.query_class_id;
     `
 	mysqlQueryWithDBName = `
         select qc.checksum as sql_id,
@@ -58,7 +58,7 @@ const (
                         sum(qcm.query_count)                                        as exec_count,
                         truncate(sum(qcm.query_time_sum), 2)                        as total_exec_time,
                         truncate(sum(qcm.query_time_sum) / sum(qcm.query_count), 2) as avg_exec_time,
-                        qcm.rows_examined_max
+						max(qcm.rows_examined_max)                                  as rows_examined_max
                  from query_class_metrics qcm
                           inner join instances i on qcm.instance_id = i.instance_id
                  		  inner join query_examples qe on qcm.query_class_id = qe.query_class_id
@@ -68,7 +68,7 @@ const (
                    and qcm.start_ts < ?
 				   and qcm.rows_examined_max >= ?
                  group by qcm.query_class_id
-                 order by qcm.rows_examined_max desc
+                 order by rows_examined_max desc
 				  limit ? offset ?) m
                  inner join query_classes qc on m.query_class_id = qc.query_class_id
                  left join query_examples qe on m.query_class_id = qe.query_class_id;
@@ -87,7 +87,7 @@ const (
                         sum(qcm.query_count)                                        as exec_count,
                         truncate(sum(qcm.query_time_sum), 2)                        as total_exec_time,
                         truncate(sum(qcm.query_time_sum) / sum(qcm.query_count), 2) as avg_exec_time,
-                        qcm.rows_examined_max
+						max(qcm.rows_examined_max)                                  as rows_examined_max
                  from query_class_metrics qcm
                           inner join instances i on qcm.instance_id = i.instance_id
 						  inner join query_classes qc on qcm.query_class_id = qc.query_class_id
@@ -109,7 +109,6 @@ const (
                sm.total_exec_time,
                sm.avg_exec_time,
                sm.rows_examined_max
-        
         from (
                  select queryid                                               as sql_id,
                         sum(num_queries)                                      as exec_count,
@@ -147,7 +146,6 @@ const (
                sm.total_exec_time,
                sm.avg_exec_time,
                sm.rows_examined_max
-        
         from (
                  select queryid                                               as sql_id,
                         sum(num_queries)                                      as exec_count,
@@ -187,7 +185,6 @@ const (
                sm.total_exec_time,
                sm.avg_exec_time,
                sm.rows_examined_max
-        
         from (
                  select queryid                                               as sql_id,
                         sum(num_queries)                                      as exec_count,
@@ -264,46 +261,7 @@ func (dr *DASRepo) Transaction() (middleware.Transaction, error) {
 	return dr.Database.Transaction()
 }
 
-// GetMonitorSystemByDBID gets a metadata.MonitorSystem by database identity
-func (dr *DASRepo) GetMonitorSystemByDBID(dbID int) (demetadata.MonitorSystem, error) {
-	dbService := metadata.NewDBServiceWithDefault()
-	err := dbService.GetByID(dbID)
-	if err != nil {
-		return nil, err
-	}
-
-	return dr.GetMonitorSystemByClusterID(dbService.GetDBs()[constant.ZeroInt].GetClusterID())
-}
-
-// GetMonitorSystemByMySQLServerID gets a metadata.MonitorSystem by mysql server identity
-func (dr *DASRepo) GetMonitorSystemByMySQLServerID(mysqlServerID int) (demetadata.MonitorSystem, error) {
-	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
-	err := mysqlServerService.GetByID(mysqlServerID)
-	if err != nil {
-		return nil, err
-	}
-
-	return dr.GetMonitorSystemByClusterID(mysqlServerService.GetMySQLServers()[constant.ZeroInt].GetClusterID())
-}
-
-// GetMonitorSystemByClusterID gets a metadata.MonitorSystem by mysql cluster identify
-func (dr *DASRepo) GetMonitorSystemByClusterID(clusterID int) (demetadata.MonitorSystem, error) {
-	mysqlClusterService := metadata.NewMySQLClusterServiceWithDefault()
-	err := mysqlClusterService.GetByID(clusterID)
-	if err != nil {
-		return nil, err
-	}
-
-	monitorSystemService := metadata.NewMonitorSystemServiceWithDefault()
-	err = monitorSystemService.GetByID(mysqlClusterService.GetMySQLClusters()[constant.ZeroInt].GetMonitorSystemID())
-	if err != nil {
-		return nil, err
-	}
-
-	return monitorSystemService.GetMonitorSystems()[constant.ZeroInt], nil
-}
-
-// Save saves dasInfo into table
+// Save saves sql information into the middleware
 func (dr *DASRepo) Save(mysqlClusterID, mysqlServerID, dbID int, sqlID string, startTime, endTime time.Time, limit, offset int) error {
 	sql := "\t\tinsert into t_query_operation_info(mysql_cluster_id, mysql_server_id, db_id, sql_id, start_time, end_time, `limit`, offset) values(?, ?, ?, ?, ?, ?, ?, ?);"
 
@@ -353,7 +311,7 @@ func (mr *MySQLRepo) GetByServiceNames(serviceName []string) ([]query.Query, err
 	return mr.execute(sql,
 		mr.getConfig().GetStartTime().Format(constant.DefaultTimeLayout),
 		mr.getConfig().GetEndTime().Format(constant.DefaultTimeLayout),
-		minRowsExamined,
+		getMinRowsExamined(),
 		mr.getConfig().GetLimit(),
 		mr.getConfig().GetOffset(),
 	)
@@ -377,7 +335,7 @@ func (mr *MySQLRepo) GetByDBName(serviceName, dbName string) ([]query.Query, err
 		dbName,
 		mr.getConfig().GetStartTime().Format(constant.DefaultTimeLayout),
 		mr.getConfig().GetEndTime().Format(constant.DefaultTimeLayout),
-		minRowsExamined,
+		getMinRowsExamined(),
 		mr.getConfig().GetLimit(),
 		mr.getConfig().GetOffset())
 }
@@ -471,12 +429,12 @@ func (cr *ClickhouseRepo) GetByServiceNames(serviceNames []string) ([]query.Quer
 		sql,
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
-		minRowsExamined,
+		getMinRowsExamined(),
 		cr.getConfig().GetLimit(),
 		cr.getConfig().GetOffset(),
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
-		minRowsExamined,
+		getMinRowsExamined(),
 	)
 }
 
@@ -499,14 +457,14 @@ func (cr *ClickhouseRepo) GetByDBName(serviceName, dbName string) ([]query.Query
 		dbName,
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
-		minRowsExamined,
+		getMinRowsExamined(),
 		cr.getConfig().GetLimit(),
 		cr.getConfig().GetOffset(),
 		dbName,
 		dbName,
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
-		minRowsExamined,
+		getMinRowsExamined(),
 	)
 }
 
@@ -528,13 +486,13 @@ func (cr *ClickhouseRepo) GetBySQLID(serviceName, sqlID string) (query.Query, er
 		sqlID,
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
-		minRowsExamined,
+		getMinRowsExamined(),
 		cr.getConfig().GetLimit(),
 		cr.getConfig().GetOffset(),
 		sqlID,
 		cr.getConfig().GetStartTime(),
 		cr.getConfig().GetEndTime(),
-		minRowsExamined,
+		getMinRowsExamined(),
 	)
 	if len(queries) == 0 {
 		return nil, fmt.Errorf("sql(id=%s) in service(name=%s) is not found", sqlID, serviceName)
@@ -563,4 +521,8 @@ func (cr *ClickhouseRepo) execute(command string, args ...interface{}) ([]query.
 	}
 
 	return queries, nil
+}
+
+func getMinRowsExamined() int {
+	return viper.GetInt(config.QueryMinRowsExaminedKey)
 }

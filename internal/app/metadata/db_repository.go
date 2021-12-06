@@ -265,20 +265,29 @@ func (dr *DBRepo) GetAppsByID(dbID int) ([]metadata.App, error) {
 // GetAppOwnersByID gets the application owners of the given id from the middleware
 func (dr *DBRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 	sql := `
-		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name
-			, user.email, user.telephone, user.mobile, user.role, user.del_flag
-			, user.create_time, user.last_update_time 
-		from t_meta_user_info as user 
-			inner join t_meta_app_info as app on user.id = app.owner_id
-			inner join t_meta_app_db_map as map on app.id = map.app_id
-			inner join t_meta_db_info as db on db.id = map.db_id
-		where user.del_flag = 0 
-			and app.del_flag = 0 
-			and db.del_flag = 0 
-			and map.del_flag = 0
-			and db.id = ?;
+		select user.id,
+			   user.user_name,
+			   user.department_name,
+			   user.employee_id,
+			   user.account_name,
+			   user.email,
+			   user.telephone,
+			   user.mobile,
+			   user.role,
+			   user.del_flag,
+			   user.create_time,
+			   user.last_update_time
+		from t_meta_user_info as user
+				 inner join t_meta_app_info as app on user.id = app.owner_id
+				 inner join t_meta_app_db_map as map on app.id = map.app_id
+				 inner join t_meta_db_info as db on db.id = map.db_id
+		where user.del_flag = 0
+		  and app.del_flag = 0
+		  and db.del_flag = 0
+		  and map.del_flag = 0
+		  and db.id = ?;
 	`
-	log.Debugf("metadata DbRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id)
+	log.Debugf("metadata DBRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id)
 
 	result, err := dr.Execute(sql, id)
 	if err != nil {
@@ -303,16 +312,26 @@ func (dr *DBRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 // GetDBOwnersByID gets the db owners of the given id from the middleware
 func (dr *DBRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
 	sql := `
-		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name, 
-			user.email, user.telephone, user.mobile, user.role, user.del_flag
-			, user.create_time, user.last_update_time 
-		from t_meta_user_info as user 
-			inner join t_meta_db_info as db on user.id = db.owner_id
-		where user.del_flag = 0 
-			and db.del_flag = 0
-			and db.id = ?;
+		select distinct user.id,
+						user.user_name,
+						user.department_name,
+						user.employee_id,
+						user.account_name,
+						user.email,
+						user.telephone,
+						user.mobile,
+						user.role,
+						user.del_flag
+				,
+						user.create_time,
+						user.last_update_time
+		from t_meta_user_info as user
+				 inner join t_meta_db_info as db on user.id = db.owner_id
+		where user.del_flag = 0
+		  and db.del_flag = 0
+		  and db.id = ?;
 	`
-	log.Debugf("metadata DbRepo.GetDBOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id)
+	log.Debugf("metadata DBRepo.GetDBOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id)
 
 	result, err := dr.Execute(sql, id)
 	if err != nil {
@@ -359,7 +378,7 @@ func (dr *DBRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
 			and db.del_flag = 0
 			and db.id = ?;
 	`
-	log.Debugf("metadata DbRepo.GetAllOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id, id)
+	log.Debugf("metadata DBRepo.GetAllOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id, id)
 
 	result, err := dr.Execute(sql, id, id)
 	if err != nil {

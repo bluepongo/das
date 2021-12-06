@@ -10,9 +10,10 @@ import (
 )
 
 const (
-	middlewareClusterNameStruct    = "ClusterName"
-	middlewareClusterOwnerIDStruct = "OwnerID"
-	middlewareClusterEnvIDStruct   = "EnvID"
+	middlewareClusterClusterNameStruct = "ClusterName"
+	middlewareClusterOwnerIDStruct     = "OwnerID"
+	middlewareClusterEnvIDStruct       = "EnvID"
+	middlewareClusterDelFlagStruct     = "DelFlag"
 )
 
 var _ metadata.MiddlewareCluster = (*MiddlewareClusterInfo)(nil)
@@ -117,9 +118,15 @@ func (mci *MiddlewareClusterInfo) GetLastUpdateTime() time.Time {
 	return mci.LastUpdateTime
 }
 
-// GetMiddlewareServerIDList gets the middleware server id list of this cluster
-func (mci *MiddlewareClusterInfo) GetMiddlewareServerIDList() ([]int, error) {
-	return mci.MiddlewareClusterRepo.GetMiddlewareServerIDList(mci.Identity())
+// GetMiddlewareServers gets the middleware server id list of this cluster
+func (mci *MiddlewareClusterInfo) GetMiddlewareServers() ([]metadata.MiddlewareServer, error) {
+	middlewareServerService := NewMiddlewareServerServiceWithDefault()
+	err := middlewareServerService.GetByClusterID(mci.Identity())
+	if err != nil {
+		return nil, err
+	}
+
+	return middlewareServerService.GetMiddlewareServers(), nil
 }
 
 // Set sets entity with given fields, key is the field name and value is the relevant value of the key

@@ -3,84 +3,30 @@ package query
 import (
 	"testing"
 
-	"github.com/romberli/das/config"
-	"github.com/romberli/das/global"
 	"github.com/romberli/go-util/common"
-	"github.com/romberli/go-util/middleware/mysql"
-	"github.com/romberli/log"
-	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	defaultQuerySQLID           = "sql_id"
-	defaultQueryFingerprint     = "fingerprint"
-	defaultQueryExample         = "example"
-	defaultQueryDBName          = "test"
-	defaultQueryExecCount       = 1
-	defaultQueryTotalExecTime   = 3.5
-	defaultQueryAvgExecTime     = 1.5
-	defaultQueryRowsExaminedMax = 10
-
-	// modify the connection information
-	// pmm1
-	serviceTestDBAddr = "192.168.10.220:3306"
-	// pmm2
-	// serviceTestDBAddr   = "192.168.10.219:3306"
-	serviceTestDBDBName = "das"
-	serviceTestDBDBUser = "root"
-	serviceTestDBDBPass = "root"
-)
+var testService *Service
 
 func init() {
-	// pmm1
-	pmmVersion = 1
-	// pmm2
-	// pmmVersion = 2
+	testPMMVersion = 2
+	testInitMySQLInfo()
+	testInitDASMySQLPool()
+	testInitViper()
 
-	switch pmmVersion {
-	case 1:
-		viper.Set(config.DBMonitorMySQLUserKey, config.DefaultDBMonitorMySQLUser)
-		viper.Set(config.DBMonitorMySQLPassKey, config.DefaultDBMonitorMySQLPass)
-	case 2:
-		viper.Set(config.DBMonitorClickhouseUserKey, config.DefaultDBMonitorClickhouseUser)
-		viper.Set(config.DBMonitorClickhousePassKey, config.DefaultDBMonitorClickhousePass)
-	}
-}
-
-func initQueryRepo() *DASRepo {
-	var err error
-
-	global.DASMySQLPool, err = mysql.NewPoolWithDefault(serviceTestDBAddr, serviceTestDBDBName, serviceTestDBDBUser, serviceTestDBDBPass)
-	if err != nil {
-		log.Error(common.CombineMessageWithError("initQueryRepo() failed", err))
-		return nil
-	}
-	return newDASRepo(global.DASMySQLPool)
-}
-
-func initNewQuery() *Query {
-	return &Query{
-		defaultQuerySQLID,
-		defaultQueryFingerprint,
-		defaultQueryExample,
-		defaultQueryDBName,
-		defaultQueryExecCount,
-		defaultQueryTotalExecTime,
-		defaultQueryAvgExecTime,
-		defaultQueryRowsExaminedMax,
-	}
-}
-
-var service = createService()
-
-func createService() *Service {
-	return newService(NewConfigWithDefault(), initQueryRepo())
+	testService = newService(NewConfigWithDefault(), testDASRepo)
 }
 
 func TestService_All(t *testing.T) {
-	TestService_GetConfig(t)
-	TestService_GetQueries(t)
+	testPMMVersion = 1
+	TestService_GetByMySQLClusterID(t)
+	TestService_GetByMySQLServerID(t)
+	TestService_GetByDBID(t)
+	TestService_GetBySQLID(t)
+	TestService_Marshal(t)
+
+	testPMMVersion = 2
 	TestService_GetByMySQLClusterID(t)
 	TestService_GetByMySQLServerID(t)
 	TestService_GetByDBID(t)
@@ -88,76 +34,38 @@ func TestService_All(t *testing.T) {
 	TestService_Marshal(t)
 }
 
-func TestService_GetConfig(t *testing.T) {
-	asst := assert.New(t)
-
-	limit := service.GetConfig().GetLimit()
-	asst.Equal(defaultLimit, limit, "test GetConfig() failed")
-}
-
-func TestService_GetQueries(t *testing.T) {
-	asst := assert.New(t)
-
-	service.queries = append(service.queries, initNewQuery())
-	sqlID := service.GetQueries()[0].GetSQLID()
-	asst.Equal(defaultQuerySQLID, sqlID, "test GetQueries() failed")
-}
-
 func TestService_GetByMySQLClusterID(t *testing.T) {
 	asst := assert.New(t)
 
-	switch pmmVersion {
-	case 1:
-		err := service.GetByMySQLClusterID(2)
-		asst.Nil(err, common.CombineMessageWithError("test GetByMySQLClusterID() failed", err))
-	case 2:
-		err := service.GetByMySQLClusterID(1)
-		asst.Nil(err, common.CombineMessageWithError("test GetByMySQLClusterID() failed", err))
-	}
+	err := testService.GetByMySQLClusterID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetByMySQLClusterID() failed", err))
 }
 
 func TestService_GetByMySQLServerID(t *testing.T) {
 	asst := assert.New(t)
 
-	switch pmmVersion {
-	case 1:
-		err := service.GetByMySQLServerID(3)
-		asst.Nil(err, common.CombineMessageWithError("test GetByMySQLServerID() failed", err))
-	case 2:
-		err := service.GetByMySQLServerID(1)
-		asst.Nil(err, common.CombineMessageWithError("test GetByMySQLServerID() failed", err))
-	}
+	err := testService.GetByMySQLServerID(testMySQLServerID)
+	asst.Nil(err, common.CombineMessageWithError("test GetByMySQLServerID() failed", err))
 }
 
 func TestService_GetByDBID(t *testing.T) {
 	asst := assert.New(t)
 
-	switch pmmVersion {
-	case 1:
-		err := service.GetByDBID(3, 1)
-		asst.Nil(err, common.CombineMessageWithError("test GetByDBID() failed", err))
-	case 2:
-		err := service.GetByDBID(2, 2)
-		asst.Nil(err, common.CombineMessageWithError("test GetByDBID() failed", err))
-	}
+	err := testService.GetByDBID(testMySQLServerID, testDBID)
+	asst.Nil(err, common.CombineMessageWithError("test GetByDBID() failed", err))
 }
 
 func TestService_GetBySQLID(t *testing.T) {
 	asst := assert.New(t)
 
-	switch pmmVersion {
-	case 1:
-		err := service.GetBySQLID(6, "999ECD050D719733")
-		asst.Nil(err, common.CombineMessageWithError("test GetBySQLID() failed", err))
-	case 2:
-		err := service.GetBySQLID(2, "999ECD050D719733")
-		asst.Nil(err, common.CombineMessageWithError("test GetBySQLID() failed", err))
-	}
+	err := testService.GetBySQLID(testMySQLServerID, testSQLID)
+	asst.Nil(err, common.CombineMessageWithError("test GetBySQLID() failed", err))
 }
 
 func TestService_Marshal(t *testing.T) {
 	asst := assert.New(t)
 
-	_, err := service.Marshal()
+	jsonBytes, err := testService.Marshal()
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
+	t.Log(string(jsonBytes))
 }

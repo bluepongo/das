@@ -69,10 +69,6 @@ var (
 	dbMonitorMySQLPass       string
 	dbApplicationMySQLUser   string
 	dbApplicationMySQLPass   string
-	dbSoarMySQLAddr          string
-	dbSoarMySQLName          string
-	dbSoarMySQLUser          string
-	dbSoarMySQLPass          string
 	// alert
 	alertSMTPEnabledStr string
 	alertSMTPFormat     string
@@ -85,6 +81,8 @@ var (
 	alertHTTPConfig     string
 	// healthcheck
 	healthcheckAlertOwnerType string
+	// query
+	queryMinRowsExamined int
 	// sqladvisor
 	sqladvisorSoarBin          string
 	sqladvisorSoarConfig       string
@@ -170,10 +168,6 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&dbMonitorClickhousePass, "db-monitor-clickhouse-pass", constant.DefaultRandomString, fmt.Sprintf("specify clickhouse user password of monitor system(default: %s)", config.DefaultDBPass))
 	rootCmd.PersistentFlags().StringVar(&dbMonitorMySQLUser, "db-monitor-mysql-user", constant.DefaultRandomString, fmt.Sprintf("specify mysql user name of monitor system(default: %s)", config.DefaultDBUser))
 	rootCmd.PersistentFlags().StringVar(&dbMonitorMySQLPass, "db-monitor-mysql-pass", constant.DefaultRandomString, fmt.Sprintf("specify mysql user password of monitor system(default: %s)", config.DefaultDBPass))
-	rootCmd.PersistentFlags().StringVar(&dbSoarMySQLAddr, "db-soar-mysql-addr", constant.DefaultRandomString, fmt.Sprintf("specify soar database address(format: host:port)(default: %s)", fmt.Sprintf("%s:%d", constant.DefaultLocalHostIP, constant.DefaultMySQLPort)))
-	rootCmd.PersistentFlags().StringVar(&dbSoarMySQLName, "db-soar-mysql-name", constant.DefaultRandomString, fmt.Sprintf("specify soar database name(default: %s)", config.DefaultDBSoarMySQLName))
-	rootCmd.PersistentFlags().StringVar(&dbSoarMySQLUser, "db-soar-mysql-user", constant.DefaultRandomString, fmt.Sprintf("specify soar database user name(default: %s)", config.DefaultDBSoarMySQLUser))
-	rootCmd.PersistentFlags().StringVar(&dbSoarMySQLPass, "db-soar-mysql-pass", constant.DefaultRandomString, fmt.Sprintf("specify soar database user password(default: %s)", config.DefaultDBSoarMySQLPass))
 	// alert
 	rootCmd.PersistentFlags().StringVar(&alertSMTPEnabledStr, "alert-smtp-enabled", constant.DefaultRandomString, fmt.Sprintf("specify if enables smtp method(default: %s)", constant.TrueString))
 	rootCmd.PersistentFlags().StringVar(&alertSMTPFormat, "alert-smtp-format", constant.DefaultRandomString, fmt.Sprintf("specify the email content format(default: %s)", config.DefaultAlterSMTPFormat))
@@ -186,6 +180,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&alertHTTPConfig, "alert-http-config", constant.DefaultRandomString, fmt.Sprintf("specify alert api parameters(default: %s)", config.DefaultAlertHTTPConfig))
 	// healthcheck
 	rootCmd.PersistentFlags().StringVar(&healthcheckAlertOwnerType, "healthcheck-alert-owner-type", constant.DefaultRandomString, fmt.Sprintf("specify healthcheck alert owner type(default: %s)", config.DefaultHealthcheckAlertOwnerType))
+	// query
+	rootCmd.PersistentFlags().IntVar(&queryMinRowsExamined, "query-min-rows-examined", constant.DefaultRandomInt, fmt.Sprintf("specify query min rows examined(default: %d", config.DefaultQueryMinRowsExamined))
 	// sqladvisor
 	rootCmd.PersistentFlags().StringVar(&sqladvisorSoarBin, "sqladvisor-soar-bin", constant.DefaultRandomString, fmt.Sprintf("specify binary path of soar(default: %s)", config.DefaultSQLAdvisorSoarBin))
 	rootCmd.PersistentFlags().StringVar(&sqladvisorSoarConfig, "sqladvisor-soar-config", constant.DefaultRandomString, fmt.Sprintf("specify config file path of soar(default: %s)", config.DefaultSQLAdvisorSoarConfig))
@@ -388,18 +384,6 @@ func OverrideConfig() (err error) {
 	if dbApplicationMySQLPass != constant.DefaultRandomString {
 		viper.Set(config.DBApplicationMySQLPassKey, dbApplicationMySQLPass)
 	}
-	if dbSoarMySQLAddr != constant.DefaultRandomString {
-		viper.Set(config.DBDASMySQLAddrKey, dbSoarMySQLAddr)
-	}
-	if dbSoarMySQLName != constant.DefaultRandomString {
-		viper.Set(config.DBDASMySQLNameKey, dbSoarMySQLName)
-	}
-	if dbSoarMySQLUser != constant.DefaultRandomString {
-		viper.Set(config.DBDASMySQLUserKey, dbSoarMySQLUser)
-	}
-	if dbSoarMySQLPass != constant.DefaultRandomString {
-		viper.Set(config.DBDASMySQLPassKey, dbSoarMySQLPass)
-	}
 
 	// override alert
 	if alertSMTPEnabledStr != constant.DefaultRandomString {
@@ -442,6 +426,11 @@ func OverrideConfig() (err error) {
 	// override healthcheck
 	if healthcheckAlertOwnerType != constant.DefaultRandomString {
 		viper.Set(config.HealthcheckAlertOwnerTypeKey, healthcheckAlertOwnerType)
+	}
+
+	// override query
+	if queryMinRowsExamined != constant.DefaultRandomInt {
+		viper.Set(config.QueryMinRowsExaminedKey, queryMinRowsExamined)
 	}
 
 	// override sqladvisor

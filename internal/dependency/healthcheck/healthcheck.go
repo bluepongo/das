@@ -35,12 +35,14 @@ type ApplicationMySQLRepo interface {
 	GetVariables(items []string) ([]Variable, error)
 	// GetMySQLDirs gets the mysql data directory and binlog directory
 	GetMySQLDirs() ([]string, error)
-	// GetTables gets the tables
+	// GetLargeTables gets the tables
 	GetLargeTables() ([]Table, error)
+	// GetDBName gets the db name of given table names
+	GetDBName(tableNames []string) (string, error)
 }
 
 type PrometheusRepo interface {
-	// GetMountPoint gets the mount points from the prometheus
+	// GetFileSystems gets the file systems from the prometheus
 	GetFileSystems() ([]FileSystem, error)
 	// GetAvgBackupFailedRatio gets the average backup failed ratio
 	GetAvgBackupFailedRatio() ([]PrometheusData, error)
@@ -48,13 +50,13 @@ type PrometheusRepo interface {
 	GetStatisticFailedRatio() ([]PrometheusData, error)
 	// GetCPUUsage gets the cpu usage
 	GetCPUUsage() ([]PrometheusData, error)
-	// CheckIOUtil gets the io util
+	// GetIOUtil gets the io util
 	GetIOUtil() ([]PrometheusData, error)
 	// GetDiskCapacityUsage gets the disk capacity usage
 	GetDiskCapacityUsage(mountPoints []string) ([]PrometheusData, error)
 	// GetConnectionUsage gets the connection usage
 	GetConnectionUsage() ([]PrometheusData, error)
-	// GetActiveSessionPercents gets the active session number
+	// GetAverageActiveSessionPercents gets the average active session percents
 	GetAverageActiveSessionPercents() ([]PrometheusData, error)
 	// GetCacheMissRatio gets the cache miss ratio
 	GetCacheMissRatio() ([]PrometheusData, error)
@@ -70,23 +72,29 @@ type QueryRepo interface {
 type Service interface {
 	// GetDASRepo returns the das repository
 	GetDASRepo() DASRepo
+	// GetOperationInfo returns the operation information
+	GetOperationInfo() OperationInfo
+	// GetEngine returns the healthcheck engine
+	GetEngine() Engine
 	// GetResult returns the result
 	GetResult() Result
 	// GetResultByOperationID gets the result by operation id from the middleware
 	GetResultByOperationID(id int) error
 	// Check checks the server health status
-	Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) error
+	Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error)
 	// Check checks the server health status
-	CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration) error
+	CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration) (int, error)
 	// ReviewAccuracy reviews the accuracy of the check
 	ReviewAccuracy(id, review int) error
-	// MarshalJSON marshals Service to json string
-	MarshalJSON() ([]byte, error)
-	// MarshalJSON marshals only specified field of the Service to json string
-	MarshalJSONWithFields(fields ...string) ([]byte, error)
+	// Marshal marshals Service to json string
+	Marshal() ([]byte, error)
+	// MarshalWithFields marshals only specified field of the Service to json string
+	MarshalWithFields(fields ...string) ([]byte, error)
 }
 
 type Engine interface {
+	// GetOperationInfo returns the operation information
+	GetOperationInfo() OperationInfo
 	// Run checks the server health status
 	Run()
 }

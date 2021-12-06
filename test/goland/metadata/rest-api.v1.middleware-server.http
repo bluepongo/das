@@ -1,32 +1,39 @@
 ### get all middleware server
 GET http://{{baseURL}}/api/v1/metadata/middleware-server
-Accept: application/json
+Content-Type: application/json
 
 ### get middleware server by cluster id
-GET http://{{baseURL}}/api/v1/metadata/middleware-server/cluster-id/13
-Accept: application/json
+GET http://{{baseURL}}/api/v1/metadata/middleware-server/cluster-id/1
+Content-Type: application/json
 
 ### get middleware server by id
 GET http://{{baseURL}}/api/v1/metadata/middleware-server/get/1
-Accept: application/json
+Content-Type: application/json
 
 ### get middleware server by host info
-GET http://{{baseURL}}/api/v1/metadata/middleware-server/host-info?host_ip=3&port_num=1
-Accept: application/json
+GET http://{{baseURL}}/api/v1/metadata/middleware-server/host-info
+Content-Type: application/json
+
+{"host_ip": "192.168.10.219", "port_num": 33061}
 
 ### add new middleware server
 POST http://{{baseURL}}/api/v1/metadata/middleware-server
 Content-Type: application/json
 
-{"cluster_id": 13, "server_name": "test003", "middleware_role": 1, "host_ip": "123.123.123.1", "port_num": 12}
+{"cluster_id": 1, "server_name": "new_middleware_server", "middleware_role": 1, "host_ip": "192.168.10.219", "port_num": 33062}
 
 ### update middleware-server by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-server/update/31
+POST http://{{baseURL}}/api/v1/metadata/middleware-server/update/1
 Content-Type: application/json
 
-{"server_name": "newTest", "del_flag": 1}
+{"server_name": "update_middeware_server"}
 
+### update middleware-server by id
+POST http://{{baseURL}}/api/v1/metadata/middleware-server/update/1
+Content-Type: application/json
+
+{"server_name": "middleware-server-1"}
 
 ### delete middleware-server by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-server/delete/31
+POST http://{{baseURL}}/api/v1/metadata/middleware-server/delete/28
 Content-Type: application/json

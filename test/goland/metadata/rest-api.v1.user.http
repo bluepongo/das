@@ -1,47 +1,74 @@
 ### GetUser
 GET http://{{baseURL}}/api/v1/metadata/user
-Accept: application/json
+Content-Type: application/json
 
 ### GetUserByName
-GET http://{{baseURL}}/api/v1/metadata/user/user-name/user_name
-Accept: application/json
+GET http://{{baseURL}}/api/v1/metadata/user/user-name/zhangsan
+Content-Type: application/json
 
 ### GetUserByID
-GET http://{{baseURL}}/api/v1/metadata/user/get/5
-Accept: application/json
+GET http://{{baseURL}}/api/v1/metadata/user/get/1
+Content-Type: application/json
 
 ### GetUserByEmployeeID
-GET http://{{baseURL}}/api/v1/metadata/user/employee-id/employee_id
-Accept: application/json
+GET http://{{baseURL}}/api/v1/metadata/user/employee-id/100001
+Content-Type: application/json
 
 ### GetUserByAccountName
-GET http://{{baseURL}}/api/v1/metadata/user/account-name/account_name
-Accept: application/json
+GET http://{{baseURL}}/api/v1/metadata/user/account-name/zs001
+Content-Type: application/json
 
 ### GetUserByEmail
-GET http://{{baseURL}}/api/v1/metadata/user/email/email
-Accept: application/json
+GET http://{{baseURL}}/api/v1/metadata/user/email/allinemailtest@163.com
+Content-Type: application/json
 
 ### GetUserByTelephone
-GET http://{{baseURL}}/api/v1/metadata/user/telephone/telephone
-Accept: application/json
+GET http://{{baseURL}}/api/v1/metadata/user/telephone/01012345678
+Content-Type: application/json
 
 ### GetUserByMobile
-GET http://{{baseURL}}/api/v1/metadata/user/mobile/mobile
-Accept: application/json
+GET http://{{baseURL}}/api/v1/metadata/user/mobile/13012345678
+Content-Type: application/json
 
 ### AddUser
 POST http://{{baseURL}}/api/v1/metadata/user
 Content-Type: application/json
 
- {"department_name": "department_name","employee_id": "employee_id21", "telephone": "telephone","role": 2,"del_flag": 0,"user_name": "user_name21","account_name": "account_na1me2","email": "emai12l","mobile": "mobile" }
+{
+  "user_name": "test_new_user_name",
+  "department_name": "department_name",
+  "employee_id": "200001",
+  "account_name": "test_new_account_name",
+  "email": "test_new_account_name@163.com",
+  "telephone": "02112345678",
+  "mobile": "13112345678",
+  "role": 3
+}
 
 ### UpdateUserByID
-POST http://{{baseURL}}/api/v1/metadata/user/update/3
+POST http://{{baseURL}}/api/v1/metadata/user/update/1
 Content-Type: application/json
 
-  {"department_name": "department_name","employee_id": "employee_id2", "telephone": "telephone","role": 2,"del_flag": 0,"user_name": "user_name2","account_name": "account_name2","email": "emai2l","mobile": "mobile" }
+{
+  "user_name": "update_user_name",
+  "department_name": "update_department_name",
+  "employee_id": "update_employee_id",
+  "account_name": "update_account_name",
+  "email": "update_account_name@163.com"
+}
+
+### UpdateUserByID
+POST http://{{baseURL}}/api/v1/metadata/user/update/1
+Content-Type: application/json
+
+{
+  "user_name": "zhangsan",
+  "department_name": "arch",
+  "employee_id": "100001",
+  "account_name": "zs001",
+  "email": "allinemailtest@163.com"
+}
 
 ### DeleteUserByID
-POST http://{{baseURL}}/api/v1/metadata/user/delete/1
+POST http://{{baseURL}}/api/v1/metadata/user/delete/13
 Content-Type: application/json

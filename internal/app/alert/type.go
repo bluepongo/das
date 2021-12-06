@@ -1,7 +1,11 @@
 package alert
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/romberli/das/config"
+	"github.com/romberli/go-util/constant"
 	"github.com/spf13/viper"
 )
 
@@ -50,4 +54,15 @@ func (c Config) Set(key string, value string) {
 // Delete deletes the given key from the config
 func (c Config) Delete(key string) {
 	delete(c, key)
+}
+
+// String returns the string value of the config
+func (c Config) String() string {
+	s := constant.LeftBraceString + constant.CRLFString
+
+	for key, value := range c {
+		s += fmt.Sprintf(`    "%s": "%s",`, key, value) + constant.CRLFString
+	}
+
+	return strings.Trim(s, constant.CommaString) + constant.RightBraceString
 }

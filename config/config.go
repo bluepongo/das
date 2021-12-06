@@ -75,10 +75,6 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(DBMonitorMySQLPassKey, DefaultDBMonitorMySQLPass)
 	viper.SetDefault(DBApplicationMySQLUserKey, DefaultDBApplicationMySQLUser)
 	viper.SetDefault(DBApplicationMySQLPassKey, DefaultDBApplicationMySQLPass)
-	viper.SetDefault(DBSoarMySQLAddrKey, fmt.Sprintf("%s:%d", constant.DefaultLocalHostIP, constant.DefaultMySQLPort))
-	viper.SetDefault(DBSoarMySQLNameKey, DefaultDBName)
-	viper.SetDefault(DBSoarMySQLUserKey, DefaultDBUser)
-	viper.SetDefault(DBSoarMySQLPassKey, DefaultDBPass)
 	// alert
 	viper.SetDefault(AlertSMTPEnabledKey, DefaultAlertSMTPEnabled)
 	viper.SetDefault(AlertSMTPFormatKey, DefaultAlterSMTPFormat)
@@ -91,6 +87,8 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(AlertHTTPConfigKey, DefaultAlertHTTPConfig)
 	// healthcheck
 	viper.SetDefault(HealthcheckAlertOwnerTypeKey, DefaultHealthcheckAlertOwnerType)
+	// query
+	viper.SetDefault(QueryMinRowsExaminedKey, DefaultQueryMinRowsExamined)
 	// sqladvisor
 	viper.SetDefault(SQLAdvisorSoarBinKey, DefaultSQLAdvisorSoarBin)
 	viper.SetDefault(SQLAdvisorSoarConfigKey, DefaultSQLAdvisorSoarConfig)
@@ -136,6 +134,12 @@ func ValidateConfig() (err error) {
 
 	// validate healthcheck section
 	err = ValidateHealthcheck()
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	// validate query section
+	err = ValidateQuery()
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
@@ -429,21 +433,22 @@ func ValidateDatabase() error {
 			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbSoarAddr))
 		}
 	}
-	// validate db.soar.mysql.name
-	_, err = cast.ToStringE(viper.Get(DBSoarMySQLNameKey))
-	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	// validate db.soar.mysql.user
-	_, err = cast.ToStringE(viper.Get(DBSoarMySQLUserKey))
-	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	// validate db.soar.mysql.pass
-	_, err = cast.ToStringE(viper.Get(DBSoarMySQLPassKey))
-	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
+	// todo remove
+	// // validate db.soar.mysql.name
+	// _, err = cast.ToStringE(viper.Get(DBSoarMySQLNameKey))
+	// if err != nil {
+	// 	merr = multierror.Append(merr, err)
+	// }
+	// // validate db.soar.mysql.user
+	// _, err = cast.ToStringE(viper.Get(DBSoarMySQLUserKey))
+	// if err != nil {
+	// 	merr = multierror.Append(merr, err)
+	// }
+	// // validate db.soar.mysql.pass
+	// _, err = cast.ToStringE(viper.Get(DBSoarMySQLPassKey))
+	// if err != nil {
+	// 	merr = multierror.Append(merr, err)
+	// }
 
 	return merr.ErrorOrNil()
 }
@@ -516,6 +521,7 @@ func ValidateAlert() error {
 	return merr.ErrorOrNil()
 }
 
+// ValidateHealthcheck validates if health check section is valid
 func ValidateHealthcheck() error {
 	merr := &multierror.Error{}
 
@@ -531,6 +537,19 @@ func ValidateHealthcheck() error {
 	}
 	if !valid {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidHealthcheckAlertOwnerType, ownerType))
+	}
+
+	return merr.ErrorOrNil()
+}
+
+// ValidateQuery validates if query section is valid
+func ValidateQuery() error {
+	merr := &multierror.Error{}
+
+	// validate query.minRowsExamined
+	_, err := cast.ToIntE(viper.Get(QueryMinRowsExaminedKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
 	}
 
 	return merr.ErrorOrNil()

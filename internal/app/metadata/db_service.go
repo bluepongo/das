@@ -19,21 +19,12 @@ type DBService struct {
 	DBs          []metadata.DB         `json:"dbs"`
 	MySQLCluster metadata.MySQLCluster `json:"mysql_cluster"`
 	Apps         []metadata.App        `json:"apps"`
-	AppOwners    []metadata.User       `json:"app_owners"`
-	DBOwners     []metadata.User       `json:"db_owners"`
-	AllOwners    []metadata.User       `json:"all_owners"`
+	Owners       []metadata.User       `json:"owners"`
 }
 
 // NewDBService returns a new *DBService
 func NewDBService(repo metadata.DBRepo) *DBService {
-	return &DBService{repo,
-		[]metadata.DB{},
-		nil,
-		[]metadata.App{},
-		[]metadata.User{},
-		[]metadata.User{},
-		[]metadata.User{},
-	}
+	return &DBService{DBRepo: repo}
 }
 
 // NewDBServiceWithDefault returns a new *DBService with default repository
@@ -41,9 +32,24 @@ func NewDBServiceWithDefault() *DBService {
 	return NewDBService(NewDBRepoWithGlobal())
 }
 
-// GetDBs returns databases of the service
+// GetDBs returns the databases of the service
 func (ds *DBService) GetDBs() []metadata.DB {
 	return ds.DBs
+}
+
+// GetMySQLCluster returns the mysql cluster of the service
+func (ds *DBService) GetMySQLCluster() metadata.MySQLCluster {
+	return ds.MySQLCluster
+}
+
+// GetApps returns the apps of the service
+func (ds *DBService) GetApps() []metadata.App {
+	return ds.Apps
+}
+
+// GetOwners returns the owners of the service
+func (ds *DBService) GetOwners() []metadata.User {
+	return ds.Owners
 }
 
 // GetAll gets all databases from the middleware
@@ -64,25 +70,27 @@ func (ds *DBService) GetByEnv(envID int) error {
 	return err
 }
 
-// GetByID gets an database of the given id from the middleware
+// GetByID gets the database of the given id from the middleware
 func (ds *DBService) GetByID(id int) error {
 	db, err := ds.DBRepo.GetByID(id)
 	if err != nil {
 		return err
 	}
 
+	ds.DBs = nil
 	ds.DBs = append(ds.DBs, db)
 
 	return nil
 }
 
-// GetByNameAndClusterInfo gets an database of the given db name and cluster info from the middleware
+// GetByNameAndClusterInfo gets the database of the given db name and cluster info from the middleware
 func (ds *DBService) GetByNameAndClusterInfo(name string, clusterID, clusterType int) error {
 	db, err := ds.DBRepo.GetByNameAndClusterInfo(name, clusterID, clusterType)
 	if err != nil {
 		return err
 	}
 
+	ds.DBs = nil
 	ds.DBs = append(ds.DBs, db)
 
 	return nil
@@ -91,6 +99,7 @@ func (ds *DBService) GetByNameAndClusterInfo(name string, clusterID, clusterType
 // GetMySQLClusterByID gets the cluster of the db
 func (ds *DBService) GetMySQLClusterByID(id int) error {
 	var err error
+
 	ds.MySQLCluster, err = ds.DBRepo.GetMySQLCLusterByID(id)
 
 	return err
@@ -99,6 +108,7 @@ func (ds *DBService) GetMySQLClusterByID(id int) error {
 // GetAppsByID gets an apps that uses this db
 func (ds *DBService) GetAppsByID(dbID int) error {
 	var err error
+
 	ds.Apps, err = ds.DBRepo.GetAppsByID(dbID)
 
 	return err
@@ -107,7 +117,8 @@ func (ds *DBService) GetAppsByID(dbID int) error {
 // GetAppOwnersByID gets the application owners of the given id
 func (ds *DBService) GetAppOwnersByID(id int) error {
 	var err error
-	ds.AppOwners, err = ds.DBRepo.GetAppOwnersByID(id)
+
+	ds.Owners, err = ds.DBRepo.GetAppOwnersByID(id)
 
 	return err
 }
@@ -115,7 +126,8 @@ func (ds *DBService) GetAppOwnersByID(id int) error {
 // GetDBOwnersByID gets the db owners of the given id
 func (ds *DBService) GetDBOwnersByID(id int) error {
 	var err error
-	ds.DBOwners, err = ds.DBRepo.GetAppOwnersByID(id)
+
+	ds.Owners, err = ds.DBRepo.GetAppOwnersByID(id)
 
 	return err
 }
@@ -123,12 +135,13 @@ func (ds *DBService) GetDBOwnersByID(id int) error {
 // GetAllOwnersByID gets both application and db owners of the given id
 func (ds *DBService) GetAllOwnersByID(id int) error {
 	var err error
-	ds.AllOwners, err = ds.DBRepo.GetAllOwnersByID(id)
+
+	ds.Owners, err = ds.DBRepo.GetAllOwnersByID(id)
 
 	return err
 }
 
-// Create creates an new database in the middleware
+// Create creates a new database in the middleware
 func (ds *DBService) Create(fields map[string]interface{}) error {
 	// generate new map
 	_, dbNameExists := fields[dbDBNameStruct]
@@ -150,6 +163,7 @@ func (ds *DBService) Create(fields map[string]interface{}) error {
 		return err
 	}
 
+	ds.DBs = nil
 	ds.DBs = append(ds.DBs, db)
 
 	return nil
@@ -174,6 +188,11 @@ func (ds *DBService) Update(id int, fields map[string]interface{}) error {
 
 // Delete deletes the database of given id in the middleware
 func (ds *DBService) Delete(id int) error {
+	err := ds.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return ds.DBRepo.Delete(id)
 }
 

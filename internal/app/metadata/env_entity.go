@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	envNameStruct = "EnvName"
+	envEnvNameStruct = "EnvName"
+	envDelFlagStruct = "DelFlag"
 )
 
 var _ metadata.Env = (*EnvInfo)(nil)
@@ -90,11 +91,6 @@ func (ei *EnvInfo) GetCreateTime() time.Time {
 // GetLastUpdateTime returns the last update time
 func (ei *EnvInfo) GetLastUpdateTime() time.Time {
 	return ei.LastUpdateTime
-}
-
-// Get returns value of given field
-func (ei *EnvInfo) Get(field string) (interface{}, error) {
-	return common.GetValueOfStruct(ei, field)
 }
 
 // GetDelFlag returns the delete flag

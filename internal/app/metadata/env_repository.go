@@ -126,6 +126,37 @@ func (er *EnvRepo) GetID(envName string) (int, error) {
 	return result.GetInt(constant.ZeroInt, constant.ZeroInt)
 }
 
+// GetEnvByName gets Env of given environment name
+func (er *EnvRepo) GetEnvByName(envName string) (metadata.Env, error) {
+	sql := `
+		select id, env_name, del_flag, create_time, last_update_time
+		from t_meta_env_info
+		where del_flag = 0
+		and env_name = ?;
+	`
+	log.Debugf("metadata EnvRepo.GetEnvByName() sql: \n%s\nplaceholders: %s", sql, envName)
+
+	result, err := er.Execute(sql, envName)
+	if err != nil {
+		return nil, err
+	}
+	switch result.RowNumber() {
+	case 0:
+		return nil, errors.New(fmt.Sprintf("metadata EnvInfo.GetEnvByName(): data does not exists, env_name: %s", envName))
+	case 1:
+		envInfo := NewEmptyEnvInfoWithGlobal()
+		// map to struct
+		err = result.MapToStructByRowIndex(envInfo, constant.ZeroInt, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return nil, err
+		}
+
+		return envInfo, nil
+	default:
+		return nil, errors.New(fmt.Sprintf("metadata EnvInfo.GetEnvByName(): duplicate key exists, env_name: %s", envName))
+	}
+}
+
 // Create creates an environment in the middleware
 func (er *EnvRepo) Create(env metadata.Env) (metadata.Env, error) {
 	sql := `insert into t_meta_env_info(env_name) values(?);`
@@ -170,44 +201,12 @@ func (er *EnvRepo) Delete(id int) error {
 	if err != nil {
 		return err
 	}
-	//delete from t_meta_env_info where id =
 	sql := `delete from t_meta_env_info where id = ?;`
-	log.Debugf("metadata EnvRepo.Delete() delete sql(t_meta_app_info): %s", sql)
+	log.Debugf("metadata EnvRepo.Delete() delete sql: %s", sql)
 	_, err = tx.Execute(sql, id)
 	if err != nil {
 		return err
 	}
 
 	return tx.Commit()
-}
-
-// GetEnvByName gets Env of given environment name
-func (er *EnvRepo) GetEnvByName(envName string) (metadata.Env, error) {
-	sql := `
-		select id, env_name, del_flag, create_time, last_update_time
-		from t_meta_env_info
-		where del_flag = 0
-		and env_name = ?;
-	`
-	log.Debugf("metadata EnvRepo.GetEnvByName() sql: \n%s\nplaceholders: %s", sql, envName)
-
-	result, err := er.Execute(sql, envName)
-	if err != nil {
-		return nil, err
-	}
-	switch result.RowNumber() {
-	case 0:
-		return nil, errors.New(fmt.Sprintf("metadata EnvInfo.GetEnvByName(): data does not exists, env_name: %s", envName))
-	case 1:
-		envInfo := NewEmptyEnvInfoWithGlobal()
-		// map to struct
-		err = result.MapToStructByRowIndex(envInfo, constant.ZeroInt, constant.DefaultMiddlewareTag)
-		if err != nil {
-			return nil, err
-		}
-
-		return envInfo, nil
-	default:
-		return nil, errors.New(fmt.Sprintf("metadata EnvInfo.GetEnvByName(): duplicate key exists, env_name: %s", envName))
-	}
 }

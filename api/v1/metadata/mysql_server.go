@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	utilmeta "github.com/romberli/das/pkg/util/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/log"
@@ -17,20 +18,19 @@ import (
 )
 
 const (
-	msIDJSON        = "id"
-	msClusterIDJSON = "cluster_id"
-	msHostIPJSON    = "host_ip"
-	msPortNumJSON   = "port_num"
-	msIsMasterJSON  = "is_master"
+	mysqlServerIDJSON        = "id"
+	mysqlServerClusterIDJSON = "cluster_id"
+	mysqlServerHostIPJSON    = "host_ip"
+	mysqlServerPortNumJSON   = "port_num"
 
-	msClusterIDStruct      = "ClusterID"
-	msServerNameStruct     = "ServerName"
-	msHostIPStruct         = "HostIP"
-	msPortNumStruct        = "PortNum"
-	msDeploymentTypeStruct = "DeploymentType"
-	msVersionStruct        = "Version"
+	mysqlServerClusterIDStruct      = "ClusterID"
+	mysqlServerServerNameStruct     = "ServerName"
+	mysqlServerHostIPStruct         = "HostIP"
+	mysqlServerPortNumStruct        = "PortNum"
+	mysqlServerDeploymentTypeStruct = "DeploymentType"
+	mysqlServerVersionStruct        = "Version"
 
-	msMySQLCluster = "MySQLCluster"
+	mysqlServerMySQLClusterStruct = "MySQLCluster"
 
 	isMasterResponse = `{"is_master": "%t"}`
 )
@@ -69,9 +69,9 @@ func GetMySQLServer(c *gin.Context) {
 // @Router /api/v1/metadata/mysql-server/cluster-id/:cluster_id [get]
 func GetMySQLServerByClusterID(c *gin.Context) {
 	// get param
-	clusterIDStr := c.Param(msClusterIDJSON)
+	clusterIDStr := c.Param(mysqlServerClusterIDJSON)
 	if clusterIDStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, msIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerIDJSON)
 		return
 	}
 	clusterID, err := strconv.Atoi(clusterIDStr)
@@ -107,9 +107,9 @@ func GetMySQLServerByClusterID(c *gin.Context) {
 // @Router /api/v1/metadata/mysql-server/get/:id [get]
 func GetMySQLServerByID(c *gin.Context) {
 	// get param
-	idStr := c.Param(msIDJSON)
+	idStr := c.Param(mysqlServerIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, msIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerIDJSON)
 		return
 	}
 	id, err := strconv.Atoi(idStr)
@@ -144,29 +144,20 @@ func GetMySQLServerByID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"cluster_id":1,"deployment_type":1,"host_ip":"host_ip_init","port_num":3306,"version":"1.1.1","del_flag":0,"create_time":"2021-02-23T23:43:37.236228+08:00","last_update_time":"2021-02-23T23:43:37.236228+08:00","id":1}]}"
 // @Router /api/v1/metadata/mysql-server/host-info [get]
 func GetMySQLServerByHostInfo(c *gin.Context) {
-	// get param
-	hostIP := c.Query(msHostIPJSON)
-	if hostIP == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, msHostIPJSON)
-		return
-	}
-	portNumStr := c.Query(msPortNumJSON)
-	if portNumStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, msPortNumJSON)
-		return
-	}
-	portNum, err := strconv.Atoi(portNumStr)
+	var rd *utilmeta.HostInfo
+	// bind json
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
-
 	}
+
 	// init service
 	s := metadata.NewMySQLServerServiceWithDefault()
 	// get entity
-	err = s.GetByHostInfo(hostIP, portNum)
+	err = s.GetByHostInfo(rd.GetHostIP(), rd.GetPortNum())
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLServerByHostInfo, hostIP, portNum, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLServerByHostInfo, rd.GetHostIP(), rd.GetPortNum(), err.Error())
 		return
 	}
 	// marshal service
@@ -178,7 +169,7 @@ func GetMySQLServerByHostInfo(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLServerByHostInfo, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerByHostInfo, hostIP, portNum)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerByHostInfo, rd.GetHostIP(), rd.GetPortNum())
 }
 
 // @Tags mysql server
@@ -200,14 +191,14 @@ func IsMaster(c *gin.Context) {
 		return
 	}
 
-	hostIP, hostIPExists := dataMap[msHostIPJSON]
+	hostIP, hostIPExists := dataMap[mysqlServerHostIPJSON]
 	if !hostIPExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, msHostIPJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerHostIPJSON)
 		return
 	}
-	portNumStr, portNumExists := dataMap[msPortNumJSON]
+	portNumStr, portNumExists := dataMap[mysqlServerPortNumJSON]
 	if !portNumExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, msPortNumJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerPortNumJSON)
 		return
 	}
 	portNum, err := strconv.Atoi(portNumStr)
@@ -235,9 +226,9 @@ func IsMaster(c *gin.Context) {
 // @Router /api/v1/metadata/mysql-server/mysql-cluster/:id [get]
 func GetMySQLClusterByMySQLServerID(c *gin.Context) {
 	// get param
-	idStr := c.Param(msIDJSON)
+	idStr := c.Param(mysqlServerIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, msIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerIDJSON)
 		return
 	}
 	id, err := strconv.Atoi(idStr)
@@ -256,7 +247,7 @@ func GetMySQLClusterByMySQLServerID(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(msMySQLCluster)
+	jsonBytes, err := s.MarshalWithFields(mysqlServerMySQLClusterStruct)
 	// jsonBytes, err := s.Marshal()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
@@ -288,22 +279,22 @@ func AddMySQLServer(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	_, clusterIDExists := fields[msClusterIDStruct]
-	_, serverNameExists := fields[msServerNameStruct]
-	_, hostIPExists := fields[msHostIPStruct]
-	_, portNumExists := fields[msPortNumStruct]
-	_, deploymentTypeExists := fields[msDeploymentTypeStruct]
+	_, clusterIDExists := fields[mysqlServerClusterIDStruct]
+	_, serverNameExists := fields[mysqlServerServerNameStruct]
+	_, hostIPExists := fields[mysqlServerHostIPStruct]
+	_, portNumExists := fields[mysqlServerPortNumStruct]
+	_, deploymentTypeExists := fields[mysqlServerDeploymentTypeStruct]
 	if !clusterIDExists || !serverNameExists || !hostIPExists || !portNumExists || !deploymentTypeExists {
 		fmt.Println("wtf")
 		resp.ResponseNOK(
 			c, message.ErrFieldNotExists,
 			fmt.Sprintf(
 				"%s and %s and %s and %s and %s",
-				msClusterIDStruct,
-				msServerNameStruct,
-				msHostIPStruct,
-				msPortNumStruct,
-				msDeploymentTypeStruct))
+				mysqlServerClusterIDStruct,
+				mysqlServerServerNameStruct,
+				mysqlServerHostIPStruct,
+				mysqlServerPortNumStruct,
+				mysqlServerDeploymentTypeStruct))
 		return
 	}
 	// init service
@@ -312,11 +303,11 @@ func AddMySQLServer(c *gin.Context) {
 	err = s.Create(fields)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataAddMySQLServer,
-			fields[msServerNameStruct],
-			fields[msClusterIDStruct],
-			fields[msHostIPStruct],
-			fields[msPortNumStruct],
-			fields[msDeploymentTypeStruct],
+			fields[mysqlServerServerNameStruct],
+			fields[mysqlServerClusterIDStruct],
+			fields[mysqlServerHostIPStruct],
+			fields[mysqlServerPortNumStruct],
+			fields[mysqlServerDeploymentTypeStruct],
 			err.Error())
 		return
 	}
@@ -330,11 +321,11 @@ func AddMySQLServer(c *gin.Context) {
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAddMySQLServer, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddMySQLServer,
-		fields[msServerNameStruct],
-		fields[msClusterIDStruct],
-		fields[msHostIPStruct],
-		fields[msPortNumStruct],
-		fields[msDeploymentTypeStruct],
+		fields[mysqlServerServerNameStruct],
+		fields[mysqlServerClusterIDStruct],
+		fields[mysqlServerHostIPStruct],
+		fields[mysqlServerPortNumStruct],
+		fields[mysqlServerDeploymentTypeStruct],
 	)
 }
 
@@ -346,9 +337,9 @@ func AddMySQLServer(c *gin.Context) {
 func UpdateMySQLServerByID(c *gin.Context) {
 	var fields map[string]interface{}
 	// get param
-	idStr := c.Param(msIDJSON)
+	idStr := c.Param(mysqlServerIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, msIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerIDJSON)
 		return
 	}
 	id, err := strconv.Atoi(idStr)
@@ -368,13 +359,13 @@ func UpdateMySQLServerByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	_, clusterIDExists := fields[msClusterIDStruct]
-	_, serverNameExists := fields[msServerNameStruct]
-	_, hostIPExists := fields[msHostIPStruct]
-	_, portNumExists := fields[msPortNumStruct]
-	_, deploymentTypeExists := fields[msDeploymentTypeStruct]
-	_, versionExists := fields[msVersionStruct]
-	_, delFlagExists := fields[delFlagStruct]
+	_, clusterIDExists := fields[mysqlServerClusterIDStruct]
+	_, serverNameExists := fields[mysqlServerServerNameStruct]
+	_, hostIPExists := fields[mysqlServerHostIPStruct]
+	_, portNumExists := fields[mysqlServerPortNumStruct]
+	_, deploymentTypeExists := fields[mysqlServerDeploymentTypeStruct]
+	_, versionExists := fields[mysqlServerVersionStruct]
+	_, delFlagExists := fields[envDelFlagStruct]
 	if !clusterIDExists &&
 		!serverNameExists &&
 		!hostIPExists &&
@@ -385,13 +376,13 @@ func UpdateMySQLServerByID(c *gin.Context) {
 		resp.ResponseNOK(
 			c, message.ErrFieldNotExists,
 			fmt.Sprintf("%s, %s, %s, %s, %s, %s and %s",
-				fields[msClusterIDStruct],
-				fields[msServerNameStruct],
-				fields[msHostIPStruct],
-				fields[msPortNumStruct],
-				fields[msDeploymentTypeStruct],
-				fields[msVersionStruct],
-				fields[delFlagStruct]))
+				fields[mysqlServerClusterIDStruct],
+				fields[mysqlServerServerNameStruct],
+				fields[mysqlServerHostIPStruct],
+				fields[mysqlServerPortNumStruct],
+				fields[mysqlServerDeploymentTypeStruct],
+				fields[mysqlServerVersionStruct],
+				fields[envDelFlagStruct]))
 		return
 	}
 	// init service
@@ -411,7 +402,7 @@ func UpdateMySQLServerByID(c *gin.Context) {
 	// resp
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataUpdateMySQLServer, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.DebugMetadataUpdateMySQLServer, fields[msServerNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.DebugMetadataUpdateMySQLServer, fields[mysqlServerServerNameStruct])
 }
 
 // TODO: Modify Swagger comment
@@ -424,9 +415,9 @@ func DeleteMySQLServerByID(c *gin.Context) {
 	var fields map[string]interface{}
 
 	// get param
-	idStr := c.Param(msIDJSON)
+	idStr := c.Param(mysqlServerIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, msIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerIDJSON)
 		return
 	}
 	id, err := strconv.Atoi(idStr)
@@ -453,5 +444,5 @@ func DeleteMySQLServerByID(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataDeleteMySQLServer, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteMySQLServer, fields[msServerNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteMySQLServer, fields[mysqlServerServerNameStruct])
 }

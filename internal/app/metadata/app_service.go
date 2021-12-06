@@ -20,7 +20,7 @@ type AppService struct {
 
 // NewAppService returns a new *AppService
 func NewAppService(repo metadata.AppRepo) *AppService {
-	return &AppService{repo, []metadata.App{}, []metadata.DB{}}
+	return &AppService{AppRepo: repo}
 }
 
 // NewAppServiceWithDefault returns a new *AppService with default repository
@@ -31,6 +31,11 @@ func NewAppServiceWithDefault() *AppService {
 // GetApps returns apps of the service
 func (as *AppService) GetApps() []metadata.App {
 	return as.Apps
+}
+
+// GetApps returns dbs of the service
+func (as *AppService) GetDBs() []metadata.DB {
+	return as.DBs
 }
 
 // GetAll gets all apps from the middleware
@@ -49,6 +54,7 @@ func (as *AppService) GetByID(id int) error {
 		return err
 	}
 
+	as.Apps = nil
 	as.Apps = append(as.Apps, entity)
 
 	return err
@@ -61,6 +67,7 @@ func (as *AppService) GetAppByName(appName string) error {
 		return err
 	}
 
+	as.Apps = nil
 	as.Apps = append(as.Apps, app)
 
 	return nil
@@ -68,13 +75,11 @@ func (as *AppService) GetAppByName(appName string) error {
 
 // GetDBsByID gets databases that the app uses
 func (as *AppService) GetDBsByID(id int) error {
-	dbs, err := as.AppRepo.GetDBsByID(id)
-	if err != nil {
-		return err
-	}
+	var err error
 
-	as.DBs = dbs
-	return nil
+	as.DBs, err = as.AppRepo.GetDBsByID(id)
+
+	return err
 }
 
 // Create creates an app in the middleware
@@ -101,7 +106,9 @@ func (as *AppService) Create(fields map[string]interface{}) error {
 		return err
 	}
 
+	as.Apps = nil
 	as.Apps = append(as.Apps, app)
+
 	return nil
 }
 
@@ -124,6 +131,11 @@ func (as *AppService) Update(id int, fields map[string]interface{}) error {
 
 // Delete deletes the app of given id in the middleware
 func (as *AppService) Delete(id int) error {
+	err := as.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return as.AppRepo.Delete(id)
 }
 

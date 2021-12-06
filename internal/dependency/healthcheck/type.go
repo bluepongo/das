@@ -2,7 +2,28 @@ package healthcheck
 
 import (
 	"time"
+
+	"github.com/romberli/das/internal/dependency/metadata"
 )
+
+type OperationInfo interface {
+	// GetOperationID returns the operation identity
+	GetOperationID() int
+	// GetApps returns the apps
+	GetApps() []metadata.App
+	// GetMySQLServer returns the mysql server
+	GetMySQLServer() metadata.MySQLServer
+	// GetMonitorSystem returns the monitor system
+	GetMonitorSystem() metadata.MonitorSystem
+	// GetStartTime returns the start time
+	GetStartTime() time.Time
+	// GetEndTime returns the end time
+	GetEndTime() time.Time
+	// GetStep returns the step
+	GetStep() time.Duration
+	// GetAppName returns the app name in string, it will concat all the app names with comma
+	GetAppName() string
+}
 
 type ItemConfig interface {
 	// GetID returns the identity

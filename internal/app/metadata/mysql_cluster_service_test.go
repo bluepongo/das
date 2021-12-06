@@ -1,8 +1,6 @@
 package metadata
 
 import (
-	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/romberli/go-util/common"
@@ -10,15 +8,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func initNewMySQLService() *MySQLClusterService {
-	initMySQLClusterRepo()
-	return NewMySQLClusterService(mysqlClusterRepo)
+var testMySQLClusterService *MySQLClusterService
+
+func init() {
+	testInitDASMySQLPool()
+	testMySQLClusterService = NewMySQLClusterServiceWithDefault()
 }
 
 func TestMySQLClusterServiceAll(t *testing.T) {
-	TestMySQLClusterService_GetMySQLServers(t)
+	TestMySQLClusterService_GetMySQLClusters(t)
 	TestMySQLClusterService_GetAll(t)
 	TestMySQLClusterService_GetByID(t)
+	TestMySQLClusterService_GetByName(t)
+	TestMySQLClusterService_GetMySQLServersByID(t)
+	TestMySQLClusterService_GetMasterServersByID(t)
+	TestMySQLClusterService_GetDBsByID(t)
+	TestMySQLClusterService_GetAppOwnersByID(t)
+	TestMySQLClusterService_GetDBOwnersByID(t)
+	TestMySQLClusterService_GetAllOwnersByID(t)
 	TestMySQLClusterService_Create(t)
 	TestMySQLClusterService_Update(t)
 	TestMySQLClusterService_Delete(t)
@@ -26,167 +33,139 @@ func TestMySQLClusterServiceAll(t *testing.T) {
 	TestMySQLClusterService_MarshalWithFields(t)
 }
 
-func TestMySQLClusterService_GetMySQLServers(t *testing.T) {
+func TestMySQLClusterService_GetMySQLClusters(t *testing.T) {
 	asst := assert.New(t)
 
-	s := initNewMySQLService()
-	err := s.GetAll()
-	asst.Nil(err, "test GetEnvs() failed")
-	entities := s.GetMySQLClusters()
-	asst.Greater(len(entities), constant.ZeroInt, "test GetEnvs() failed")
+	err := testMySQLClusterService.GetAll()
+	asst.Nil(err, common.CombineMessageWithError("test GetMySQLServers() failed", err))
+	asst.Equal(2, len(testMySQLClusterService.GetMySQLClusters()), "test GetMySQLServers() failed")
 }
 
 func TestMySQLClusterService_GetAll(t *testing.T) {
 	asst := assert.New(t)
 
-	s := initNewMySQLService()
-	err := s.GetAll()
-	asst.Nil(err, "test GetEnvs() failed")
-	entities := s.GetMySQLClusters()
-	asst.Greater(len(entities), constant.ZeroInt, "test GetEnvs() failed")
+	err := testMySQLClusterService.GetAll()
+	asst.Nil(err, common.CombineMessageWithError("test GetAll() failed", err))
+	asst.Equal(2, len(testMySQLClusterService.GetMySQLClusters()), "test GetAll() failed")
 }
 
 func TestMySQLClusterService_GetByID(t *testing.T) {
 	asst := assert.New(t)
 
-	s := initNewMySQLService()
-	err := s.GetByID(1)
-	asst.Nil(err, "test GetByID() failed")
-	id := s.MySQLClusters[constant.ZeroInt].Identity()
-	asst.Equal("1", id, "test GetByID() failed")
+	err := testMySQLClusterService.GetByID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetByID() failed", err))
+	asst.Equal(testMySQLClusterID, testMySQLClusterService.GetMySQLClusters()[constant.ZeroInt].Identity(), "test GetByID() failed")
 }
 
 func TestMySQLClusterService_GetByName(t *testing.T) {
 	asst := assert.New(t)
 
-	s := initNewMySQLService()
-	err := s.GetByName("name")
-	asst.Nil(err, "test GetByName() failed")
-	id := s.MySQLClusters[constant.ZeroInt].Identity()
-	asst.Equal("name", id, "test GetByName() failed")
+	err := testMySQLClusterService.GetByName(testMySQLClusterClusterName)
+	asst.Nil(err, common.CombineMessageWithError("test GetByName() failed", err))
+	asst.Equal(testMySQLClusterClusterName, testMySQLClusterService.GetMySQLClusters()[constant.ZeroInt].GetClusterName(), "test GetByName() failed")
+}
+
+func TestMySQLClusterService_GetMySQLServersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testMySQLClusterService.GetMySQLServersByID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetMySQLServersByID() failed", err))
+	asst.Equal(1, len(testMySQLClusterService.GetMySQLServers()), "test GetMySQLServersByID() failed")
+}
+
+func TestMySQLClusterService_GetMasterServersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testMySQLClusterService.GetMasterServersByID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetMasterServersByID() failed", err))
+	asst.Equal(1, len(testMySQLClusterService.GetMySQLServers()), "test GetMasterServersByID() failed")
 }
 
 func TestMySQLClusterService_GetDBsByID(t *testing.T) {
 	asst := assert.New(t)
 
-	s := initNewMySQLService()
-	err := s.GetDBsByID(1)
-	asst.Nil(err, "test GetDBsByID() failed")
-	id := s.Databases[constant.ZeroInt].Identity()
-	asst.Equal(1, id, "test GetByID() failed")
+	err := testMySQLClusterService.GetDBsByID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBsByID() failed", err))
+	asst.Equal(2, len(testMySQLClusterService.GetDBs()), "test GetDBsByID() failed")
 }
 
 func TestMySQLClusterService_GetAppOwnersByID(t *testing.T) {
 	asst := assert.New(t)
 
-	s := initNewMySQLService()
-	err := s.GetAppOwnersByID(1)
-	asst.Nil(err, "test GetAppOwnersByID() failed")
-	id := s.Owners[constant.ZeroInt].Identity()
-	asst.Equal(1, id, "test GetByID() failed")
+	err := testMySQLClusterService.GetAppOwnersByID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetAppOwnersByID() failed", err))
+	asst.Equal(1, testMySQLClusterService.GetOwners()[constant.ZeroInt].Identity(), "test GetAppOwnersByID() failed")
 }
 
 func TestMySQLClusterService_GetDBOwnersByID(t *testing.T) {
 	asst := assert.New(t)
 
-	s := initNewMySQLService()
-	err := s.GetDBOwnersByID(1)
-	asst.Nil(err, "test GetDBOwnersByID() failed")
-	id := s.Owners[constant.ZeroInt].Identity()
-	asst.Equal(1, id, "test GetByID() failed")
+	err := testMySQLClusterService.GetDBOwnersByID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBOwnersByID() failed", err))
+	asst.Equal(1, testMySQLClusterService.GetOwners()[constant.ZeroInt].Identity(), "test GetDBOwnersByID() failed")
 }
 
 func TestMySQLClusterService_GetAllOwnersByID(t *testing.T) {
 	asst := assert.New(t)
 
-	s := initNewMySQLService()
-	err := s.GetAllOwnersByID(1)
-	asst.Nil(err, "test GetAllOwnersByID() failed")
-	id := s.Owners[constant.ZeroInt].Identity()
-	asst.Equal(1, id, "test GetByID() failed")
+	err := testMySQLClusterService.GetAllOwnersByID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetAllOwnersByID() failed", err))
+	asst.Equal(1, testMySQLClusterService.GetOwners()[constant.ZeroInt].Identity(), "test GetAllOwnersByID() failed")
 }
 
 func TestMySQLClusterService_Create(t *testing.T) {
 	asst := assert.New(t)
 
-	s := initNewMySQLService()
-
-	err := s.Create(map[string]interface{}{
-		clusterNameStruct:         testInsertClusterName,
-		middlewareClusterIDStruct: defaultMySQLClusterInfoMiddlewareClusterID,
-		monitorSystemIDStruct:     defaultMySQLClusterInfoMonitorSystemID,
-		ownerIDStruct:             defaultMySQLClusterInfoOwnerID,
-		envIDStruct:               defaultMySQLClusterInfoEnvID,
+	err := testMySQLClusterService.Create(map[string]interface{}{
+		mysqlClusterClusterNameStruct:         testMySQLClusterNewClusterName,
+		mysqlCLusterMiddlewareClusterIDStruct: testMySQLClusterMiddlewareClusterID,
+		mysqlClusterMonitorSystemIDStruct:     testMySQLClusterMonitorSystemID,
+		mysqlClusterOwnerIDStruct:             testMySQLClusterOwnerID,
+		mysqlClusterEnvIDStruct:               testMySQLClusterEnvID,
 	})
 	asst.Nil(err, common.CombineMessageWithError("test Create() failed", err))
 	// delete
-	err = deleteMySQLClusterByID(s.MySQLClusters[0].Identity())
+	err = testMySQLClusterService.Delete(testMySQLClusterService.GetMySQLClusters()[constant.ZeroInt].Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Create() failed", err))
 }
 
 func TestMySQLClusterService_Update(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := createMySQLCluster()
+	entity, err := testCreateMySQLCluster()
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
-	s := initNewMySQLService()
-	err = s.Update(entity.Identity(), map[string]interface{}{clusterNameStruct: testUpdateClusterName})
+
+	err = testMySQLClusterService.Update(entity.Identity(), map[string]interface{}{mysqlClusterClusterNameStruct: testMySQLClusterUpdateClusterName})
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
-	err = s.GetByID(entity.Identity())
+	err = testMySQLClusterService.GetByID(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
-	mysqlClusterName := s.GetMySQLClusters()[constant.ZeroInt].GetClusterName()
-	asst.Equal(testUpdateClusterName, mysqlClusterName)
+	asst.Equal(testMySQLClusterUpdateClusterName, testMySQLClusterService.GetMySQLClusters()[constant.ZeroInt].GetClusterName(), "test Update() failed")
 	// delete
-	err = deleteMySQLClusterByID(s.MySQLClusters[0].Identity())
+	err = testMySQLClusterService.Delete(testMySQLClusterService.GetMySQLClusters()[constant.ZeroInt].Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
 }
 
 func TestMySQLClusterService_Delete(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := createMySQLCluster()
+	entity, err := testCreateMySQLCluster()
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
-	s := initNewMySQLService()
-	err = s.Delete(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
-	// delete
-	err = deleteMySQLClusterByID(entity.Identity())
+	err = testMySQLClusterService.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
 }
 
 func TestMySQLClusterService_Marshal(t *testing.T) {
-	var entitiesUnmarshal []*MySQLClusterInfo
-
 	asst := assert.New(t)
 
-	s := initNewMySQLService()
-	err := s.GetAll()
+	jsonBytes, err := testMySQLClusterService.Marshal()
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
-	data, err := s.Marshal()
-	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
-	err = json.Unmarshal(data, &entitiesUnmarshal)
-	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
-	entities := s.GetMySQLClusters()
-	for i := 0; i < len(entities); i++ {
-		entity := entities[i]
-		entityUnmarshal := entitiesUnmarshal[i]
-		asst.True(equalMySQLClusterInfo(entity.(*MySQLClusterInfo), entityUnmarshal), common.CombineMessageWithError("test Marshal() failed", err))
-	}
+	t.Log(string(jsonBytes))
 }
 
 func TestMySQLClusterService_MarshalWithFields(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := createMySQLCluster()
+	jsonBytes, err := testMySQLClusterService.MarshalWithFields(mysqlClusterMySQLClustersStruct)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
-	s := initNewMySQLService()
-	err = s.GetByID(entity.Identity())
-	dataService, err := s.MarshalWithFields(clusterNameStruct)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
-	dataEntity, err := entity.MarshalJSONWithFields(clusterNameStruct)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
-	asst.Equal(string(dataService), fmt.Sprintf("[%s]", string(dataEntity)))
-	// delete
-	err = deleteMySQLClusterByID(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
+	t.Log(string(jsonBytes))
 }

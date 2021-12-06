@@ -11,10 +11,11 @@ import (
 
 const (
 	middlewareServerClusterIDStruct      = "ClusterID"
-	middlewareServerNameStruct           = "ServerName"
+	middlewareServerServerNameStruct     = "ServerName"
 	middlewareServerMiddlewareRoleStruct = "MiddlewareRole"
 	middlewareServerHostIPStruct         = "HostIP"
 	middlewareServerPortNumStruct        = "PortNum"
+	middlewareServerDelFlagStruct        = "DelFlag"
 )
 
 var _ metadata.MiddlewareServer = (*MiddlewareServerInfo)(nil)
