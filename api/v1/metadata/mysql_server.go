@@ -61,7 +61,6 @@ func GetMySQLServer(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerAll)
 }
 
-// TODO: Modify Swagger comment
 // @Tags mysql server
 // @Summary get mysql servers by cluster id
 // @Produce  application/json
@@ -262,7 +261,7 @@ func GetMySQLClusterByMySQLServerID(c *gin.Context) {
 // @Tags mysql server
 // @Summary add a new mysql server
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"create_time":"2021-02-24T02:47:19.589172+08:00","del_flag":0,"last_update_time":"2021-02-24T02:47:19.589172+08:00","id":93,"cluster_id":0,"host_ip":"192.168.1.1","port_num":3306,"deployment_type":0,"version":""}]}"
+// @Success 200 {string} string "{"code": 200, "data": [{"create_time":"2021-02-24T02:47:19.589172+08:00","del_flag":0,"last_update_time":"2021-02-24T02:47:19.589172+08:00","id":93,"cluster_id":0,"host_ip":"192.168.1.1","port_num":3306,"deployment_type":0,"version":"5.7.35"}]}"
 // @Router /api/v1/metadata/mysql-server [post]
 func AddMySQLServer(c *gin.Context) {
 	var fields map[string]interface{}
@@ -332,7 +331,7 @@ func AddMySQLServer(c *gin.Context) {
 // @Tags mysql server
 // @Summary update mysql server by id
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"last_update_time":"2021-02-24T02:47:19.589172+08:00","id":93,"cluster_id":0,"host_ip":"192.168.1.1","version":"","del_flag":1,"create_time":"2021-02-24T02:47:19.589172+08:00","port_num":3306,"deployment_type":0}]}"
+// @Success 200 {string} string "{"code": 200, "data": [{"last_update_time":"2021-02-24T02:47:19.589172+08:00","id":93,"cluster_id":0,"host_ip":"192.168.1.1","version":"5.7.35","del_flag":1,"create_time":"2021-02-24T02:47:19.589172+08:00","port_num":3306,"deployment_type":0}]}"
 // @Router /api/v1/metadata/mysql-server/:id [post]
 func UpdateMySQLServerByID(c *gin.Context) {
 	var fields map[string]interface{}
@@ -405,11 +404,10 @@ func UpdateMySQLServerByID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.DebugMetadataUpdateMySQLServer, fields[mysqlServerServerNameStruct])
 }
 
-// TODO: Modify Swagger comment
 // @Tags mysql server
 // @Summary get mysql servers by host info
 // @Produce  application/json
-// @Success
+// @Success 200 {string} string "{"code": 200, "data": [{"last_update_time":"2021-02-24T02:47:19.589172+08:00","id":93,"cluster_id":0,"host_ip":"192.168.1.1","version":"5.7.35","del_flag":1,"create_time":"2021-02-24T02:47:19.589172+08:00","port_num":3306,"deployment_type":0}]}"
 // @Router /api/v1/metadata/mysql-server/:id [get]
 func DeleteMySQLServerByID(c *gin.Context) {
 	var fields map[string]interface{}

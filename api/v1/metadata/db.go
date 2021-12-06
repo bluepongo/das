@@ -140,7 +140,7 @@ func GetDBByID(c *gin.Context) {
 // @Summary get database by db name and cluster info
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "owner_id": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router /api/v1/metadata/db/name-and-cluster-info[get]
+// @Router /api/v1/metadata/db/name-and-cluster-info [get]
 func GetDBByNameAndClusterInfo(c *gin.Context) {
 	var dbInfo *metadata.DBInfo
 	// get data

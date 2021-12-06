@@ -192,7 +192,7 @@ func GetUserByAccountName(c *gin.Context) {
 // @Summary get user by Email
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
-// @Router /api/v1/metadata"/user/email/:email [get]
+// @Router /api/v1/metadata/user/email/:email [get]
 func GetUserByEmail(c *gin.Context) {
 	// get param
 	email := c.Param(emailJSON)
