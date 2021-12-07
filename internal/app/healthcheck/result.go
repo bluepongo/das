@@ -37,6 +37,7 @@ const (
 	resultTableRowsHighStruct                    = "TableRowsHigh"
 	resultTableSizeDataStruct                    = "TableSizeData"
 	resultTableSizeHighStruct                    = "TableSizeHigh"
+	resultSlowQueryData                          = "SlowQueryData"
 	resultSlowQueryAdvice                        = "SlowQueryAdvice"
 	resultAccuracyReviewStruct                   = "AccuracyReview"
 	resultDelFlagStruct                          = "DelFlag"
@@ -66,6 +67,7 @@ var defaultIgnoreList = []string{
 	resultTableRowsHighStruct,
 	resultTableSizeDataStruct,
 	resultTableSizeHighStruct,
+	resultSlowQueryData,
 	resultAccuracyReviewStruct,
 	resultDelFlagStruct,
 	resultLastUpdateTimeStruct,
@@ -529,6 +531,7 @@ func (r *Result) getString(ignoreList []string) string {
 
 	for i := 0; i < inVal.NumField(); i++ {
 		fieldType := inVal.Type().Field(i)
+		fieldVal := inVal.Field(i)
 		fieldTag := fieldType.Tag.Get(constant.DefaultMarshalTag)
 		if fieldTag != constant.EmptyString && !common.StringInSlice(ignoreList, fieldType.Name) {
 			fieldStrTemplate = `"%s":"%s",`
@@ -537,13 +540,14 @@ func (r *Result) getString(ignoreList []string) string {
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
 				reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 				fieldStrTemplate = `"%s":%d,`
-			case reflect.Bool, reflect.String:
-				if fieldType.Name == resultDBConfigAdviceStruct || fieldType.Name == resultSlowQueryAdvice {
+			case reflect.String:
+				if fieldVal.String() != constant.EmptyString &&
+					(fieldType.Name == resultDBConfigAdviceStruct || fieldType.Name == resultSlowQueryAdvice) {
 					fieldStrTemplate = `"%s":%s,`
 				}
 			}
 
-			s += fmt.Sprintf(fieldStrTemplate, fieldTag, inVal.Field(i))
+			s += fmt.Sprintf(fieldStrTemplate, fieldTag, fieldVal)
 		}
 	}
 
