@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	resultIDStruct                               = "ID"
 	resultOperationIDStruct                      = "OperationID"
 	resultDBConfigDataStruct                     = "DBConfigData"
+	resultDBConfigAdviceStruct                   = "DBConfigAdvice"
 	resultAvgBackupFailedRatioDataStruct         = "AvgBackupFailedRatioData"
 	resultAvgBackupFailedRatioHighStruct         = "AvgBackupFailedRatioHigh"
 	resultStatisticFailedRatioDataStruct         = "StatisticFailedRatioData"
@@ -37,6 +37,7 @@ const (
 	resultTableRowsHighStruct                    = "TableRowsHigh"
 	resultTableSizeDataStruct                    = "TableSizeData"
 	resultTableSizeHighStruct                    = "TableSizeHigh"
+	resultSlowQueryAdvice                        = "SlowQueryAdvice"
 	resultAccuracyReviewStruct                   = "AccuracyReview"
 	resultDelFlagStruct                          = "DelFlag"
 	resultCreateTimeStruct                       = "CreateTime"
@@ -75,6 +76,8 @@ type Result struct {
 	healthcheck.DASRepo
 	ID                                int       `middleware:"id" json:"id"`
 	OperationID                       int       `middleware:"operation_id" json:"operation_id"`
+	HostIP                            string    `middleware:"host_ip" json:"host_ip"`
+	PortNum                           int       `middleware:"port_num" json:"port_num"`
 	WeightedAverageScore              int       `middleware:"weighted_average_score" json:"weighted_average_score"`
 	DBConfigScore                     int       `middleware:"db_config_score" json:"db_config_score"`
 	DBConfigData                      string    `middleware:"db_config_data" json:"db_config_data"`
@@ -119,7 +122,7 @@ type Result struct {
 }
 
 // NewResult returns a new *Result
-func NewResult(repo healthcheck.DASRepo, operationID int, weightedAverageScore int, dbConfigScore int, dbConfigData string, dbConfigAdvice string,
+func NewResult(repo healthcheck.DASRepo, operationID int, hostIP string, portNum int, weightedAverageScore int, dbConfigScore int, dbConfigData string, dbConfigAdvice string,
 	avgBackupFailedRatioScore int, avgBackupFailedRatioData string, avgBackupFailedRatioHigh string, statisticScore int, statisticData string, statisticHigh string,
 	cpuUsageScore int, cpuUsageData string, cpuUsageHigh string, ioUtilScore int, ioUtilData string, ioUtilHigh string,
 	diskCapacityUsageScore int, diskCapacityUsageData string, diskCapacityUsageHigh string,
@@ -132,6 +135,8 @@ func NewResult(repo healthcheck.DASRepo, operationID int, weightedAverageScore i
 	return &Result{
 		DASRepo:                           repo,
 		OperationID:                       operationID,
+		HostIP:                            hostIP,
+		PortNum:                           portNum,
 		WeightedAverageScore:              weightedAverageScore,
 		DBConfigScore:                     dbConfigScore,
 		DBConfigData:                      dbConfigData,
@@ -183,7 +188,7 @@ func NewEmptyResultWithGlobal() *Result {
 }
 
 // NewResultWithDefault returns a new *Result with default DASRepo
-func NewResultWithDefault(operationID int, weightedAverageScore int, dbConfigScore int,
+func NewResultWithDefault(operationID int, hostIP string, portNum int, weightedAverageScore int, dbConfigScore int,
 	avgBackupFailedRatioScore int, statisticFailedRatioScore int,
 	cpuUsageScore int, ioUtilScore int, diskCapacityUsageScore int, connectionUsageScore int,
 	averageActiveSessionPercentsScore int, cacheMissRatioScore int, tableRowsScore int, tableSizeScore int,
@@ -191,6 +196,8 @@ func NewResultWithDefault(operationID int, weightedAverageScore int, dbConfigSco
 	return &Result{
 		DASRepo:                           NewDASRepoWithGlobal(),
 		OperationID:                       operationID,
+		HostIP:                            hostIP,
+		PortNum:                           portNum,
 		WeightedAverageScore:              weightedAverageScore,
 		DBConfigScore:                     dbConfigScore,
 		DBConfigData:                      constant.DefaultRandomString,
@@ -234,13 +241,15 @@ func NewResultWithDefault(operationID int, weightedAverageScore int, dbConfigSco
 
 // NewEmptyResult returns an empty Result
 func NewEmptyResult() *Result {
-	return NewEmptyResultWithOperationID(constant.ZeroInt)
+	return NewEmptyResultWithOperationIDAndHostInfo(constant.ZeroInt, constant.EmptyString, constant.ZeroInt)
 }
 
-// NewEmptyResultWithOperationID returns an empty Result but with operation identity
-func NewEmptyResultWithOperationID(operationID int) *Result {
+// NewEmptyResultWithOperationIDAndHostInfo returns an empty Result but with operation identity and host information
+func NewEmptyResultWithOperationIDAndHostInfo(operationID int, hostIP string, portNum int) *Result {
 	return &Result{
 		OperationID: operationID,
+		HostIP:      hostIP,
+		PortNum:     portNum,
 	}
 }
 
@@ -252,6 +261,16 @@ func (r *Result) Identity() int {
 // GetOperationID returns the OperationID
 func (r *Result) GetOperationID() int {
 	return r.OperationID
+}
+
+// Identity returns the host ip
+func (r *Result) GetHostIP() string {
+	return r.HostIP
+}
+
+// Identity returns the port number
+func (r *Result) GetPortNum() int {
+	return r.PortNum
 }
 
 // GetWeightedAverageScore returns the WeightedAverageScore
@@ -503,21 +522,28 @@ func (r *Result) setWithEmptyValue() {
 }
 
 func (r *Result) getString(ignoreList []string) string {
+	var fieldStrTemplate string
+
 	s := constant.LeftBraceString
 	inVal := reflect.ValueOf(r).Elem()
 
 	for i := 0; i < inVal.NumField(); i++ {
 		fieldType := inVal.Type().Field(i)
-		fieldVal := inVal.Field(i)
 		fieldTag := fieldType.Tag.Get(constant.DefaultMarshalTag)
 		if fieldTag != constant.EmptyString && !common.StringInSlice(ignoreList, fieldType.Name) {
-			fieldStr := fmt.Sprintf(`"%s":%v,`, fieldTag, inVal.Field(i))
-			if fieldType.Name == resultCreateTimeStruct || fieldType.Name == resultLastUpdateTimeStruct ||
-				fieldVal.IsZero() || fieldVal.String() == constant.NullString {
-				fieldStr = fmt.Sprintf(`"%s":"%v",`, fieldTag, fieldVal)
+			fieldStrTemplate = `"%s":"%s",`
+
+			switch fieldType.Type.Kind() {
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+				reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+				fieldStrTemplate = `"%s":%d,`
+			case reflect.Bool, reflect.String:
+				if fieldType.Name == resultDBConfigAdviceStruct || fieldType.Name == resultSlowQueryAdvice {
+					fieldStrTemplate = `"%s":%s,`
+				}
 			}
 
-			s += fieldStr
+			s += fmt.Sprintf(fieldStrTemplate, fieldTag, inVal.Field(i))
 		}
 	}
 

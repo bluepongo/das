@@ -120,7 +120,7 @@ func (dr *DASRepo) LoadEngineConfig() (healthcheck.EngineConfig, error) {
 // GetResultByOperationID gets a Result by the operationID from the middleware
 func (dr *DASRepo) GetResultByOperationID(operationID int) (healthcheck.Result, error) {
 	sql := `
-		select id, operation_id, weighted_average_score, db_config_score, db_config_data, 
+		select id, operation_id, host_ip, port_num, weighted_average_score, db_config_score, db_config_data,
 		db_config_advice, avg_backup_failed_ratio_score, avg_backup_failed_ratio_data, 
 		avg_backup_failed_ratio_high, statistics_failed_ratio_score, statistics_failed_ratio_data, 
 		statistics_failed_ratio_high, cpu_usage_score, cpu_usage_data, cpu_usage_high,
@@ -203,7 +203,7 @@ func (dr *DASRepo) UpdateOperationStatus(operationID int, status int, message st
 
 // SaveResult saves the result in the middleware
 func (dr *DASRepo) SaveResult(result healthcheck.Result) error {
-	sql := `insert into t_hc_result(operation_id, weighted_average_score, db_config_score, db_config_data, 
+	sql := `insert into t_hc_result(operation_id, host_ip, port_num, weighted_average_score, db_config_score, db_config_data,
 		db_config_advice, avg_backup_failed_ratio_score, avg_backup_failed_ratio_data, 
 		avg_backup_failed_ratio_high, statistics_failed_ratio_score, statistics_failed_ratio_data, 
 		statistics_failed_ratio_high, cpu_usage_score, cpu_usage_data, cpu_usage_high, 
@@ -214,10 +214,10 @@ func (dr *DASRepo) SaveResult(result healthcheck.Result) error {
 		cache_miss_ratio_high, table_rows_score, table_rows_data, table_rows_high,
 		table_size_score, table_size_data, table_size_high, slow_query_score,
 		slow_query_data, slow_query_advice, accuracy_review)
-		values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+		values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 	`
 	log.Debugf("healthCheck DASRepo.SaveResult() insert sql: \n%s\nplaceholders: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %ss, %s, %s, %s",
-		sql, result.GetOperationID(), result.GetWeightedAverageScore(),
+		sql, result.GetOperationID(), result.GetHostIP(), result.GetPortNum(), result.GetWeightedAverageScore(),
 		result.GetDBConfigScore(), result.GetDBConfigData(), result.GetDBConfigAdvice(),
 		result.GetAvgBackupFailedRatioScore(), result.GetAvgBackupFailedRatioData(), result.GetAvgBackupFailedRatioHigh(),
 		result.GetStatisticFailedRatioScore(), result.GetStatisticFailedRatioData(), result.GetStatisticFailedRatioHigh(),
@@ -232,7 +232,7 @@ func (dr *DASRepo) SaveResult(result healthcheck.Result) error {
 		result.GetSlowQueryScore(), result.GetSlowQueryData(), result.GetSlowQueryAdvice(), result.GetAccuracyReview())
 
 	// execute
-	_, err := dr.Execute(sql, result.GetOperationID(), result.GetWeightedAverageScore(),
+	_, err := dr.Execute(sql, result.GetOperationID(), result.GetHostIP(), result.GetPortNum(), result.GetWeightedAverageScore(),
 		result.GetDBConfigScore(), result.GetDBConfigData(), result.GetDBConfigAdvice(),
 		result.GetAvgBackupFailedRatioScore(), result.GetAvgBackupFailedRatioData(), result.GetAvgBackupFailedRatioHigh(),
 		result.GetStatisticFailedRatioScore(), result.GetStatisticFailedRatioData(), result.GetStatisticFailedRatioHigh(),

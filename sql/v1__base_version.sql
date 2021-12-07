@@ -191,6 +191,8 @@ CREATE TABLE `t_hc_default_engine_config` (
 CREATE TABLE `t_hc_result` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `operation_id` int(11) NOT NULL COMMENT '操作ID',
+  `host_ip` varchar(100) NOT NULL COMMENT '服务器IP',
+  `port_num` int(11) NOT NULL COMMENT '端口',
   `weighted_average_score` int(11) NOT NULL COMMENT '加权平均分',
   `db_config_score` int(11) NOT NULL COMMENT '数据库参数配置评分',
   `db_config_data` mediumtext DEFAULT NULL COMMENT '数据库参数配置数据',
@@ -234,8 +236,9 @@ CREATE TABLE `t_hc_result` (
   `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx01_operation_id` (`operation_id`),
-  KEY `idx02_operation_id_weighted_average_score` (`operation_id`, `weighted_average_score`),
-  KEY `idx03_weighted_average_score` (`weighted_average_score`)
+  KEY `idx02_host_ip_port_num` (`host_ip`, `port_num`),
+  KEY `idx03_operation_id_weighted_average_score` (`operation_id`, `weighted_average_score`),
+  KEY `idx04_weighted_average_score` (`weighted_average_score`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '健康检查结果表';
 
 CREATE TABLE `t_hc_operation_info` (
