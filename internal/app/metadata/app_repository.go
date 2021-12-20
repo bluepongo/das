@@ -141,7 +141,7 @@ func (ar *AppRepo) GetAppByName(appName string) (metadata.App, error) {
 
 // GetDBsByID gets databases that app uses
 func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
-	sql := `select * from t_meta_db_info where id in (select db_id from t_meta_app_db_map where app_id = ?);`
+	sql := `select * from t_meta_db_info where id in (select db_id from t_meta_app_db_map where app_id = ? and del_flag = 0) and del_flag = 0;`
 	log.Debugf("metadata AppRepo.GetDBsByID() select sql: %s", sql)
 	result, err := ar.Execute(sql, id)
 	if err != nil {
