@@ -123,8 +123,8 @@ func (ss *SMTPSender) sendMail(from string, toList, ccList []string, message []b
 	if err != nil {
 		return err
 	}
-	if len(toList) == 0 {
-		return fmt.Errorf("Email toList cant be null")
+	if len(toList) == constant.ZeroInt {
+		return fmt.Errorf("toList could not be empty")
 	}
 	for _, to := range toList {
 		err = ss.GetClient().Rcpt(to)
