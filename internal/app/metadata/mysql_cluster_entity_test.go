@@ -120,8 +120,10 @@ func TestMySQLClusterInfo_GetAppOwners(t *testing.T) {
 	asst := assert.New(t)
 
 	owners, err := testMySQLClusterInfo.GetAppOwners()
+	// fmt.Print(owners[0].Identity(), owners[1].Identity(), owners[2].Identity())
 	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
 	asst.Equal(1, owners[constant.ZeroInt].Identity(), "test GetAppOwners() failed", err)
+	asst.Equal(3, len(owners), "test GetAppOwners() failed", err)
 }
 
 func TestMySQLClusterInfo_GetDBOwners(t *testing.T) {
@@ -136,8 +138,9 @@ func TestMySQLClusterInfo_GetAllOwners(t *testing.T) {
 	asst := assert.New(t)
 
 	owners, err := testMySQLClusterInfo.GetAllOwners()
+	// fmt.Print(owners[0].Identity(), owners[1].Identity(), owners[2].Identity())
 	asst.Nil(err, common.CombineMessageWithError("test GetAllOwners() failed", err))
-	asst.Equal(1, owners[constant.ZeroInt].Identity(), "test GetAllOwners() failed", err)
+	asst.Equal(3, len(owners), "test GetAllOwners() failed", err)
 }
 
 func TestMySQLClusterInfo_Set(t *testing.T) {
