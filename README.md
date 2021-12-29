@@ -22,9 +22,12 @@ The following software is required to work with the das codebase and build it lo
 
 To check the source code and build binaries, you can simply run:
 
+Build
 ```
 go build -o das main.go
-# Start das
+```
+Start
+```
 ./das start --daemon=true --config=./config/das.yaml
 ```
 
