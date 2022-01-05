@@ -275,46 +275,46 @@ func (dec DefaultEngineConfig) Validate() error {
 	itemWeightSummary := constant.ZeroInt
 	// validate defaultEngineConfig exits items
 	if len(dec) == constant.ZeroInt {
-		return message.NewMessage(msghc.ErrDefaultEngineEmpty)
+		return message.NewMessage(msghc.ErrHealthcheckDefaultEngineEmpty)
 	}
 	for itemName, defaultItemConfig := range dec {
 		// validate item weight
 		if defaultItemConfig.ItemWeight > defaultHundred || defaultItemConfig.ItemWeight < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrItemWeightItemInvalid, itemName, defaultItemConfig.ItemWeight)
+			return message.NewMessage(msghc.ErrHealthcheckItemWeightItemInvalid, itemName, defaultItemConfig.ItemWeight)
 		}
 		// validate low watermark
 		if defaultItemConfig.LowWatermark < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrLowWatermarkItemInvalid, itemName, defaultItemConfig.LowWatermark)
+			return message.NewMessage(msghc.ErrHealthcheckLowWatermarkItemInvalid, itemName, defaultItemConfig.LowWatermark)
 		}
 		// validate high watermark
 		if defaultItemConfig.HighWatermark < defaultItemConfig.LowWatermark {
-			return message.NewMessage(msghc.ErrHighWatermarkItemInvalid, itemName, defaultItemConfig.HighWatermark)
+			return message.NewMessage(msghc.ErrHealthcheckHighWatermarkItemInvalid, itemName, defaultItemConfig.HighWatermark)
 		}
 		// validate unit
 		if defaultItemConfig.Unit < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrUnitItemInvalid, itemName, defaultItemConfig.Unit)
+			return message.NewMessage(msghc.ErrHealthcheckUnitItemInvalid, itemName, defaultItemConfig.Unit)
 		}
 		// validate score deduction per unit high
 		if defaultItemConfig.ScoreDeductionPerUnitHigh > defaultHundred || defaultItemConfig.ScoreDeductionPerUnitHigh < constant.ZeroInt || defaultItemConfig.ScoreDeductionPerUnitHigh > defaultItemConfig.MaxScoreDeductionHigh {
-			return message.NewMessage(msghc.ErrScoreDeductionPerUnitHighItemInvalid, itemName, defaultItemConfig.ScoreDeductionPerUnitHigh)
+			return message.NewMessage(msghc.ErrHealthcheckScoreDeductionPerUnitHighItemInvalid, itemName, defaultItemConfig.ScoreDeductionPerUnitHigh)
 		}
 		// validate max score deduction high
 		if defaultItemConfig.MaxScoreDeductionHigh > defaultHundred || defaultItemConfig.MaxScoreDeductionHigh < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrMaxScoreDeductionHighItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionHigh)
+			return message.NewMessage(msghc.ErrHealthcheckMaxScoreDeductionHighItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionHigh)
 		}
 		// validate score deduction per unit medium
 		if defaultItemConfig.ScoreDeductionPerUnitMedium > defaultHundred || defaultItemConfig.ScoreDeductionPerUnitMedium < constant.ZeroInt || defaultItemConfig.ScoreDeductionPerUnitMedium > defaultItemConfig.MaxScoreDeductionMedium {
-			return message.NewMessage(msghc.ErrScoreDeductionPerUnitMediumItemInvalid, itemName, defaultItemConfig.ScoreDeductionPerUnitMedium)
+			return message.NewMessage(msghc.ErrHealthcheckScoreDeductionPerUnitMediumItemInvalid, itemName, defaultItemConfig.ScoreDeductionPerUnitMedium)
 		}
 		// validate max score deduction medium
 		if defaultItemConfig.MaxScoreDeductionMedium > defaultHundred || defaultItemConfig.MaxScoreDeductionMedium < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrMaxScoreDeductionMediumItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionMedium)
+			return message.NewMessage(msghc.ErrHealthcheckMaxScoreDeductionMediumItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionMedium)
 		}
 		itemWeightSummary += defaultItemConfig.ItemWeight
 	}
 	// validate item weigh count is 100
 	if itemWeightSummary != defaultHundred {
-		return message.NewMessage(msghc.ErrItemWeightSummaryInvalid, itemWeightSummary)
+		return message.NewMessage(msghc.ErrHealthcheckItemWeightSummaryInvalid, itemWeightSummary)
 	}
 
 	return nil
