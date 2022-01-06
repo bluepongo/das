@@ -2,14 +2,12 @@ CREATE TABLE `t_meta_app_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `app_name` varchar(100) NOT NULL COMMENT '应用系统名称',
   `level` tinyint(4) DEFAULT NULL COMMENT '系统等级: 1-A, 2-B, 3-C',
-  `owner_id` int(11) DEFAULT NULL COMMENT '应用系统主要负责人ID',
   `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
   `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
   `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx01_app_name` (`app_name`),
-  KEY `idx02_level` (`level`),
-  KEY `idx03_owner_id` (`owner_id`)
+  KEY `idx02_level` (`level`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '应用系统信息表';
 
 CREATE TABLE `t_meta_app_db_map` (
@@ -29,7 +27,6 @@ CREATE TABLE `t_meta_db_info` (
   `db_name` varchar(100) NOT NULL COMMENT '数据库名称',
   `cluster_id` int(11) NOT NULL COMMENT '数据库集群ID',
   `cluster_type` tinyint(4) NOT NULL DEFAULT 1 COMMENT '集群类型: 1-单库, 2-分库分表',
-  `owner_id` int(11) DEFAULT NULL COMMENT '数据库主要负责人ID',
   `env_id` int(11) NOT NULL COMMENT '环境: 1-online, 2-rel, 3-uat, 4-sit, 5-pt, 6-dev',
   `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
   `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
@@ -51,14 +48,12 @@ CREATE TABLE `t_meta_env_info` (
 CREATE TABLE `t_meta_middleware_cluster_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `cluster_name` varchar(100) NOT NULL COMMENT '中间件集群名称',
-  `owner_id` int(11) DEFAULT NULL COMMENT '中间件主要负责人ID',
   `env_id` int(11) NOT NULL COMMENT '环境: 1-online, 2-rel, 3-uat, 4-sit, 5-pt, 6-dev',
   `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
   `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
   `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx01_cluster_name_env_id` (`cluster_name`, `env_id`),
-  KEY `idx02_owner_id` (`owner_id`),
   KEY `idx03_env_id` (`env_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '中间件集群信息表';
 
@@ -100,7 +95,6 @@ CREATE TABLE `t_meta_mysql_cluster_info` (
   `cluster_name` varchar(100) NOT NULL COMMENT '集群名称',
   `middleware_cluster_id` int(11) DEFAULT NULL COMMENT '中间件集群ID',
   `monitor_system_id` int(11) DEFAULT NULL COMMENT '监控系统ID',
-  `owner_id` int(11) DEFAULT NULL COMMENT '数据库集群主要负责人ID',
   `env_id` int(11) NOT NULL COMMENT '环境: 1-online, 2-rel, 3-uat, 4-sit, 5-pt, 6-dev',
   `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
   `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
@@ -108,7 +102,6 @@ CREATE TABLE `t_meta_mysql_cluster_info` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx01_cluster_name_env_id` (`cluster_name`, `env_id`),
   KEY `idx03_monitor_system_id` (`monitor_system_id`),
-  KEY `idx04_owner_id` (`owner_id`),
   key `idx05_env_id` (`env_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = 'MySQL集群信息表';
 
@@ -150,6 +143,55 @@ CREATE TABLE `t_meta_user_info` (
   UNIQUE KEY `idx05_mobile` (`mobile`),
   KEY `idx06_user_name` (`user_name`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '用户信息表';
+
+
+CREATE TABLE `t_meta_app_user_map` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `app_id` int(11) NOT NULL COMMENT '应用系统ID',
+  `user_id` int(11) NOT NULL COMMENT '用户ID',
+  `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
+  `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
+  `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx01_app_id_user_id` (`app_id`, `user_id`),
+  KEY `idx02_user_id` (`user_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '应用系统-用户映射表';
+
+CREATE TABLE `t_meta_db_user_map` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `db_id` int(11) NOT NULL COMMENT '数据库ID',
+  `user_id` int(11) NOT NULL COMMENT '用户ID',
+  `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
+  `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
+  `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx01_db_id_user_id` (`db_id`, `user_id`),
+  KEY `idx02_user_id` (`user_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '数据库-用户映射表';
+
+CREATE TABLE `t_meta_middleware_cluster_user_map` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `middleware_cluster_id` int(11) NOT NULL COMMENT '中间件集群ID',
+  `user_id` int(11) NOT NULL COMMENT '用户ID',
+  `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
+  `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
+  `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx01_middleware_cluster_id_user_id` (`middleware_cluster_id`, `user_id`),
+  KEY `idx02_user_id` (`user_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '中间件集群-用户映射表';
+
+CREATE TABLE `t_meta_mysql_cluster_user_map` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `mysql_cluster_id` int(11) NOT NULL COMMENT '数据库集群ID',
+  `user_id` int(11) NOT NULL COMMENT '用户ID',
+  `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
+  `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
+  `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx01_mysql_cluster_id_user_id` (`mysql_cluster_id`, `user_id`),
+  KEY `idx02_user_id` (`user_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '数据库集群-用户映射表';
 
 CREATE TABLE `t_alert_operation_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',

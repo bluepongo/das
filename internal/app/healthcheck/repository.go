@@ -454,7 +454,7 @@ func (pr *PrometheusRepo) GetFileSystems() ([]healthcheck.FileSystem, error) {
 		// pmm 2.x
 		prometheusQuery = PrometheusFileSystemV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	prometheusQuery = fmt.Sprintf(prometheusQuery, pr.getNodeName())
@@ -491,7 +491,7 @@ func (pr *PrometheusRepo) GetAvgBackupFailedRatio() ([]healthcheck.PrometheusDat
 		// pmm 2.x
 		prometheusQuery = PrometheusAvgBackupFailedRatioV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	prometheusQuery = fmt.Sprintf(prometheusQuery, pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName())
@@ -513,7 +513,7 @@ func (pr *PrometheusRepo) GetStatisticFailedRatio() ([]healthcheck.PrometheusDat
 		// pmm 2.x
 		prometheusQuery = PrometheusStatisticFailedRatioV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	prometheusQuery = fmt.Sprintf(prometheusQuery, pr.getNodeName(), pr.getNodeName())
@@ -535,7 +535,7 @@ func (pr *PrometheusRepo) GetCPUUsage() ([]healthcheck.PrometheusData, error) {
 		// pmm 2.x
 		prometheusQuery = PrometheusCPUUsageV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	nodeName := pr.getNodeName()
@@ -560,7 +560,7 @@ func (pr *PrometheusRepo) GetIOUtil() ([]healthcheck.PrometheusData, error) {
 		// pmm 2.x
 		prometheusQuery = fmt.Sprintf(PrometheusIOUtilV2, nodeName, nodeName, nodeName, nodeName)
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	log.Debugf("healthcheck PrometheusRepo.GetIOUtil() query: \n%s\n", prometheusQuery)
@@ -584,7 +584,7 @@ func (pr *PrometheusRepo) GetDiskCapacityUsage(mountPoints []string) ([]healthch
 		// pmm 2.x
 		prometheusQuery = fmt.Sprintf(PrometheusDiskCapacityV2, nodeName, mps, nodeName, mps, nodeName, mps, nodeName, mps)
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	log.Debugf("healthcheck PrometheusRepo.GetDiskCapacityUsage() query: \n%s\n", prometheusQuery)
@@ -605,7 +605,7 @@ func (pr *PrometheusRepo) GetConnectionUsage() ([]healthcheck.PrometheusData, er
 		// pmm 2.x
 		prometheusQuery = PrometheusConnectionUsageV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	serviceName := pr.getServiceName()
@@ -628,7 +628,7 @@ func (pr *PrometheusRepo) GetAverageActiveSessionPercents() ([]healthcheck.Prome
 		// pmm 2.x
 		prometheusQuery = PrometheusAverageActiveSessionPercentsV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	serviceName := pr.getServiceName()
@@ -651,7 +651,7 @@ func (pr *PrometheusRepo) GetCacheMissRatio() ([]healthcheck.PrometheusData, err
 		// pmm 2.x
 		prometheusQuery = PrometheusCacheMissRatioV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	serviceName := pr.getServiceName()

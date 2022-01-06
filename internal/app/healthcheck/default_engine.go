@@ -795,7 +795,12 @@ func (de *DefaultEngine) checkSlowQuery() error {
 			// get advice
 			advice, err = advisorService.Advise(dbID, sql.GetExample())
 			if err != nil {
-				return err
+				// TODO: if the tables that were used in the slow query do not exist anymore,
+				//  sql advisor returns an error, and we can do nothing here,
+				//  so for now, log the error message and jump over this,
+				//  we may optimize this later
+				log.Error(message.NewMessage(msghc.ErrHealthcheckSQLAdvisorAdvice, err.Error()).Error())
+				continue
 			}
 		} else {
 			jsonBytes, err := json.Marshal(sql)
