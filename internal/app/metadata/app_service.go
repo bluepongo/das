@@ -34,9 +34,14 @@ func (as *AppService) GetApps() []metadata.App {
 	return as.Apps
 }
 
-// GetApps returns dbs of the service
+// GetDBs returns dbs of the service
 func (as *AppService) GetDBs() []metadata.DB {
 	return as.DBs
+}
+
+// GetUsers returns dbs of the service
+func (as *AppService) GetUsers() []metadata.User {
+	return as.Users
 }
 
 // GetAll gets all apps from the middleware

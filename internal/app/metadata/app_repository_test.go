@@ -23,6 +23,8 @@ const (
 	testAppNewAppName    = "test_new_app_name"
 	testAppUpdateAppName = "test_update_app_name"
 	testAppDBID          = 1
+	testAppUserID        = 1
+	testAppUserID2       = 14
 )
 
 var testAppRepo *AppRepo
@@ -67,7 +69,10 @@ func TestAppRepoAll(t *testing.T) {
 	TestAppRepo_Delete(t)
 	TestAppRepo_AddAppDB(t)
 	TestAppRepo_DeleteAppDB(t)
+	TestAppRepo_AddAppUser(t)
+	TestAppRepo_DeleteAppUser(t)
 	TestAppRepo_GetDBsByID(t)
+	TestAppRepo_GetUsersByID(t)
 
 }
 
@@ -186,6 +191,14 @@ func TestAppRepo_GetDBsByID(t *testing.T) {
 
 }
 
+func TestAppRepo_GetUsersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	users, err := testAppRepo.GetUsersByID(testAppAppID)
+	asst.Nil(err, common.CombineMessageWithError("test GetUsersByID() failed", err))
+	asst.Equal(2, len(users), "test GetUsersByID() failed")
+
+}
 func TestAppRepo_AddAppDB(t *testing.T) {
 	asst := assert.New(t)
 
@@ -214,4 +227,34 @@ func TestAppRepo_DeleteAppDB(t *testing.T) {
 	// delete
 	err = testAppRepo.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test DeleteAppDB() failed", err))
+}
+
+func TestAppRepo_AddAppUser(t *testing.T) {
+	asst := assert.New(t)
+
+	entity, err := testCreateApp()
+	asst.Nil(err, common.CombineMessageWithError("test AddAppUser() failed", err))
+	err = testAppRepo.AddUser(entity.Identity(), testAppUserID)
+	asst.Nil(err, common.CombineMessageWithError("test AddAppUser() failed", err))
+	users, err := entity.GetUsers()
+	asst.Nil(err, common.CombineMessageWithError("test AddAppUser() failed", err))
+	asst.Equal(1, len(users), "test AddAppUser() failed")
+	// delete
+	err = testAppRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test AddAppUser() failed", err))
+}
+
+func TestAppRepo_DeleteAppUser(t *testing.T) {
+	asst := assert.New(t)
+
+	entity, err := testCreateApp()
+	asst.Nil(err, common.CombineMessageWithError("test DeleteAppUser() failed", err))
+	err = testAppRepo.DeleteUser(entity.Identity(), testAppUserID)
+	asst.Nil(err, common.CombineMessageWithError("test DeleteAppUser() failed", err))
+	users, err := entity.GetUsers()
+	asst.Nil(err, common.CombineMessageWithError("test DeleteAppUser() failed", err))
+	asst.Zero(len(users), "test DeleteAppUser() failed")
+	// delete
+	err = testAppRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test DeleteAppUser() failed", err))
 }

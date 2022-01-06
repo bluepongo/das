@@ -94,7 +94,7 @@ func TestMySQLClusterService_GetAppOwnersByID(t *testing.T) {
 
 	err := testMySQLClusterService.GetAppOwnersByID(testMySQLClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAppOwnersByID() failed", err))
-	asst.Equal(1, testMySQLClusterService.GetOwners()[constant.ZeroInt].Identity(), "test GetAppOwnersByID() failed")
+	asst.Equal(14, testMySQLClusterService.GetOwners()[constant.ZeroInt].Identity(), "test GetAppOwnersByID() failed")
 	asst.Equal(2, len(testMySQLClusterService.GetOwners()), "test GetAppOwnersByID() failed")
 }
 
@@ -111,8 +111,8 @@ func TestMySQLClusterService_GetAllOwnersByID(t *testing.T) {
 
 	err := testMySQLClusterService.GetAllOwnersByID(testMySQLClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAllOwnersByID() failed", err))
-	asst.Equal(1, testMySQLClusterService.GetOwners()[constant.ZeroInt].Identity(), "test GetAllOwnersByID() failed")
-	asst.Equal(2, len(testMySQLClusterService.GetOwners()), "test GetAllOwnersByID() failed")
+	asst.Equal(14, testMySQLClusterService.GetOwners()[constant.ZeroInt].Identity(), "test GetAllOwnersByID() failed")
+	asst.Equal(3, len(testMySQLClusterService.GetOwners()), "test GetAllOwnersByID() failed")
 }
 
 func TestMySQLClusterService_Create(t *testing.T) {

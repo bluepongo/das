@@ -79,8 +79,10 @@ type AppRepo interface {
 type AppService interface {
 	// GetApps returns apps of the service
 	GetApps() []App
-	// GetApps returns dbs of the service
+	// GetDBs returns dbs of the service
 	GetDBs() []DB
+	// GetUsers returns users of the service
+	GetUsers() []User
 	// GetAll gets all apps from the middleware
 	GetAll() error
 	// GetByID gets an app of the given id from the middleware

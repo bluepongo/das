@@ -158,7 +158,8 @@ func TestMySQLClusterRepo_GetAppOwners(t *testing.T) {
 
 	owners, err := testMySQLClusterRepo.GetAppOwnersByID(testMySQLClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
-	asst.Equal(1, owners[constant.ZeroInt].Identity(), "test GetAppOwners() failed")
+	asst.Equal(14, owners[constant.ZeroInt].Identity(), "test GetAppOwners() failed")
+	asst.Equal(2, len(owners), "test GetAppOwners() failed")
 }
 
 func TestMySQLClusterRepo_GetDBOwners(t *testing.T) {
@@ -174,7 +175,8 @@ func TestMySQLClusterRepo_GetAllOwners(t *testing.T) {
 
 	owners, err := testMySQLClusterRepo.GetAllOwnersByID(testMySQLClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAllOwners() failed", err))
-	asst.Equal(1, owners[constant.ZeroInt].Identity(), "test GetAllOwners() failed")
+	asst.Equal(14, owners[constant.ZeroInt].Identity(), "test GetAllOwners() failed")
+	asst.Equal(3, len(owners), "test GetAllOwners() failed")
 }
 
 func TestMySQLClusterRepo_Create(t *testing.T) {

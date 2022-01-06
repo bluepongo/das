@@ -266,6 +266,9 @@ func (mcr *MySQLClusterRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 	for row := 0; row < resultNum; row++ {
 		userList[row] = NewEmptyUserInfoWithGlobal()
 	}
+	if len(userList) == 0 {
+		log.Errorf("metadata MySQLClusterRepo.GetAppOwnersByID() failed. No active users are connected to this app, ID %d", id)
+	}
 	// map to struct
 	err = result.MapToStructSlice(userList, constant.DefaultMiddlewareTag)
 	if err != nil {

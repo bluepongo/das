@@ -306,18 +306,36 @@ func (ar *AppRepo) DeleteDB(appID, dbID int) error {
 
 // AddUser adds a new map of app and user in the middleware
 func (ar *AppRepo) AddUser(appID, userID int) error {
+	userRepo := NewUserRepoWithGlobal()
+	_, err := userRepo.GetByID(userID)
+	if err != nil {
+		return err
+	}
+	_, err = ar.GetByID(appID)
+	if err != nil {
+		return err
+	}
 	sql := `insert into t_meta_app_user_map(app_id, user_id) values(?, ?);`
 	log.Debugf("metadata AppRepo.AddUser() insert sql: %s", sql)
-	_, err := ar.Execute(sql, appID, userID)
+	_, err = ar.Execute(sql, appID, userID)
 
 	return err
 }
 
 // DeleteUser delete the map of app and user in the middleware
 func (ar *AppRepo) DeleteUser(appID, userID int) error {
+	userRepo := NewUserRepoWithGlobal()
+	_, err := userRepo.GetByID(userID)
+	if err != nil {
+		return err
+	}
+	_, err = ar.GetByID(appID)
+	if err != nil {
+		return err
+	}
 	sql := `delete from t_meta_app_user_map where app_id = ? and user_id = ?;`
 	log.Debugf("metadata AppRepo.DeleteUser() delete sql: %s", sql)
-	_, err := ar.Execute(sql, appID, userID)
+	_, err = ar.Execute(sql, appID, userID)
 
 	return err
 }

@@ -122,8 +122,8 @@ func TestMySQLClusterInfo_GetAppOwners(t *testing.T) {
 	owners, err := testMySQLClusterInfo.GetAppOwners()
 	// fmt.Print(owners[0].Identity(), owners[1].Identity(), owners[2].Identity())
 	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
-	asst.Equal(1, owners[constant.ZeroInt].Identity(), "test GetAppOwners() failed", err)
-	asst.Equal(3, len(owners), "test GetAppOwners() failed", err)
+	asst.Equal(14, owners[constant.ZeroInt].Identity(), "test GetAppOwners() failed", err)
+	asst.Equal(2, len(owners), "test GetAppOwners() failed", err)
 }
 
 func TestMySQLClusterInfo_GetDBOwners(t *testing.T) {
