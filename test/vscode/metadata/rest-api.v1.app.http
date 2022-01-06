@@ -18,6 +18,10 @@ Accept: application/json
 GET http://{{baseURL}}/api/v1/metadata/app/db/1
 Accept: application/json
 
+### metadata.GetUsersByAppID
+GET http://{{baseURL}}/api/v1/metadata/app/user/1
+Accept: application/json
+
 ### metadata.AddApp
 POST http://{{baseURL}}/api/v1/metadata/app 
 Content-Type: application/json
@@ -39,9 +43,21 @@ Content-Type: application/json
 
 {"db_id":9}
 
+### metadata.AppAddUser
+POST http://{{baseURL}}/api/v1/metadata/app/add-user/3
+Content-Type: application/json
+
+{"user_id":15}
+
+
 ### metadata.AppDeleteDB
 POST http://{{baseURL}}/api/v1/metadata/app/delete-db/1111
 Content-Type: application/json
 
 {"db_id":9}
 
+### metadata.AppDeleteUser
+POST http://{{baseURL}}/api/v1/metadata/app/delete-user/3
+Content-Type: application/json
+
+{"user_id":15}

@@ -121,6 +121,11 @@ func (ai *AppInfo) GetDBs() ([]metadata.DB, error) {
 	return ai.AppRepo.GetDBsByID(ai.Identity())
 }
 
+// GetUsers gets user list that own the app
+func (ai *AppInfo) GetUsers() ([]metadata.User, error) {
+	return ai.AppRepo.GetUsersByID(ai.Identity())
+}
+
 // Set sets App with given fields, key is the field name and value is the relevant value of the key
 func (ai *AppInfo) Set(fields map[string]interface{}) error {
 	for fieldName, fieldValue := range fields {
@@ -146,6 +151,16 @@ func (ai *AppInfo) AddDB(dbID int) error {
 // DeleteDB deletes the map of the app and database in the middleware
 func (ai *AppInfo) DeleteDB(dbID int) error {
 	return ai.AppRepo.DeleteDB(ai.Identity(), dbID)
+}
+
+// AddUser adds a new map of the app and user in the middleware
+func (ai *AppInfo) AddUser(userID int) error {
+	return ai.AppRepo.AddUser(ai.Identity(), userID)
+}
+
+// DeleteUser deletes the map of the app and user in the middleware
+func (ai *AppInfo) DeleteUser(userID int) error {
+	return ai.AppRepo.DeleteUser(ai.Identity(), userID)
 }
 
 // MarshalJSON marshals App to json bytes

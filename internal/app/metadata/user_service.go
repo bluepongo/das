@@ -17,11 +17,12 @@ const userUsersStruct = "Users"
 type UserService struct {
 	metadata.UserRepo
 	Users []metadata.User `json:"users"`
+	Apps  []metadata.App  `jaon:"apps"`
 }
 
 // NewUserService returns a new *UserService
 func NewUserService(repo metadata.UserRepo) *UserService {
-	return &UserService{repo, []metadata.User{}}
+	return &UserService{UserRepo: repo}
 }
 
 // NewUserServiceWithDefault returns a new *UserService with default repository
@@ -41,6 +42,11 @@ func (us *UserService) GetAll() error {
 	us.Users, err = us.UserRepo.GetAll()
 
 	return err
+}
+
+// GetApps returns the apps of the service
+func (us *UserService) GetApps() []metadata.App {
+	return us.Apps
 }
 
 // GetByName gets users of given user name
@@ -199,4 +205,33 @@ func (us *UserService) Marshal() ([]byte, error) {
 // MarshalWithFields marshals only specified fields of the UserService to json bytes
 func (us *UserService) MarshalWithFields(fields ...string) ([]byte, error) {
 	return common.MarshalStructWithFields(us, fields...)
+}
+
+// GetAppsByID gets apps that this user owns
+func (us *UserService) GetAppsByID(userID int) error {
+	var err error
+
+	us.Apps, err = us.UserRepo.GetAppsByID(userID)
+
+	return err
+}
+
+// AddApp adus a new map of app and user in the middleware
+func (us *UserService) AddApp(userID, appID int) error {
+	err := us.UserRepo.AddApp(userID, appID)
+	if err != nil {
+		return err
+	}
+
+	return us.GetAppsByID(userID)
+}
+
+// DeleteApp deletes the map of app and user in the middleware
+func (us *UserService) DeleteApp(userID, appID int) error {
+	err := us.UserRepo.DeleteApp(userID, appID)
+	if err != nil {
+		return err
+	}
+
+	return us.GetAppsByID(userID)
 }

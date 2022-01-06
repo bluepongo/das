@@ -22,7 +22,8 @@ const (
 	testAppLastUpdateTimeString = "2021-01-21 13:00:00.000000"
 	testAppAppNameJSON          = "app_name"
 
-	testAppNewDBID = 2
+	testAppNewDBID   = 2
+	testAppNewUserID = 16
 )
 
 var testAppInfo *AppInfo
@@ -66,7 +67,11 @@ func TestAppEntityAll(t *testing.T) {
 	TestAppInfo_MarshalJSONWithFields(t)
 	TestAppInfo_AddAppDB(t)
 	TestAppInfo_DeleteAppDB(t)
+	TestAppInfo_AddAppUser(t)
+	TestAppInfo_DeleteAppUser(t)
 	TestAppInfo_GetDBS(t)
+	TestAppInfo_GetUsers(t)
+
 }
 
 func TestAppInfo_Identity(t *testing.T) {
@@ -120,6 +125,15 @@ func TestAppInfo_GetDBS(t *testing.T) {
 
 }
 
+func TestAppInfo_GetUsers(t *testing.T) {
+	asst := assert.New(t)
+
+	users, err := testAppInfo.GetUsers()
+	fmt.Println(users)
+	asst.Equal(nil, err, "test GetUsers() failed")
+	asst.Equal(2, len(users), "test GetUsers() failed")
+}
+
 func TestAppInfo_Set(t *testing.T) {
 	asst := assert.New(t)
 
@@ -166,7 +180,7 @@ func TestAppInfo_AddAppDB(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
 	dbs, err := testAppInfo.GetDBs()
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
-	asst.Equal(2, len(dbs), common.CombineMessageWithError("test AddDB() failed", err))
+	asst.Equal(1, len(dbs), common.CombineMessageWithError("test AddDB() failed", err))
 	// delete
 	err = testAppInfo.DeleteDB(testAppNewDBID)
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
@@ -182,4 +196,29 @@ func TestAppInfo_DeleteAppDB(t *testing.T) {
 	dbs, err := testAppInfo.GetDBs()
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
 	asst.Equal(testAppDBID, dbs[constant.ZeroInt].Identity(), common.CombineMessageWithError("test DeleteDB() failed", err))
+}
+
+func TestAppInfo_AddAppUser(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testAppInfo.AddUser(testAppNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	users, err := testAppInfo.GetUsers()
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	asst.Equal(3, len(users), common.CombineMessageWithError("test AddUser() failed", err))
+	// delete
+	err = testAppInfo.DeleteUser(testAppNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+}
+
+func TestAppInfo_DeleteAppUser(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testAppInfo.AddUser(testAppNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	err = testAppInfo.DeleteUser(testAppNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+	users, err := testAppInfo.GetUsers()
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+	asst.Equal(testAppUserID, users[constant.ZeroInt].Identity(), common.CombineMessageWithError("test DeleteUser() failed", err))
 }

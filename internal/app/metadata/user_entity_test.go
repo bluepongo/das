@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/jinzhu/now"
+	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/stretchr/testify/assert"
@@ -23,6 +24,8 @@ const (
 	testUserDelFlag              = 0
 	testUserCreateTimeString     = "2021-01-21 10:00:00.000000"
 	testUserLastUpdateTimeString = "2021-01-21 13:00:00.000000"
+
+	testUserNewAppID = 3
 )
 
 var testUserInfo *UserInfo
@@ -69,6 +72,8 @@ func TestUserEntityAll(t *testing.T) {
 	TestUserInfo_Delete(t)
 	TestUserInfo_MarshalJSON(t)
 	TestUserInfo_MarshalJSONWithFields(t)
+	TestUserInfo_AddApp(t)
+	TestUserInfo_DeleteApp(t)
 }
 
 func TestUserInfo_Identity(t *testing.T) {
@@ -172,4 +177,32 @@ func TestUserInfo_MarshalJSONWithFields(t *testing.T) {
 	jsonBytes, err := testUserInfo.MarshalJSONWithFields(userUserNameStruct)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
 	t.Log(string(jsonBytes))
+}
+
+func TestUserInfo_AddApp(t *testing.T) {
+	var apps []metadata.App
+
+	asst := assert.New(t)
+
+	err := testUserInfo.AddApp(testUserNewAppID)
+	apps, err = testUserInfo.GetAppsByID(testUserInfo.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+	asst.Equal(1, len(apps), "test AddApp() failed")
+	// delete
+	err = testUserInfo.DeleteApp(testUserNewAppID)
+	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+}
+
+func TestUserInfo_DeleteApp(t *testing.T) {
+	var apps []metadata.App
+
+	asst := assert.New(t)
+
+	err := testUserInfo.AddApp(testUserNewAppID)
+	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+	err = testUserInfo.DeleteApp(testUserNewAppID)
+	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+	apps, err = testUserInfo.GetAppsByID(testUserInfo.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+	asst.Equal(0, len(apps), "test AddApp() failed")
 }

@@ -191,6 +191,16 @@ func (ui *UserInfo) Delete() {
 	ui.DelFlag = 1
 }
 
+// AddApp adds a new map of application system and user in the middleware
+func (ui *UserInfo) AddApp(appID int) error {
+	return ui.UserRepo.AddApp(ui.ID, appID)
+}
+
+// DeleteApp delete the map of application system and user in the middleware
+func (ui *UserInfo) DeleteApp(appID int) error {
+	return ui.UserRepo.DeleteApp(ui.ID, appID)
+}
+
 // MarshalJSON marshals User to json string
 func (ui *UserInfo) MarshalJSON() ([]byte, error) {
 	return common.MarshalStructWithTag(ui, constant.DefaultMarshalTag)
