@@ -36,7 +36,7 @@ Start
 ## Contributing
 
 <a href="https://github.com/romberli/das/graphs/contributors">
-  <img src="https://contributors-img.web.app/image?repo=romberli/das" />
+  <img src="https://contributors-img.web.app/image?repo=romberli/das"/>
 </a>
 
 ## License
