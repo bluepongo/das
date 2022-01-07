@@ -847,7 +847,7 @@ func (de *DefaultEngine) postRun() error {
 		return err
 	}
 
-	if de.getResult().WeightedAverageScore < defaultMaxScore {
+	if de.getResult().GetWeightedAverageScore() < defaultMaxScore {
 		err = de.sendEmail()
 		if err != nil {
 			return err
