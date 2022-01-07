@@ -19,6 +19,9 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.POST("/app/delete/:id", metadata.DeleteAppByID)
 		metadataGroup.POST("/app/add-db/:id", metadata.AppAddDB)
 		metadataGroup.POST("/app/delete-db/:id", metadata.AppDeleteDB)
+		metadataGroup.GET("/app/user/:id", metadata.GetUsersByAppID)
+		metadataGroup.POST("/app/add-user/:id", metadata.AppAddUser)
+		metadataGroup.POST("/app/delete-user/:id", metadata.AppDeleteUser)
 		// db
 		metadataGroup.GET("/db", metadata.GetDB)
 		metadataGroup.GET("/db/env/:env_id", metadata.GetDBByEnv)
@@ -102,5 +105,8 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.POST("/user", metadata.AddUser)
 		metadataGroup.POST("/user/update/:id", metadata.UpdateUserByID)
 		metadataGroup.POST("/user/delete/:id", metadata.DeleteUserByID)
+		metadataGroup.GET("/user/app/:id", metadata.GetAppsByUserID)
+		metadataGroup.POST("/user/add-app/:id", metadata.UserAddApp)
+		metadataGroup.POST("/user/delete-app/:id", metadata.UserDeleteApp)
 	}
 }

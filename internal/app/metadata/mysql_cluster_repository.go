@@ -240,14 +240,14 @@ func (mcr *MySQLClusterRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 						user.create_time,
 						user.last_update_time
 		from t_meta_user_info as user
-				 inner join t_meta_app_owner_map as aom
-							on user.id = aom.owner_id
+				 inner join t_meta_app_user_map as aum
+							on user.id = aum.user_id
 				 inner join t_meta_app_db_map as map
-							on aom.app_id = map.app_id
+							on aum.app_id = map.app_id
 				 inner join t_meta_db_info as db
 							on db.id = map.db_id
 		where user.del_flag = 0
-		  and aom.del_flag = 0
+		  and aum.del_flag = 0
 		  and db.del_flag = 0
 		  and map.del_flag = 0
 		  and db.cluster_id = ?
@@ -265,6 +265,9 @@ func (mcr *MySQLClusterRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 
 	for row := 0; row < resultNum; row++ {
 		userList[row] = NewEmptyUserInfoWithGlobal()
+	}
+	if len(userList) == 0 {
+		log.Errorf("metadata MySQLClusterRepo.GetAppOwnersByID() failed. No active users are connected to this app, ID %d", id)
 	}
 	// map to struct
 	err = result.MapToStructSlice(userList, constant.DefaultMiddlewareTag)
@@ -336,14 +339,14 @@ func (mcr *MySQLClusterRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
 			   user.create_time,
 			   user.last_update_time
 		from t_meta_user_info as user
-				 inner join t_meta_app_owner_map as aom
-							on user.id = aom.owner_id
+				 inner join t_meta_app_user_map as aum
+							on user.id = aum.user_id
 				 inner join t_meta_app_db_map as map
-							on aom.app_id = map.app_id
+							on aum.app_id = map.app_id
 				 inner join t_meta_db_info as db
 							on db.id = map.db_id
 		where user.del_flag = 0
-		  and aom.del_flag = 0
+		  and aum.del_flag = 0
 		  and db.del_flag = 0
 		  and map.del_flag = 0
 		  and db.cluster_id = ?

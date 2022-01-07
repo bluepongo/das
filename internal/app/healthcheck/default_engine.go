@@ -916,6 +916,9 @@ func (de *DefaultEngine) parsePrometheusDatas(item string, datas []healthcheck.P
 
 func (de *DefaultEngine) sendEmail() error {
 	toAddrs, err := de.getToAddrs()
+	if len(toAddrs) == 0 {
+		return fmt.Errorf("SendEmail toAddrs can't be null !!!!")
+	}
 	if err != nil {
 		return err
 	}

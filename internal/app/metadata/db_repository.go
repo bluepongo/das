@@ -463,18 +463,36 @@ func (dr *DBRepo) Delete(id int) error {
 
 // AddApp adds a new map of the app and database in the middleware
 func (dr *DBRepo) AddApp(dbID, appID int) error {
+	appRepo := NewAppRepoWithGlobal()
+	_, err := appRepo.GetByID(appID)
+	if err != nil {
+		return err
+	}
+	_, err = dr.GetByID(dbID)
+	if err != nil {
+		return err
+	}
 	sql := `insert into t_meta_app_db_map(app_id, db_id) values(?, ?);`
 	log.Debugf("metadata DBRepo.AddApp() insert sql: %s", sql)
-	_, err := dr.Execute(sql, appID, dbID)
+	_, err = dr.Execute(sql, appID, dbID)
 
 	return err
 }
 
 // DeleteApp deletes a map of the app and database in the middleware
 func (dr *DBRepo) DeleteApp(dbID, appID int) error {
+	appRepo := NewAppRepoWithGlobal()
+	_, err := appRepo.GetByID(appID)
+	if err != nil {
+		return err
+	}
+	_, err = dr.GetByID(dbID)
+	if err != nil {
+		return err
+	}
 	sql := `delete from t_meta_app_db_map where app_id = ? and db_id = ?;`
 	log.Debugf("metadata DBRepo.DeleteApp() delete sql: %s", sql)
-	_, err := dr.Execute(sql, appID, dbID)
+	_, err = dr.Execute(sql, appID, dbID)
 
 	return err
 }

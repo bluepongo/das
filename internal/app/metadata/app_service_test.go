@@ -27,6 +27,8 @@ func TestAppServiceAll(t *testing.T) {
 	TestAppService_MarshalWithFields(t)
 	TestAppService_DeleteDB(t)
 	TestAppService_AddDB(t)
+	TestAppService_DeleteUser(t)
+	TestAppService_AddUser(t)
 }
 
 func TestAppService_GetEntities(t *testing.T) {
@@ -59,9 +61,17 @@ func TestAppService_GetByID(t *testing.T) {
 func TestAppService_GetDBsByID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testAppService.GetDBsByID(testAppAppID)
+	err := testAppService.GetDBsByID(2)
 	asst.Nil(err, common.CombineMessageWithError("test GetDBSByID() failed", err))
 	asst.Equal(1, len(testAppService.DBs), common.CombineMessageWithError("test GetDBSByID() failed", err))
+}
+
+func TestAppService_GetUsersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testAppService.GetUsersByID(testAppAppID)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBSByID() failed", err))
+	asst.Equal(2, len(testAppService.Users), common.CombineMessageWithError("test GetDBSByID() failed", err))
 }
 
 func TestAppService_Create(t *testing.T) {
@@ -153,4 +163,33 @@ func TestAppService_DeleteDB(t *testing.T) {
 	asst.Zero(len(testAppService.GetDBs()))
 	err = testAppRepo.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
+}
+
+func TestAppService_AddUser(t *testing.T) {
+	asst := assert.New(t)
+	entity, err := testCreateApp()
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	err = testAppService.AddUser(entity.Identity(), testAppUserID)
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	err = testAppService.GetUsersByID(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	asst.Equal(testAppUserID, testAppService.GetUsers()[constant.ZeroInt].Identity())
+	err = testAppService.DeleteUser(entity.Identity(), testAppUserID)
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	err = testAppRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+}
+
+func TestAppService_DeleteUser(t *testing.T) {
+	asst := assert.New(t)
+	entity, err := testCreateApp()
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+	err = testAppService.AddUser(entity.Identity(), testAppUserID)
+	asst.Nil(err, "test DeleteUser() failed")
+	err = testAppService.DeleteUser(entity.Identity(), testAppUserID)
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+	err = testAppService.GetUsersByID(entity.Identity())
+	asst.Zero(len(testAppService.GetUsers()))
+	err = testAppRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
 }

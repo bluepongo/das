@@ -356,3 +356,74 @@ func (ur *UserRepo) Delete(id int) error {
 
 	return err
 }
+
+// GetAppsByID gets app list that this user owns
+func (ur *UserRepo) GetAppsByID(userID int) ([]metadata.App, error) {
+	sql := `
+		select app.id, app.app_name, app.level, app.owner_id, app.del_flag
+			, app.create_time, app.last_update_time
+		from t_meta_app_info as app
+			inner join t_meta_app_user_map as map on app.id = map.app_id
+			inner join t_meta_user_info as user on user.id = map.user_id
+		where app.del_flag = 0 
+			and map.del_flag = 0 
+			and user.del_flag = 0
+			and user.id = ?;
+	`
+	log.Debugf("metadata UserRepo.GetAppsByID() sql: \n%s\nplaceholders: %d", sql, userID)
+
+	result, err := ur.Execute(sql, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	appList := make([]metadata.App, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		appList[row] = NewEmptyAppInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(appList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return appList, nil
+}
+
+// AddApp adds a new map of the app and user in the middleware
+func (ur *UserRepo) AddApp(userID, appID int) error {
+	appRepo := NewAppRepoWithGlobal()
+	_, err := appRepo.GetByID(appID)
+	if err != nil {
+		return err
+	}
+	_, err = ur.GetByID(userID)
+	if err != nil {
+		return err
+	}
+	sql := `insert into t_meta_app_user_map(app_id, user_id) values(?, ?);`
+	log.Debugf("metadata UserRepo.AddApp() insert sql: %s", sql)
+	_, err = ur.Execute(sql, appID, userID)
+
+	return err
+}
+
+// DeleteApp deletes a map of the app and user in the middleware
+func (ur *UserRepo) DeleteApp(userID, appID int) error {
+	appRepo := NewAppRepoWithGlobal()
+	_, err := appRepo.GetByID(appID)
+	if err != nil {
+		return err
+	}
+	_, err = ur.GetByID(userID)
+	if err != nil {
+		return err
+	}
+	sql := `delete from t_meta_app_user_map where app_id = ? and user_id = ?;`
+	log.Debugf("metadata UserRepo.DeleteApp() delete sql: %s", sql)
+	_, err = ur.Execute(sql, appID, userID)
+
+	return err
+}

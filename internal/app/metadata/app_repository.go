@@ -181,6 +181,51 @@ func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 
 }
 
+// GetUsersByID gets user list that own the app
+func (ar *AppRepo) GetUsersByID(id int) ([]metadata.User, error) {
+	sql := `
+		select ui.id,
+			   ui.user_name,
+			   ui.department_name,
+			   ui.employee_id,
+			   ui.account_name,
+			   ui.email,
+			   ui.telephone,
+			   ui.mobile,
+			   ui.role,
+			   ui.del_flag,
+			   ui.create_time,
+			   ui.last_update_time
+		from t_meta_app_info ai
+				 inner join t_meta_app_user_map aum
+							on ai.id = aum.app_id
+				 inner join t_meta_user_info ui on aum.user_id = ui.id
+		where ai.del_flag = 0
+		  and aum.del_flag = 0
+		  and ui.del_flag = 0
+		  and ai.id = ?
+	`
+	log.Debugf("metadata AppRepo.GetUsersByID() select sql: %s", sql)
+	result, err := ar.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	// init []dependency.Entity
+	userList := make([]metadata.User, result.RowNumber())
+	for i := range userList {
+		userList[i] = NewEmptyUserInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(userList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return userList, nil
+
+}
+
 // Create creates an app in the middleware
 func (ar *AppRepo) Create(app metadata.App) (metadata.App, error) {
 	sql := `insert into t_meta_app_info(app_name, level, owner_id) values(?, ?, ?);`
@@ -255,6 +300,42 @@ func (ar *AppRepo) DeleteDB(appID, dbID int) error {
 	sql := `delete from t_meta_app_db_map where app_id = ? and db_id = ?;`
 	log.Debugf("metadata AppRepo.DeleteDB() delete sql: %s", sql)
 	_, err := ar.Execute(sql, appID, dbID)
+
+	return err
+}
+
+// AddUser adds a new map of app and user in the middleware
+func (ar *AppRepo) AddUser(appID, userID int) error {
+	userRepo := NewUserRepoWithGlobal()
+	_, err := userRepo.GetByID(userID)
+	if err != nil {
+		return err
+	}
+	_, err = ar.GetByID(appID)
+	if err != nil {
+		return err
+	}
+	sql := `insert into t_meta_app_user_map(app_id, user_id) values(?, ?);`
+	log.Debugf("metadata AppRepo.AddUser() insert sql: %s", sql)
+	_, err = ar.Execute(sql, appID, userID)
+
+	return err
+}
+
+// DeleteUser delete the map of app and user in the middleware
+func (ar *AppRepo) DeleteUser(appID, userID int) error {
+	userRepo := NewUserRepoWithGlobal()
+	_, err := userRepo.GetByID(userID)
+	if err != nil {
+		return err
+	}
+	_, err = ar.GetByID(appID)
+	if err != nil {
+		return err
+	}
+	sql := `delete from t_meta_app_user_map where app_id = ? and user_id = ?;`
+	log.Debugf("metadata AppRepo.DeleteUser() delete sql: %s", sql)
+	_, err = ar.Execute(sql, appID, userID)
 
 	return err
 }
