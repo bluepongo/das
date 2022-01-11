@@ -5,7 +5,6 @@ import (
 
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
-	"github.com/romberli/log"
 
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/pkg/message"
@@ -114,9 +113,7 @@ func (mss *MySQLServerService) GetMySQLClusterByID(id int) error {
 
 	mss.MySQLCluster, err = mss.GetMySQLServers()[constant.ZeroInt].GetMySQLCluster()
 
-	log.Debug(fmt.Sprintf("%v", mss.MySQLCluster))
-
-	return nil
+	return err
 }
 
 // Create creates a new mysql server entity and insert it into the middleware

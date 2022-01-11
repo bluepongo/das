@@ -64,6 +64,8 @@ type DBRepo interface {
 	GetByNameAndClusterInfo(name string, clusterID, clusterType int) (DB, error)
 	// GetID gets the identity with given database name, cluster id and cluster type from the middleware
 	GetID(dbName string, clusterID int, clusterType int) (int, error)
+	// GetMySQLCLusterByID gets the mysql cluster of the given id from the middleware
+	GetMySQLCLusterByID(id int) (MySQLCluster, error)
 	// GetAppsByID gets an apps that uses this db
 	GetAppsByID(id int) ([]App, error)
 	// GetAppOwnersByID gets the application owners of the given id from the middleware
@@ -95,7 +97,9 @@ type DBService interface {
 	GetByID(id int) error
 	// GetByNameAndClusterInfo gets an database of the given db name and cluster info from the middleware
 	GetByNameAndClusterInfo(name string, clusterID, clusterType int) error
-	// GetAppsByID gets an apps that uses this db
+	// GetMySQLClusterByID gets the cluster of the db
+	GetMySQLClusterByID(id int) error
+	// GetAppsByID gets apps that uses this db
 	GetAppsByID(id int) error
 	// GetAppOwnersByID gets the application owners of the given id
 	GetAppOwnersByID(id int) error

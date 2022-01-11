@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/jinzhu/now"
+	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/stretchr/testify/assert"
@@ -14,7 +15,7 @@ import (
 const (
 	defaultDBInfoID                   = 1
 	defaultDBInfoDBName               = "test"
-	defaultDBInfoClusterID            = 1
+	defaultDBInfoClusterID            = 2
 	defaultDBInfoClusterType          = 1
 	defaultDBInfoOwnerID              = 1
 	defaultDBInfoEnvID                = 2
@@ -50,7 +51,11 @@ func TestDBEntityAll(t *testing.T) {
 	TestDBInfo_GetDelFlag(t)
 	TestDBInfo_GetCreateTime(t)
 	TestDBInfo_GetLastUpdateTime(t)
-	TestDBInfo_GetAppIDList(t)
+	TestDBInfo_GetApps(t)
+	TestDBInfo_GetMySQLClusterByID(t)
+	TestDBInfo_GetAppOwners(t)
+	TestDBInfo_GetDBOwners(t)
+	TestDBInfo_GetAllOwners(t)
 	TestDBInfo_Set(t)
 	TestDBInfo_Delete(t)
 	TestDBInfo_AddDBApp(t)
@@ -122,16 +127,49 @@ func TestDBInfo_GetLastUpdateTime(t *testing.T) {
 	asst.True(reflect.DeepEqual(dbInfo.LastUpdateTime, dbInfo.GetLastUpdateTime()), "test GetLastUpdateTime() failed")
 }
 
-func TestDBInfo_GetAppIDList(t *testing.T) {
+func TestDBInfo_GetMySQLClusterByID(t *testing.T) {
 	asst := assert.New(t)
 
 	dbInfo := initNewDBInfo()
-	appIDList, err := dbInfo.GetAppIDList()
-	asst.Nil(err, common.CombineMessageWithError("test GetAppIDList() failed", err))
-	defaultAppIDList := []int{1, 2}
-	for i := 0; i < len(appIDList); i++ {
-		asst.Equal(defaultAppIDList[i], appIDList[i], "test GetAppIDList() failed")
-	}
+	mysqlCluster, err := dbInfo.GetMySQLCluster()
+	asst.Nil(err, common.CombineMessageWithError("test GetMySQLCLuster() failed", err))
+	asst.NotNil(mysqlCluster, "test GetMySQLCluster() failed")
+}
+
+func TestDBInfo_GetAppOwners(t *testing.T) {
+	asst := assert.New(t)
+
+	dbInfo := initNewDBInfo()
+	appOwners, err := dbInfo.GetAppOwners()
+	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
+	asst.NotNil(appOwners, "test GetAppOwners() failed")
+}
+
+func TestDBInfo_GetDBOwners(t *testing.T) {
+	asst := assert.New(t)
+
+	dbInfo := initNewDBInfo()
+	dbOwners, err := dbInfo.GetDBOwners()
+	asst.Nil(err, common.CombineMessageWithError("test GetDBOwners() failed", err))
+	asst.NotNil(dbOwners, "test GetDBOwners() failed")
+}
+
+func TestDBInfo_GetAllOwners(t *testing.T) {
+	asst := assert.New(t)
+
+	dbInfo := initNewDBInfo()
+	allOwners, err := dbInfo.GetAllOwners()
+	asst.Nil(err, common.CombineMessageWithError("test GetAllOwners() failed", err))
+	asst.NotNil(allOwners, "test GetAllOwners() failed")
+}
+
+func TestDBInfo_GetApps(t *testing.T) {
+	asst := assert.New(t)
+
+	dbInfo := initNewDBInfo()
+	apps, err := dbInfo.GetApps()
+	asst.Nil(err, common.CombineMessageWithError("test GetApps() failed", err))
+	asst.NotEqual(0, len(apps), "test GetApps() failed")
 }
 
 func TestDBInfo_Set(t *testing.T) {
@@ -153,30 +191,30 @@ func TestDBInfo_Delete(t *testing.T) {
 }
 
 func TestDBInfo_AddDBApp(t *testing.T) {
-	var appIDList []int
+	var apps []metadata.App
 
 	asst := assert.New(t)
 
 	dbInfo := initNewDBInfo()
 	err := dbInfo.AddApp(3)
-	appIDList, err = dbInfo.GetAppIDList()
+	apps, err = dbInfo.GetApps()
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	asst.Equal(3, len(appIDList), "test AddApp() failed")
+	asst.NotEqual(0, len(apps), "test AddApp() failed")
 	// delete
 	err = dbInfo.DeleteApp(3)
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
 }
 
 func TestDBInfo_DeleteDBApp(t *testing.T) {
-	var appIDList []int
+	var apps []metadata.App
 
 	asst := assert.New(t)
 
 	dbInfo := initNewDBInfo()
 	err := dbInfo.DeleteApp(2)
-	appIDList, err = dbInfo.GetAppIDList()
+	apps, err = dbInfo.GetApps()
 	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	asst.Equal(1, len(appIDList), "test DeleteApp() failed")
+	asst.Equal(1, len(apps), "test DeleteApp() failed")
 	// add
 	err = dbInfo.AddApp(2)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))

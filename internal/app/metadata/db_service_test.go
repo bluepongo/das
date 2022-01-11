@@ -16,7 +16,11 @@ func TestDBServiceAll(t *testing.T) {
 	TestDBService_GetByEnv(t)
 	TestDBService_GetByID(t)
 	TestDBService_GetByNameAndClusterInfo(t)
-	TestDBService_GetAppIDList(t)
+	TestDBService_GetAppsByID(t)
+	TestDBService_GetMySQLClusterByID(t)
+	TestDBService_GetAppOwnersByID(t)
+	TestDBService_GetDBOwnersByID(t)
+	TestDBService_GetAllOwnersByID(t)
 	TestDBService_Create(t)
 	TestDBService_Update(t)
 	TestDBService_Delete(t)
@@ -101,14 +105,54 @@ func TestDBService_GetByNameAndClusterInfo(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test GetByID() failed", err))
 }
 
-func TestDBService_GetAppIDList(t *testing.T) {
+func TestDBService_GetAppsByID(t *testing.T) {
 	asst := assert.New(t)
 
 	s := NewDBService(dbRepo)
-	err := s.GetAppIDList(1)
-	asst.Nil(err, "test GetAppIDList() failed")
-	appIDList := s.AppIDList
-	asst.Equal(2, len(appIDList), "test GetAppIDList() failed")
+	err := s.GetAppsByID(1)
+	asst.Nil(err, "test GetAppsByID() failed")
+	apps := s.Apps
+	asst.NotNil(apps, "test GetAppsByID() failed")
+}
+
+func TestDBService_GetMySQLClusterByID(t *testing.T) {
+	asst := assert.New(t)
+
+	s := NewDBService(dbRepo)
+	err := s.GetMySQLClusterByID(1)
+	asst.Nil(err, "test GetMySQLClusterByID() failed")
+	mysqlCluster := s.MySQLCluster
+	asst.NotNil(mysqlCluster, "test GetMySQLClusterByID() failed")
+}
+
+func TestDBService_GetAppOwnersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	s := NewDBService(dbRepo)
+	err := s.GetAppOwnersByID(1)
+	asst.Nil(err, "test GetAppOwnersByID() failed")
+	appOwners := s.AppOwners
+	asst.NotNil(appOwners, "test GetAppOwnersByID() failed")
+}
+
+func TestDBService_GetDBOwnersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	s := NewDBService(dbRepo)
+	err := s.GetDBOwnersByID(1)
+	asst.Nil(err, "test GetDBOwnersByID() failed")
+	dbOwners := s.DBOwners
+	asst.NotNil(dbOwners, "test GetDBOwnersByID() failed")
+}
+
+func TestDBService_GetAllOwnersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	s := NewDBService(dbRepo)
+	err := s.GetAllOwnersByID(1)
+	asst.Nil(err, "test GetAllOwnersByID() failed")
+	allOwners := s.AllOwners
+	asst.NotNil(allOwners, "test GetAllOwnersByID() failed")
 }
 
 func TestDBService_Create(t *testing.T) {
@@ -161,8 +205,9 @@ func TestDBService_AddDBApp(t *testing.T) {
 
 	err := s.AddApp(1, 3)
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	appIDList := s.AppIDList
-	asst.Equal(3, len(appIDList), "test AddApp() failed")
+	apps, err := s.DBRepo.GetAppsByID(1)
+	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+	asst.NotNil(apps, common.CombineMessageWithError("test AddApp() failed", err))
 }
 
 func TestDBService_DeleteDBApp(t *testing.T) {
@@ -171,8 +216,9 @@ func TestDBService_DeleteDBApp(t *testing.T) {
 	s := NewDBService(dbRepo)
 	err := s.DeleteApp(1, 3)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	appIDList := s.AppIDList
-	asst.Equal(2, len(appIDList), "test DeleteApp() failed")
+	apps, err := s.DBRepo.GetAppsByID(1)
+	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
+	asst.Equal(0, len(apps), "test DeleteApp() failed")
 }
 
 func TestDBService_Marshal(t *testing.T) {

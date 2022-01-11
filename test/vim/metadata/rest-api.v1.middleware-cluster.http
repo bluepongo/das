@@ -1,37 +1,35 @@
 http://127.0.0.1:6090
 
 ### get all middleware cluster
-GET /api/v1/metadata/middleware-cluster
 Accept: application/json
+GET /api/v1/metadata/middleware-cluster
 
 ### get middleware cluster by env_id
-GET /api/v1/metadata/middleware-cluster/env/1
 Accept: application/json
+GET /api/v1/metadata/middleware-cluster/env/1
 
 ### get middleware cluster by id
-GET /api/v1/metadata/middleware-cluster/get/13
 Accept: application/json
+GET /api/v1/metadata/middleware-cluster/get/13
 
 ### get middleware cluster by name
-GET /api/v1/metadata/middleware-cluster/cluster-name/test001
 Accept: application/json
+GET /api/v1/metadata/middleware-cluster/cluster-name/test001
 
 ### get middleware server list by cluster id
-GET /api/v1/metadata/middleware-cluster/middleware-server/13
 Accept: application/json
+GET /api/v1/metadata/middleware-cluster/middleware-server/13
 
 ### add new middleware cluster
-POST /api/v1/metadata/middleware-cluster
 Content-Type: application/json
-
+POST /api/v1/metadata/middleware-cluster
 {"cluster_name": "rest_test", "owner_id": 1, "envid": 1}
 
 ### update middleware cluster by id
-POST /api/v1/metadata/middleware-cluster/update/13
 Content-Type: application/json
-
+POST /api/v1/metadata/middleware-cluster/update/13
 {"cluster_name": "new_test", "del_flag": 1}
 
 ### delete middleware cluster by id
-POST /api/v1/metadata/middleware-cluster/delete/14
 Content-Type: application/json
+POST /api/v1/metadata/middleware-cluster/delete/14

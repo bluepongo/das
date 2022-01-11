@@ -255,7 +255,6 @@ func GetMySQLClusterByMySQLServerID(c *gin.Context) {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByServerID, id, err.Error())
 		return
 	}
-	log.Debug(fmt.Sprintf("%v", s))
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(msMySQLCluster)
 	// jsonBytes, err := s.Marshal()
@@ -265,7 +264,6 @@ func GetMySQLClusterByMySQLServerID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(jsonStr)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLClusterByServerID, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClusterByServerID, id)
 }
