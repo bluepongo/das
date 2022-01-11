@@ -17,6 +17,7 @@ config/das.yaml
 config/soar.yaml
 config/soar.blacklist
 test/*.json
+todo/
 
 # output
 *.out
