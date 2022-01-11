@@ -15,9 +15,30 @@ import (
 	"github.com/spf13/viper"
 )
 
-const logExpression = `^\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}\.\d{3}`
+const (
+	u003cCode  = "\\u003c"
+	u003eCode  = "\\u003e"
+	crlfString = "\\n"
+	tabString  = "\\t"
 
-var _ sqladvisor.Advisor = (*DefaultAdvisor)(nil)
+	u003cString = "<"
+	u003eString = ">"
+
+	logExp               = `^\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}\.\d{3}`
+	errExp               = `\[1;31m\[E]|\[1;31m\[F]`
+	defaultLogMessageLen = 3
+)
+
+var (
+	_ sqladvisor.Advisor = (*DefaultAdvisor)(nil)
+
+	repMap = map[string]string{
+		u003cCode:  u003cString,
+		u003eCode:  u003eString,
+		crlfString: constant.CRLFString,
+		tabString:  constant.TabString,
+	}
+)
 
 type DefaultAdvisor struct {
 	parser     *parser.Parser
@@ -71,8 +92,8 @@ func (da *DefaultAdvisor) Advise(dbID int, sqlText string) (string, string, erro
 // advise parses the sql text and returns the tuning advice,
 // note that only the first sql statement in the sql text will be advised
 func (da *DefaultAdvisor) adviseWithDefault(dbID int, sqlText string) (string, string, error) {
-	user := viper.GetString(config.DBSoarMySQLUserKey)
-	pass := viper.GetString(config.DBSoarMySQLPassKey)
+	user := viper.GetString(config.DBApplicationMySQLUserKey)
+	pass := viper.GetString(config.DBApplicationMySQLPassKey)
 
 	return da.advise(dbID, sqlText, user, pass)
 }
@@ -95,14 +116,15 @@ func (da *DefaultAdvisor) advise(dbID int, sqlText, user, pass string) (string, 
 	return da.parseResult(result)
 }
 
-// getOnlineDSN returns the online dsn which will be used by soar
+// getOnlineDSNWithDefault returns the online dsn which will be used by soar with default username and password
 func (da *DefaultAdvisor) getOnlineDSNWithDefault(dbID int) (string, error) {
-	user := viper.GetString(config.DBSoarMySQLUserKey)
-	pass := viper.GetString(config.DBSoarMySQLPassKey)
+	user := viper.GetString(config.DBApplicationMySQLUserKey)
+	pass := viper.GetString(config.DBApplicationMySQLPassKey)
 
 	return da.getOnlineDSN(dbID, user, pass)
 }
 
+// getOnlineDSN returns the online dsn which will be used by soar
 func (da *DefaultAdvisor) getOnlineDSN(dbID int, user, pass string) (string, error) {
 	// get db service
 	dbService := metadata.NewDBServiceWithDefault()
@@ -133,10 +155,6 @@ func (da *DefaultAdvisor) getOnlineDSN(dbID int, user, pass string) (string, err
 	return fmt.Sprintf("%s:%s@%s:%d/%s", user, pass, hostIP, portNum, dbName), nil
 }
 
-func (da *DefaultAdvisor) getDBSoarMySQLUser() string {
-	return viper.GetString(config.DBSoarMySQLUserKey)
-}
-
 // parseResult parses result, it will split the advice information and the log information
 func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 	var (
@@ -146,23 +164,31 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 	)
 
 	isLogMsg := true
-	regExp, err := regexp.Compile(logExpression)
+	logExpression, err := regexp.Compile(logExp)
+	if err != nil {
+		return constant.EmptyString, constant.EmptyString, err
+	}
+	errExpression, err := regexp.Compile(errExp)
 	if err != nil {
 		return constant.EmptyString, constant.EmptyString, err
 	}
 
 	lines := strings.Split(result, constant.CRLFString)
 	for _, line := range lines {
+		// replace some characters
+		for key, value := range repMap {
+			line = strings.ReplaceAll(line, key, value)
+		}
+
 		if isLogMsg {
-			isLogMsg = regExp.Match([]byte(line))
+			isLogMsg = logExpression.Match([]byte(line))
 		}
 
 		if isLogMsg {
 			message += line + constant.CRLFString
 			stringList := strings.Split(line, constant.SpaceString)
-			if len(stringList) >= 3 {
-				logLevel := string(stringList[2][1])
-				if logLevel == "E" || logLevel == "F" {
+			if len(stringList) >= defaultLogMessageLen {
+				if errExpression.Match([]byte(stringList[2])) {
 					errMsg += line + constant.CRLFString
 				}
 			}
@@ -174,7 +200,7 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 	}
 
 	if errMsg != constant.EmptyString {
-		return constant.EmptyString, constant.EmptyString, errors.New(fmt.Sprintf("parse result failed. error:\n%s", errMsg))
+		return advice, message, errors.New(fmt.Sprintf("parse result failed. error:\n%s", errMsg))
 	}
 
 	return advice, message, nil

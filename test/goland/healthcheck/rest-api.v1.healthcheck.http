@@ -7,10 +7,10 @@ POST http://{{baseURL}}/api/v1/healthcheck/check
 Content-Type: application/json
 
 {
-    "server_id": "1",
-    "start_time":"2021-05-18 12:00:00.000000",
-    "end_time":"2021-05-18 15:00:00.000000",
-    "step": "10s"
+    "server_id": 1,
+    "start_time":"2021-11-10 12:00:00",
+    "end_time":"2021-11-18 15:00:00",
+    "step": "30s"
 }
 
 ### healthcheck.CheckByHostInfo
@@ -18,11 +18,11 @@ POST http://{{baseURL}}/api/v1/healthcheck/check/host-info
 Content-Type: application/json
 
 {
-    "host_ip": "192.168.10.210",
-    "port_num": "3306",
-    "start_time":"2021-05-18 12:00:00.000000",
-    "end_time":"2021-05-18 15:00:00.000000",
-    "step": "10s"
+    "host_ip": "192.168.10.219",
+    "port_num": 3306,
+    "start_time":"2021-11-10 00:00:00.000000",
+    "end_time":"2021-11-16 00:00:00.000000",
+    "step": "30s"
 }
 
 ### healthcheck.ReviewAccuracy

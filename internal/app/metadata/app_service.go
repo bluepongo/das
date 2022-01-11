@@ -14,13 +14,14 @@ var _ metadata.AppService = (*AppService)(nil)
 
 type AppService struct {
 	metadata.AppRepo
-	Apps []metadata.App `json:"apps"`
-	DBs  []metadata.DB  `json:"dbs"`
+	Apps  []metadata.App  `json:"apps"`
+	DBs   []metadata.DB   `json:"dbs"`
+	Users []metadata.User `json:"users"`
 }
 
 // NewAppService returns a new *AppService
 func NewAppService(repo metadata.AppRepo) *AppService {
-	return &AppService{repo, []metadata.App{}, []metadata.DB{}}
+	return &AppService{AppRepo: repo}
 }
 
 // NewAppServiceWithDefault returns a new *AppService with default repository
@@ -31,6 +32,16 @@ func NewAppServiceWithDefault() *AppService {
 // GetApps returns apps of the service
 func (as *AppService) GetApps() []metadata.App {
 	return as.Apps
+}
+
+// GetDBs returns dbs of the service
+func (as *AppService) GetDBs() []metadata.DB {
+	return as.DBs
+}
+
+// GetUsers returns dbs of the service
+func (as *AppService) GetUsers() []metadata.User {
+	return as.Users
 }
 
 // GetAll gets all apps from the middleware
@@ -49,6 +60,7 @@ func (as *AppService) GetByID(id int) error {
 		return err
 	}
 
+	as.Apps = nil
 	as.Apps = append(as.Apps, entity)
 
 	return err
@@ -61,6 +73,7 @@ func (as *AppService) GetAppByName(appName string) error {
 		return err
 	}
 
+	as.Apps = nil
 	as.Apps = append(as.Apps, app)
 
 	return nil
@@ -68,7 +81,20 @@ func (as *AppService) GetAppByName(appName string) error {
 
 // GetDBsByID gets databases that the app uses
 func (as *AppService) GetDBsByID(id int) error {
-	return nil
+	var err error
+
+	as.DBs, err = as.AppRepo.GetDBsByID(id)
+
+	return err
+}
+
+// GetUsersByID gets Users that own the app
+func (as *AppService) GetUsersByID(id int) error {
+	var err error
+
+	as.Users, err = as.AppRepo.GetUsersByID(id)
+
+	return err
 }
 
 // Create creates an app in the middleware
@@ -95,7 +121,9 @@ func (as *AppService) Create(fields map[string]interface{}) error {
 		return err
 	}
 
+	as.Apps = nil
 	as.Apps = append(as.Apps, app)
+
 	return nil
 }
 
@@ -118,6 +146,11 @@ func (as *AppService) Update(id int, fields map[string]interface{}) error {
 
 // Delete deletes the app of given id in the middleware
 func (as *AppService) Delete(id int) error {
+	err := as.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return as.AppRepo.Delete(id)
 }
 
@@ -139,6 +172,26 @@ func (as *AppService) DeleteDB(appID, dbID int) error {
 	}
 
 	return as.GetDBsByID(appID)
+}
+
+// AddUser adds a new map of app and user in the middleware
+func (as *AppService) AddUser(appID, userID int) error {
+	err := as.AppRepo.AddUser(appID, userID)
+	if err != nil {
+		return err
+	}
+
+	return as.GetUsersByID(appID)
+}
+
+// DeleteUser deletes the map of app and database in the middleware
+func (as *AppService) DeleteUser(appID, userID int) error {
+	err := as.AppRepo.DeleteUser(appID, userID)
+	if err != nil {
+		return err
+	}
+
+	return as.GetUsersByID(appID)
 }
 
 // Marshal marshals AppService.Apps to json bytes

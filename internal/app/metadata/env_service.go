@@ -35,6 +35,7 @@ func (es *EnvService) GetEnvs() []metadata.Env {
 // GetAll gets all environments from the middleware
 func (es *EnvService) GetAll() error {
 	var err error
+
 	es.Envs, err = es.EnvRepo.GetAll()
 
 	return err
@@ -42,9 +43,9 @@ func (es *EnvService) GetAll() error {
 
 // GetID gets identity of an entity with given fields
 func (es *EnvService) GetID(fields map[string]interface{}) (int, error) {
-	_, ok := fields[envNameStruct]
+	_, ok := fields[envEnvNameStruct]
 	if !ok {
-		return constant.ZeroInt, message.NewMessage(message.ErrFieldNotExists, envNameStruct)
+		return constant.ZeroInt, message.NewMessage(message.ErrFieldNotExists, envEnvNameStruct)
 	}
 	// create a new entity
 	envInfo, err := NewEnvInfoWithMapAndRandom(fields)
@@ -67,6 +68,7 @@ func (es *EnvService) GetByID(id int) error {
 		return err
 	}
 
+	es.Envs = nil
 	es.Envs = append(es.Envs, entity)
 
 	return err
@@ -79,6 +81,7 @@ func (es *EnvService) GetEnvByName(envName string) error {
 		return err
 	}
 
+	es.Envs = nil
 	es.Envs = append(es.Envs, env)
 
 	return nil
@@ -87,9 +90,9 @@ func (es *EnvService) GetEnvByName(envName string) error {
 // Create creates an environment in the middleware
 func (es *EnvService) Create(fields map[string]interface{}) error {
 	// generate new map
-	_, ok := fields[envNameStruct]
+	_, ok := fields[envEnvNameStruct]
 	if !ok {
-		return message.NewMessage(message.ErrFieldNotExists, envNameStruct)
+		return message.NewMessage(message.ErrFieldNotExists, envEnvNameStruct)
 	}
 	// create a new entity
 	envInfo, err := NewEnvInfoWithMapAndRandom(fields)
@@ -102,6 +105,7 @@ func (es *EnvService) Create(fields map[string]interface{}) error {
 		return err
 	}
 
+	es.Envs = nil
 	es.Envs = append(es.Envs, env)
 
 	return nil
@@ -126,6 +130,11 @@ func (es *EnvService) Update(id int, fields map[string]interface{}) error {
 
 // Delete deletes the environment of given id in the middleware
 func (es *EnvService) Delete(id int) error {
+	err := es.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return es.EnvRepo.Delete(id)
 }
 

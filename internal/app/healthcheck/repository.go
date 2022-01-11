@@ -2,7 +2,6 @@ package healthcheck
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/go-version"
@@ -25,8 +24,9 @@ const (
 	mysql57           = "5.7"
 	performanceSchema = "performance_schema"
 	informationSchema = "information_schema"
-	deviceLabel       = "device"
-	mountPointLabel   = "mountpoint"
+
+	deviceLabel     = "device"
+	mountPointLabel = "mountpoint"
 
 	dataDirVariable   = "datadir"
 	binlogDirVariable = "log_bin_base"
@@ -120,7 +120,7 @@ func (dr *DASRepo) LoadEngineConfig() (healthcheck.EngineConfig, error) {
 // GetResultByOperationID gets a Result by the operationID from the middleware
 func (dr *DASRepo) GetResultByOperationID(operationID int) (healthcheck.Result, error) {
 	sql := `
-		select id, operation_id, weighted_average_score, db_config_score, db_config_data, 
+		select id, operation_id, host_ip, port_num, weighted_average_score, db_config_score, db_config_data,
 		db_config_advice, avg_backup_failed_ratio_score, avg_backup_failed_ratio_data, 
 		avg_backup_failed_ratio_high, statistics_failed_ratio_score, statistics_failed_ratio_data, 
 		statistics_failed_ratio_high, cpu_usage_score, cpu_usage_data, cpu_usage_high,
@@ -184,30 +184,18 @@ func (dr *DASRepo) InitOperation(mysqlServerID int, startTime, endTime time.Time
 	log.Debugf("healthCheck DASRepo.InitOperation() insert sql: \n%s\nplaceholders: %s, %s, %s, %s",
 		sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
 
-	_, err := dr.Execute(sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
-	if err != nil {
-		return constant.ZeroInt, err
-	}
-
-	sql = `
-		select id from t_hc_operation_info where del_flag = 0 and 
-		mysql_server_id = ? and start_time = ? and end_time = ? and step = ?;
-	`
-	log.Debugf("healthCheck DASRepo.InitOperation() select sql: \n%s\nplaceholders: %s, %s, %s, %s",
-		sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
-
 	result, err := dr.Execute(sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
 	if err != nil {
 		return constant.ZeroInt, err
 	}
 
-	return result.GetInt(constant.ZeroInt, constant.ZeroInt)
+	return result.LastInsertID()
 }
 
 // UpdateOperationStatus updates the status and message by the operationID in the middleware
 func (dr *DASRepo) UpdateOperationStatus(operationID int, status int, message string) error {
 	sql := `update t_hc_operation_info set status = ?, message = ? where id = ?;`
-	log.Debugf("healthCheck DASRepo.UpdateOperationStatus() update sql: \n%s\nplaceholders: %s, %s, %s", sql, operationID, status, message)
+	log.Debugf("healthCheck DASRepo.UpdateOperationStatus() update sql: \n%s\nplaceholders: %s, %s, %s", sql, status, message, operationID)
 	_, err := dr.Execute(sql, status, message, operationID)
 
 	return err
@@ -215,7 +203,7 @@ func (dr *DASRepo) UpdateOperationStatus(operationID int, status int, message st
 
 // SaveResult saves the result in the middleware
 func (dr *DASRepo) SaveResult(result healthcheck.Result) error {
-	sql := `insert into t_hc_result(operation_id, weighted_average_score, db_config_score, db_config_data, 
+	sql := `insert into t_hc_result(operation_id, host_ip, port_num, weighted_average_score, db_config_score, db_config_data,
 		db_config_advice, avg_backup_failed_ratio_score, avg_backup_failed_ratio_data, 
 		avg_backup_failed_ratio_high, statistics_failed_ratio_score, statistics_failed_ratio_data, 
 		statistics_failed_ratio_high, cpu_usage_score, cpu_usage_data, cpu_usage_high, 
@@ -226,10 +214,10 @@ func (dr *DASRepo) SaveResult(result healthcheck.Result) error {
 		cache_miss_ratio_high, table_rows_score, table_rows_data, table_rows_high,
 		table_size_score, table_size_data, table_size_high, slow_query_score,
 		slow_query_data, slow_query_advice, accuracy_review)
-		values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+		values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 	`
 	log.Debugf("healthCheck DASRepo.SaveResult() insert sql: \n%s\nplaceholders: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %ss, %s, %s, %s",
-		sql, result.GetOperationID(), result.GetWeightedAverageScore(),
+		sql, result.GetOperationID(), result.GetHostIP(), result.GetPortNum(), result.GetWeightedAverageScore(),
 		result.GetDBConfigScore(), result.GetDBConfigData(), result.GetDBConfigAdvice(),
 		result.GetAvgBackupFailedRatioScore(), result.GetAvgBackupFailedRatioData(), result.GetAvgBackupFailedRatioHigh(),
 		result.GetStatisticFailedRatioScore(), result.GetStatisticFailedRatioData(), result.GetStatisticFailedRatioHigh(),
@@ -244,7 +232,7 @@ func (dr *DASRepo) SaveResult(result healthcheck.Result) error {
 		result.GetSlowQueryScore(), result.GetSlowQueryData(), result.GetSlowQueryAdvice(), result.GetAccuracyReview())
 
 	// execute
-	_, err := dr.Execute(sql, result.GetOperationID(), result.GetWeightedAverageScore(),
+	_, err := dr.Execute(sql, result.GetOperationID(), result.GetHostIP(), result.GetPortNum(), result.GetWeightedAverageScore(),
 		result.GetDBConfigScore(), result.GetDBConfigData(), result.GetDBConfigAdvice(),
 		result.GetAvgBackupFailedRatioScore(), result.GetAvgBackupFailedRatioData(), result.GetAvgBackupFailedRatioHigh(),
 		result.GetStatisticFailedRatioScore(), result.GetStatisticFailedRatioData(), result.GetStatisticFailedRatioHigh(),
@@ -303,12 +291,12 @@ func (dr *DASRepo) loadEngineConfig() (DefaultEngineConfig, error) {
 }
 
 type ApplicationMySQLRepo struct {
-	operationInfo *OperationInfo
+	operationInfo healthcheck.OperationInfo
 	conn          *mysql.Conn
 }
 
 // NewApplicationMySQLRepo returns a new *ApplicationMySQLRepo
-func NewApplicationMySQLRepo(operationInfo *OperationInfo, conn *mysql.Conn) *ApplicationMySQLRepo {
+func NewApplicationMySQLRepo(operationInfo healthcheck.OperationInfo, conn *mysql.Conn) *ApplicationMySQLRepo {
 	return &ApplicationMySQLRepo{
 		operationInfo: operationInfo,
 		conn:          conn,
@@ -316,7 +304,7 @@ func NewApplicationMySQLRepo(operationInfo *OperationInfo, conn *mysql.Conn) *Ap
 }
 
 // GetOperationInfo returns the operation information
-func (amr *ApplicationMySQLRepo) GetOperationInfo() *OperationInfo {
+func (amr *ApplicationMySQLRepo) GetOperationInfo() healthcheck.OperationInfo {
 	return amr.operationInfo
 }
 
@@ -405,13 +393,38 @@ func (amr *ApplicationMySQLRepo) GetLargeTables() ([]healthcheck.Table, error) {
 	return tables, nil
 }
 
+// GetDBName gets the db name of given table names
+func (amr *ApplicationMySQLRepo) GetDBName(tableNames []string) (string, error) {
+	if len(tableNames) == constant.ZeroInt {
+		return constant.EmptyString, nil
+	}
+
+	sql := `select table_schema from information_schema.tables where table_name in (%s);`
+	interfaces, err := common.ConvertInterfaceToSliceInterface(tableNames)
+	if err != nil {
+		return constant.EmptyString, err
+	}
+	inClause, err := middleware.ConvertSliceToString(interfaces...)
+	if err != nil {
+		return constant.EmptyString, err
+	}
+	sql = fmt.Sprintf(sql, inClause)
+
+	result, err := amr.getConnection().Execute(sql)
+	if err != nil {
+		return constant.EmptyString, err
+	}
+
+	return result.GetString(constant.ZeroInt, constant.ZeroInt)
+}
+
 type PrometheusRepo struct {
-	operationInfo *OperationInfo
+	operationInfo healthcheck.OperationInfo
 	conn          *prometheus.Conn
 }
 
 // NewPrometheusRepo returns a new *PrometheusRepo
-func NewPrometheusRepo(operationInfo *OperationInfo, conn *prometheus.Conn) *PrometheusRepo {
+func NewPrometheusRepo(operationInfo healthcheck.OperationInfo, conn *prometheus.Conn) *PrometheusRepo {
 	return &PrometheusRepo{
 		operationInfo: operationInfo,
 		conn:          conn,
@@ -419,7 +432,7 @@ func NewPrometheusRepo(operationInfo *OperationInfo, conn *prometheus.Conn) *Pro
 }
 
 // GetOperationInfo returns the operation information
-func (pr *PrometheusRepo) GetOperationInfo() *OperationInfo {
+func (pr *PrometheusRepo) GetOperationInfo() healthcheck.OperationInfo {
 	return pr.operationInfo
 }
 
@@ -441,7 +454,7 @@ func (pr *PrometheusRepo) GetFileSystems() ([]healthcheck.FileSystem, error) {
 		// pmm 2.x
 		prometheusQuery = PrometheusFileSystemV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	prometheusQuery = fmt.Sprintf(prometheusQuery, pr.getNodeName())
@@ -478,7 +491,7 @@ func (pr *PrometheusRepo) GetAvgBackupFailedRatio() ([]healthcheck.PrometheusDat
 		// pmm 2.x
 		prometheusQuery = PrometheusAvgBackupFailedRatioV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	prometheusQuery = fmt.Sprintf(prometheusQuery, pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName(), pr.getNodeName())
@@ -500,7 +513,7 @@ func (pr *PrometheusRepo) GetStatisticFailedRatio() ([]healthcheck.PrometheusDat
 		// pmm 2.x
 		prometheusQuery = PrometheusStatisticFailedRatioV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	prometheusQuery = fmt.Sprintf(prometheusQuery, pr.getNodeName(), pr.getNodeName())
@@ -522,7 +535,7 @@ func (pr *PrometheusRepo) GetCPUUsage() ([]healthcheck.PrometheusData, error) {
 		// pmm 2.x
 		prometheusQuery = PrometheusCPUUsageV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	nodeName := pr.getNodeName()
@@ -547,7 +560,7 @@ func (pr *PrometheusRepo) GetIOUtil() ([]healthcheck.PrometheusData, error) {
 		// pmm 2.x
 		prometheusQuery = fmt.Sprintf(PrometheusIOUtilV2, nodeName, nodeName, nodeName, nodeName)
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	log.Debugf("healthcheck PrometheusRepo.GetIOUtil() query: \n%s\n", prometheusQuery)
@@ -571,7 +584,7 @@ func (pr *PrometheusRepo) GetDiskCapacityUsage(mountPoints []string) ([]healthch
 		// pmm 2.x
 		prometheusQuery = fmt.Sprintf(PrometheusDiskCapacityV2, nodeName, mps, nodeName, mps, nodeName, mps, nodeName, mps)
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	log.Debugf("healthcheck PrometheusRepo.GetDiskCapacityUsage() query: \n%s\n", prometheusQuery)
@@ -592,7 +605,7 @@ func (pr *PrometheusRepo) GetConnectionUsage() ([]healthcheck.PrometheusData, er
 		// pmm 2.x
 		prometheusQuery = PrometheusConnectionUsageV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	serviceName := pr.getServiceName()
@@ -602,7 +615,7 @@ func (pr *PrometheusRepo) GetConnectionUsage() ([]healthcheck.PrometheusData, er
 	return pr.execute(prometheusQuery)
 }
 
-// GetActiveSessionPercents gets the active session number
+// GetAverageActiveSessionPercents gets the average active session percents
 func (pr *PrometheusRepo) GetAverageActiveSessionPercents() ([]healthcheck.PrometheusData, error) {
 	var prometheusQuery string
 
@@ -615,7 +628,7 @@ func (pr *PrometheusRepo) GetAverageActiveSessionPercents() ([]healthcheck.Prome
 		// pmm 2.x
 		prometheusQuery = PrometheusAverageActiveSessionPercentsV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	serviceName := pr.getServiceName()
@@ -638,7 +651,7 @@ func (pr *PrometheusRepo) GetCacheMissRatio() ([]healthcheck.PrometheusData, err
 		// pmm 2.x
 		prometheusQuery = PrometheusCacheMissRatioV2
 	default:
-		return nil, message.NewMessage(msghc.ErrPmmVersionInvalid)
+		return nil, message.NewMessage(msghc.ErrHealthcheckPmmVersionInvalid)
 	}
 
 	serviceName := pr.getServiceName()
@@ -655,13 +668,7 @@ func (pr *PrometheusRepo) getServiceName() string {
 
 // getNodeName returns the node name
 func (pr *PrometheusRepo) getNodeName() string {
-	serviceName := pr.getServiceName()
-	strList := strings.Split(serviceName, constant.ColonString)
-	if len(strList) > constant.ZeroInt {
-		return strList[constant.ZeroInt]
-	}
-
-	return serviceName[:strings.LastIndex(serviceName, constant.DashString)]
+	return pr.GetOperationInfo().GetMySQLServer().GetServerName()
 }
 
 // getPMMVersion returns the pmm version
@@ -694,12 +701,12 @@ func (pr *PrometheusRepo) execute(query string) ([]healthcheck.PrometheusData, e
 }
 
 type MySQLQueryRepo struct {
-	operationInfo *OperationInfo
+	operationInfo healthcheck.OperationInfo
 	conn          *mysql.Conn
 }
 
 // NewMySQLQueryRepo returns the new *MySQLQueryRepo
-func NewMySQLQueryRepo(operationInfo *OperationInfo, conn *mysql.Conn) *MySQLQueryRepo {
+func NewMySQLQueryRepo(operationInfo healthcheck.OperationInfo, conn *mysql.Conn) *MySQLQueryRepo {
 	return &MySQLQueryRepo{
 		operationInfo: operationInfo,
 		conn:          conn,
@@ -707,7 +714,7 @@ func NewMySQLQueryRepo(operationInfo *OperationInfo, conn *mysql.Conn) *MySQLQue
 }
 
 // GetOperationInfo returns the operation information
-func (mqr *MySQLQueryRepo) GetOperationInfo() *OperationInfo {
+func (mqr *MySQLQueryRepo) GetOperationInfo() healthcheck.OperationInfo {
 	return mqr.operationInfo
 }
 
@@ -753,12 +760,12 @@ func (mqr *MySQLQueryRepo) getPMMVersion() int {
 }
 
 type ClickhouseQueryRepo struct {
-	operationInfo *OperationInfo
+	operationInfo healthcheck.OperationInfo
 	conn          *clickhouse.Conn
 }
 
 // NewClickhouseQueryRepo returns the new *ClickhouseQueryRepo
-func NewClickhouseQueryRepo(operationInfo *OperationInfo, conn *clickhouse.Conn) *ClickhouseQueryRepo {
+func NewClickhouseQueryRepo(operationInfo healthcheck.OperationInfo, conn *clickhouse.Conn) *ClickhouseQueryRepo {
 	return &ClickhouseQueryRepo{
 		operationInfo: operationInfo,
 		conn:          conn,
@@ -766,7 +773,7 @@ func NewClickhouseQueryRepo(operationInfo *OperationInfo, conn *clickhouse.Conn)
 }
 
 // GetOperationInfo returns the operation information
-func (cqr *ClickhouseQueryRepo) GetOperationInfo() *OperationInfo {
+func (cqr *ClickhouseQueryRepo) GetOperationInfo() healthcheck.OperationInfo {
 	return cqr.operationInfo
 }
 

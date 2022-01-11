@@ -11,6 +11,8 @@ type Config interface {
 	Set(key string, value string)
 	// Delete deletes the given key from the config
 	Delete(key string)
+	// String returns the string value of the config
+	String() string
 }
 
 type Repository interface {
@@ -38,4 +40,6 @@ type Service interface {
 	GetConfig() Config
 	// SendEmail sends the email
 	SendEmail(toAddrs, ccAddrs, subject, content string) error
+	// Save saves the email into the middleware
+	Save(toAddrs, ccAddrs, subject, content, message string) error
 }

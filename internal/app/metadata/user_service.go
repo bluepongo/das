@@ -11,27 +11,18 @@ import (
 
 var _ metadata.UserService = (*UserService)(nil)
 
-const (
-	userNameStruct       = "UserName"
-	departmentNameStruct = "DepartmentName"
-	employeeIDStruct     = "EmployeeID"
-	accountNameStruct    = "AccountName"
-	emailStruct          = "Email"
-	telephoneStruct      = "Telephone"
-	mobileStruct         = "Mobile"
-	roleStruct           = "Role"
-	userUsersStruct      = "Users"
-)
+const userUsersStruct = "Users"
 
 // UserService struct
 type UserService struct {
 	metadata.UserRepo
 	Users []metadata.User `json:"users"`
+	Apps  []metadata.App  `jaon:"apps"`
 }
 
 // NewUserService returns a new *UserService
 func NewUserService(repo metadata.UserRepo) *UserService {
-	return &UserService{repo, []metadata.User{}}
+	return &UserService{UserRepo: repo}
 }
 
 // NewUserServiceWithDefault returns a new *UserService with default repository
@@ -39,10 +30,30 @@ func NewUserServiceWithDefault() *UserService {
 	return NewUserService(NewUserRepoWithGlobal())
 }
 
+// GetUsers returns users of the service
+func (us *UserService) GetUsers() []metadata.User {
+	return us.Users
+}
+
 // GetAll gets all users
 func (us *UserService) GetAll() error {
 	var err error
+
 	us.Users, err = us.UserRepo.GetAll()
+
+	return err
+}
+
+// GetApps returns the apps of the service
+func (us *UserService) GetApps() []metadata.App {
+	return us.Apps
+}
+
+// GetByName gets users of given user name
+func (us *UserService) GetByName(userName string) error {
+	var err error
+
+	us.Users, err = us.UserRepo.GetByName(userName)
 
 	return err
 }
@@ -54,6 +65,72 @@ func (us *UserService) GetByID(id int) error {
 		return err
 	}
 
+	us.Users = nil
+	us.Users = append(us.Users, user)
+
+	return err
+}
+
+// GetByEmployeeID gets a user of given employee id
+func (us *UserService) GetByEmployeeID(employeeID string) error {
+	user, err := us.UserRepo.GetByEmployeeID(employeeID)
+	if err != nil {
+		return err
+	}
+
+	us.Users = nil
+	us.Users = append(us.Users, user)
+
+	return err
+}
+
+// GetByAccountName gets a user of given account name
+func (us *UserService) GetByAccountName(accountName string) error {
+	user, err := us.UserRepo.GetByAccountName(accountName)
+	if err != nil {
+		return err
+	}
+
+	us.Users = nil
+	us.Users = append(us.Users, user)
+
+	return err
+}
+
+// GetByEmail gets a user of given email
+func (us *UserService) GetByEmail(email string) error {
+	user, err := us.UserRepo.GetByEmail(email)
+	if err != nil {
+		return err
+	}
+
+	us.Users = nil
+	us.Users = append(us.Users, user)
+
+	return err
+}
+
+// GetByTelephone gets a user of given telephone
+func (us *UserService) GetByTelephone(telephone string) error {
+	user, err := us.UserRepo.GetByTelephone(telephone)
+	if err != nil {
+		return err
+	}
+
+	us.Users = nil
+	us.Users = append(us.Users, user)
+
+	return err
+}
+
+// GetByTelephone gets a user of given mobile
+func (us *UserService) GetByMobile(mobile string) error {
+	user, err := us.UserRepo.GetByMobile(mobile)
+	if err != nil {
+		return err
+	}
+
+	us.Users = nil
 	us.Users = append(us.Users, user)
 
 	return err
@@ -62,30 +139,17 @@ func (us *UserService) GetByID(id int) error {
 // Create creates a user in the middleware
 func (us *UserService) Create(fields map[string]interface{}) error {
 	// generate new map
-	_, ok := fields[userNameStruct]
+	_, ok := fields[userUserNameStruct]
 	if !ok {
-		return message.NewMessage(message.ErrFieldNotExists, userNameStruct)
+		return message.NewMessage(message.ErrFieldNotExists, userUserNameStruct)
 	}
-	_, ok = fields[departmentNameStruct]
+	_, ok = fields[userAccountNameStruct]
 	if !ok {
-		return message.NewMessage(message.ErrFieldNotExists, departmentNameStruct)
+		return message.NewMessage(message.ErrFieldNotExists, userAccountNameStruct)
 	}
-	// _, ok = fields[employeeIDStruct]
-	// if !ok {
-	// 	return message.NewMessage(message.ErrFieldNotExists, employeeIDStruct)
-	// }
-	_, ok = fields[accountNameStruct]
+	_, ok = fields[userEmailStruct]
 	if !ok {
-		return message.NewMessage(message.ErrFieldNotExists, accountNameStruct)
-	}
-	_, ok = fields[emailStruct]
-	if !ok {
-		return message.NewMessage(message.ErrFieldNotExists, emailStruct)
-	}
-
-	_, ok = fields[roleStruct]
-	if !ok {
-		return message.NewMessage(message.ErrFieldNotExists, roleStruct)
+		return message.NewMessage(message.ErrFieldNotExists, userEmailStruct)
 	}
 
 	// create a new user
@@ -100,7 +164,9 @@ func (us *UserService) Create(fields map[string]interface{}) error {
 		return err
 	}
 
+	us.Users = nil
 	us.Users = append(us.Users, user)
+
 	return nil
 }
 
@@ -123,6 +189,11 @@ func (us *UserService) Update(id int, fields map[string]interface{}) error {
 
 // Delete deletes the user of given id in the middleware
 func (us *UserService) Delete(id int) error {
+	err := us.GetByID(id)
+	if err != nil {
+		return err
+	}
+
 	return us.UserRepo.Delete(id)
 }
 
@@ -136,75 +207,31 @@ func (us *UserService) MarshalWithFields(fields ...string) ([]byte, error) {
 	return common.MarshalStructWithFields(us, fields...)
 }
 
-// GetByAccountName gets a user of given account name
-func (us *UserService) GetByAccountName(accountName string) error {
-	user, err := us.UserRepo.GetByAccountName(accountName)
-	if err != nil {
-		return err
-	}
-
-	us.Users = append(us.Users, user)
-
-	return err
-}
-
-// GetByEmail gets a user of given email
-func (us *UserService) GetByEmail(email string) error {
-	user, err := us.UserRepo.GetByEmail(email)
-	if err != nil {
-		return err
-	}
-
-	us.Users = append(us.Users, user)
-
-	return err
-}
-
-// GetByTelephone gets a user of given telephone
-func (us *UserService) GetByTelephone(telephone string) error {
-	user, err := us.UserRepo.GetByTelephone(telephone)
-	if err != nil {
-		return err
-	}
-
-	us.Users = append(us.Users, user)
-
-	return err
-}
-
-// GetByTelephone gets a user of given mobile
-func (us *UserService) GetByMobile(mobile string) error {
-	user, err := us.UserRepo.GetByMobile(mobile)
-	if err != nil {
-		return err
-	}
-
-	us.Users = append(us.Users, user)
-
-	return err
-}
-
-// GetByEmployeeID gets a user of given employee id
-func (us *UserService) GetByEmployeeID(employeeID string) error {
-	user, err := us.UserRepo.GetByEmployeeID(employeeID)
-	if err != nil {
-		return err
-	}
-
-	us.Users = append(us.Users, user)
-
-	return err
-}
-
-// GetByName gets users of given user name
-func (us *UserService) GetByName(userName string) error {
+// GetAppsByID gets apps that this user owns
+func (us *UserService) GetAppsByID(userID int) error {
 	var err error
-	us.Users, err = us.UserRepo.GetByName(userName)
+
+	us.Apps, err = us.UserRepo.GetAppsByID(userID)
 
 	return err
 }
 
-// GetUsers returns users of the service
-func (us *UserService) GetUsers() []metadata.User {
-	return us.Users
+// AddApp adus a new map of app and user in the middleware
+func (us *UserService) AddApp(userID, appID int) error {
+	err := us.UserRepo.AddApp(userID, appID)
+	if err != nil {
+		return err
+	}
+
+	return us.GetAppsByID(userID)
+}
+
+// DeleteApp deletes the map of app and user in the middleware
+func (us *UserService) DeleteApp(userID, appID int) error {
+	err := us.UserRepo.DeleteApp(userID, appID)
+	if err != nil {
+		return err
+	}
+
+	return us.GetAppsByID(userID)
 }

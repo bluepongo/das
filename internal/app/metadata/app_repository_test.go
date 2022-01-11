@@ -1,9 +1,12 @@
 package metadata
 
 import (
+	"os"
 	"testing"
 
+	"github.com/romberli/das/global"
 	"github.com/romberli/go-util/common"
+	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
 	"github.com/stretchr/testify/assert"
@@ -12,32 +15,43 @@ import (
 )
 
 const (
-	appAddr       = "127.0.0.1:3306"
-	appDBName     = "das"
-	appDBUser     = "root"
-	appDBPass     = "rootroot"
-	onlineAppName = "test2"
-	newAppName    = "testApp"
+	testDASMySQLAddr = "192.168.10.219:3306"
+	testDASMySQLName = "das"
+	testDASMySQLUser = "root"
+	testDASMySQLPass = "root"
+
+	testAppNewAppName    = "test_new_app_name"
+	testAppUpdateAppName = "test_update_app_name"
+	testAppDBID          = 1
+	testAppUserID        = 1
+	testAppUserID2       = 14
 )
 
-var appRepo = initAppRepo()
+var testAppRepo *AppRepo
 
-func initAppRepo() *AppRepo {
-	pool, err := mysql.NewPoolWithDefault(appAddr, appDBName, appDBUser, appDBPass)
-	if err != nil {
-		log.Error(common.CombineMessageWithError("initAppRepo() failed", err))
-		return nil
-	}
-
-	return NewAppRepo(pool)
+func init() {
+	testInitDASMySQLPool()
+	testAppRepo = NewAppRepoWithGlobal()
 }
 
-func createApp() (metadata.App, error) {
+func testInitDASMySQLPool() {
+	var err error
+
+	if global.DASMySQLPool == nil {
+		global.DASMySQLPool, err = mysql.NewPoolWithDefault(testDASMySQLAddr, testDASMySQLName, testDASMySQLUser, testDASMySQLPass)
+		if err != nil {
+			log.Error(common.CombineMessageWithError("testInitDASMySQLPool() failed", err))
+			os.Exit(constant.DefaultAbnormalExitCode)
+		}
+	}
+}
+
+func testCreateApp() (metadata.App, error) {
 	appSystemInfo := NewAppInfoWithDefault(
-		defaultAppInfoAppName,
-		defaultAppInfoLevel,
+		testAppNewAppName,
+		testAppLevel,
 	)
-	entity, err := appRepo.Create(appSystemInfo)
+	entity, err := testAppRepo.Create(appSystemInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -45,23 +59,20 @@ func createApp() (metadata.App, error) {
 	return entity, nil
 }
 
-func deleteAppByID(id int) error {
-	sql := `delete from t_meta_app_system_info where id = ?`
-	_, err := appRepo.Execute(sql, id)
-	return err
-}
-
 func TestAppRepoAll(t *testing.T) {
 	TestAppRepo_Execute(t)
 	TestAppRepo_GetAll(t)
 	TestAppRepo_GetByID(t)
 	TestAppRepo_GetAppByName(t)
-	TestAppRepo_GetDBIDList(t)
 	TestAppRepo_Create(t)
 	TestAppRepo_Update(t)
 	TestAppRepo_Delete(t)
 	TestAppRepo_AddAppDB(t)
 	TestAppRepo_DeleteAppDB(t)
+	TestAppRepo_AddAppUser(t)
+	TestAppRepo_DeleteAppUser(t)
+	TestAppRepo_GetDBsByID(t)
+	TestAppRepo_GetUsersByID(t)
 
 }
 
@@ -69,9 +80,9 @@ func TestAppRepo_Execute(t *testing.T) {
 	asst := assert.New(t)
 
 	sql := `select 1;`
-	result, err := appRepo.Execute(sql)
+	result, err := testAppRepo.Execute(sql)
 	asst.Nil(err, common.CombineMessageWithError("test Execute() failed", err))
-	r, err := result.GetInt(0, 0)
+	r, err := result.GetInt(constant.ZeroInt, constant.ZeroInt)
 	asst.Nil(err, common.CombineMessageWithError("test Execute() failed", err))
 	asst.Equal(1, r, "test Execute() failed")
 }
@@ -79,151 +90,171 @@ func TestAppRepo_Execute(t *testing.T) {
 func TestAppRepo_Transaction(t *testing.T) {
 	asst := assert.New(t)
 
-	sql := `insert into t_meta_app_system_info(system_name,level,owner_id,owner_group) values(?,?,?,?);`
-	tx, err := appRepo.Transaction()
+	sql := `insert into t_meta_app_info(app_name,level,owner_id) values(?,?,?);`
+	tx, err := testAppRepo.Transaction()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	err = tx.Begin()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
-	_, err = tx.Execute(sql, defaultAppInfoAppName, defaultAppInfoLevel, defaultAppInfoOwnerID, defaultAppInfoOwnerGroup)
+	_, err = tx.Execute(sql, testAppNewAppName, testAppLevel, testAppOwnerID)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	// check if inserted
-	sql = `select system_name from t_meta_app_system_info where system_name=?`
-	result, err := tx.Execute(sql,
-		defaultAppInfoAppName,
-	)
+	sql = `select app_name from t_meta_app_info where app_name=?`
+	result, err := tx.Execute(sql, testAppNewAppName)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
-	appSystemName, err := result.GetString(0, 0)
+	appName, err := result.GetString(constant.ZeroInt, constant.ZeroInt)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
-	if appSystemName != defaultAppInfoAppName {
-		asst.Fail("test Transaction() failed")
-	}
+	asst.Equal(appName, testAppNewAppName, "test Transaction() failed")
 	err = tx.Rollback()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	// check if rollbacked
-	entities, err := appRepo.GetAll()
+	entities, err := testAppRepo.GetAll()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	for _, entity := range entities {
-		systemName := entity.GetAppName()
-		asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
-		if systemName == defaultAppInfoAppName {
-			asst.Fail("test Transaction() failed")
-			break
-		}
+		asst.NotEqual(entity.GetAppName(), testAppNewAppName, "test Transaction() failed")
 	}
 }
 
 func TestAppRepo_GetAll(t *testing.T) {
 	asst := assert.New(t)
 
-	entities, err := appRepo.GetAll()
+	entities, err := testAppRepo.GetAll()
 	asst.Nil(err, common.CombineMessageWithError("test GetAll() failed", err))
-	systemName := entities[0].GetAppName()
-	asst.Nil(err, common.CombineMessageWithError("test GetAll() failed", err))
-	asst.Equal(onlineAppName, systemName, "test GetAll() failed")
+	asst.Equal(3, len(entities), "test GetAll() failed")
 }
 
 func TestAppRepo_GetByID(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := appRepo.GetByID(2)
+	entity, err := testAppRepo.GetByID(testAppAppID)
 	asst.Nil(err, common.CombineMessageWithError("test GetByID() failed", err))
-	systemName := entity.GetAppName()
-	asst.Nil(err, common.CombineMessageWithError("test GetByID() failed", err))
-	asst.Equal(onlineAppName, systemName, "test GetByID() failed")
+	appName := entity.GetAppName()
+	asst.Equal(testAppAppName, appName, "test GetByID() failed")
 }
 
 func TestAppRepo_Create(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := createApp()
-
+	entity, err := testCreateApp()
 	asst.Nil(err, common.CombineMessageWithError("test Create() failed", err))
 	// delete
-	err = deleteAppByID(entity.Identity())
+	err = testAppRepo.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Create() failed", err))
 }
 
 func TestAppRepo_Update(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := createApp()
+	entity, err := testCreateApp()
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
-	err = entity.Set(map[string]interface{}{appAppNameStruct: newAppName})
+	err = entity.Set(map[string]interface{}{appAppNameStruct: testAppUpdateAppName})
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
-	err = appRepo.Update(entity)
+	err = testAppRepo.Update(entity)
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
-	entity, err = appRepo.GetByID(entity.Identity())
+	entity, err = testAppRepo.GetByID(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
-	systemName := entity.GetAppName()
-	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
-	asst.Equal(newAppName, systemName, "test Update() failed")
+	appName := entity.GetAppName()
+	asst.Equal(testAppUpdateAppName, appName, "test Update() failed")
 	// delete
-	err = deleteAppByID(entity.Identity())
+	err = testAppRepo.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
 }
 
 func TestAppRepo_Delete(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := createApp()
+	entity, err := testCreateApp()
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
 	// delete
-	err = deleteAppByID(entity.Identity())
+	err = testAppRepo.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
 }
 
 func TestAppRepo_GetAppByName(t *testing.T) {
 	asst := assert.New(t)
 
-	_, err := createApp()
+	_, err := testCreateApp()
 	asst.Nil(err, common.CombineMessageWithError("test GetAppByName() failed", err))
-	entity, err := appRepo.GetAppByName(defaultAppInfoAppName)
+	entity, err := testAppRepo.GetAppByName(testAppNewAppName)
 	asst.Nil(err, common.CombineMessageWithError("test GetAppByName() failed", err))
-	asst.Equal(defaultAppInfoAppName, entity.GetAppName(), common.CombineMessageWithError("test GetAppByName() failed", err))
+	asst.Equal(testAppNewAppName, entity.GetAppName(), common.CombineMessageWithError("test GetAppByName() failed", err))
 	// delete
-	err = deleteAppByID(entity.Identity())
+	err = testAppRepo.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test GetAppByName() failed", err))
 }
 
-func TestAppRepo_GetDBIDList(t *testing.T) {
+func TestAppRepo_GetDBsByID(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := createApp()
-	asst.Nil(err, common.CombineMessageWithError("test GetDBIDList() failed", err))
-	dbIDList, err := appRepo.GetDBIDList(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test GetDBIDList() failed", err))
-	asst.Equal(2, len(dbIDList), "test GetDBIDList() failed")
-	// delete
-	err = deleteAppByID(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test GetAppByName() failed", err))
+	dbs, err := testAppRepo.GetDBsByID(testAppAppID)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBsByID() failed", err))
+	asst.Equal(1, len(dbs), "test GetDBsByID() failed")
+
 }
 
+func TestAppRepo_GetUsersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	users, err := testAppRepo.GetUsersByID(testAppAppID)
+	asst.Nil(err, common.CombineMessageWithError("test GetUsersByID() failed", err))
+	asst.Equal(2, len(users), "test GetUsersByID() failed")
+
+}
 func TestAppRepo_AddAppDB(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := createApp()
-	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
-	err = appRepo.AddDB(entity.Identity(), 3)
-	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
-	dbIDList, err := appRepo.GetDBIDList(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
-	asst.Equal(3, len(dbIDList), "test AddDB() failed")
+	entity, err := testCreateApp()
+	asst.Nil(err, common.CombineMessageWithError("test AddAppDB() failed", err))
+	err = testAppRepo.AddDB(entity.Identity(), testAppDBID)
+	asst.Nil(err, common.CombineMessageWithError("test AddAppDB() failed", err))
+	dbs, err := entity.GetDBs()
+	asst.Nil(err, common.CombineMessageWithError("test AddAppDB() failed", err))
+	asst.Equal(1, len(dbs), "test AddAppDB() failed")
 	// delete
-	err = deleteAppByID(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
+	err = testAppRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test AddAppDB() failed", err))
 }
 
 func TestAppRepo_DeleteAppDB(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := createApp()
-	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
-	err = appRepo.DeleteDB(entity.Identity(), 3)
-	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
-	dbIDList, err := appRepo.GetDBIDList(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
-	asst.Equal(2, len(dbIDList), "test DeleteDB() failed")
+	entity, err := testCreateApp()
+	asst.Nil(err, common.CombineMessageWithError("test DeleteAppDB() failed", err))
+	err = testAppRepo.DeleteDB(entity.Identity(), testAppDBID)
+	asst.Nil(err, common.CombineMessageWithError("test DeleteAppDB() failed", err))
+	dbs, err := entity.GetDBs()
+	asst.Nil(err, common.CombineMessageWithError("test DeleteAppDB() failed", err))
+	asst.Zero(len(dbs), "test DeleteAppDB() failed")
 	// delete
-	err = deleteAppByID(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
+	err = testAppRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test DeleteAppDB() failed", err))
+}
+
+func TestAppRepo_AddAppUser(t *testing.T) {
+	asst := assert.New(t)
+
+	entity, err := testCreateApp()
+	asst.Nil(err, common.CombineMessageWithError("test AddAppUser() failed", err))
+	err = testAppRepo.AddUser(entity.Identity(), testAppUserID)
+	asst.Nil(err, common.CombineMessageWithError("test AddAppUser() failed", err))
+	users, err := entity.GetUsers()
+	asst.Nil(err, common.CombineMessageWithError("test AddAppUser() failed", err))
+	asst.Equal(1, len(users), "test AddAppUser() failed")
+	// delete
+	err = testAppRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test AddAppUser() failed", err))
+}
+
+func TestAppRepo_DeleteAppUser(t *testing.T) {
+	asst := assert.New(t)
+
+	entity, err := testCreateApp()
+	asst.Nil(err, common.CombineMessageWithError("test DeleteAppUser() failed", err))
+	err = testAppRepo.DeleteUser(entity.Identity(), testAppUserID)
+	asst.Nil(err, common.CombineMessageWithError("test DeleteAppUser() failed", err))
+	users, err := entity.GetUsers()
+	asst.Nil(err, common.CombineMessageWithError("test DeleteAppUser() failed", err))
+	asst.Zero(len(users), "test DeleteAppUser() failed")
+	// delete
+	err = testAppRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test DeleteAppUser() failed", err))
 }

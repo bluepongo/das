@@ -21,8 +21,8 @@ type MiddlewareCluster interface {
 	GetCreateTime() time.Time
 	// GetLastUpdateTime returns the last update time
 	GetLastUpdateTime() time.Time
-	// GetMiddlewareServerIDList gets the middleware server id list of this cluster
-	GetMiddlewareServerIDList() ([]int, error)
+	// GetMiddlewareServers gets the middleware server id list of this cluster
+	GetMiddlewareServers() ([]MiddlewareServer, error)
 	// Set sets MiddlewareCluster with given fields, key is the field name and value is the relevant value of the key
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
@@ -48,8 +48,6 @@ type MiddlewareClusterRepo interface {
 	GetByName(clusterName string) (MiddlewareCluster, error)
 	// GetID gets the identity with given cluster name and env id from the middleware
 	GetID(clusterName string, envID int) (int, error)
-	// GetMiddlewareServerIDList gets the middleware server id list of given cluster id from the middle ware
-	GetMiddlewareServerIDList(clusterID int) ([]int, error)
 	// Create creates a middleware cluster in the middleware
 	Create(mc MiddlewareCluster) (MiddlewareCluster, error)
 	// Update updates the middleware cluster in the middleware
@@ -61,6 +59,8 @@ type MiddlewareClusterRepo interface {
 type MiddlewareClusterService interface {
 	// GetMiddlewareClusters returns middleware clusters of the service
 	GetMiddlewareClusters() []MiddlewareCluster
+	// GetMiddlewareServers returns middleware servers of the service
+	GetMiddlewareServers() []MiddlewareServer
 	// GetAll gets all middleware clusters from the middleware
 	GetAll() error
 	// GetByEnv gets middleware clusters of given env id
@@ -69,8 +69,8 @@ type MiddlewareClusterService interface {
 	GetByID(id int) error
 	// GetByName gets a middleware cluster of given cluster name
 	GetByName(clusterName string) error
-	// GetMiddlewareServerIDList gets the middleware server id list of given cluster id
-	GetMiddlewareServerIDList(clusterID int) ([]int, error)
+	// GetMiddlewareServersByID gets the middleware servers of given cluster id
+	GetMiddlewareServersByID(clusterID int) error
 	// Create creates a middleware cluster in the middleware
 	Create(fields map[string]interface{}) error
 	// Update gets a middleware cluster of the given id from the middleware,

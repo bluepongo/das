@@ -9,6 +9,17 @@ import (
 	"github.com/romberli/das/internal/dependency/metadata"
 )
 
+const (
+	monitorSystemSystemNameStruct  = "MonitorSystemName"
+	monitorSystemSystemTypeStruct  = "MonitorSystemType"
+	monitorSystemHostIPStruct      = "MonitorSystemHostIP"
+	monitorSystemPortNumStruct     = "MonitorSystemPortNum"
+	monitorSystemPortNumSlowStruct = "MonitorSystemPortNumSlow"
+	monitorSystemBaseUrlStruct     = "BaseURL"
+	monitorSystemEnvIDStruct       = "EnvID"
+	monitorSystemDelFlagStruct     = "DelFlag"
+)
+
 var _ metadata.MonitorSystem = (*MonitorSystemInfo)(nil)
 
 type MonitorSystemInfo struct {

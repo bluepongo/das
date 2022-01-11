@@ -34,3 +34,6 @@ http-client.env.json
 .vscode/
 .test
 das.yaml
+target
+todo.md
+*.yamlbk

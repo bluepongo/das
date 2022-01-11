@@ -1,33 +1,40 @@
 ### get all mysql servers
 GET http://{{baseURL}}/api/v1/metadata/mysql-server
-Accept: application/json
+Content-Type: application/json
 
 ### get mysql server by cluster-id
 GET http://{{baseURL}}/api/v1/metadata/mysql-server/cluster-id/1
-Accept: application/json
+Content-Type: application/json
 
 
 ### get mysql server by id
-GET http://{{baseURL}}/api/v1/metadata/mysql-server/get/86
-Accept: application/json
+GET http://{{baseURL}}/api/v1/metadata/mysql-server/get/1
+Content-Type: application/json
 
-### get mysql server by id
-GET http://{{baseURL}}/api/v1/metadata/mysql-server/host-info?host_ip=192.168.1.1&port_num=3306
-Accept: application/json
+### get mysql server by host info
+GET http://{{baseURL}}/api/v1/metadata/mysql-server/host-info
+Content-Type: application/json
 
+{"host_ip": "192.168.10.219", "port_num": 3306}
 
 ### add new mysql server
 POST http://{{baseURL}}/api/v1/metadata/mysql-server
 Content-Type: application/json
 
-{"cluster_id": 1, "server_name": "test", "service_name": "test", "host_ip": "192.168.1.1", "port_num": 3306, "deployment_type": 1}
+{"cluster_id": 1, "server_name": "new_mysql_server", "service_name": "192-168-10-219-33061", "host_ip": "192-168-10-219", "port_num": 33061, "deployment_type": 1, "version": "5.7"}
 
 ### update mysql server by id
-POST http://{{baseURL}}/api/v1/metadata/mysql-server/update/86
+POST http://{{baseURL}}/api/v1/metadata/mysql-server/update/1
 Content-Type: application/json
 
-{"cluster_id": 97, "del_flag": 0}
+{"server_name": "update_mysql_server", "del_flag": 0}
+
+### update mysql server by id
+POST http://{{baseURL}}/api/v1/metadata/mysql-server/update/1
+Content-Type: application/json
+
+{"server_name": "192-168-10-219", "del_flag": 0}
 
 ### delete mysql server by id
-POST http://{{baseURL}}/api/v1/metadata/mysql-server/delete/1
+POST http://{{baseURL}}/api/v1/metadata/mysql-server/delete/21
 Content-Type: application/json

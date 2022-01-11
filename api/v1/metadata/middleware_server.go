@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	utilmeta "github.com/romberli/das/pkg/util/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/log"
@@ -18,8 +19,6 @@ import (
 const (
 	middlewareServerIDJSON        = "id"
 	middlewareServerClusterIDJSON = "cluster_id"
-	middlewareServerHostIPJSON    = "host_ip"
-	middlewareServerPortNumJSON   = "port_num"
 
 	middlewareServerClusterIDStruct      = "ClusterID"
 	middlewareServerNameStruct           = "ServerName"
@@ -134,29 +133,20 @@ func GetMiddlewareServerByID(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": [{"cluster_id":13,"server_name":"test001","port_num":1,"last_update_time":"2021-04-11T23:16:10.281222+08:00","id":1,"middleware_role":1,"host_ip":"3","del_flag":0,"create_time":"2021-04-07T17:51:00.270268+08:00"}]}"
 // @Router /api/v1/metadata/middleware-server/host-info [get]
 func GetMiddlewareServerByHostInfo(c *gin.Context) {
-	// get params
-	middleServerHostIP := c.Query(middlewareServerHostIPJSON)
-	if middleServerHostIP == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerHostIPJSON)
-		return
-	}
-	middleServerPortNumStr := c.Query(middlewareServerPortNumJSON)
-	if middleServerPortNumStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerPortNumJSON)
-		return
-	}
-	middleServerPortNum, err := strconv.Atoi(middleServerPortNumStr)
+	var rd *utilmeta.HostInfo
+	// bind json
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	hostIP := middleServerHostIP + "-" + middleServerPortNumStr
+
 	// init service
 	s := metadata.NewMiddlewareServerServiceWithDefault()
 	// get entity
-	err = s.GetByHostInfo(middleServerHostIP, middleServerPortNum)
+	err = s.GetByHostInfo(rd.GetHostIP(), rd.GetPortNum())
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareServerByHostInfo, hostIP)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareServerByHostInfo, rd.GetHostIP(), rd.GetPortNum())
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
@@ -167,7 +157,7 @@ func GetMiddlewareServerByHostInfo(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMiddlewareServerByHostInfo, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMiddlewareServerByHostInfo, hostIP)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMiddlewareServerByHostInfo, rd.GetHostIP(), rd.GetPortNum())
 }
 
 // @Tags middleware server
@@ -269,9 +259,9 @@ func UpdateMiddlewareServerByID(c *gin.Context) {
 	_, middlewareServerMiddlewareRoleExists := fields[middlewareServerMiddlewareRoleStruct]
 	_, middlewareServerHostIPExists := fields[middlewareServerHostIPStruct]
 	_, middlewareServerPortNumExists := fields[middlewareServerPortNumStruct]
-	_, delFlagExists := fields[delFlagStruct]
+	_, delFlagExists := fields[envDelFlagStruct]
 	if !middlewareServerClusterIDExists && !middlewareServerNameExists && !middlewareServerMiddlewareRoleExists && !middlewareServerHostIPExists && !middlewareServerPortNumExists && !delFlagExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", middlewareServerNameStruct, delFlagStruct))
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", middlewareServerNameStruct, envDelFlagStruct))
 		return
 	}
 	// init service
@@ -318,7 +308,7 @@ func DeleteMiddlewareServerByID(c *gin.Context) {
 	// update entities
 	err = s.Delete(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMiddlewareServer, fields[middlewareClusterNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMiddlewareServer, fields[middlewareClusterClusterNameStruct], err.Error())
 		return
 	}
 	// marshal service
@@ -330,5 +320,5 @@ func DeleteMiddlewareServerByID(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataDeleteMiddlewareServer, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteMiddlewareServer, fields[middlewareClusterNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteMiddlewareServer, fields[middlewareClusterClusterNameStruct])
 }

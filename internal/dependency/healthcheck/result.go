@@ -9,6 +9,10 @@ type Result interface {
 	Identity() int
 	// GetOperationID returns the operation id
 	GetOperationID() int
+	// GetHostIP returns the host ip
+	GetHostIP() string
+	// GetPortNum returns the port number
+	GetPortNum() int
 	// GetWeightedAverageScore returns the weighted average score
 	GetWeightedAverageScore() int
 	// GetDBConfigScore returns the database configuration score
@@ -91,6 +95,8 @@ type Result interface {
 	GetCreateTime() time.Time
 	// GetLastUpdateTime returns the last update time
 	GetLastUpdateTime() time.Time
+	// String returns the string value of the result
+	String() string
 	// Set sets health check with given fields, key is the field name and value is the relevant value of the key
 	Set(fields map[string]interface{}) error
 	// MarshalJSON marshals Result to json string

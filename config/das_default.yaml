@@ -42,7 +42,7 @@ log:
   # default: 7
   maxDays: 7
   # description: specify how many files will be kept after rotating,
-  # oldest log files will be removed automatically.
+  # the oldest log files will be removed automatically.
   # type: int
   # default: 5
   maxBackups: 5
@@ -162,26 +162,6 @@ db:
       # type: string
       # default: root
       pass: root
-  # soar configuration
-  soar:
-    # mysql configuration
-    mysql:
-      # description: database address, format: host:port
-      # type: string
-      # default: "127.0.0.1:3306"
-      addr: "127.0.0.1:3306"
-      # description: database name
-      # type: string
-      # default: das
-      name: das
-      # description: database username
-      # type: string
-      # default: root
-      user: root
-      # description: database password
-      # type: string
-      # default: root
-      pass: root
 
 # alert configuration
 alert:
@@ -191,10 +171,15 @@ alert:
     # type: bool
     # default: true
     enabled: true
+    # description: specify the email content format
+    # type: string
+    # available: [text, html]
+    # default: html
+    format: html
     # description: specify the address of the smtp server
     # type: string
     # default: "127.0.0.1:25"
-    addr: "127.0.0.1:25"
+    url: "127.0.0.1:25"
     # description: specify the username of the smtp server
     # type: string
     # default: root
@@ -231,6 +216,13 @@ healthcheck:
     # available: [app, db, all]
     # default: "all"
     ownerType: all
+
+# query configuration
+query:
+  # description: specify min rows examined, slow queries which scanned less than this value will be ignored
+  # type: int
+  # default: 100000
+  minRowsExamined: 100000
 
 # sqladvisor configuration
 sqladvisor:

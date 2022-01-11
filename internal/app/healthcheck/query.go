@@ -11,13 +11,12 @@ const (
     	select table_schema,
 			   table_name,
 			   table_rows,
-			   truncate((data_length + index_length) / 1024 / 1024 / 1024, 2) as size
+			   truncate((data_length + index_length) / 1024 / 1024 / 1024, 2) as table_size
 		from information_schema.tables
 		where table_type = 'BASE TABLE'
 		  and table_rows > ?
 		order by table_rows desc;
     `
-
 	// Prometheus API
 	PrometheusAvgBackupFailedRatioV1 = `
 		1-(sum(mysqldumpbackup{instance=~"%s",type="status"})/count(mysqldumpbackup{instance=~"%s",type="status"})+

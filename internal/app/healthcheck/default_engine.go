@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/romberli/das/config"
@@ -16,21 +17,22 @@ import (
 	depquery "github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
+	util "github.com/romberli/das/pkg/util/query"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"
+	"github.com/romberli/go-util/middleware/sql/statement"
 	"github.com/romberli/log"
 	"github.com/spf13/viper"
 )
 
 const (
-	defaultDBConfigScore                        = 5
 	defaultMinScore                             = 0
 	defaultMaxScore                             = 100.0
 	defaultHundred                              = 100
 	defaultDBConfigItemName                     = "db_config"
 	defaultAvgBackupFailedRatioItemName         = "avg_backup_failed_ratio"
-	defaultStatisticItemName                    = "statistics_failed_ratio"
+	defaultStatisticFailedRatioItemName         = "statistics_failed_ratio"
 	defaultCPUUsageItemName                     = "cpu_usage"
 	defaultIOUtilItemName                       = "io_util"
 	defaultDiskCapacityUsageItemName            = "disk_capacity_usage"
@@ -43,16 +45,22 @@ const (
 	defaultSlowQueryTopSQLNum                   = 3
 	defaultClusterType                          = 1
 
-	defaultAlertSubject = "das healthcheck result"
+	defaultAlertSubjectTemplate = "das healthcheck - %s "
+	httpSystemNameJSON          = "system_name"
+	httpHostIPJSON              = "host_ip"
+	httpEventIDJSON             = "event_id"
+	httpAlertTimeJSON           = "alert_time"
 )
 
 var (
 	_ healthcheck.Engine = (*DefaultEngine)(nil)
+
+	ignoreDBList = []string{"information_schema", "performance_schema", "mysql", "test", "sys"}
 )
 
 // DefaultEngine work for health check module
 type DefaultEngine struct {
-	operationInfo        *OperationInfo
+	operationInfo        healthcheck.OperationInfo
 	engineConfig         DefaultEngineConfig
 	result               *Result
 	mountPoints          []string
@@ -64,7 +72,7 @@ type DefaultEngine struct {
 }
 
 // NewDefaultEngine returns a new *DefaultEngine
-func NewDefaultEngine(operationInfo *OperationInfo,
+func NewDefaultEngine(operationInfo healthcheck.OperationInfo,
 	dasRepo healthcheck.DASRepo,
 	applicationMySQLRepo healthcheck.ApplicationMySQLRepo,
 	prometheusRepo healthcheck.PrometheusRepo,
@@ -72,7 +80,7 @@ func NewDefaultEngine(operationInfo *OperationInfo,
 	return &DefaultEngine{
 		operationInfo:        operationInfo,
 		engineConfig:         NewEmptyDefaultEngineConfig(),
-		result:               NewEmptyResultWithOperationID(operationInfo.GetOperationID()),
+		result:               NewEmptyResultWithOperationIDAndHostInfo(operationInfo.GetOperationID(), operationInfo.GetMySQLServer().GetHostIP(), operationInfo.GetMySQLServer().GetPortNum()),
 		dasRepo:              dasRepo,
 		applicationMySQLRepo: applicationMySQLRepo,
 		prometheusRepo:       prometheusRepo,
@@ -80,8 +88,8 @@ func NewDefaultEngine(operationInfo *OperationInfo,
 	}
 }
 
-// getOperationInfo returns the operation information
-func (de *DefaultEngine) getOperationInfo() *OperationInfo {
+// GetOperationInfo returns the operation information
+func (de *DefaultEngine) GetOperationInfo() healthcheck.OperationInfo {
 	return de.operationInfo
 }
 
@@ -144,16 +152,17 @@ func (de *DefaultEngine) Run() {
 	if err != nil {
 		log.Error(message.NewMessage(msghc.ErrHealthcheckDefaultEngineRun, err.Error()).Error())
 		// update status
-		updateErr := de.getDASRepo().UpdateOperationStatus(de.operationInfo.operationID, defaultFailedStatus, err.Error())
+		updateErr := de.getDASRepo().UpdateOperationStatus(de.GetOperationInfo().GetOperationID(), defaultFailedStatus, err.Error())
 		if updateErr != nil {
 			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 			return
 		}
+		return
 	}
 
 	// update operation status
-	msg := fmt.Sprintf("healthcheck completed successfully. engine: default, operation_id: %d", de.operationInfo.operationID)
-	updateErr := de.getDASRepo().UpdateOperationStatus(de.operationInfo.operationID, defaultSuccessStatus, msg)
+	msg := fmt.Sprintf("healthcheck completed successfully. engine: default, operation_id: %d", de.GetOperationInfo().GetOperationID())
+	updateErr := de.getDASRepo().UpdateOperationStatus(de.GetOperationInfo().GetOperationID(), defaultSuccessStatus, msg)
 	if updateErr != nil {
 		log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 	}
@@ -292,8 +301,8 @@ func (de *DefaultEngine) preRun() error {
 		}
 	}
 	// init default report host and port
-	dbConfigVariableNames[dbConfigReportHost] = de.getOperationInfo().GetMySQLServer().GetHostIP()
-	dbConfigVariableNames[dbConfigReportPort] = strconv.Itoa(de.getOperationInfo().GetMySQLServer().GetPortNum())
+	dbConfigVariableNames[dbConfigReportHost] = de.GetOperationInfo().GetMySQLServer().GetHostIP()
+	dbConfigVariableNames[dbConfigReportPort] = strconv.Itoa(de.GetOperationInfo().GetMySQLServer().GetPortNum())
 
 	return nil
 }
@@ -421,7 +430,7 @@ func (de *DefaultEngine) CheckAvgBackupFailedRatio() error {
 		return err
 	}
 	// parse data
-	de.result.AvgBackupFailedRatioScore, de.result.AvgBackupFailedRatioData, de.result.AvgBackupFailedRatioHigh, err = de.parsePrometheusDatas(defaultCPUUsageItemName, datas)
+	de.result.AvgBackupFailedRatioScore, de.result.AvgBackupFailedRatioData, de.result.AvgBackupFailedRatioHigh, err = de.parsePrometheusDatas(defaultAvgBackupFailedRatioItemName, datas)
 	if err != nil {
 		return err
 	}
@@ -437,7 +446,7 @@ func (de *DefaultEngine) CheckStatisticFailedRatio() error {
 		return err
 	}
 	// parse data
-	de.result.StatisticFailedRatioScore, de.result.StatisticFailedRatioData, de.result.StatisticFailedRatioHigh, err = de.parsePrometheusDatas(defaultCPUUsageItemName, datas)
+	de.result.StatisticFailedRatioScore, de.result.StatisticFailedRatioData, de.result.StatisticFailedRatioHigh, err = de.parsePrometheusDatas(defaultStatisticFailedRatioItemName, datas)
 	if err != nil {
 		return err
 	}
@@ -688,6 +697,7 @@ func (de *DefaultEngine) checkSlowQuery() error {
 	}
 
 	var (
+		i                                int
 		slowQueryRowsExaminedHighSum     int
 		slowQueryRowsExaminedHighCount   int
 		slowQueryRowsExaminedMediumSum   int
@@ -708,9 +718,30 @@ func (de *DefaultEngine) checkSlowQuery() error {
 
 	slowQueryRowsExaminedConfig := de.getItemConfig(defaultSlowQueryRowsExaminedItemName)
 
-	for i, slowQuery := range slowQueries {
+	for _, slowQuery := range slowQueries {
+		if statement.GetType(slowQuery.GetExample()) == statement.Unknown {
+			continue
+		}
 		if i < defaultSlowQueryTopSQLNum {
-			topSQLList = append(topSQLList, slowQuery)
+			dbName, err := util.GetDBName(slowQuery.GetExample())
+			if err != nil {
+				return err
+			}
+			if dbName == constant.EmptyString {
+				tableNames, err := util.GetTableNames(slowQuery.GetExample())
+				if err != nil {
+					return err
+				}
+				dbName, err = de.getApplicationMySQLRepo().GetDBName(tableNames)
+				if err != nil {
+					return err
+				}
+			}
+			if !common.StringInSlice(ignoreDBList, dbName) {
+				slowQuery.SetDBName(dbName)
+				topSQLList = append(topSQLList, slowQuery)
+				i++
+			}
 		}
 		if slowQuery.GetRowsExaminedMax() >= int(slowQueryRowsExaminedConfig.GetHighWatermark()) {
 			// slow query rows examined high
@@ -745,7 +776,7 @@ func (de *DefaultEngine) checkSlowQuery() error {
 	}
 
 	// sql tuning
-	clusterID := de.operationInfo.mysqlServer.GetClusterID()
+	clusterID := de.GetOperationInfo().GetMySQLServer().GetClusterID()
 	// init db service
 	dbService := metadata.NewDBServiceWithDefault()
 	for _, sql := range topSQLList {
@@ -764,7 +795,12 @@ func (de *DefaultEngine) checkSlowQuery() error {
 			// get advice
 			advice, err = advisorService.Advise(dbID, sql.GetExample())
 			if err != nil {
-				return err
+				// TODO: if the tables that were used in the slow query do not exist anymore,
+				//  sql advisor returns an error, and we can do nothing here,
+				//  so for now, log the error message and jump over this,
+				//  we may optimize this later
+				log.Error(message.NewMessage(msghc.ErrHealthcheckSQLAdvisorAdvice, err.Error()).Error())
+				continue
 			}
 		} else {
 			jsonBytes, err := json.Marshal(sql)
@@ -786,7 +822,7 @@ func (de *DefaultEngine) checkSlowQuery() error {
 func (de *DefaultEngine) summarize() {
 	de.result.WeightedAverageScore = (de.result.DBConfigScore*de.getItemConfig(defaultDBConfigItemName).GetItemWeight() +
 		de.result.AvgBackupFailedRatioScore*de.getItemConfig(defaultAvgBackupFailedRatioItemName).GetItemWeight() +
-		de.result.StatisticFailedRatioScore*de.getItemConfig(defaultStatisticItemName).GetItemWeight() +
+		de.result.StatisticFailedRatioScore*de.getItemConfig(defaultStatisticFailedRatioItemName).GetItemWeight() +
 		de.result.CPUUsageScore*de.getItemConfig(defaultCPUUsageItemName).GetItemWeight() +
 		de.result.IOUtilScore*de.getItemConfig(defaultIOUtilItemName).GetItemWeight() +
 		de.result.DiskCapacityUsageScore*de.getItemConfig(defaultDiskCapacityUsageItemName).GetItemWeight() +
@@ -811,9 +847,11 @@ func (de *DefaultEngine) postRun() error {
 		return err
 	}
 
-	err = de.sendEmail()
-	if err != nil {
-		return err
+	if de.getResult().GetWeightedAverageScore() < defaultMaxScore {
+		err = de.sendEmail()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -880,18 +918,36 @@ func (de *DefaultEngine) parsePrometheusDatas(item string, datas []healthcheck.P
 
 func (de *DefaultEngine) sendEmail() error {
 	toAddrs, err := de.getToAddrs()
+	if len(toAddrs) == 0 {
+		return fmt.Errorf("send email toAddrs can't be null")
+	}
 	if err != nil {
 		return err
 	}
-	resultBytes, err := de.getResult().MarshalJSON()
-	alertService := alert.NewServiceWithDefault(alert.NewConfigFromFile())
 
-	return alertService.SendEmail(toAddrs, constant.EmptyString, defaultAlertSubject, string(resultBytes))
+	result, err := de.getDASRepo().GetResultByOperationID(de.GetOperationInfo().GetOperationID())
+	if err != nil {
+		return err
+	}
+
+	cfg := alert.NewConfigFromFile()
+	cfg.Set(httpSystemNameJSON, de.GetOperationInfo().GetAppName())
+	cfg.Set(httpHostIPJSON, de.GetOperationInfo().GetMySQLServer().GetHostIP())
+	cfg.Set(httpEventIDJSON, strconv.Itoa(de.GetOperationInfo().GetOperationID()))
+	cfg.Set(httpAlertTimeJSON, time.Now().Format(constant.TimeLayoutSecond))
+	alertService := alert.NewServiceWithDefault(cfg)
+
+	return alertService.SendEmail(
+		toAddrs,
+		constant.EmptyString,
+		fmt.Sprintf(defaultAlertSubjectTemplate, de.GetOperationInfo().GetAppName()),
+		result.String(),
+	)
 }
 
 // getToAddrs gets to addrs that will send email to
 func (de *DefaultEngine) getToAddrs() (string, error) {
-	mysqlCluster, err := de.getOperationInfo().GetMySQLServer().GetMySQLCluster()
+	mysqlCluster, err := de.GetOperationInfo().GetMySQLServer().GetMySQLCluster()
 	if err != nil {
 		return constant.EmptyString, err
 	}
@@ -912,8 +968,15 @@ func (de *DefaultEngine) getToAddrs() (string, error) {
 		return constant.EmptyString, err
 	}
 
+	smtpEnabled := viper.GetBool(config.AlertSMTPEnabledKey)
+	httpEnabled := viper.GetBool(config.AlertHTTPEnabledKey)
 	for _, owner := range owners {
-		toAddrs += owner.GetEmail() + constant.CommaString
+		if smtpEnabled {
+			toAddrs += owner.GetEmail() + constant.CommaString
+		}
+		if !smtpEnabled && httpEnabled {
+			toAddrs += fmt.Sprintf("%s(%s),", owner.GetUserName(), owner.GetAccountName())
+		}
 	}
 
 	return strings.Trim(toAddrs, constant.CommaString), nil

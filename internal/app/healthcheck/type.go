@@ -1,6 +1,7 @@
 package healthcheck
 
 import (
+	"strings"
 	"time"
 
 	"github.com/romberli/das/internal/dependency/healthcheck"
@@ -46,13 +47,14 @@ const (
 	dbConfigReportHostValid                = constant.EmptyString
 	dbConfigReportPortValid                = constant.EmptyString
 	dbConfigInnodbFlushMethodValid         = "O_DIRECT"
-	dbConfigInnodbMonitorEnableValid       = "all"
+	dbConfigInnodbMonitorEnableValid       = "ALL"
 	dbConfigInnodbPrintAllDeadlocksValid   = "ON"
 	dbConfigSlowQueryLogValid              = "ON"
 	dbConfigPerformanceSchemaValid         = "ON"
 )
 
 var (
+	_ healthcheck.OperationInfo  = (*OperationInfo)(nil)
 	_ healthcheck.Variable       = (*GlobalVariable)(nil)
 	_ healthcheck.Table          = (*Table)(nil)
 	_ healthcheck.PrometheusData = (*PrometheusData)(nil)
@@ -80,6 +82,7 @@ var (
 
 type OperationInfo struct {
 	operationID   int
+	apps          []metadata.App
 	mysqlServer   metadata.MySQLServer
 	monitorSystem metadata.MonitorSystem
 	startTime     time.Time
@@ -88,9 +91,10 @@ type OperationInfo struct {
 }
 
 // NewOperationInfo returns a new *OperationInfo
-func NewOperationInfo(operationID int, mysqlServer metadata.MySQLServer, MonitorSystem metadata.MonitorSystem, startTime, endTime time.Time, step time.Duration) *OperationInfo {
+func NewOperationInfo(operationID int, apps []metadata.App, mysqlServer metadata.MySQLServer, MonitorSystem metadata.MonitorSystem, startTime, endTime time.Time, step time.Duration) *OperationInfo {
 	return &OperationInfo{
 		operationID:   operationID,
+		apps:          apps,
 		mysqlServer:   mysqlServer,
 		monitorSystem: MonitorSystem,
 		startTime:     startTime,
@@ -99,28 +103,50 @@ func NewOperationInfo(operationID int, mysqlServer metadata.MySQLServer, Monitor
 	}
 }
 
+// GetOperationID returns the operation identity
 func (oi *OperationInfo) GetOperationID() int {
 	return oi.operationID
 }
 
+// GetApps returns the apps
+func (oi *OperationInfo) GetApps() []metadata.App {
+	return oi.apps
+}
+
+// GetMySQLServer returns the mysql server
 func (oi *OperationInfo) GetMySQLServer() metadata.MySQLServer {
 	return oi.mysqlServer
 }
 
+// GetMonitorSystem returns the monitor system
 func (oi *OperationInfo) GetMonitorSystem() metadata.MonitorSystem {
 	return oi.monitorSystem
 }
 
+// GetStartTime returns the start time
 func (oi *OperationInfo) GetStartTime() time.Time {
 	return oi.startTime
 }
 
+// GetEndTime returns the end time
 func (oi *OperationInfo) GetEndTime() time.Time {
 	return oi.endTime
 }
 
+// GetStep returns the step
 func (oi *OperationInfo) GetStep() time.Duration {
 	return oi.step
+}
+
+// GetAppName returns the app name in string, it will concat all the app names with comma
+func (oi *OperationInfo) GetAppName() string {
+	var name string
+
+	for _, app := range oi.GetApps() {
+		name += app.GetAppName() + constant.CommaString
+	}
+
+	return strings.Trim(name, constant.CommaString)
 }
 
 // DefaultItemConfig include all data for a item
@@ -249,46 +275,46 @@ func (dec DefaultEngineConfig) Validate() error {
 	itemWeightSummary := constant.ZeroInt
 	// validate defaultEngineConfig exits items
 	if len(dec) == constant.ZeroInt {
-		return message.NewMessage(msghc.ErrDefaultEngineEmpty)
+		return message.NewMessage(msghc.ErrHealthcheckDefaultEngineEmpty)
 	}
 	for itemName, defaultItemConfig := range dec {
 		// validate item weight
 		if defaultItemConfig.ItemWeight > defaultHundred || defaultItemConfig.ItemWeight < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrItemWeightItemInvalid, itemName, defaultItemConfig.ItemWeight)
+			return message.NewMessage(msghc.ErrHealthcheckItemWeightItemInvalid, itemName, defaultItemConfig.ItemWeight)
 		}
 		// validate low watermark
 		if defaultItemConfig.LowWatermark < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrLowWatermarkItemInvalid, itemName, defaultItemConfig.LowWatermark)
+			return message.NewMessage(msghc.ErrHealthcheckLowWatermarkItemInvalid, itemName, defaultItemConfig.LowWatermark)
 		}
 		// validate high watermark
 		if defaultItemConfig.HighWatermark < defaultItemConfig.LowWatermark {
-			return message.NewMessage(msghc.ErrHighWatermarkItemInvalid, itemName, defaultItemConfig.HighWatermark)
+			return message.NewMessage(msghc.ErrHealthcheckHighWatermarkItemInvalid, itemName, defaultItemConfig.HighWatermark)
 		}
 		// validate unit
 		if defaultItemConfig.Unit < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrUnitItemInvalid, itemName, defaultItemConfig.Unit)
+			return message.NewMessage(msghc.ErrHealthcheckUnitItemInvalid, itemName, defaultItemConfig.Unit)
 		}
 		// validate score deduction per unit high
 		if defaultItemConfig.ScoreDeductionPerUnitHigh > defaultHundred || defaultItemConfig.ScoreDeductionPerUnitHigh < constant.ZeroInt || defaultItemConfig.ScoreDeductionPerUnitHigh > defaultItemConfig.MaxScoreDeductionHigh {
-			return message.NewMessage(msghc.ErrScoreDeductionPerUnitHighItemInvalid, itemName, defaultItemConfig.ScoreDeductionPerUnitHigh)
+			return message.NewMessage(msghc.ErrHealthcheckScoreDeductionPerUnitHighItemInvalid, itemName, defaultItemConfig.ScoreDeductionPerUnitHigh)
 		}
 		// validate max score deduction high
 		if defaultItemConfig.MaxScoreDeductionHigh > defaultHundred || defaultItemConfig.MaxScoreDeductionHigh < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrMaxScoreDeductionHighItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionHigh)
+			return message.NewMessage(msghc.ErrHealthcheckMaxScoreDeductionHighItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionHigh)
 		}
 		// validate score deduction per unit medium
 		if defaultItemConfig.ScoreDeductionPerUnitMedium > defaultHundred || defaultItemConfig.ScoreDeductionPerUnitMedium < constant.ZeroInt || defaultItemConfig.ScoreDeductionPerUnitMedium > defaultItemConfig.MaxScoreDeductionMedium {
-			return message.NewMessage(msghc.ErrScoreDeductionPerUnitMediumItemInvalid, itemName, defaultItemConfig.ScoreDeductionPerUnitMedium)
+			return message.NewMessage(msghc.ErrHealthcheckScoreDeductionPerUnitMediumItemInvalid, itemName, defaultItemConfig.ScoreDeductionPerUnitMedium)
 		}
 		// validate max score deduction medium
 		if defaultItemConfig.MaxScoreDeductionMedium > defaultHundred || defaultItemConfig.MaxScoreDeductionMedium < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrMaxScoreDeductionMediumItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionMedium)
+			return message.NewMessage(msghc.ErrHealthcheckMaxScoreDeductionMediumItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionMedium)
 		}
 		itemWeightSummary += defaultItemConfig.ItemWeight
 	}
 	// validate item weigh count is 100
 	if itemWeightSummary != defaultHundred {
-		return message.NewMessage(msghc.ErrItemWeightSummaryInvalid, itemWeightSummary)
+		return message.NewMessage(msghc.ErrHealthcheckItemWeightSummaryInvalid, itemWeightSummary)
 	}
 
 	return nil

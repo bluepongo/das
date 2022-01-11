@@ -58,14 +58,17 @@ const (
 	DefaultDBMonitorClickhouseUser   = ""
 	DefaultDBMonitorClickhousePass   = ""
 	DefaultDBMonitorMySQLUser        = "root"
-	DefaultDBMonitorMySQLPass        = ""
+	DefaultDBMonitorMySQLPass        = "root"
 	DefaultDBApplicationMySQLUser    = "root"
 	DefaultDBApplicationMySQLPass    = "root"
 	DefaultDBSoarMySQLName           = "soar"
 	DefaultDBSoarMySQLUser           = "root"
 	DefaultDBSoarMySQLPass           = "root"
 	DefaultAlertSMTPEnabled          = true
-	DefaultAlertSMTPAddr             = "smtp.163.com"
+	AlertSMTPTextFormat              = "text"
+	AlertSMTPHTMLFormat              = "html"
+	DefaultAlterSMTPFormat           = AlertSMTPTextFormat
+	DefaultAlertSMTPURL              = "127.0.0.1:25"
 	DefaultAlertSMTPUser             = "root"
 	DefaultAlertSMTPPass             = "root"
 	DefaultAlertSMTPFrom             = "mail@example.com"
@@ -76,6 +79,7 @@ const (
 	HealthcheckAlertOwnerTypeDB      = "db"
 	HealthcheckAlertOwnerTypeAll     = "all"
 	DefaultHealthcheckAlertOwnerType = HealthcheckAlertOwnerTypeAll
+	DefaultQueryMinRowsExamined      = 100000
 	DefaultSQLAdvisorSoarBin         = "./soar"
 	DefaultSQLAdvisorSoarConfig      = "./soar.yaml"
 	DefaultSQLAdvisorSoarBlacklist   = "./soar.blacklist"
@@ -117,13 +121,10 @@ const (
 	DBMonitorClickhousePassKey  = "db.monitor.clickhouse.pass"
 	DBMonitorMySQLUserKey       = "db.monitor.mysql.user"
 	DBMonitorMySQLPassKey       = "db.monitor.mysql.pass"
-	DBSoarMySQLAddrKey          = "db.soar.mysql.addr"
-	DBSoarMySQLNameKey          = "db.soar.mysql.name"
-	DBSoarMySQLUserKey          = "db.soar.mysql.user"
-	DBSoarMySQLPassKey          = "db.soar.mysql.pass"
 	// alert
 	AlertSMTPEnabledKey = "alert.smtp.enabled"
-	AlertSMTPAddrKey    = "alert.smtp.addr"
+	AlertSMTPFormatKey  = "alert.smtp.format"
+	AlertSMTPURLKey     = "alert.smtp.url"
 	AlertSMTPUserKey    = "alert.smtp.user"
 	AlertSMTPPassKey    = "alert.smtp.pass"
 	AlertSMTPFromKey    = "alert.smtp.from"
@@ -132,9 +133,11 @@ const (
 	AlertHTTPConfigKey  = "alert.http.config"
 	// healthcheck
 	HealthcheckAlertOwnerTypeKey = "healthcheck.alert.ownerType"
+	// query
+	QueryMinRowsExaminedKey = "query.minRowsExamined"
 	// sqladvisor
-	SQLAdvisorSoarBinKey       = "sqladvisor.soar.Bin"
-	SQLAdvisorSoarConfigKey    = "sqladvisor.soar.Config"
+	SQLAdvisorSoarBinKey       = "sqladvisor.soar.bin"
+	SQLAdvisorSoarConfigKey    = "sqladvisor.soar.config"
 	SQLAdvisorSoarSamplingKey  = "sqladvisor.soar.sampling"
 	SQLAdvisorSoarProfilingKey = "sqladvisor.soar.profiling"
 	SQLAdvisorSoarTraceKey     = "sqladvisor.soar.trace"

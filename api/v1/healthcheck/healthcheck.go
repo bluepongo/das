@@ -2,6 +2,7 @@ package healthcheck
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -10,19 +11,17 @@ import (
 	"github.com/romberli/das/pkg/message"
 	msghealth "github.com/romberli/das/pkg/message/healthcheck"
 	"github.com/romberli/das/pkg/resp"
+	utilhealth "github.com/romberli/das/pkg/util/healthcheck"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/log"
 )
 
 const (
-	operationIDJSON = "operation_id"
-	serverIDJSON    = "server_id"
-	hostIPJSON      = "host_ip"
-	portNumJSON     = "port_num"
-	startTimeJSON   = "start_time"
-	endTimeJSON     = "end_time"
-	stepJSON        = "step"
-	reviewJSON      = "review"
+	operationIDJSON            = "operation_id"
+	reviewJSON                 = "review"
+	checkRespMessage           = `{"code": 0, "operation_id: %d", message": "healthcheck started"}`
+	checkByHostInfoRespMessage = `{"code": 0, "operation_id: %d", "message": "healthcheck by host info started"}`
+	reviewAccuracyRespMessage  = `{"code": 0, "message": "reviewed accuracy"}`
 )
 
 // @Tags healthcheck
@@ -51,7 +50,7 @@ func GetResultByOperationID(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalJSON()
+	jsonBytes, err := s.Marshal()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
@@ -65,72 +64,42 @@ func GetResultByOperationID(c *gin.Context) {
 // @Tags healthcheck
 // @Summary check health of the database
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": "healthcheck started.}"
+// @Success 200 {string} string "{"code": 200, "data": "healthcheck started."}"
 // @Router /api/v1/healthcheck/check [post]
 func Check(c *gin.Context) {
-	// get data
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
-		return
-	}
-	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
+	var rd *utilhealth.Check
+	// bind json
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	mysqlServerIDStr, mysqlServerIDExists := dataMap[serverIDJSON]
-	if !mysqlServerIDExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, serverIDJSON)
-		return
-	}
-	mysqlServerID, err := strconv.Atoi(mysqlServerIDStr)
+	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetStartTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err.Error())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetStartTime())
 		return
 	}
-	startTimeStr, startTimeExists := dataMap[startTimeJSON]
-	if !startTimeExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, startTimeJSON)
-		return
-	}
-	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, startTimeStr, time.Local)
+	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetEndTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, startTimeStr)
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetEndTime())
 		return
 	}
-	endTimeStr, endTimeExists := dataMap[endTimeJSON]
-	if !endTimeExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, endTimeJSON)
-		return
-	}
-	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, endTimeStr, time.Local)
+	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, endTimeStr)
-		return
-	}
-	stepStr, stepExists := dataMap[stepJSON]
-	if !stepExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, stepJSON)
-		return
-	}
-	step, err := time.ParseDuration(stepStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, step)
+		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, rd.GetStep())
 		return
 	}
 	// init service
 	s := healthcheck.NewServiceWithDefault()
 	// check health
-	err = s.Check(mysqlServerID, startTime, endTime, step)
+	operationID, err := s.Check(rd.GetServerID(), startTime, endTime, step)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, operationID, err.Error())
 		return
 	}
-	respMessage := "healthcheck started"
-	log.Debug(message.NewMessage(msghealth.DebugHealthcheckCheck, respMessage).Error())
-	resp.ResponseOK(c, respMessage, msghealth.InfoHealthcheckCheck)
+
+	log.Debug(message.NewMessage(msghealth.DebugHealthcheckCheck, operationID).Error())
+	resp.ResponseOK(c, fmt.Sprintf(checkRespMessage, operationID), msghealth.InfoHealthcheckCheck, operationID)
 }
 
 // @Tags healthcheck
@@ -139,71 +108,39 @@ func Check(c *gin.Context) {
 // @Success 200 {string} string "{"code": 200, "data": ""}"
 // @Router /api/v1/healthcheck/check/host-info [post]
 func CheckByHostInfo(c *gin.Context) {
-	// get data
-	data, err := c.GetRawData()
+	var rd *utilhealth.CheckByHostInfo
+	// bind json
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
+	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetStartTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err.Error())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetStartTime())
 		return
 	}
-	hostIP, hostIPExists := dataMap[hostIPJSON]
-	if !hostIPExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, hostIPJSON)
-		return
-	}
-	portNumStr, portNumExists := dataMap[portNumJSON]
-	if !portNumExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, portNumJSON)
-		return
-	}
-	portNum, err := strconv.Atoi(portNumStr)
+	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetEndTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetEndTime())
 		return
 	}
-	startTimeStr, startTimeExists := dataMap[startTimeJSON]
-	if !startTimeExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, startTimeJSON)
-		return
-	}
-	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, startTimeStr, time.Local)
+	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, startTimeStr)
-	}
-	endTimeStr, endTimeExists := dataMap[endTimeJSON]
-	if !endTimeExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, endTimeJSON)
+		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, rd.GetStep())
 		return
-	}
-	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, endTimeStr, time.Local)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, endTimeStr)
-	}
-	stepStr, stepExists := dataMap[stepJSON]
-	if !stepExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, stepJSON)
-		return
-	}
-	step, err := time.ParseDuration(stepStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, step)
 	}
 	// init service
 	s := healthcheck.NewServiceWithDefault()
 	// get entities
-	err = s.CheckByHostInfo(hostIP, portNum, startTime, endTime, step)
+	operationID, err := s.CheckByHostInfo(rd.GetHostIP(), rd.GetPortNum(), startTime, endTime, step)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, operationID, err.Error())
 		return
 	}
-	respMessage := "healthcheck by host info started"
-	log.Debug(message.NewMessage(msghealth.DebugHealthcheckCheckByHostInfo, respMessage).Error())
-	resp.ResponseOK(c, respMessage, msghealth.InfoHealthcheckCheckByHostInfo)
+
+	log.Debug(message.NewMessage(msghealth.DebugHealthcheckCheckByHostInfo, operationID).Error())
+	resp.ResponseOK(c, fmt.Sprintf(checkByHostInfoRespMessage, operationID), msghealth.InfoHealthcheckCheckByHostInfo, operationID)
 }
 
 // @Tags healthcheck
@@ -242,7 +179,7 @@ func ReviewAccuracy(c *gin.Context) {
 		resp.ResponseNOK(c, msghealth.ErrHealthcheckReviewAccuracy, operationID, err.Error())
 		return
 	}
-	respMessage := "reviewed accuracy"
-	log.Debug(message.NewMessage(msghealth.DebugHealthcheckReviewAccuracy, respMessage).Error())
-	resp.ResponseOK(c, respMessage, msghealth.InfoHealthcheckReviewAccuracy)
+
+	log.Debug(message.NewMessage(msghealth.DebugHealthcheckReviewAccuracy, reviewAccuracyRespMessage).Error())
+	resp.ResponseOK(c, reviewAccuracyRespMessage, msghealth.InfoHealthcheckReviewAccuracy)
 }

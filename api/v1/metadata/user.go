@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -15,6 +16,8 @@ import (
 )
 
 const (
+	userIDJSON      = "id"
+	userAppIDJSON   = "app_id"
 	userNameJSON    = "user_name"
 	employeeIDJSON  = "employee_id"
 	accountNameJSON = "account_name"
@@ -22,6 +25,7 @@ const (
 	telephoneJSON   = "telephone"
 	mobileJSON      = "mobile"
 
+	userAppsStruct       = "Apps"
 	userNameStruct       = "UserName"
 	departmentNameStruct = "DepartmentName"
 	employeeIDStruct     = "EmployeeID"
@@ -98,9 +102,9 @@ func GetUserByName(c *gin.Context) {
 // @Router /api/v1/metadata/user/get/:id [get]
 func GetUserByID(c *gin.Context) {
 	// get param
-	idStr := c.Param(idJSON)
+	idStr := c.Param(envIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, idJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 		return
 	}
 	id, err := strconv.Atoi(idStr)
@@ -192,7 +196,7 @@ func GetUserByAccountName(c *gin.Context) {
 // @Summary get user by Email
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
-// @Router /api/v1/metadata"/user/email/:email [get]
+// @Router /api/v1/metadata/user/email/:email [get]
 func GetUserByEmail(c *gin.Context) {
 	// get param
 	email := c.Param(emailJSON)
@@ -363,9 +367,9 @@ func UpdateUserByID(c *gin.Context) {
 	var fields map[string]interface{}
 
 	// get params
-	idStr := c.Param(idJSON)
+	idStr := c.Param(envIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, idJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 	}
 	id, err := strconv.Atoi(idStr)
 	data, err := c.GetRawData()
@@ -387,9 +391,9 @@ func UpdateUserByID(c *gin.Context) {
 	_, mobileExists := fields[mobileStruct]
 	_, telephoneExists := fields[telephoneStruct]
 	_, roleExists := fields[roleStruct]
-	_, delFlagExists := fields[delFlagStruct]
+	_, delFlagExists := fields[envDelFlagStruct]
 	if !userNameExists && !departmentNameExists && !employeeIDExists && !accountNameExists && !emailExists && !telephoneExists && !roleExists && !delFlagExists && !mobileExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", userNameStruct, delFlagStruct))
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", userNameStruct, envDelFlagStruct))
 		return
 	}
 	// init service
@@ -421,9 +425,9 @@ func DeleteUserByID(c *gin.Context) {
 	var fields map[string]interface{}
 
 	// get params
-	idStr := c.Param(idJSON)
+	idStr := c.Param(envIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, idJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 		return
 	}
 	id, err := strconv.Atoi(idStr)
@@ -449,4 +453,148 @@ func DeleteUserByID(c *gin.Context) {
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataDeleteUserByID, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteUserByID, fields[userNameStruct])
+}
+
+// @Tags user
+// @Summary get apps by id
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Router /api/v1/metadata/user/app/:id [get]
+func GetAppsByUserID(c *gin.Context) {
+	// get param
+	idStr := c.Param(userIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, userIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// get entity
+	err = s.GetAppsByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppsByUserID, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(userAppsStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppsByUserID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppsByUserID, id)
+
+}
+
+// @Tags user
+// @Summary add application map
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [1, 2]}"
+// @Router /api/v1/metadata/user/add-app/:id [post]
+func UserAddApp(c *gin.Context) {
+	// get params
+	idStr := c.Param(userIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, userIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		return
+	}
+	dataMap := make(map[string]int)
+	err = json.Unmarshal(data, &dataMap)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUserAddApp, id, err.Error())
+		return
+	}
+	appID, appIDExists := dataMap[userAppIDJSON]
+	if !appIDExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, userAppIDJSON)
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// update entities
+	err = s.AddApp(id, appID)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUserAddApp, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(userAppsStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataUserAddApp, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataUserAddApp, id, appID)
+}
+
+// @Tags user
+// @Summary delete application map
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [1]}"
+// @Router /api/v1/metadata/user/delete-app/:id [post]
+func UserDeleteApp(c *gin.Context) {
+	// get params
+	idStr := c.Param(userIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, userIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		return
+	}
+	dataMap := make(map[string]int)
+	err = json.Unmarshal(data, &dataMap)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUserDeleteApp, id, err.Error())
+		return
+	}
+	appID, appIDExists := dataMap[userAppIDJSON]
+	if !appIDExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, userAppIDJSON)
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// update entities
+	err = s.DeleteApp(id, appID)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUserDeleteApp, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(userAppsStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataUserAddApp, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataUserDeleteApp, id, appID)
 }

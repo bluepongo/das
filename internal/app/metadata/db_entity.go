@@ -14,7 +14,7 @@ const (
 	dbClusterIDStruct   = "ClusterID"
 	dbClusterTypeStruct = "ClusterType"
 	dbEnvIDStruct       = "EnvID"
-	db
+	dbDelFlagStruct     = "DelFlag"
 )
 
 var _ metadata.DB = (*DBInfo)(nil)

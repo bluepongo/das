@@ -13,26 +13,44 @@ import (
 )
 
 const (
-	defaultDBInfoID                   = 1
-	defaultDBInfoDBName               = "test"
-	defaultDBInfoClusterID            = 2
-	defaultDBInfoClusterType          = 1
-	defaultDBInfoOwnerID              = 1
-	defaultDBInfoEnvID                = 2
-	defaultDBInfoDelFlag              = 0
-	defaultDBInfoCreateTimeString     = "2021-01-21 10:00:00.000000"
-	defaultDBInfoLastUpdateTimeString = "2021-01-21 13:00:00.000000"
-	dbNameJSON                        = "db_name"
+	testDBDBID                 = 1
+	testDBDBName               = "pmm_test"
+	testDBClusterID            = 1
+	testDBClusterType          = 1
+	testDBOwnerID              = 1
+	testDBEnvID                = 1
+	testDBDelFlag              = 0
+	testDBCreateTimeString     = "2021-01-21 10:00:00.000000"
+	testDBLastUpdateTimeString = "2021-01-21 13:00:00.000000"
+	testDBDBNameJSON           = "db_name"
+	testDBAppID                = 1
+	testDBNewAppID             = 2
+	testDBMySQLClusterID       = 1
 )
 
-func initNewDBInfo() *DBInfo {
+var testDBInfo *DBInfo
+
+func init() {
+	testDBInfo = testInitNewDBInfo()
+}
+
+func testInitNewDBInfo() *DBInfo {
 	now.TimeFormats = append(now.TimeFormats, constant.DefaultTimeLayout)
 
-	createTime, _ := now.Parse(defaultDBInfoCreateTimeString)
-	lastUpdateTime, _ := now.Parse(defaultDBInfoLastUpdateTimeString)
-	return NewDBInfo(dbRepo, defaultDBInfoID, defaultDBInfoDBName, defaultDBInfoClusterID,
-		defaultDBInfoClusterType, defaultDBInfoOwnerID, defaultDBInfoEnvID, defaultDBInfoDelFlag,
-		createTime, lastUpdateTime)
+	createTime, _ := now.Parse(testDBCreateTimeString)
+	lastUpdateTime, _ := now.Parse(testDBLastUpdateTimeString)
+
+	return NewDBInfoWithGlobal(
+		testDBDBID,
+		testDBDBName,
+		testDBClusterID,
+		testDBClusterType,
+		testDBOwnerID,
+		testDBEnvID,
+		testDBDelFlag,
+		createTime,
+		lastUpdateTime,
+	)
 }
 
 func dbEqual(a, b *DBInfo) bool {
@@ -58,8 +76,8 @@ func TestDBEntityAll(t *testing.T) {
 	TestDBInfo_GetAllOwners(t)
 	TestDBInfo_Set(t)
 	TestDBInfo_Delete(t)
-	TestDBInfo_AddDBApp(t)
-	TestDBInfo_DeleteDBApp(t)
+	TestDBInfo_AddApp(t)
+	TestDBInfo_DeleteApp(t)
 	TestDBInfo_MarshalJSON(t)
 	TestDBInfo_MarshalJSONWithFields(t)
 }
@@ -67,157 +85,142 @@ func TestDBEntityAll(t *testing.T) {
 func TestDBInfo_Identity(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	asst.Equal(defaultDBInfoID, dbInfo.Identity(), "test Identity() failed")
+	asst.Equal(testDBDBID, testDBInfo.Identity(), "test Identity() failed")
 }
 
 func TestDBInfo_GetDBName(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	asst.Equal(defaultDBInfoDBName, dbInfo.GetDBName(), "test GetDBName() failed")
+	asst.Equal(testDBDBName, testDBInfo.GetDBName(), "test GetDBName() failed")
 }
 
 func TestDBInfo_GetClusterID(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	asst.Equal(defaultDBInfoClusterID, dbInfo.GetClusterID(), "test GetClusterID() failed")
+	asst.Equal(testDBClusterID, testDBInfo.GetClusterID(), "test GetClusterID() failed")
 }
 
 func TestDBInfo_GetClusterType(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	asst.Equal(defaultDBInfoClusterType, dbInfo.GetClusterType(), "test GetClusterType() failed")
+	asst.Equal(testDBClusterType, testDBInfo.GetClusterType(), "test GetClusterType() failed")
 }
 
 func TestDBInfo_GetOwnerID(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	asst.Equal(defaultDBInfoOwnerID, dbInfo.GetOwnerID(), "test GetOwnerID() failed")
+	asst.Equal(testDBOwnerID, testDBInfo.GetOwnerID(), "test GetOwnerID() failed")
 }
 
 func TestDBInfo_GetEnvID(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	asst.Equal(defaultDBInfoEnvID, dbInfo.GetEnvID(), "test GetEnvID() failed")
+	asst.Equal(testDBEnvID, testDBInfo.GetEnvID(), "test GetEnvID() failed")
 }
 
 func TestDBInfo_GetDelFlag(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	asst.Equal(defaultDBInfoDelFlag, dbInfo.GetDelFlag(), "test GetDelFlag() failed")
+	asst.Equal(testDBDelFlag, testDBInfo.GetDelFlag(), "test GetDelFlag() failed")
 }
 
 func TestDBInfo_GetCreateTime(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	asst.True(reflect.DeepEqual(dbInfo.CreateTime, dbInfo.GetCreateTime()), "test GetCreateTime failed")
+	asst.True(reflect.DeepEqual(testDBInfo.CreateTime, testDBInfo.GetCreateTime()), "test GetCreateTime failed")
 }
 
 func TestDBInfo_GetLastUpdateTime(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	asst.True(reflect.DeepEqual(dbInfo.LastUpdateTime, dbInfo.GetLastUpdateTime()), "test GetLastUpdateTime() failed")
+	asst.True(reflect.DeepEqual(testDBInfo.LastUpdateTime, testDBInfo.GetLastUpdateTime()), "test GetLastUpdateTime() failed")
 }
 
 func TestDBInfo_GetMySQLClusterByID(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	mysqlCluster, err := dbInfo.GetMySQLCluster()
-	asst.Nil(err, common.CombineMessageWithError("test GetMySQLCLuster() failed", err))
-	asst.NotNil(mysqlCluster, "test GetMySQLCluster() failed")
+	mysqlCluster, err := testDBInfo.GetMySQLCluster()
+	asst.Nil(err, common.CombineMessageWithError("test GetMySQLClusterByID() failed", err))
+	asst.Equal(testDBClusterID, mysqlCluster.Identity(), "test GetMySQLClusterByID() failed")
 }
 
 func TestDBInfo_GetAppOwners(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	appOwners, err := dbInfo.GetAppOwners()
+	appOwners, err := testDBInfo.GetAppOwners()
 	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
-	asst.NotNil(appOwners, "test GetAppOwners() failed")
+	asst.Equal(testAppOwnerID, appOwners[constant.ZeroInt].Identity(), "test GetAppOwners() failed")
 }
 
 func TestDBInfo_GetDBOwners(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	dbOwners, err := dbInfo.GetDBOwners()
+	dbOwners, err := testDBInfo.GetDBOwners()
 	asst.Nil(err, common.CombineMessageWithError("test GetDBOwners() failed", err))
-	asst.NotNil(dbOwners, "test GetDBOwners() failed")
+	asst.Equal(testAppOwnerID, dbOwners[constant.ZeroInt].Identity(), "test GetDBOwners() failed")
 }
 
 func TestDBInfo_GetAllOwners(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	allOwners, err := dbInfo.GetAllOwners()
+	allOwners, err := testDBInfo.GetAllOwners()
 	asst.Nil(err, common.CombineMessageWithError("test GetAllOwners() failed", err))
-	asst.NotNil(allOwners, "test GetAllOwners() failed")
+	asst.Equal(testAppOwnerID, allOwners[constant.ZeroInt].Identity(), "test GetAllOwners() failed")
 }
 
 func TestDBInfo_GetApps(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	apps, err := dbInfo.GetApps()
+	apps, err := testDBInfo.GetApps()
 	asst.Nil(err, common.CombineMessageWithError("test GetApps() failed", err))
-	asst.NotEqual(0, len(apps), "test GetApps() failed")
+	asst.Equal(testDBAppID, apps[constant.ZeroInt].Identity(), "test GetApps() failed")
 }
 
 func TestDBInfo_Set(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	newDBName := "new_db"
-	err := dbInfo.Set(map[string]interface{}{"DBName": newDBName})
+	err := testDBInfo.Set(map[string]interface{}{dbDBNameStruct: testDBNewDBName})
 	asst.Nil(err, common.CombineMessageWithError("test Get() failed", err))
-	asst.Equal(newDBName, dbInfo.DBName, "test Set() failed")
+	asst.Equal(testDBNewDBName, testDBInfo.GetDBName(), "test Set() failed")
+	err = testDBInfo.Set(map[string]interface{}{dbDBNameStruct: testDBDBName})
+	asst.Nil(err, common.CombineMessageWithError("test Get() failed", err))
 }
 
 func TestDBInfo_Delete(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	dbInfo.Delete()
-	asst.Equal(1, dbInfo.DelFlag, "test Delete() failed")
+	testDBInfo.Delete()
+	asst.Equal(1, testDBInfo.DelFlag, "test Delete() failed")
+	err := testDBInfo.Set(map[string]interface{}{dbDelFlagStruct: constant.ZeroInt})
+	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
 }
 
-func TestDBInfo_AddDBApp(t *testing.T) {
+func TestDBInfo_AddApp(t *testing.T) {
 	var apps []metadata.App
 
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	err := dbInfo.AddApp(3)
-	apps, err = dbInfo.GetApps()
+	err := testDBInfo.AddApp(testDBNewAppID)
+	apps, err = testDBInfo.GetAppsByID(testDBInfo.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	asst.NotEqual(0, len(apps), "test AddApp() failed")
+	asst.Equal(2, len(apps), "test AddApp() failed")
 	// delete
-	err = dbInfo.DeleteApp(3)
+	err = testDBInfo.DeleteApp(testDBNewAppID)
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
 }
 
-func TestDBInfo_DeleteDBApp(t *testing.T) {
+func TestDBInfo_DeleteApp(t *testing.T) {
 	var apps []metadata.App
 
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	err := dbInfo.DeleteApp(2)
-	apps, err = dbInfo.GetApps()
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	asst.Equal(1, len(apps), "test DeleteApp() failed")
-	// add
-	err = dbInfo.AddApp(2)
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
+	err := testDBInfo.AddApp(testDBNewAppID)
+	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+	err = testDBInfo.DeleteApp(testDBNewAppID)
+	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+	apps, err = testDBInfo.GetAppsByID(testDBInfo.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+	asst.Equal(1, len(apps), "test AddApp() failed")
 }
 
 func TestDBInfo_MarshalJSON(t *testing.T) {
@@ -225,21 +228,19 @@ func TestDBInfo_MarshalJSON(t *testing.T) {
 
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	data, err := dbInfo.MarshalJSON()
+	data, err := testDBInfo.MarshalJSON()
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
 	err = json.Unmarshal(data, &dbInfoUnmarshal)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
-	asst.True(dbEqual(dbInfo, dbInfoUnmarshal), "test MarshalJSON() failed")
+	asst.True(dbEqual(testDBInfo, dbInfoUnmarshal), "test MarshalJSON() failed")
 }
 
 func TestDBInfo_MarshalJSONWithFields(t *testing.T) {
 	asst := assert.New(t)
 
-	dbInfo := initNewDBInfo()
-	data, err := dbInfo.MarshalJSONWithFields(dbDBNameStruct)
+	data, err := testDBInfo.MarshalJSONWithFields(dbDBNameStruct)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
-	expect, err := json.Marshal(map[string]interface{}{dbNameJSON: "test"})
+	expect, err := json.Marshal(map[string]interface{}{testDBDBNameJSON: testDBDBName})
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 	asst.Equal(string(expect), string(data), "test MarshalJSONWithFields() failed")
 }

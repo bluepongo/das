@@ -1,6 +1,7 @@
 package query
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/romberli/das/config"
@@ -80,6 +81,11 @@ func (q *Query) GetRowsExaminedMax() int {
 	return q.RowsExaminedMax
 }
 
+// SetDBName sets db name to the query
+func (q *Query) SetDBName(dbName string) {
+	q.DBName = dbName
+}
+
 // Querier include config of query and connection pool of DAS repo
 type Querier struct {
 	config  *Config
@@ -116,9 +122,7 @@ func (q *Querier) GetByMySQLClusterID(mysqlClusterID int) ([]query.Query, error)
 
 	var queries []query.Query
 	for _, mysqlServer := range mysqlServers {
-		mysqlServerID := mysqlServer.Identity()
-		// dispatch to GetByMySQLServerID()
-		qs, err := q.GetByMySQLServerID(mysqlServerID)
+		qs, err := q.GetByMySQLServerID(mysqlServer.Identity())
 		if err != nil {
 			return nil, err
 		}
@@ -267,9 +271,8 @@ func (q *Querier) getMonitorSystemByMySQLServerID(mysqlServerID int) (depmeta.Mo
 		return nil, err
 	}
 	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
-	mysqlClusterID := mysqlServer.GetClusterID()
 
-	return q.getMonitorSystemByMySQLClusterID(mysqlClusterID)
+	return q.getMonitorSystemByMySQLClusterID(mysqlServer.GetClusterID())
 }
 
 func (q *Querier) getMonitorRepo(monitorSystem depmeta.MonitorSystem) (query.MonitorRepo, error) {
@@ -281,14 +284,18 @@ func (q *Querier) getMonitorRepo(monitorSystem depmeta.MonitorSystem) (query.Mon
 		// pmm 1.x
 		mysqlConn, err := mysql.NewConn(addr, pmmMySQLDBName, q.getMonitorMySQLUser(), q.getMonitorMySQLPass())
 		if err != nil {
-			return nil, err
+			return nil, errors.New(
+				fmt.Sprintf("create monitor mysql connection failed. addr: %s, user: %s. error:\n%s",
+					addr, q.getMonitorMySQLUser(), err.Error()))
 		}
 		monitorRepo = NewMySQLRepo(q.getConfig(), mysqlConn)
 	case 2:
 		// pmm 2.x
 		clickhouseConn, err := clickhouse.NewConnWithDefault(addr, pmmClickhouseDBName, q.getMonitorClickhouseUser(), q.getMonitorClickhousePass())
 		if err != nil {
-			return nil, err
+			return nil, errors.New(
+				fmt.Sprintf("create monitor clickhouse connection failed. addr: %s, user: %s. error:\n%s",
+					addr, q.getMonitorClickhouseUser(), err.Error()))
 		}
 		monitorRepo = NewClickHouseRepo(q.getConfig(), clickhouseConn)
 	default:

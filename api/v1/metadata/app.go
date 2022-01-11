@@ -20,17 +20,19 @@ const (
 	appIDJSON      = "id"
 	appAppNameJSON = "app_name"
 	appDBIDJSON    = "db_id"
+	appUserIDJSON  = "user_id"
 
-	appAppNameStruct  = "AppName"
-	appLevelStruct    = "Level"
-	appDelFlagStruct  = "DelFlag"
-	appDBIDListStruct = "DBIDList"
+	appAppNameStruct = "AppName"
+	appLevelStruct   = "Level"
+	appDelFlagStruct = "DelFlag"
+	appDBsStruct     = "DBs"
+	appUsersStruct   = "Users"
 )
 
 // @Tags application
 // @Summary get all applications
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
 // @Router /api/v1/metadata/app [get]
 func GetApp(c *gin.Context) {
 	// init service
@@ -56,7 +58,7 @@ func GetApp(c *gin.Context) {
 // @Tags application
 // @Summary get application by id
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
 // @Router /api/v1/metadata/app/:id [get]
 func GetAppByID(c *gin.Context) {
 	// get param
@@ -93,7 +95,7 @@ func GetAppByID(c *gin.Context) {
 // @Tags application
 // @Summary get application by system name
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "app_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "app_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
 // @Router /api/v1/metadata/app/app-name/:name [get]
 func GetAppByName(c *gin.Context) {
 	// get params
@@ -126,15 +128,43 @@ func GetAppByName(c *gin.Context) {
 // @Summary get dbs
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [1, 2]}"
-// @Router /api/vi/metadata/app/dbs/:id [get]
+// @Router /api/vi/metadata/app/db/:id [get]
 func GetDBsByAppID(c *gin.Context) {
-
+	// get param
+	idStr := c.Param(appIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewAppServiceWithDefault()
+	// get entity
+	err = s.GetDBsByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBsByID, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(appDBsStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBsByID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBsByID, id)
 }
 
 // @Tags application
 // @Summary add a new application
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
 // @Router /api/v1/metadata/app [post]
 func AddApp(c *gin.Context) {
 	var fields map[string]interface{}
@@ -146,7 +176,7 @@ func AddApp(c *gin.Context) {
 		return
 	}
 	// unmarshal data
-	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.AppInfo{}, constant.DefaultMiddlewareTag)
+	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.AppInfo{}, constant.DefaultJSONTag)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
@@ -184,7 +214,7 @@ func AddApp(c *gin.Context) {
 // @Tags application
 // @Summary update application by id
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
 // @Router /api/v1/metadata/app/:id [post]
 func UpdateAppByID(c *gin.Context) {
 	var fields map[string]interface{}
@@ -206,7 +236,7 @@ func UpdateAppByID(c *gin.Context) {
 		return
 	}
 	// unmarshal data
-	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.AppInfo{}, constant.DefaultMiddlewareTag)
+	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.AppInfo{}, constant.DefaultJSONTag)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
@@ -241,7 +271,7 @@ func UpdateAppByID(c *gin.Context) {
 // @Tags application
 // @Summary delete app by id
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
 // @Router /api/v1/metadata/app/delete/:id [post]
 func DeleteAppByID(c *gin.Context) {
 	var fields map[string]interface{}
@@ -280,7 +310,7 @@ func DeleteAppByID(c *gin.Context) {
 // @Tags application
 // @Summary add database map
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
 // @Router /api/v1/metadata/app/add-db/:id [post]
 func AppAddDB(c *gin.Context) {
 	// get params
@@ -320,7 +350,7 @@ func AppAddDB(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(appDBIDListStruct)
+	jsonBytes, err := s.MarshalWithFields(appDBsStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
@@ -373,7 +403,7 @@ func AppDeleteDB(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(appDBIDListStruct)
+	jsonBytes, err := s.MarshalWithFields(appDBsStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
@@ -382,4 +412,148 @@ func AppDeleteDB(c *gin.Context) {
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAppDeleteDB, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAppDeleteDB, id, dbID)
+}
+
+// @Tags application
+// @Summary get users
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [1, 2]}"
+// @Router /api/vi/metadata/app/user/:id [get]
+func GetUsersByAppID(c *gin.Context) {
+	// get param
+	idStr := c.Param(appIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewAppServiceWithDefault()
+	// get entity
+	err = s.GetUsersByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUsersByID, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(appUsersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetUsersByID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetUsersByID, id)
+}
+
+// @Tags application
+// @Summary add user map
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
+// @Router /api/v1/metadata/app/add-user/:id [post]
+func AppAddUser(c *gin.Context) {
+	// get params
+	idStr := c.Param(appIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		return
+	}
+
+	dataMap := make(map[string]int)
+	err = json.Unmarshal(data, &dataMap)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAppAddUser, id, err.Error())
+		return
+	}
+	userID, userIDExists := dataMap[appUserIDJSON]
+	if !userIDExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, appUserIDJSON)
+		return
+	}
+	// init service
+	s := metadata.NewAppServiceWithDefault()
+	// update entities
+	err = s.AddUser(id, userID)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAppAddUser, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(appUsersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataAppAddUser, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAppAddUser, id, userID)
+}
+
+// @Tags application
+// @Summary delete user map
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [1]}"
+// @Router /api/v1/metadata/app/delete-user/:id [post]
+func AppDeleteUser(c *gin.Context) {
+	// get params
+	idStr := c.Param(appIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		return
+	}
+	dataMap := make(map[string]int)
+	err = json.Unmarshal(data, &dataMap)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAppDeleteUser, id, err.Error())
+		return
+	}
+	userID, userIDExists := dataMap[appUserIDJSON]
+	if !userIDExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, appUserIDJSON)
+		return
+	}
+	// init service
+	s := metadata.NewAppServiceWithDefault()
+	// update entities
+	err = s.DeleteUser(id, userID)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAppDeleteUser, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(appUsersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataAppDeleteUser, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAppDeleteUser, id, userID)
 }

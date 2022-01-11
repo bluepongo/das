@@ -174,30 +174,6 @@ func (mcr *MiddlewareClusterRepo) GetID(clusterName string, envID int) (int, err
 	return result.GetInt(constant.ZeroInt, constant.ZeroInt)
 }
 
-// GetMiddlewareServerIDList gets the middleware server id list of given cluster id from the middle ware
-func (mcr *MiddlewareClusterRepo) GetMiddlewareServerIDList(clusterID int) ([]int, error) {
-	sql := `select id from t_meta_middleware_server_info
-            where del_flag = 0
-            and cluster_id = ?
-		    order by id;
-	`
-	log.Debugf("metadata MiddlewareCLusterRepo.GetMiddlewareServerIDList() select sql: %s", sql)
-	result, err := mcr.Execute(sql, clusterID)
-	if err != nil {
-		return nil, err
-	}
-	resultNum := result.RowNumber()
-	serverIDList := make([]int, resultNum)
-	for row := 0; row < resultNum; row++ {
-		serverID, err := result.GetInt(row, constant.ZeroInt)
-		if err != nil {
-			return nil, err
-		}
-		serverIDList[row] = serverID
-	}
-	return serverIDList, nil
-}
-
 // Create creates data with given entity in the middleware
 func (mcr *MiddlewareClusterRepo) Create(middlewareCluster metadata.MiddlewareCluster) (metadata.MiddlewareCluster, error) {
 	sql := `insert into t_meta_middleware_cluster_info(cluster_name, owner_id, env_id) values(?, ?, ?);`

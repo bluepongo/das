@@ -1,7 +1,6 @@
 package metadata
 
 import (
-	"encoding/json"
 	"reflect"
 	"testing"
 
@@ -12,37 +11,36 @@ import (
 )
 
 const (
-	defaultMiddlewareClusterInfoID                   = 1
-	defaultMiddlewareClusterInfoClusterName          = "ttt"
-	defaultMiddlewareClusterInfoOwnerID              = 1
-	defaultMiddlewareClusterInfoEnvID                = 1
-	defaultMiddlewareClusterInfoDelFlag              = 0
-	defaultMiddlewareClusterInfoCreateTimeString     = "2021-01-21 10:00:00.000000"
-	defaultMiddlewareClusterInfoLastUpdateTimeString = "2021-01-21 13:00:00.000000"
-
-	middlewareServerIDListCount = 0
-	middlewareClusterNameJSON   = "cluster_name"
+	testMiddlewareClusterClusterID            = 1
+	testMiddlewareClusterClusterName          = "middleware-cluster-1"
+	testMiddlewareClusterOwnerID              = 1
+	testMiddlewareClusterEnvID                = 1
+	testMiddlewareClusterDelFlag              = 0
+	testMiddlewareClusterCreateTimeString     = "2021-01-21 10:00:00.000000"
+	testMiddlewareClusterLastUpdateTimeString = "2021-01-21 13:00:00.000000"
 )
 
-func initNewMiddlewareClusterInfo() *MiddlewareClusterInfo {
+var testMiddlewareClusterInfo *MiddlewareClusterInfo
+
+func init() {
+	testInitDASMySQLPool()
+	testMiddlewareClusterInfo = testInitNewMiddlewareClusterInfo()
+}
+
+func testInitNewMiddlewareClusterInfo() *MiddlewareClusterInfo {
 	now.TimeFormats = append(now.TimeFormats, constant.DefaultTimeLayout)
 
-	createTime, _ := now.Parse(defaultMiddlewareClusterInfoCreateTimeString)
-	lastUpdateTime, _ := now.Parse(defaultMiddlewareClusterInfoLastUpdateTimeString)
-	return NewMiddlewareClusterInfo(
-		middlewareClusterRepo,
-		defaultMiddlewareClusterInfoID,
-		defaultMiddlewareClusterInfoClusterName,
-		defaultMiddlewareClusterInfoOwnerID,
-		defaultMiddlewareClusterInfoEnvID,
-		defaultMiddlewareClusterInfoDelFlag,
+	createTime, _ := now.Parse(testMiddlewareClusterCreateTimeString)
+	lastUpdateTime, _ := now.Parse(testMiddlewareClusterLastUpdateTimeString)
+	return NewMiddlewareClusterInfoWithGlobal(
+		testMiddlewareClusterClusterID,
+		testMiddlewareClusterClusterName,
+		testMiddlewareClusterOwnerID,
+		testMiddlewareClusterEnvID,
+		testMiddlewareClusterDelFlag,
 		createTime,
 		lastUpdateTime,
 	)
-}
-
-func middlewareClusterStructEqual(a, b *MiddlewareClusterInfo) bool {
-	return a.ID == b.ID && a.ClusterName == b.ClusterName && a.OwnerID == b.OwnerID && a.EnvID == b.EnvID && a.DelFlag == b.DelFlag && a.CreateTime == b.CreateTime && a.LastUpdateTime == b.LastUpdateTime
 }
 
 func TestMiddlewareClusterEntityAll(t *testing.T) {
@@ -54,7 +52,7 @@ func TestMiddlewareClusterEntityAll(t *testing.T) {
 	TestMiddlewareClusterInfo_GetCreateTime(t)
 	TestMiddlewareClusterInfo_GetLastUpdateTime(t)
 	TestMiddlewareClusterInfo_GetCreateTime(t)
-	TestMiddlewareClusterInfo_GetMiddlewareServerIDList(t)
+	TestMiddlewareClusterInfo_GetMiddlewareServers(t)
 	TestMiddlewareClusterInfo_Set(t)
 	TestMiddlewareClusterInfo_Delete(t)
 	TestMiddlewareClusterInfo_MarshalJSON(t)
@@ -64,99 +62,85 @@ func TestMiddlewareClusterEntityAll(t *testing.T) {
 func TestMiddlewareClusterInfo_Identity(t *testing.T) {
 	asst := assert.New(t)
 
-	middlewareClusterInfo := initNewMiddlewareClusterInfo()
-	asst.Equal(defaultMiddlewareClusterInfoID, middlewareClusterInfo.Identity(), "test Identity() failed")
+	asst.Equal(testMiddlewareClusterClusterID, testMiddlewareClusterInfo.Identity(), "test Identity() failed")
 }
 
 func TestMiddlewareClusterInfo_GetClusterName(t *testing.T) {
 	asst := assert.New(t)
 
-	middlewareClusterInfo := initNewMiddlewareClusterInfo()
-	asst.Equal(defaultMiddlewareClusterInfoClusterName, middlewareClusterInfo.GetClusterName(), "test GetClusterName() failed")
+	asst.Equal(testMiddlewareClusterClusterName, testMiddlewareClusterInfo.GetClusterName(), "test GetClusterName() failed")
 }
 
 func TestMiddlewareClusterInfo_GetOwnerID(t *testing.T) {
 	asst := assert.New(t)
 
-	middlewareClusterInfo := initNewMiddlewareClusterInfo()
-	asst.Equal(defaultMiddlewareClusterInfoOwnerID, middlewareClusterInfo.GetOwnerID(), "test GetOwnerID() failed")
+	asst.Equal(testMiddlewareClusterOwnerID, testMiddlewareClusterInfo.GetOwnerID(), "test GetOwnerID() failed")
 }
 
 func TestMiddlewareClusterInfo_GetEnvID(t *testing.T) {
 	asst := assert.New(t)
 
-	middlewareClusterInfo := initNewMiddlewareClusterInfo()
-	asst.Equal(defaultMiddlewareClusterInfoEnvID, middlewareClusterInfo.GetEnvID(), "test GetEnvID() failed")
+	asst.Equal(testMiddlewareClusterEnvID, testMiddlewareClusterInfo.GetEnvID(), "test GetEnvID() failed")
 }
 func TestMiddlewareClusterInfo_GetDelFlag(t *testing.T) {
 	asst := assert.New(t)
 
-	middlewareClusterInfo := initNewMiddlewareClusterInfo()
-	asst.Equal(constant.ZeroInt, middlewareClusterInfo.GetDelFlag(), "test GetDelFlag() failed")
+	asst.Equal(constant.ZeroInt, testMiddlewareClusterInfo.GetDelFlag(), "test GetDelFlag() failed")
 }
 
 func TestMiddlewareClusterInfo_GetCreateTime(t *testing.T) {
 	asst := assert.New(t)
 
-	middlewareClusterInfo := initNewMiddlewareClusterInfo()
-	asst.True(reflect.DeepEqual(middlewareClusterInfo.CreateTime, middlewareClusterInfo.GetCreateTime()), "test GetCreateTime failed")
+	asst.True(reflect.DeepEqual(testMiddlewareClusterInfo.CreateTime, testMiddlewareClusterInfo.GetCreateTime()), "test GetCreateTime failed")
 }
 
 func TestMiddlewareClusterInfo_GetLastUpdateTime(t *testing.T) {
 	asst := assert.New(t)
 
-	middlewareClusterInfo := initNewMiddlewareClusterInfo()
-	asst.True(reflect.DeepEqual(middlewareClusterInfo.LastUpdateTime, middlewareClusterInfo.GetLastUpdateTime()), "test GetLastUpdateTime() failed")
+	asst.True(reflect.DeepEqual(testMiddlewareClusterInfo.LastUpdateTime, testMiddlewareClusterInfo.GetLastUpdateTime()), "test GetLastUpdateTime() failed")
 }
 
-func TestMiddlewareClusterInfo_GetMiddlewareServerIDList(t *testing.T) {
+func TestMiddlewareClusterInfo_GetMiddlewareServers(t *testing.T) {
 	asst := assert.New(t)
 
-	middlewareClusterInfo := initNewMiddlewareClusterInfo()
-	list, err := middlewareClusterInfo.GetMiddlewareServerIDList()
-	count := len(list)
-	asst.Nil(err, common.CombineMessageWithError("test GetMiddlewareServerIDList() failed", err))
-	asst.Equal(middlewareServerIDListCount, count, "test GetMiddlewareServerIDList() failed")
+	middlewareServers, err := testMiddlewareClusterInfo.GetMiddlewareServers()
+	asst.Nil(err, common.CombineMessageWithError("test GetMiddlewareServersByID() failed", err))
+	asst.Equal(1, len(middlewareServers), "test GetMiddlewareServersByID() failed")
 }
 
 func TestMiddlewareClusterInfo_Set(t *testing.T) {
 	asst := assert.New(t)
 
-	middlewareClusterInfo := initNewMiddlewareClusterInfo()
-	newClusterName := "new_cluster"
-	err := middlewareClusterInfo.Set(map[string]interface{}{"ClusterName": newClusterName})
+	err := testMiddlewareClusterInfo.Set(map[string]interface{}{middlewareClusterClusterNameStruct: testMiddlewareClusterUpdateClusterName})
 	asst.Nil(err, common.CombineMessageWithError("test Set() failed", err))
-	asst.Equal(newClusterName, middlewareClusterInfo.ClusterName, "test Set() failed")
+	asst.Equal(testMiddlewareClusterUpdateClusterName, testMiddlewareClusterInfo.GetClusterName(), "test Set() failed")
+	err = testMiddlewareClusterInfo.Set(map[string]interface{}{middlewareClusterClusterNameStruct: testMiddlewareClusterNewClusterName})
+	asst.Nil(err, common.CombineMessageWithError("test Set() failed", err))
+	asst.Equal(testMiddlewareClusterNewClusterName, testMiddlewareClusterInfo.GetClusterName(), "test Set() failed")
 }
 
 func TestMiddlewareClusterInfo_Delete(t *testing.T) {
 	asst := assert.New(t)
 
-	middlewareClusterInfo := initNewMiddlewareClusterInfo()
-	middlewareClusterInfo.Delete()
-	asst.Equal(1, middlewareClusterInfo.GetDelFlag(), "test Delete() failed")
+	testMiddlewareClusterInfo.Delete()
+	asst.Equal(1, testMiddlewareClusterInfo.GetDelFlag(), "test Delete() failed")
+	err := testMiddlewareClusterInfo.Set(map[string]interface{}{middlewareClusterDelFlagStruct: constant.ZeroInt})
+	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
+	asst.Equal(constant.ZeroInt, testMiddlewareClusterInfo.GetDelFlag(), "test Delete() failed")
 }
 
 func TestMiddlewareClusterInfo_MarshalJSON(t *testing.T) {
-	var middlewareClusterInfoUnmarshal *MiddlewareClusterInfo
-
 	asst := assert.New(t)
 
-	middlewareClusterInfo := initNewMiddlewareClusterInfo()
-	data, err := middlewareClusterInfo.MarshalJSON()
+	jsonBytes, err := testMiddlewareClusterInfo.MarshalJSON()
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
-	err = json.Unmarshal(data, &middlewareClusterInfoUnmarshal)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
-	asst.True(middlewareClusterStructEqual(middlewareClusterInfo, middlewareClusterInfoUnmarshal), "test MarshalJSON() failed")
+	t.Log(string(jsonBytes))
 }
 
 func TestMiddlewareClusterInfo_MarshalJSONWithFields(t *testing.T) {
 	asst := assert.New(t)
 
-	middlewareClusterInfo := initNewMiddlewareClusterInfo()
-	data, err := middlewareClusterInfo.MarshalJSONWithFields(middlewareClusterNameStruct)
+	jsonBytes, err := testMiddlewareClusterInfo.MarshalJSONWithFields(middlewareClusterClusterNameStruct)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
-	expect, err := json.Marshal(map[string]interface{}{middlewareClusterNameJSON: "ttt"})
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
-	asst.Equal(string(expect), string(data), "test MarshalJSONWithFields() failed")
+	t.Log(string(jsonBytes))
 }

@@ -35,6 +35,7 @@ import (
 var (
 	ValidLogLevels                 = []string{"debug", "info", "warn", "warning", "error", "fatal"}
 	ValidLogFormats                = []string{"text", "json"}
+	ValidAlertSTMPFormat           = []string{AlertSMTPTextFormat, AlertSMTPHTMLFormat}
 	ValidHealthcheckAlertOwnerType = []string{HealthcheckAlertOwnerTypeApp, HealthcheckAlertOwnerTypeDB, HealthcheckAlertOwnerTypeAll}
 )
 
@@ -74,13 +75,10 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(DBMonitorMySQLPassKey, DefaultDBMonitorMySQLPass)
 	viper.SetDefault(DBApplicationMySQLUserKey, DefaultDBApplicationMySQLUser)
 	viper.SetDefault(DBApplicationMySQLPassKey, DefaultDBApplicationMySQLPass)
-	viper.SetDefault(DBSoarMySQLAddrKey, fmt.Sprintf("%s:%d", constant.DefaultLocalHostIP, constant.DefaultMySQLPort))
-	viper.SetDefault(DBSoarMySQLNameKey, DefaultDBName)
-	viper.SetDefault(DBSoarMySQLUserKey, DefaultDBUser)
-	viper.SetDefault(DBSoarMySQLPassKey, DefaultDBPass)
 	// alert
 	viper.SetDefault(AlertSMTPEnabledKey, DefaultAlertSMTPEnabled)
-	viper.SetDefault(AlertSMTPAddrKey, DefaultAlertSMTPAddr)
+	viper.SetDefault(AlertSMTPFormatKey, DefaultAlterSMTPFormat)
+	viper.SetDefault(AlertSMTPURLKey, DefaultAlertSMTPURL)
 	viper.SetDefault(AlertSMTPUserKey, DefaultAlertSMTPUser)
 	viper.SetDefault(AlertSMTPPassKey, DefaultAlertSMTPPass)
 	viper.SetDefault(AlertSMTPFromKey, DefaultAlertSMTPFrom)
@@ -89,6 +87,8 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(AlertHTTPConfigKey, DefaultAlertHTTPConfig)
 	// healthcheck
 	viper.SetDefault(HealthcheckAlertOwnerTypeKey, DefaultHealthcheckAlertOwnerType)
+	// query
+	viper.SetDefault(QueryMinRowsExaminedKey, DefaultQueryMinRowsExamined)
 	// sqladvisor
 	viper.SetDefault(SQLAdvisorSoarBinKey, DefaultSQLAdvisorSoarBin)
 	viper.SetDefault(SQLAdvisorSoarConfigKey, DefaultSQLAdvisorSoarConfig)
@@ -134,6 +134,12 @@ func ValidateConfig() (err error) {
 
 	// validate healthcheck section
 	err = ValidateHealthcheck()
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	// validate query section
+	err = ValidateQuery()
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
@@ -246,7 +252,7 @@ func ValidateServer() error {
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
-	serverAddrList := strings.Split(serverAddr, ":")
+	serverAddrList := strings.Split(serverAddr, constant.ColonString)
 
 	switch len(serverAddrList) {
 	case 2:
@@ -305,7 +311,7 @@ func ValidateDatabase() error {
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
-	dasAddr := strings.Split(dbDASAddr, ":")
+	dasAddr := strings.Split(dbDASAddr, constant.ColonString)
 	if len(dasAddr) != 2 {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbDASAddr))
 	} else {
@@ -427,21 +433,22 @@ func ValidateDatabase() error {
 			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbSoarAddr))
 		}
 	}
-	// validate db.soar.mysql.name
-	_, err = cast.ToStringE(viper.Get(DBSoarMySQLNameKey))
-	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	// validate db.soar.mysql.user
-	_, err = cast.ToStringE(viper.Get(DBSoarMySQLUserKey))
-	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	// validate db.soar.mysql.pass
-	_, err = cast.ToStringE(viper.Get(DBSoarMySQLPassKey))
-	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
+	// todo remove
+	// // validate db.soar.mysql.name
+	// _, err = cast.ToStringE(viper.Get(DBSoarMySQLNameKey))
+	// if err != nil {
+	// 	merr = multierror.Append(merr, err)
+	// }
+	// // validate db.soar.mysql.user
+	// _, err = cast.ToStringE(viper.Get(DBSoarMySQLUserKey))
+	// if err != nil {
+	// 	merr = multierror.Append(merr, err)
+	// }
+	// // validate db.soar.mysql.pass
+	// _, err = cast.ToStringE(viper.Get(DBSoarMySQLPassKey))
+	// if err != nil {
+	// 	merr = multierror.Append(merr, err)
+	// }
 
 	return merr.ErrorOrNil()
 }
@@ -455,8 +462,20 @@ func ValidateAlert() error {
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
+	// validate alert.smtp.format
+	format, err := cast.ToStringE(viper.Get(AlertSMTPFormatKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+	valid, err := common.ElementInSlice(ValidAlertSTMPFormat, format)
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+	if !valid {
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidAlertSMTPFormat, format))
+	}
 	// validate alert.smtp.addr
-	_, err = cast.ToStringE(viper.Get(AlertSMTPAddrKey))
+	_, err = cast.ToStringE(viper.Get(AlertSMTPURLKey))
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
@@ -502,6 +521,7 @@ func ValidateAlert() error {
 	return merr.ErrorOrNil()
 }
 
+// ValidateHealthcheck validates if health check section is valid
 func ValidateHealthcheck() error {
 	merr := &multierror.Error{}
 
@@ -517,6 +537,19 @@ func ValidateHealthcheck() error {
 	}
 	if !valid {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidHealthcheckAlertOwnerType, ownerType))
+	}
+
+	return merr.ErrorOrNil()
+}
+
+// ValidateQuery validates if query section is valid
+func ValidateQuery() error {
+	merr := &multierror.Error{}
+
+	// validate query.minRowsExamined
+	_, err := cast.ToIntE(viper.Get(QueryMinRowsExaminedKey))
+	if err != nil {
+		merr = multierror.Append(merr, err)
 	}
 
 	return merr.ErrorOrNil()

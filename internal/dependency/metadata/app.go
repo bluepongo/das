@@ -23,6 +23,8 @@ type App interface {
 	GetLastUpdateTime() time.Time
 	// GetDBs gets database identity list that the app uses
 	GetDBs() ([]DB, error)
+	// GetUsers gets user list that own the app
+	GetUsers() ([]User, error)
 	// Set sets App with given fields, key is the field name and value is the relevant value of the key
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
@@ -31,6 +33,10 @@ type App interface {
 	AddDB(dbID int) error
 	// DeleteDB deletes the map of the app and database in the middleware
 	DeleteDB(dbID int) error
+	// AddUser adds a new map of the app and user in the middleware
+	AddUser(userID int) error
+	// DeleteUser deletes the map of the app and user in the middleware
+	DeleteUser(userID int) error
 	// MarshalJSON marshals App to json bytes
 	MarshalJSON() ([]byte, error)
 	// MarshalJSONWithFields marshals only specified fields of the App to json string
@@ -52,6 +58,8 @@ type AppRepo interface {
 	GetAppByName(appName string) (App, error)
 	// GetDBsByID gets databases that app uses
 	GetDBsByID(id int) ([]DB, error)
+	// GetUsersByID gets user list that own the app
+	GetUsersByID(id int) ([]User, error)
 	// Create creates an app in the middleware
 	Create(appSystem App) (App, error)
 	// Update updates the app in the middleware
@@ -62,11 +70,19 @@ type AppRepo interface {
 	AddDB(appID, dbID int) error
 	// DeleteDB delete the map of app and database in the middleware
 	DeleteDB(appID, dbID int) error
+	// AddUser adds a new map of app and user in the middleware
+	AddUser(appID, userID int) error
+	// DeleteUser delete the map of app and user in the middleware
+	DeleteUser(appID, userID int) error
 }
 
 type AppService interface {
 	// GetApps returns apps of the service
 	GetApps() []App
+	// GetDBs returns dbs of the service
+	GetDBs() []DB
+	// GetUsers returns users of the service
+	GetUsers() []User
 	// GetAll gets all apps from the middleware
 	GetAll() error
 	// GetByID gets an app of the given id from the middleware
@@ -75,6 +91,8 @@ type AppService interface {
 	GetAppByName(appName string) error
 	// GetDBsByID gets databases that the app uses
 	GetDBsByID(id int) error
+	// GetUsersByID gets Users that own the app
+	GetUsersByID(id int) error
 	// Create creates an app in the middleware
 	Create(fields map[string]interface{}) error
 	// Update gets the app of the given id from the middleware,
@@ -88,6 +106,10 @@ type AppService interface {
 	AddDB(appID, dbID int) error
 	// DeleteDB deletes the map of app and database in the middleware
 	DeleteDB(appID, dbID int) error
+	// AddUser adds a new map of app and user in the middleware
+	AddUser(appID, userID int) error
+	// DeleteDB deletes the map of app and user in the middleware
+	DeleteUser(appID, userID int) error
 	// Marshal marshals AppService.Apps to json bytes
 	Marshal() ([]byte, error)
 	// MarshalWithFields marshals only specified fields of the AppService to json bytes

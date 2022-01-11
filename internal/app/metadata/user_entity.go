@@ -9,6 +9,18 @@ import (
 	"github.com/romberli/das/internal/dependency/metadata"
 )
 
+const (
+	userUserNameStruct       = "UserName"
+	userDepartmentNameStruct = "DepartmentName"
+	userEmployeeIDStruct     = "EmployeeID"
+	userAccountNameStruct    = "AccountName"
+	userEmailStruct          = "Email"
+	userTelephoneStruct      = "Telephone"
+	userMobileStruct         = "Mobile"
+	userRoleStruct           = "Role"
+	userDelFlagStruct        = "DelFlag"
+)
+
 var _ metadata.User = (*UserInfo)(nil)
 
 // UserInfo create userinfo struct
@@ -162,11 +174,6 @@ func (ui *UserInfo) GetDelFlag() int {
 	return ui.DelFlag
 }
 
-// Get returns value of given field
-func (ui *UserInfo) Get(field string) (interface{}, error) {
-	return common.GetValueOfStruct(ui, field)
-}
-
 // Set sets entity with given fields, key is the field name and value is the relevant value of the key
 func (ui *UserInfo) Set(fields map[string]interface{}) error {
 	for fieldName, fieldValue := range fields {
@@ -182,6 +189,16 @@ func (ui *UserInfo) Set(fields map[string]interface{}) error {
 // Delete sets DelFlag to 1
 func (ui *UserInfo) Delete() {
 	ui.DelFlag = 1
+}
+
+// AddApp adds a new map of application system and user in the middleware
+func (ui *UserInfo) AddApp(appID int) error {
+	return ui.UserRepo.AddApp(ui.ID, appID)
+}
+
+// DeleteApp delete the map of application system and user in the middleware
+func (ui *UserInfo) DeleteApp(appID int) error {
+	return ui.UserRepo.DeleteApp(ui.ID, appID)
 }
 
 // MarshalJSON marshals User to json string

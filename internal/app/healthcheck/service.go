@@ -1,12 +1,14 @@
 package healthcheck
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/internal/dependency/healthcheck"
+	depmeta "github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
 	"github.com/romberli/go-util/common"
@@ -19,7 +21,7 @@ import (
 )
 
 const (
-	resultStruct                   = "Result"
+	healthcheckResultStruct        = "Result"
 	defaultMonitorClickhouseDBName = "pmm"
 	defaultMonitorMySQLDBName      = "pmm"
 	defaultSuccessStatus           = 2
@@ -61,8 +63,13 @@ func (s *Service) GetDASRepo() healthcheck.DASRepo {
 }
 
 // GetOperationInfo returns the operation information
-func (s *Service) GetOperationInfo() *OperationInfo {
+func (s *Service) GetOperationInfo() healthcheck.OperationInfo {
 	return s.OperationInfo
+}
+
+// GetEngine returns the healthcheck engine
+func (s *Service) GetEngine() healthcheck.Engine {
+	return s.Engine
 }
 
 // GetResult returns the healthcheck result
@@ -74,7 +81,7 @@ func (s *Service) GetResult() healthcheck.Result {
 func (s *Service) GetResultByOperationID(id int) error {
 	var err error
 
-	s.Result, err = s.DASRepo.GetResultByOperationID(id)
+	s.Result, err = s.GetDASRepo().GetResultByOperationID(id)
 	if err != nil {
 		return err
 	}
@@ -84,75 +91,108 @@ func (s *Service) GetResultByOperationID(id int) error {
 
 // Check performs healthcheck on the mysql server with given mysql server id,
 // initiating is synchronous, actual running is asynchronous
-func (s *Service) Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) error {
+func (s *Service) Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
 	return s.check(mysqlServerID, startTime, endTime, step)
 }
 
 // CheckByHostInfo performs healthcheck on the mysql server with given mysql server id,
 // initiating is synchronous, actual running is asynchronous
-func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration) error {
+func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration) (int, error) {
 	// init mysql server service
 	mss := metadata.NewMySQLServerServiceWithDefault()
 	// get entities
 	err := mss.GetByHostInfo(hostIP, portNum)
 	if err != nil {
-		return err
+		return constant.ZeroInt, err
 	}
-	mysqlServerID := mss.MySQLServers[0].Identity()
+	mysqlServerID := mss.GetMySQLServers()[constant.ZeroInt].Identity()
+
 	return s.check(mysqlServerID, startTime, endTime, step)
 }
 
 // check performs healthcheck on the mysql server with given mysql server id,
 // initiating is synchronous, actual running is asynchronous
-func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) error {
+func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
 	// init
-	err := s.init(mysqlServerID, startTime, endTime, step)
+	operationID, err := s.init(mysqlServerID, startTime, endTime, step)
 	if err != nil {
-		updateErr := s.DASRepo.UpdateOperationStatus(s.OperationInfo.operationID, defaultFailedStatus, err.Error())
+		updateErr := s.GetDASRepo().UpdateOperationStatus(operationID, defaultFailedStatus, err.Error())
 		if updateErr != nil {
 			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
 		}
 
-		return err
+		return operationID, err
 	}
 	// run asynchronously
-	go s.Engine.Run()
+	go s.GetEngine().Run()
 
-	return nil
+	return operationID, nil
 }
 
 // init initiates healthcheck operation and engine
-func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step time.Duration) error {
-	// check if operation with the same mysql server id is still running
-	isRunning, err := s.DASRepo.IsRunning(mysqlServerID)
+func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
+	// insert operation message
+	operationID, err := s.GetDASRepo().InitOperation(mysqlServerID, startTime, endTime, step)
 	if err != nil {
-		return err
+		return operationID, err
+	}
+	// check if operation with the same mysql server id is still running
+	isRunning, err := s.GetDASRepo().IsRunning(mysqlServerID)
+	if err != nil {
+		return operationID, err
 	}
 	if isRunning {
-		return fmt.Errorf("healthcheck of mysql server is still running. mysql server id: %d", mysqlServerID)
-	}
-	// insert operation message
-	operationID, err := s.DASRepo.InitOperation(mysqlServerID, startTime, endTime, step)
-	if err != nil {
-		return err
+		return operationID, fmt.Errorf("healthcheck of mysql server is still running. mysql server id: %d", mysqlServerID)
 	}
 	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
 	err = mysqlServerService.GetByID(mysqlServerID)
 	if err != nil {
-		return err
+		return operationID, err
 	}
 	// get mysql server
 	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
 	// get monitor system
 	monitorSystem, err := mysqlServer.GetMonitorSystem()
+	if err != nil {
+		return operationID, err
+	}
+	// get mysql cluster
+	mysqlCluster, err := mysqlServer.GetMySQLCluster()
+	if err != nil {
+		return operationID, err
+	}
+	// get dbs
+	dbs, err := mysqlCluster.GetDBs()
+	if err != nil {
+		return operationID, err
+	}
+	// get apps
+	var apps []depmeta.App
+	for _, db := range dbs {
+		applications, err := db.GetApps()
+		if err != nil {
+			return operationID, err
+		}
+		for _, application := range applications {
+			exists, err := common.ElementInSlice(apps, application)
+			if err != nil {
+				return operationID, err
+			}
+			if !exists {
+				apps = append(apps, applications...)
+			}
+		}
+	}
 	// init operation information
-	s.OperationInfo = NewOperationInfo(operationID, mysqlServer, monitorSystem, startTime, endTime, step)
+	s.OperationInfo = NewOperationInfo(operationID, apps, mysqlServer, monitorSystem, startTime, endTime, step)
 
 	// init application mysql connection
 	mysqlServerAddr := fmt.Sprintf("%s:%d", mysqlServer.GetHostIP(), mysqlServer.GetPortNum())
 	applicationMySQLConn, err := mysql.NewConn(mysqlServerAddr, constant.EmptyString, s.getApplicationMySQLUser(), s.getApplicationMySQLPass())
 	if err != nil {
-		return err
+		return operationID, errors.New(
+			fmt.Sprintf("create application mysql connection failed. addr: %s, user: %s. error:\n%s",
+				mysqlServerAddr, s.getApplicationMySQLUser(), err.Error()))
 	}
 	// init application mysql repository
 	applicationMySQLRepo := NewApplicationMySQLRepo(s.GetOperationInfo(), applicationMySQLConn)
@@ -173,7 +213,9 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 		// init mysql connection
 		conn, err := mysql.NewConn(slowQueryAddr, defaultMonitorMySQLDBName, s.getMonitorMySQLUser(), s.getMonitorMySQLPass())
 		if err != nil {
-			return err
+			return operationID, errors.New(
+				fmt.Sprintf("create monitor mysql connection failed. addr: %s, user: %s. error:\n%s",
+					slowQueryAddr, s.getMonitorMySQLUser(), err.Error()))
 		}
 		queryRepo = NewMySQLQueryRepo(s.GetOperationInfo(), conn)
 	case 2:
@@ -183,21 +225,25 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 		// init clickhouse connection
 		conn, err := clickhouse.NewConnWithDefault(slowQueryAddr, defaultMonitorClickhouseDBName, s.getMonitorClickhouseUser(), s.getMonitorClickhousePass())
 		if err != nil {
-			return err
+			return operationID, errors.New(
+				fmt.Sprintf("create monitor clickhouse connection failed. addr: %s, user: %s. error:\n%s",
+					slowQueryAddr, s.getMonitorClickhouseUser(), err.Error()))
 		}
 		queryRepo = NewClickhouseQueryRepo(s.GetOperationInfo(), conn)
 	default:
-		return fmt.Errorf("healthcheck: monitor system type should be either 1 or 2, %d is not valid", monitorSystem.GetSystemType())
+		return operationID, fmt.Errorf("healthcheck: monitor system type should be either 1 or 2, %d is not valid", monitorSystem.GetSystemType())
 	}
 
 	prometheusConn, err := prometheus.NewConnWithConfig(prometheusConfig)
 	if err != nil {
-		return err
+		return operationID, errors.New(
+			fmt.Sprintf("create prometheus connection failed. addr: %s, user: %s. error:\n%s",
+				prometheusAddr, s.getMonitorPrometheusUser(), err.Error()))
 	}
 	prometheusRepo := NewPrometheusRepo(s.GetOperationInfo(), prometheusConn)
 	s.Engine = NewDefaultEngine(s.GetOperationInfo(), s.GetDASRepo(), applicationMySQLRepo, prometheusRepo, queryRepo)
 
-	return nil
+	return operationID, nil
 }
 
 // getApplicationMySQLUser returns application mysql username
@@ -242,15 +288,15 @@ func (s *Service) getMonitorMySQLPass() string {
 
 // ReviewAccuracy updates accuracy review with given operation id
 func (s *Service) ReviewAccuracy(id, review int) error {
-	return s.DASRepo.UpdateAccuracyReviewByOperationID(id, review)
+	return s.GetDASRepo().UpdateAccuracyReviewByOperationID(id, review)
 }
 
-// MarshalJSON marshals Service to json bytes
-func (s *Service) MarshalJSON() ([]byte, error) {
-	return s.MarshalJSONWithFields(resultStruct)
+// Marshal marshals Service to json bytes
+func (s *Service) Marshal() ([]byte, error) {
+	return s.MarshalWithFields(healthcheckResultStruct)
 }
 
-// MarshalJSONWithFields marshals only specified fields of the Service to json bytes
-func (s *Service) MarshalJSONWithFields(fields ...string) ([]byte, error) {
-	return common.MarshalStructWithFields(s.Result, fields...)
+// MarshalWithFields marshals only specified fields of the Service to json bytes
+func (s *Service) MarshalWithFields(fields ...string) ([]byte, error) {
+	return common.MarshalStructWithFields(s, fields...)
 }

@@ -1,6 +1,9 @@
 package global
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
 	"github.com/spf13/viper"
@@ -23,6 +26,11 @@ func InitDASMySQLPool() (err error) {
 	poolConfig := mysql.NewPoolConfigWithConfig(config, maxConnections, initConnections, maxIdleConnections, maxIdleTime, keepAliveInterval)
 	log.Debugf("pool config: %v", poolConfig)
 	DASMySQLPool, err = mysql.NewPoolWithPoolConfig(poolConfig)
+	if err != nil {
+		return errors.New(
+			fmt.Sprintf("create das mysql pool failed. addr: %s, db: %s, user: %s. error:\n%s",
+				dbAddr, dbName, dbUser, err.Error()))
+	}
 
-	return err
+	return nil
 }

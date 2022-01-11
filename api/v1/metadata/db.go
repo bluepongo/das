@@ -18,19 +18,15 @@ import (
 )
 
 const (
-	dbIDJSON          = "id"
-	dbEnvIDJSON       = "env_id"
-	dbAppIDJSON       = "app_id"
-	dbDBNameJSON      = "db_name"
-	dbClusterIDJSON   = "cluster_id"
-	dbClusterTypeJSON = "cluster_type"
+	dbIDJSON    = "id"
+	dbEnvIDJSON = "env_id"
+	dbAppIDJSON = "app_id"
 
 	dbDBNameStruct      = "DBName"
 	dbClusterIDStruct   = "ClusterID"
 	dbClusterTypeStruct = "ClusterType"
 	dbOwnerIDStruct     = "OwnerID"
 	dbEnvIDStruct       = "EnvID"
-	dbAppIDListStruct   = "AppIDList"
 
 	dbMySQLClusterStruct = "MySQLCluster"
 	dbAppsStruct         = "Apps"
@@ -144,7 +140,7 @@ func GetDBByID(c *gin.Context) {
 // @Summary get database by db name and cluster info
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "owner_id": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router /api/v1/metadata/db/name-and-cluster-info[get]
+// @Router /api/v1/metadata/db/name-and-cluster-info [get]
 func GetDBByNameAndClusterInfo(c *gin.Context) {
 	var dbInfo *metadata.DBInfo
 	// get data
@@ -221,7 +217,7 @@ func GetAppsByID(c *gin.Context) {
 // @Summary get mysql cluster by id
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init","owner_id":1},{"monitor_system_id":1,"owner_id":1,"env_id":1,"create_time":"2021-02-23T04:14:23.707238+08:00","last_update_time":"2021-02-23T04:14:23.707238+08:00","id":2,"cluster_name":"newTest","middleware_cluster_id":1,"del_flag":0}]}"
-// @Router /api/v1/metadata/db/app/:id [get]
+// @Router /api/v1/metadata/db/mysql-cluster/:id [get]
 func GetMySQLClusterByDBID(c *gin.Context) {
 	// get param
 	idStr := c.Param(dbIDJSON)
@@ -450,11 +446,11 @@ func UpdateDBByID(c *gin.Context) {
 	_, clusterTypeExists := fields[dbClusterTypeStruct]
 	_, ownerIDExists := fields[dbOwnerIDStruct]
 	_, envIDExists := fields[dbEnvIDStruct]
-	_, delFlagExists := fields[delFlagStruct]
+	_, delFlagExists := fields[envDelFlagStruct]
 	if !dbNameExists && !clusterIDExists && !clusterTypeExists && !ownerIDExists && !envIDExists && !delFlagExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists,
 			fmt.Sprintf("%s, %s, %s, %s, %s, %s",
-				dbDBNameStruct, dbClusterIDStruct, dbClusterTypeStruct, dbOwnerIDStruct, dbEnvIDStruct, delFlagStruct))
+				dbDBNameStruct, dbClusterIDStruct, dbClusterTypeStruct, dbOwnerIDStruct, dbEnvIDStruct, envDelFlagStruct))
 		return
 	}
 	// init service
@@ -556,7 +552,7 @@ func DBAddApp(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(dbAppIDListStruct)
+	jsonBytes, err := s.MarshalWithFields(dbAppsStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
@@ -609,7 +605,7 @@ func DBDeleteApp(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(dbAppIDListStruct)
+	jsonBytes, err := s.MarshalWithFields(dbAppsStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return

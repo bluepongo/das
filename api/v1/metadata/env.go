@@ -16,11 +16,11 @@ import (
 )
 
 const (
-	idJSON      = "id"
-	envNameJSON = "env_name"
+	envIDJSON      = "id"
+	envEnvNameJSON = "env_name"
 
-	delFlagStruct = "DelFlag"
-	envNameStruct = "EnvName"
+	envDelFlagStruct = "DelFlag"
+	envEnvNameStruct = "EnvName"
 )
 
 // @Tags	environment
@@ -59,9 +59,9 @@ func GetEnv(c *gin.Context) {
 // @Router	/api/v1/metadata/env/:id [get]
 func GetEnvByID(c *gin.Context) {
 	// get param
-	idStr := c.Param(idJSON)
+	idStr := c.Param(envIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, idJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 		return
 	}
 	id, err := strconv.Atoi(idStr)
@@ -96,9 +96,9 @@ func GetEnvByID(c *gin.Context) {
 // @Router /api/v1/metadata/env/env-name/:env_name [get]
 func GetEnvByName(c *gin.Context) {
 	// get params
-	envName := c.Param(envNameJSON)
+	envName := c.Param(envEnvNameJSON)
 	if envName == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envNameJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envEnvNameJSON)
 		return
 	}
 	// init service
@@ -143,9 +143,9 @@ func AddEnv(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	_, ok := fields[envNameStruct]
+	_, ok := fields[envEnvNameStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envNameStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envEnvNameStruct)
 		return
 	}
 	// init service
@@ -153,7 +153,7 @@ func AddEnv(c *gin.Context) {
 	// insert into middleware
 	err = s.Create(fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddEnv, fields[envNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddEnv, fields[envEnvNameStruct], err.Error())
 		return
 	}
 	// marshal service
@@ -165,7 +165,7 @@ func AddEnv(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAddEnv, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddEnv, fields[envNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddEnv, fields[envEnvNameStruct])
 }
 
 // @Tags	environment
@@ -179,9 +179,9 @@ func UpdateEnvByID(c *gin.Context) {
 	var fields map[string]interface{}
 
 	// get params
-	idStr := c.Param(idJSON)
+	idStr := c.Param(envIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, idJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -199,10 +199,10 @@ func UpdateEnvByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
 		return
 	}
-	_, envNameExists := fields[envNameStruct]
-	_, delFlagExists := fields[delFlagStruct]
+	_, envNameExists := fields[envEnvNameStruct]
+	_, delFlagExists := fields[envDelFlagStruct]
 	if !envNameExists && !delFlagExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", envNameStruct, delFlagStruct))
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", envEnvNameStruct, envDelFlagStruct))
 		return
 	}
 	// init service
@@ -235,9 +235,9 @@ func DeleteEnvByID(c *gin.Context) {
 	var fields map[string]interface{}
 
 	// get params
-	idStr := c.Param(idJSON)
+	idStr := c.Param(envIDJSON)
 	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, idJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 		return
 	}
 	id, err := strconv.Atoi(idStr)
@@ -262,5 +262,5 @@ func DeleteEnvByID(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataDeleteEnvByID, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteEnvByID, fields[envNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteEnvByID, fields[envEnvNameStruct])
 }

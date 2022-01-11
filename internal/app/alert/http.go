@@ -13,7 +13,9 @@ import (
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/dependency/alert"
 	"github.com/romberli/go-util/constant"
+	"github.com/romberli/log"
 	"github.com/spf13/viper"
+	"github.com/tidwall/pretty"
 )
 
 const (
@@ -39,24 +41,24 @@ type HTTPSender struct {
 	url    string
 }
 
-// NewHTTTPSender returns a new alert.Sender
-func NewHTTTPSender(client *http.Client, cfg Config, url string) alert.Sender {
-	return newHTTTPSender(client, cfg, url)
+// NewHTTPSender returns a new alert.Sender
+func NewHTTPSender(client *http.Client, cfg alert.Config, url string) alert.Sender {
+	return newHTTPSender(client, cfg, url)
 }
 
-// NewHTTTPSenderWithDefault returns a new alert.Sender with default http client
-func NewHTTTPSenderWithDefault(cfg alert.Config) alert.Sender {
+// NewHTTPSenderWithDefault returns a new alert.Sender with default http client
+func NewHTTPSenderWithDefault(cfg alert.Config) alert.Sender {
 	client := &http.Client{
 		Transport: defaultTransport,
 		Timeout:   defaultDialTimeout,
 	}
 	url := viper.GetString(config.AlertHTTPURLKey)
 
-	return newHTTTPSender(client, cfg, url)
+	return newHTTPSender(client, cfg, url)
 }
 
-// NewHTTTPSender returns a new *HTTPSender
-func newHTTTPSender(client *http.Client, cfg alert.Config, url string) *HTTPSender {
+// newHTTPSender returns a new *HTTPSender
+func newHTTPSender(client *http.Client, cfg alert.Config, url string) *HTTPSender {
 	return &HTTPSender{
 		client: client,
 		config: cfg,
@@ -86,6 +88,8 @@ func (hs *HTTPSender) Send() error {
 	if err != nil {
 		return err
 	}
+
+	log.Infof("http body: %s", string(reqBody))
 	// call http api
 	resp, err := hs.GetClient().Post(hs.GetURL(), defaultContentType, bytes.NewBuffer(reqBody))
 	if err != nil {
@@ -100,7 +104,12 @@ func (hs *HTTPSender) Send() error {
 
 // buildRequestBody builds the http request body, for now, it basically marshals the config
 func (hs *HTTPSender) buildRequestBody() ([]byte, error) {
-	return json.Marshal(hs.GetConfig())
+	jsonBytes, err := json.MarshalIndent(hs.GetConfig(), constant.EmptyString, constant.DefaultIndentString)
+	if err != nil {
+		return nil, err
+	}
+
+	return pretty.Pretty(jsonBytes), nil
 }
 
 // parseResponse parses the http response to find out if sending email completed successfully

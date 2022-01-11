@@ -53,15 +53,18 @@ func SendEmail(c *gin.Context) {
 	toAddrs, toAddrsExists := dataMap[toAddrsJSON]
 	if !toAddrsExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, toAddrsJSON)
+		return
 	}
 	ccAddrs := dataMap[ccAddrsJSON]
 	subject, contentExists := dataMap[subjectJSON]
 	if !contentExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, subjectJSON)
+		return
 	}
 	content, contentExists := dataMap[contentJSON]
 	if !contentExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, contentJSON)
+		return
 	}
 
 	s := alert.NewServiceWithDefault(config)
