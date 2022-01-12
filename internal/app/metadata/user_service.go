@@ -215,23 +215,3 @@ func (us *UserService) GetAppsByID(userID int) error {
 
 	return err
 }
-
-// AddApp adus a new map of app and user in the middleware
-func (us *UserService) AddApp(userID, appID int) error {
-	err := us.UserRepo.AddApp(userID, appID)
-	if err != nil {
-		return err
-	}
-
-	return us.GetAppsByID(userID)
-}
-
-// DeleteApp deletes the map of app and user in the middleware
-func (us *UserService) DeleteApp(userID, appID int) error {
-	err := us.UserRepo.DeleteApp(userID, appID)
-	if err != nil {
-		return err
-	}
-
-	return us.GetAppsByID(userID)
-}

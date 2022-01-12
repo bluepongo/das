@@ -391,39 +391,3 @@ func (ur *UserRepo) GetAppsByID(userID int) ([]metadata.App, error) {
 
 	return appList, nil
 }
-
-// AddApp adds a new map of the app and user in the middleware
-func (ur *UserRepo) AddApp(userID, appID int) error {
-	appRepo := NewAppRepoWithGlobal()
-	_, err := appRepo.GetByID(appID)
-	if err != nil {
-		return err
-	}
-	_, err = ur.GetByID(userID)
-	if err != nil {
-		return err
-	}
-	sql := `insert into t_meta_app_user_map(app_id, user_id) values(?, ?);`
-	log.Debugf("metadata UserRepo.AddApp() insert sql: %s", sql)
-	_, err = ur.Execute(sql, appID, userID)
-
-	return err
-}
-
-// DeleteApp deletes a map of the app and user in the middleware
-func (ur *UserRepo) DeleteApp(userID, appID int) error {
-	appRepo := NewAppRepoWithGlobal()
-	_, err := appRepo.GetByID(appID)
-	if err != nil {
-		return err
-	}
-	_, err = ur.GetByID(userID)
-	if err != nil {
-		return err
-	}
-	sql := `delete from t_meta_app_user_map where app_id = ? and user_id = ?;`
-	log.Debugf("metadata UserRepo.DeleteApp() delete sql: %s", sql)
-	_, err = ur.Execute(sql, appID, userID)
-
-	return err
-}

@@ -60,8 +60,6 @@ func TestUserRepoAll(t *testing.T) {
 	TestUserRepo_Update(t)
 	TestUserRepo_Delete(t)
 	TestUserRepo_GetAppsByID(t)
-	TestUserRepo_AddUserApp(t)
-	TestUserRepo_DeleteUserApp(t)
 }
 
 func TestUserRepo_Execute(t *testing.T) {
@@ -233,36 +231,4 @@ func TestUserRepo_GetAppsByID(t *testing.T) {
 	apps, err := testUserRepo.GetAppsByID(testUser2ID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAppsByID() failed", err))
 	asst.Equal(testUserAppID, apps[constant.ZeroInt].Identity(), "test GetAppsByID() failed")
-}
-
-func TestUserRepo_AddUserApp(t *testing.T) {
-	asst := assert.New(t)
-
-	entity, err := testCreateUser()
-	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	err = testUserRepo.AddApp(entity.Identity(), testUserAppID)
-	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	apps, err := testUserRepo.GetAppsByID(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	asst.Equal(testUserAppID, apps[constant.ZeroInt].Identity(), "test AddApp() failed")
-	// delete
-	err = testUserRepo.Delete(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
-}
-
-func TestUserRepo_DeleteUserApp(t *testing.T) {
-	asst := assert.New(t)
-
-	entity, err := testCreateUser()
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	err = testUserRepo.AddApp(entity.Identity(), testUserAppID)
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	err = testUserRepo.DeleteApp(entity.Identity(), testUserAppID)
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	apps, err := testUserRepo.GetAppsByID(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	asst.Zero(len(apps), "test DeleteApp() failed")
-	// delete
-	err = testUserRepo.Delete(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
 }
