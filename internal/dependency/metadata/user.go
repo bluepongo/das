@@ -33,10 +33,6 @@ type User interface {
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
 	Delete()
-	// AddApp adds a new map of the app and user in the middleware
-	AddApp(appID int) error
-	// DeleteApp deletes a new map of the app and user in the middleware
-	DeleteApp(appID int) error
 	// MarshalJSON marshals User to json string
 	MarshalJSON() ([]byte, error)
 	// MarshalJSONWithFields marshals only specified field of the User to json string
@@ -74,10 +70,6 @@ type UserRepo interface {
 	GetByEmployeeID(employeeID string) (User, error)
 	// GetAppsByID gets app list that this user owns
 	GetAppsByID(id int) ([]App, error)
-	// AddApp adds a new map of the app and user in the middleware
-	AddApp(userID, appID int) error
-	// DeleteApp deletes a map of the app and user in the middleware
-	DeleteApp(userID, appID int) error
 }
 
 type UserService interface {
@@ -116,8 +108,4 @@ type UserService interface {
 	MarshalWithFields(fields ...string) ([]byte, error)
 	// GetAppsByID gets apps that this user owns
 	GetAppsByID(id int) error
-	// AddApp adds a new map of app and user in the middleware
-	AddApp(userID, appID int) error
-	// DeleteApp deletes the map of app and user in the middleware
-	DeleteApp(userID, appID int) error
 }

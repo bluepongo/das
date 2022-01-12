@@ -106,7 +106,5 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.POST("/user/update/:id", metadata.UpdateUserByID)
 		metadataGroup.POST("/user/delete/:id", metadata.DeleteUserByID)
 		metadataGroup.GET("/user/app/:id", metadata.GetAppsByUserID)
-		metadataGroup.POST("/user/add-app/:id", metadata.UserAddApp)
-		metadataGroup.POST("/user/delete-app/:id", metadata.UserDeleteApp)
 	}
 }

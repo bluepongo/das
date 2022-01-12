@@ -108,7 +108,7 @@ type AppService interface {
 	DeleteDB(appID, dbID int) error
 	// AddUser adds a new map of app and user in the middleware
 	AddUser(appID, userID int) error
-	// DeleteDB deletes the map of app and user in the middleware
+	// DeleteUser deletes the map of app and user in the middleware
 	DeleteUser(appID, userID int) error
 	// Marshal marshals AppService.Apps to json bytes
 	Marshal() ([]byte, error)

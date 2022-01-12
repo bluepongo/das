@@ -52,14 +52,3 @@ Content-Type: application/json
 GET http://{{baseURL}}/api/v1/metadata/user/app/1
 Accept: application/json
 
-### add new app by id
-POST http://{{baseURL}}/api/v1/metadata/user/add-app/1
-Content-Type: application/json
-
-{"app_id": 3}
-
-### delete app by id
-POST http://{{baseURL}}/api/v1/metadata/user/delete-app/1
-Content-Type: application/json
-
-{"app_id": 3}

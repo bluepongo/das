@@ -165,28 +165,3 @@ func TestUserService_GetAppsByID(t *testing.T) {
 	asst.Nil(err, "test GetAppsByID() failed")
 	asst.Equal(testUserAppID, testUserService.GetApps()[constant.ZeroInt].Identity(), "test GetAppsByID() failed")
 }
-
-func TestUserService_AddApp(t *testing.T) {
-	asst := assert.New(t)
-
-	err := testUserService.AddApp(testUser2ID, testUserNewAppID)
-	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	err = testUserService.GetAppsByID(testUser2ID)
-	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	asst.Equal(2, len(testUserService.GetApps()), common.CombineMessageWithError("test AddApp() failed", err))
-	err = testUserService.DeleteApp(testUser2ID, testUserNewAppID)
-	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-}
-
-func TestUserService_DeleteApp(t *testing.T) {
-	asst := assert.New(t)
-
-	err := testUserService.AddApp(testUser2ID, testUserNewAppID)
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	err = testUserService.DeleteApp(testUser2ID, testUserNewAppID)
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	err = testUserService.GetAppsByID(testUser2ID)
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	asst.Equal(1, len(testUserService.GetApps()), common.CombineMessageWithError("test AddApp() failed", err))
-
-}
