@@ -207,11 +207,11 @@ func (us *UserService) MarshalWithFields(fields ...string) ([]byte, error) {
 	return common.MarshalStructWithFields(us, fields...)
 }
 
-// GetAppsByID gets apps that this user owns
-func (us *UserService) GetAppsByID(userID int) error {
+// GetAppsByUserID gets apps that this user owns
+func (us *UserService) GetAppsByUserID(userID int) error {
 	var err error
 
-	us.Apps, err = us.UserRepo.GetAppsByID(userID)
+	us.Apps, err = us.UserRepo.GetAppsByUserID(userID)
 
 	return err
 }

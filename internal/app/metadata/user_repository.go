@@ -357,8 +357,8 @@ func (ur *UserRepo) Delete(id int) error {
 	return err
 }
 
-// GetAppsByID gets app list that this user owns
-func (ur *UserRepo) GetAppsByID(userID int) ([]metadata.App, error) {
+// GetAppsByUserID gets app list that this user owns
+func (ur *UserRepo) GetAppsByUserID(userID int) ([]metadata.App, error) {
 	sql := `
 		select app.id, app.app_name, app.level, app.owner_id, app.del_flag
 			, app.create_time, app.last_update_time
@@ -370,7 +370,7 @@ func (ur *UserRepo) GetAppsByID(userID int) ([]metadata.App, error) {
 			and user.del_flag = 0
 			and user.id = ?;
 	`
-	log.Debugf("metadata UserRepo.GetAppsByID() sql: \n%s\nplaceholders: %d", sql, userID)
+	log.Debugf("metadata UserRepo.GetAppsByUserID() sql: \n%s\nplaceholders: %d", sql, userID)
 
 	result, err := ur.Execute(sql, userID)
 	if err != nil {

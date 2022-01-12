@@ -158,10 +158,10 @@ func TestUserService_MarshalWithFields(t *testing.T) {
 	t.Log(string(jsonBytes))
 }
 
-func TestUserService_GetAppsByID(t *testing.T) {
+func TestUserService_GetAppsByUserID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testUserService.GetAppsByID(testUser2ID)
-	asst.Nil(err, "test GetAppsByID() failed")
-	asst.Equal(testUserAppID, testUserService.GetApps()[constant.ZeroInt].Identity(), "test GetAppsByID() failed")
+	err := testUserService.GetAppsByUserID(testUser2ID)
+	asst.Nil(err, "test GetAppsByUserID() failed")
+	asst.Equal(testUserAppID, testUserService.GetApps()[constant.ZeroInt].Identity(), "test GetAppsByUserID() failed")
 }

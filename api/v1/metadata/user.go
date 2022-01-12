@@ -474,7 +474,7 @@ func GetAppsByUserID(c *gin.Context) {
 	// init service
 	s := metadata.NewUserServiceWithDefault()
 	// get entity
-	err = s.GetAppsByID(id)
+	err = s.GetAppsByUserID(id)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppsByUserID, id, err.Error())
 		return

@@ -59,7 +59,7 @@ func TestUserRepoAll(t *testing.T) {
 	TestUserRepo_Create(t)
 	TestUserRepo_Update(t)
 	TestUserRepo_Delete(t)
-	TestUserRepo_GetAppsByID(t)
+	TestUserRepo_GetAppsByUserID(t)
 }
 
 func TestUserRepo_Execute(t *testing.T) {
@@ -225,10 +225,10 @@ func TestUserRepo_Delete(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
 }
 
-func TestUserRepo_GetAppsByID(t *testing.T) {
+func TestUserRepo_GetAppsByUserID(t *testing.T) {
 	asst := assert.New(t)
 
-	apps, err := testUserRepo.GetAppsByID(testUser2ID)
-	asst.Nil(err, common.CombineMessageWithError("test GetAppsByID() failed", err))
-	asst.Equal(testUserAppID, apps[constant.ZeroInt].Identity(), "test GetAppsByID() failed")
+	apps, err := testUserRepo.GetAppsByUserID(testUser2ID)
+	asst.Nil(err, common.CombineMessageWithError("test GetAppsByUserID() failed", err))
+	asst.Equal(testUserAppID, apps[constant.ZeroInt].Identity(), "test GetAppsByUserID() failed")
 }

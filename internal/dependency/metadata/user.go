@@ -68,8 +68,8 @@ type UserRepo interface {
 	Delete(id int) error
 	// GetByEmployeeID gets a user of given employee id from the middleware
 	GetByEmployeeID(employeeID string) (User, error)
-	// GetAppsByID gets app list that this user owns
-	GetAppsByID(id int) ([]App, error)
+	// GetAppsByUserID gets app list that this user owns
+	GetAppsByUserID(id int) ([]App, error)
 }
 
 type UserService interface {
@@ -106,6 +106,6 @@ type UserService interface {
 	Marshal() ([]byte, error)
 	// MarshalWithFields marshals only specified fields of the UserService to json bytes
 	MarshalWithFields(fields ...string) ([]byte, error)
-	// GetAppsByID gets apps that this user owns
-	GetAppsByID(id int) error
+	// GetAppsByUserID gets apps that this user owns
+	GetAppsByUserID(id int) error
 }
