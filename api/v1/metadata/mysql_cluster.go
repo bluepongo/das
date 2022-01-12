@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -19,16 +20,16 @@ const (
 	mysqlClusterIDJSON          = "id"
 	mysqlClusterEnvIDJSON       = "env_id"
 	mysqlClusterClusterNameJSON = "name"
+	mysqlClusterUserIDJSON      = "user_id"
 
 	mysqlClusterClusterNameStruct         = "ClusterName"
 	mysqlClusterMiddlewareClusterIDStruct = "MiddlewareClusterID"
 	mysqlClusterMonitorSystemIDStruct     = "MonitorSystemID"
-	mysqlClusterOwnerIDStruct             = "OwnerID"
 	mysqlClusterEnvIDStruct               = "EnvID"
 
 	mysqlClusterMySQLServersStruct = "MySQLServers"
 	mysqlClusterDBsStruct          = "DBs"
-	mysqlClusterOwnersStruct       = "Owners"
+	mysqlClusterUsersStruct        = "Users"
 )
 
 // @Tags mysql cluster
@@ -272,11 +273,11 @@ func GetDBsByMySQLCLusterID(c *gin.Context) {
 }
 
 // @Tags mysql cluster
-// @Summary get app owners
+// @Summary get mysql cluster users
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
-// @Router /api/v1/metadata/mysql-cluster/app-owner/:id [get]
-func GetAppOwnersByMySQLCLusterID(c *gin.Context) {
+// @Router /api/v1/metadata/mysql-cluster/user/:id [get]
+func GetUsersByMySQLClusterID(c *gin.Context) {
 	// get params
 	idStr := c.Param(mysqlClusterIDJSON)
 	if idStr == constant.EmptyString {
@@ -290,65 +291,136 @@ func GetAppOwnersByMySQLCLusterID(c *gin.Context) {
 	// init service
 	s := metadata.NewMySQLClusterServiceWithDefault()
 	// get entity
-	err = s.GetAppOwnersByID(id)
+	err = s.GetUsersByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppOwners, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppUsers, id, err.Error())
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(mysqlClusterOwnersStruct)
+	jsonBytes, err := s.MarshalWithFields(mysqlClusterUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppOwners, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppOwners, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppUsers, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsers, id)
 }
 
 // @Tags mysql cluster
-// @Summary get db owners
+// @Summary add user map
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
-// @Router /api/v1/metadata/mysql-cluster/db-owner/:id [get]
-func GetDBOwnersByMySQLCLusterID(c *gin.Context) {
+// @Success 200 {string} string "{"code": 200, "data": [{"user_id": 1}]}"
+// @Router /api/v1/metadata/mysql-cluster/add-user/:id [post]
+func MySQLClusterAddUser(c *gin.Context) {
 	// get params
 	idStr := c.Param(mysqlClusterIDJSON)
 	if idStr == constant.EmptyString {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterIDJSON)
+		return
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
 		return
 	}
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		return
+	}
+
+	dataMap := make(map[string]int)
+	err = json.Unmarshal(data, &dataMap)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataMySQLClusterAddUser, id, err.Error())
+		return
+	}
+	userID, userIDExists := dataMap[mysqlClusterUserIDJSON]
+	if !userIDExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterUserIDJSON)
+		return
+	}
 	// init service
 	s := metadata.NewMySQLClusterServiceWithDefault()
-	// get entity
-	err = s.GetDBOwnersByID(id)
+	// update entities
+	err = s.AddUser(id, userID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBOwners, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataMySQLClusterAddUser, id, err.Error())
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(mysqlClusterOwnersStruct)
+	jsonBytes, err := s.MarshalWithFields(mysqlClusterUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBOwners, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBOwners, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataMySQLClusterAddUser, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataMySQLClusterAddUser, id, userID)
 }
 
 // @Tags mysql cluster
-// @Summary get all owners
+// @Summary delete user map
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"user_id": 1}]}"
+// @Router /api/v1/metadata/mysql-cluster/delete-user/:id [post]
+func MySQLClusterDeleteUser(c *gin.Context) {
+	// get params
+	idStr := c.Param(mysqlClusterIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		return
+	}
+	dataMap := make(map[string]int)
+	err = json.Unmarshal(data, &dataMap)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataMySQLClusterDeleteUser, id, err.Error())
+		return
+	}
+	userID, userIDExists := dataMap[mysqlClusterUserIDJSON]
+	if !userIDExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterUserIDJSON)
+		return
+	}
+	// init service
+	s := metadata.NewMySQLClusterServiceWithDefault()
+	// update entities
+	err = s.DeleteUser(id, userID)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataMySQLClusterDeleteUser, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(mysqlClusterUsersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataMySQLClusterDeleteUser, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataMySQLClusterDeleteUser, id, userID)
+}
+
+// @Tags mysql cluster
+// @Summary get app users
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
-// @Router /api/v1/metadata/mysql-cluster/all-owner/:id [get]
-func GetAllOwnersByMySQLCLusterID(c *gin.Context) {
+// @Router /api/v1/metadata/mysql-cluster/app-user/:id [get]
+func GetAppUsersByMySQLCLusterID(c *gin.Context) {
 	// get params
 	idStr := c.Param(mysqlClusterIDJSON)
 	if idStr == constant.EmptyString {
@@ -362,21 +434,93 @@ func GetAllOwnersByMySQLCLusterID(c *gin.Context) {
 	// init service
 	s := metadata.NewMySQLClusterServiceWithDefault()
 	// get entity
-	err = s.GetAllOwnersByID(id)
+	err = s.GetAppUsersByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAllOwners, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppUsers, id, err.Error())
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(mysqlClusterOwnersStruct)
+	jsonBytes, err := s.MarshalWithFields(mysqlClusterUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
 		return
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAllOwners, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllOwners, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppUsers, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsers, id)
+}
+
+// @Tags mysql cluster
+// @Summary get db users
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router /api/v1/metadata/mysql-cluster/db-user/:id [get]
+func GetDBUsersByMySQLCLusterID(c *gin.Context) {
+	// get params
+	idStr := c.Param(mysqlClusterIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterIDJSON)
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewMySQLClusterServiceWithDefault()
+	// get entity
+	err = s.GetDBUsersByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBUsers, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(mysqlClusterUsersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBUsers, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBUsers, id)
+}
+
+// @Tags mysql cluster
+// @Summary get all users
+// @Produce  application/json
+// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router /api/v1/metadata/mysql-cluster/all-user/:id [get]
+func GetAllUsersByMySQLCLusterID(c *gin.Context) {
+	// get params
+	idStr := c.Param(mysqlClusterIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterIDJSON)
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewMySQLClusterServiceWithDefault()
+	// get entity
+	err = s.GetAllUsersByID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAllUsers, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(mysqlClusterUsersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAllUsers, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllUsers, id)
 }
 
 // @Tags mysql cluster
@@ -468,13 +612,13 @@ func UpdateMySQLClusterByID(c *gin.Context) {
 	_, clusterNameExists := fields[mysqlClusterClusterNameStruct]
 	_, middlewareClusterIDExists := fields[mysqlClusterMiddlewareClusterIDStruct]
 	_, monitorSystemIDExists := fields[mysqlClusterMonitorSystemIDStruct]
-	_, ownerIDExists := fields[mysqlClusterOwnerIDStruct]
+	// _, ownerIDExists := fields[mysqlClusterUserIDStruct]
 	_, envIDExists := fields[mysqlClusterEnvIDStruct]
 	_, delFlagExists := fields[envDelFlagStruct]
 	if !clusterNameExists &&
 		!middlewareClusterIDExists &&
 		!monitorSystemIDExists &&
-		!ownerIDExists &&
+		// !ownerIDExists &&
 		!envIDExists &&
 		!delFlagExists {
 		resp.ResponseNOK(
@@ -483,7 +627,7 @@ func UpdateMySQLClusterByID(c *gin.Context) {
 				mysqlClusterClusterNameStruct,
 				mysqlClusterMiddlewareClusterIDStruct,
 				mysqlClusterMonitorSystemIDStruct,
-				mysqlClusterOwnerIDStruct,
+				// mysqlClusterOwnerIDStruct,
 				mysqlClusterEnvIDStruct,
 				envDelFlagStruct))
 		return
