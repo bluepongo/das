@@ -374,7 +374,7 @@ func (de *DefaultEngine) checkDBConfig() error {
 				dbConfigCount++
 				variables = append(variables, NewVariable(dbConfigMaxUserConnection, value, strconv.Itoa(dbConfigMaxUserConnectionValid)))
 			}
-			// slave_parallel_workers
+		// slave_parallel_workers
 		case dbConfigSlaveParallelWorkers:
 			workers, err := strconv.Atoi(value)
 			if err != nil {
@@ -384,11 +384,17 @@ func (de *DefaultEngine) checkDBConfig() error {
 				dbConfigCount++
 				variables = append(variables, NewVariable(dbConfigSlaveParallelWorkers, value, strconv.Itoa(dbConfigSlaveParallelWorkersValid)))
 			}
-			// others
+		// report_host
+		case dbConfigReportHost:
+			if value != dbConfigVariableNames[dbConfigReportHost] && value != de.GetOperationInfo().GetMySQLServer().GetServerName() {
+				dbConfigCount++
+				variables = append(variables, NewVariable(dbConfigReportHost, value, dbConfigVariableNames[dbConfigReportHost]))
+			}
+		// others
 		case dbConfigLogBin, dbConfigBinlogFormat, dbConfigBinlogRowImage, dbConfigSyncBinlog,
 			dbConfigInnodbFlushLogAtTrxCommit, dbConfigGTIDMode, dbConfigEnforceGTIDConsistency,
 			dbConfigSlaveParallelType, dbConfigMasterInfoRepository, dbConfigRelayLogInfoRepository,
-			dbConfigReportHost, dbConfigReportPort, dbConfigInnodbFlushMethod, dbConfigInnodbMonitorEnable,
+			dbConfigReportPort, dbConfigInnodbFlushMethod, dbConfigInnodbMonitorEnable,
 			dbConfigInnodbPrintAllDeadlocks, dbConfigSlowQueryLog, dbConfigPerformanceSchema:
 			if strings.ToUpper(value) != dbConfigVariableNames[name] {
 				dbConfigCount++

@@ -73,10 +73,10 @@ var (
 		dbConfigReportHost:                dbConfigReportHostValid,
 		dbConfigReportPort:                dbConfigReportPortValid,
 		dbConfigInnodbFlushMethod:         dbConfigInnodbFlushMethodValid,
-		dbConfigInnodbMonitorEnable:       dbConfigInnodbMonitorEnableValid,
-		dbConfigInnodbPrintAllDeadlocks:   dbConfigInnodbPrintAllDeadlocksValid,
-		dbConfigSlowQueryLog:              dbConfigSlowQueryLogValid,
-		dbConfigPerformanceSchema:         dbConfigPerformanceSchemaValid,
+		// dbConfigInnodbMonitorEnable:       dbConfigInnodbMonitorEnableValid,
+		dbConfigInnodbPrintAllDeadlocks: dbConfigInnodbPrintAllDeadlocksValid,
+		dbConfigSlowQueryLog:            dbConfigSlowQueryLogValid,
+		dbConfigPerformanceSchema:       dbConfigPerformanceSchemaValid,
 	}
 )
 
