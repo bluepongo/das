@@ -24,15 +24,18 @@ const (
 	telephoneJSON   = "telephone"
 	mobileJSON      = "mobile"
 
-	userAppsStruct       = "Apps"
-	userNameStruct       = "UserName"
-	departmentNameStruct = "DepartmentName"
-	employeeIDStruct     = "EmployeeID"
-	accountNameStruct    = "AccountName"
-	emailStruct          = "Email"
-	telephoneStruct      = "Telephone"
-	roleStruct           = "Role"
-	mobileStruct         = "Mobile"
+	userAppsStruct               = "Apps"
+	userDBsStruct                = "DBs"
+	userMiddlewareClustersStruct = "MiddlewareClusters"
+	userMySQLClustersStruct      = "MySQLClusters"
+	userNameStruct               = "UserName"
+	departmentNameStruct         = "DepartmentName"
+	employeeIDStruct             = "EmployeeID"
+	accountNameStruct            = "AccountName"
+	emailStruct                  = "Email"
+	telephoneStruct              = "Telephone"
+	roleStruct                   = "Role"
+	mobileStruct                 = "Mobile"
 )
 
 // @Tags user
@@ -497,5 +500,119 @@ func GetAppsByUserID(c *gin.Context) {
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppsByUserID, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppsByUserID, id)
+
+}
+
+// @Tags user
+// @Summary get dbs by id
+// @Produce  db/json
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Router /api/v1/metadata/user/db/:id [get]
+func GetDBsByUserID(c *gin.Context) {
+	// get param
+	idStr := c.Param(userIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, userIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// get entity
+	err = s.GetDBsByUserID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBsByUserID, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(userDBsStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBsByUserID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBsByUserID, id)
+
+}
+
+// @Tags user
+// @Summary get middlewareclusters by id
+// @Produce  middlewarecluster/json
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Router /api/v1/metadata/user/middlewarecluster/:id [get]
+func GetMiddlewareClustersByUserID(c *gin.Context) {
+	// get param
+	idStr := c.Param(userIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, userIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// get entity
+	err = s.GetMiddlewareClustersByUserID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareClustersByUserID, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(userMiddlewareClustersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMiddlewareClustersByUserID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMiddlewareClustersByUserID, id)
+
+}
+
+// @Tags user
+// @Summary get mysqlclusterclusters by id
+// @Produce  mysqlclustercluster/json
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Router /api/v1/metadata/user/mysqlclustercluster/:id [get]
+func GetMySQLClustersByUserID(c *gin.Context) {
+	// get param
+	idStr := c.Param(userIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, userIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// get entity
+	err = s.GetMySQLClustersByUserID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClustersByUserID, id, err.Error())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(userMySQLClustersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLClustersByUserID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClustersByUserID, id)
 
 }

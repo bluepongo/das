@@ -49,6 +49,18 @@ POST http://{{baseURL}}/api/v1/metadata/user/delete/1
 Content-Type: application/json
 
 ### get all apps by id
-GET http://{{baseURL}}/api/v1/metadata/user/app/1
+GET http://{{baseURL}}/api/v1/metadata/user/app/15
+Accept: application/json
+
+### get all dbs by id
+GET http://{{baseURL}}/api/v1/metadata/user/db/1
+Accept: application/json
+
+### get all middlewareclusters by id
+GET http://{{baseURL}}/api/v1/metadata/user/middlewarecluster/1
+Accept: application/json
+
+### get all mysqlclusters by id
+GET http://{{baseURL}}/api/v1/metadata/user/mysqlcluster/1
 Accept: application/json
 
