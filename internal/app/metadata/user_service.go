@@ -16,8 +16,11 @@ const userUsersStruct = "Users"
 // UserService struct
 type UserService struct {
 	metadata.UserRepo
-	Users []metadata.User `json:"users"`
-	Apps  []metadata.App  `jaon:"apps"`
+	Users              []metadata.User              `json:"users"`
+	Apps               []metadata.App               `jaon:"apps"`
+	DBs                []metadata.DB                `json:"dbs"`
+	MiddlewareClusters []metadata.MiddlewareCluster `json:"middlewareclusters"`
+	MySQLClusters      []metadata.MySQLCluster      `json:"mysqlclusters"`
 }
 
 // NewUserService returns a new *UserService
@@ -47,6 +50,21 @@ func (us *UserService) GetAll() error {
 // GetApps returns the apps of the service
 func (us *UserService) GetApps() []metadata.App {
 	return us.Apps
+}
+
+// GetDBs returns the dbs of the service
+func (us *UserService) GetDBs() []metadata.DB {
+	return us.DBs
+}
+
+// GetMiddlewareClusters returns the MiddlewareClusterss of the service
+func (us *UserService) GetMiddlewareClusters() []metadata.MiddlewareCluster {
+	return us.MiddlewareClusters
+}
+
+// GetMySQLClusters returns the MySQLClusters of the service
+func (us *UserService) GetMySQLClusters() []metadata.MySQLCluster {
+	return us.MySQLClusters
 }
 
 // GetByName gets users of given user name
@@ -212,6 +230,33 @@ func (us *UserService) GetAppsByUserID(userID int) error {
 	var err error
 
 	us.Apps, err = us.UserRepo.GetAppsByUserID(userID)
+
+	return err
+}
+
+// GetDBsByUserID gets dbs that this user owns
+func (us *UserService) GetDBsByUserID(userID int) error {
+	var err error
+
+	us.DBs, err = us.UserRepo.GetDBsByUserID(userID)
+
+	return err
+}
+
+// GetMiddlewareClustersByUserID gets MiddlewareClusters that this user owns
+func (us *UserService) GetMiddlewareClustersByUserID(userID int) error {
+	var err error
+
+	us.MiddlewareClusters, err = us.UserRepo.GetMiddlewareClustersByUserID(userID)
+
+	return err
+}
+
+// GetMySQLClustersByUserID gets MySQLClusters that this user owns
+func (us *UserService) GetMySQLClustersByUserID(userID int) error {
+	var err error
+
+	us.MySQLClusters, err = us.UserRepo.GetMySQLClustersByUserID(userID)
 
 	return err
 }

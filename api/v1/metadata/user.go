@@ -107,6 +107,10 @@ func GetUserByID(c *gin.Context) {
 		return
 	}
 	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByID, id, err.Error())
+		return
+	}
 	// init service
 	s := metadata.NewUserServiceWithDefault()
 	// get UserRepo
@@ -371,6 +375,10 @@ func UpdateUserByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 	}
 	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		return
+	}
 	data, err := c.GetRawData()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())

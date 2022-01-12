@@ -29,6 +29,11 @@ func TestUserServiceAll(t *testing.T) {
 	TestUserService_Delete(t)
 	TestUserService_Marshal(t)
 	TestUserService_MarshalWithFields(t)
+	TestUserService_GetAppsByUserID(t)
+	TestUserService_GetDBsByUserID(t)
+	TestUserService_GetMiddlewareClustersByUserID(t)
+	TestUserService_GetMySQLClustersByUserID(t)
+
 }
 
 func TestUserService_GetUsers(t *testing.T) {
@@ -164,4 +169,28 @@ func TestUserService_GetAppsByUserID(t *testing.T) {
 	err := testUserService.GetAppsByUserID(testUser2ID)
 	asst.Nil(err, "test GetAppsByUserID() failed")
 	asst.Equal(testUserAppID, testUserService.GetApps()[constant.ZeroInt].Identity(), "test GetAppsByUserID() failed")
+}
+
+func TestUserService_GetDBsByUserID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testUserService.GetDBsByUserID(testUserID)
+	asst.Nil(err, "test GetDBsByUserID() failed")
+	asst.Equal(testUserDB2ID, testUserService.GetDBs()[constant.ZeroInt].Identity(), "test GetDBsByUserID() failed")
+}
+
+func TestUserService_GetMiddlewareClustersByUserID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testUserService.GetMiddlewareClustersByUserID(testUserID)
+	asst.Nil(err, "test GetMiddlewareClustersByUserID() failed")
+	asst.Equal(testUserMiddlewareClusterID, testUserService.GetMiddlewareClusters()[constant.ZeroInt].Identity(), "test GetMiddlewareClustersByUserID() failed")
+}
+
+func TestUserService_GetMySQLClustersByUserID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testUserService.GetMySQLClustersByUserID(testUserID)
+	asst.Nil(err, "test GetMySQLClustersByUserID() failed")
+	asst.Equal(testUserMySQLClusterID, testUserService.GetMySQLClusters()[constant.ZeroInt].Identity(), "test GetMySQLClustersByUserID() failed")
 }

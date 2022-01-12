@@ -70,6 +70,12 @@ type UserRepo interface {
 	GetByEmployeeID(employeeID string) (User, error)
 	// GetAppsByUserID gets app list that this user owns
 	GetAppsByUserID(id int) ([]App, error)
+	// GetDBsByUserID gets app list that this user owns
+	GetDBsByUserID(id int) ([]DB, error)
+	// GetMiddlewareClustersByUserID gets MiddlewareCluster list that this user owns
+	GetMiddlewareClustersByUserID(id int) ([]MiddlewareCluster, error)
+	// GetMySQLClustersByUserID gets MySQLCluster list that this user owns
+	GetMySQLClustersByUserID(id int) ([]MySQLCluster, error)
 }
 
 type UserService interface {
@@ -79,6 +85,12 @@ type UserService interface {
 	GetAll() error
 	// GetApps returns the apps of the service
 	GetApps() []App
+	// GetDBs returns the dbs of the service
+	GetDBs() []DB
+	// GetMiddlewareClusters returns the MiddlewareClusters of the service
+	GetMiddlewareClusters() []MiddlewareCluster
+	// GetMySQLClusters returns the MySQLClusters of the service
+	GetMySQLClusters() []MySQLCluster
 	// GetByName gets users of given user name
 	GetByName(userName string) error
 	// GetByID gets a user by the identity
@@ -108,4 +120,10 @@ type UserService interface {
 	MarshalWithFields(fields ...string) ([]byte, error)
 	// GetAppsByUserID gets apps that this user owns
 	GetAppsByUserID(id int) error
+	// GetDBsByUserID gets apps that this user owns
+	GetDBsByUserID(id int) error
+	// GetMiddlewareClustersByUserID gets MiddlewareClusters that this user owns
+	GetMiddlewareClustersByUserID(id int) error
+	// GetMySQLClustersByUserID gets MySQLClusters that this user owns
+	GetMySQLClustersByUserID(id int) error
 }

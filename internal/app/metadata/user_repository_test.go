@@ -10,15 +10,19 @@ import (
 )
 
 const (
-	testUserNewUserName    = "test_new_user_name"
-	testUserUpdateUserName = "test_update_user_name"
-	testUserNewEmployeeID  = "200001"
-	testUserNewAccountName = "test_new_account_name"
-	testUserNewEmail       = "test_new_account_name@163.com"
-	testUserNewTelephone   = "02112345678"
-	testUserNewMobile      = "13112345678"
-	testUserAppID          = 1
-	testUser2ID            = 15
+	testUserNewUserName         = "test_new_user_name"
+	testUserUpdateUserName      = "test_update_user_name"
+	testUserNewEmployeeID       = "200001"
+	testUserNewAccountName      = "test_new_account_name"
+	testUserNewEmail            = "test_new_account_name@163.com"
+	testUserNewTelephone        = "02112345678"
+	testUserNewMobile           = "13112345678"
+	testUserAppID               = 1
+	testUserDBID                = 1
+	testUserDB2ID               = 2
+	testUserMiddlewareClusterID = 1
+	testUserMySQLClusterID      = 1
+	testUser2ID                 = 15
 )
 
 var testUserRepo *UserRepo
@@ -60,6 +64,10 @@ func TestUserRepoAll(t *testing.T) {
 	TestUserRepo_Update(t)
 	TestUserRepo_Delete(t)
 	TestUserRepo_GetAppsByUserID(t)
+	TestUserRepo_GetDBsByUserID(t)
+	TestUserRepo_GetMiddlewareClustersByUserID(t)
+	TestUserRepo_GetMySQLClustersByUserID(t)
+
 }
 
 func TestUserRepo_Execute(t *testing.T) {
@@ -231,4 +239,28 @@ func TestUserRepo_GetAppsByUserID(t *testing.T) {
 	apps, err := testUserRepo.GetAppsByUserID(testUser2ID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAppsByUserID() failed", err))
 	asst.Equal(testUserAppID, apps[constant.ZeroInt].Identity(), "test GetAppsByUserID() failed")
+}
+
+func TestUserRepo_GetDBsByUserID(t *testing.T) {
+	asst := assert.New(t)
+
+	dbs, err := testUserRepo.GetDBsByUserID(testUserID)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBsByUserID() failed", err))
+	asst.Equal(testUserDB2ID, dbs[constant.ZeroInt].Identity(), "test GetDBsByUserID() failed")
+}
+
+func TestUserRepo_GetMiddlewareClustersByUserID(t *testing.T) {
+	asst := assert.New(t)
+
+	dbs, err := testUserRepo.GetMiddlewareClustersByUserID(testUserID)
+	asst.Nil(err, common.CombineMessageWithError("test GetMiddlewareClustersByUserID() failed", err))
+	asst.Equal(testUserMiddlewareClusterID, dbs[constant.ZeroInt].Identity(), "test GetMiddlewareClustersByUserID() failed")
+}
+
+func TestUserRepo_GetMySQLClustersByUserID(t *testing.T) {
+	asst := assert.New(t)
+
+	dbs, err := testUserRepo.GetMySQLClustersByUserID(testUserID)
+	asst.Nil(err, common.CombineMessageWithError("test GetMySQLClustersByUserID() failed", err))
+	asst.Equal(testUserMySQLClusterID, dbs[constant.ZeroInt].Identity(), "test GetMySQLClustersByUserID() failed")
 }
