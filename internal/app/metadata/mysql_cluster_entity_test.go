@@ -22,6 +22,7 @@ const (
 	testMySQLClusterDelFlag              = 0
 	testMySQLClusterCreateTimeString     = "2021-01-21 10:00:00.000000"
 	testMySQLClusterLastUpdateTimeString = "2021-01-21 13:00:00.000000"
+	testMySQLClusterNewUserID            = 14
 )
 
 var testMySQLClusterInfo *MySQLClusterInfo
@@ -47,7 +48,7 @@ func testInitNewMySQLClusterInfo() *MySQLClusterInfo {
 		testMySQLClusterClusterName,
 		testMySQLClusterMiddlewareClusterID,
 		testMySQLClusterMonitorSystemID,
-		testMySQLClusterOwnerID,
+		// testMySQLClusterOwnerID,
 		testMySQLClusterEnvID,
 		testMySQLClusterDelFlag,
 		createTime,
@@ -61,11 +62,14 @@ func TestMySQLClusterEntityAll(t *testing.T) {
 	TestMySQLClusterInfo_Identity(t)
 	TestMySQLClusterInfo_Get(t)
 	TestMySQLClusterInfo_GetMySQLServers(t)
-	TestMySQLClusterInfo_GetMasterServer(t)
+	// TestMySQLClusterInfo_GetMasterServer(t)
 	TestMySQLClusterInfo_GetDBs(t)
-	TestMySQLClusterInfo_GetAppOwners(t)
-	TestMySQLClusterInfo_GetDBOwners(t)
-	TestMySQLClusterInfo_GetAllOwners(t)
+	TestMySQLClusterInfo_GetUsers(t)
+	TestMySQLClusterInfo_AddMySQLClusterUser(t)
+	TestMySQLClusterInfo_DeleteMySQLClusterUser(t)
+	TestMySQLClusterInfo_GetAppUsers(t)
+	TestMySQLClusterInfo_GetDBUsers(t)
+	TestMySQLClusterInfo_GetAllUsers(t)
 	TestMySQLClusterInfo_Set(t)
 	TestMySQLClusterInfo_Delete(t)
 	TestMySQLClusterInfo_MarshalJSON(t)
@@ -85,7 +89,7 @@ func TestMySQLClusterInfo_Get(t *testing.T) {
 	asst.Equal(testMySQLClusterClusterName, testMySQLClusterInfo.GetClusterName(), "test GetClusterName() failed")
 	asst.Equal(testMySQLClusterMiddlewareClusterID, testMySQLClusterInfo.GetMiddlewareClusterID(), "test GetMiddlewareClusterID() failed")
 	asst.Equal(testMySQLClusterMonitorSystemID, testMySQLClusterInfo.GetMonitorSystemID(), "test GetMonitorSystemID() failed")
-	asst.Equal(testMySQLClusterOwnerID, testMySQLClusterInfo.GetOwnerID(), "test GetOwnerID() failed")
+	// asst.Equal(testMySQLClusterOwnerID, testMySQLClusterInfo.GetOwnerID(), "test GetOwnerID() failed")
 	asst.Equal(testMySQLClusterEnvID, testMySQLClusterInfo.GetEnvID(), "test GetEnvID() failed")
 	asst.Equal(testMySQLClusterDelFlag, testMySQLClusterInfo.GetDelFlag(), "test DelFlag() failed")
 	asst.True(reflect.DeepEqual(testMySQLClusterInfo.CreateTime, testMySQLClusterInfo.GetCreateTime()), "test GetCreateTime() failed")
@@ -116,31 +120,66 @@ func TestMySQLClusterInfo_GetDBs(t *testing.T) {
 	asst.Equal(2, len(dbs), "test GetDBs() failed", err)
 }
 
-func TestMySQLClusterInfo_GetAppOwners(t *testing.T) {
+func TestMySQLClusterInfo_GetUsers(t *testing.T) {
 	asst := assert.New(t)
 
-	owners, err := testMySQLClusterInfo.GetAppOwners()
-	// fmt.Print(owners[0].Identity(), owners[1].Identity(), owners[2].Identity())
-	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
-	asst.Equal(14, owners[constant.ZeroInt].Identity(), "test GetAppOwners() failed", err)
-	asst.Equal(2, len(owners), "test GetAppOwners() failed", err)
+	users, err := testMySQLClusterInfo.GetUsers()
+	asst.Nil(err, common.CombineMessageWithError("test GetUsers() failed", err))
+	asst.Equal(15, users[constant.ZeroInt].Identity(), "test GetUsers() failed", err)
+	asst.Equal(1, len(users), "test GetUsers() failed", err)
 }
 
-func TestMySQLClusterInfo_GetDBOwners(t *testing.T) {
+func TestMySQLClusterInfo_AddMySQLClusterUser(t *testing.T) {
 	asst := assert.New(t)
 
-	owners, err := testMySQLClusterInfo.GetDBOwners()
-	asst.Nil(err, common.CombineMessageWithError("test GetDBOwners() failed", err))
-	asst.Equal(1, owners[constant.ZeroInt].Identity(), "test GetDBOwners() failed", err)
+	err := testMySQLClusterInfo.AddUser(testMySQLClusterNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	users, err := testMySQLClusterInfo.GetUsers()
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	asst.Equal(2, len(users), common.CombineMessageWithError("test AddUser() failed", err))
+	// delete
+	err = testMySQLClusterInfo.DeleteUser(testMySQLClusterNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
 }
 
-func TestMySQLClusterInfo_GetAllOwners(t *testing.T) {
+func TestMySQLClusterInfo_DeleteMySQLClusterUser(t *testing.T) {
 	asst := assert.New(t)
 
-	owners, err := testMySQLClusterInfo.GetAllOwners()
-	// fmt.Print(owners[0].Identity(), owners[1].Identity(), owners[2].Identity())
-	asst.Nil(err, common.CombineMessageWithError("test GetAllOwners() failed", err))
-	asst.Equal(3, len(owners), "test GetAllOwners() failed", err)
+	err := testMySQLClusterInfo.AddUser(testMySQLClusterNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	err = testMySQLClusterInfo.DeleteUser(testMySQLClusterNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+	users, err := testMySQLClusterInfo.GetUsers()
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+	for _, user := range users {
+		asst.NotEqual(testMySQLClusterNewUserID, user.Identity(), common.CombineMessageWithError("test DeleteUser() failed", err))
+	}
+}
+
+func TestMySQLClusterInfo_GetAppUsers(t *testing.T) {
+	asst := assert.New(t)
+
+	users, err := testMySQLClusterInfo.GetAppUsers()
+	asst.Nil(err, common.CombineMessageWithError("test GetAppUsers() failed", err))
+	asst.Equal(15, users[constant.ZeroInt].Identity(), "test GetAppUsers() failed", err)
+	asst.Equal(1, len(users), "test GetAppUsers() failed", err)
+}
+
+func TestMySQLClusterInfo_GetDBUsers(t *testing.T) {
+	asst := assert.New(t)
+
+	users, err := testMySQLClusterInfo.GetDBUsers()
+	asst.Nil(err, common.CombineMessageWithError("test GetDBUsers() failed", err))
+	asst.Equal(1, users[constant.ZeroInt].Identity(), "test GetDBUsers() failed", err)
+	asst.Equal(1, len(users), "test GetDBUsers() failed", err)
+}
+
+func TestMySQLClusterInfo_GetAllUsers(t *testing.T) {
+	asst := assert.New(t)
+
+	users, err := testMySQLClusterInfo.GetAllUsers()
+	asst.Nil(err, common.CombineMessageWithError("test GetAllUsers() failed", err))
+	asst.Equal(2, len(users), "test GetAllUsers() failed", err)
 }
 
 func TestMySQLClusterInfo_Set(t *testing.T) {
