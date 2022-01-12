@@ -139,8 +139,8 @@ func (ar *AppRepo) GetAppByName(appName string) (metadata.App, error) {
 	return ar.GetByID(id)
 }
 
-// GetDBsByID gets databases that app uses
-func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
+// GetDBsByAppID gets databases that app uses
+func (ar *AppRepo) GetDBsByAppID(id int) ([]metadata.DB, error) {
 	sql := `
 		select di.id,
 			   di.db_name,
@@ -160,7 +160,7 @@ func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 		  and di.del_flag = 0
 		  and ai.id = ?
 	`
-	log.Debugf("metadata AppRepo.GetDBsByID() select sql: %s", sql)
+	log.Debugf("metadata AppRepo.GetDBsByAppID() select sql: %s", sql)
 	result, err := ar.Execute(sql, id)
 	if err != nil {
 		return nil, err
@@ -181,8 +181,8 @@ func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 
 }
 
-// GetUsersByID gets user list that own the app
-func (ar *AppRepo) GetUsersByID(id int) ([]metadata.User, error) {
+// GetUsersByAppID gets user list that own the app
+func (ar *AppRepo) GetUsersByAppID(id int) ([]metadata.User, error) {
 	sql := `
 		select ui.id,
 			   ui.user_name,

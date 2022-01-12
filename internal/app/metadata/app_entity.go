@@ -118,12 +118,12 @@ func (ai *AppInfo) GetLastUpdateTime() time.Time {
 
 // GetDBs gets databases that the app uses
 func (ai *AppInfo) GetDBs() ([]metadata.DB, error) {
-	return ai.AppRepo.GetDBsByID(ai.Identity())
+	return ai.AppRepo.GetDBsByAppID(ai.Identity())
 }
 
 // GetUsers gets user list that own the app
 func (ai *AppInfo) GetUsers() ([]metadata.User, error) {
-	return ai.AppRepo.GetUsersByID(ai.Identity())
+	return ai.AppRepo.GetUsersByAppID(ai.Identity())
 }
 
 // Set sets App with given fields, key is the field name and value is the relevant value of the key

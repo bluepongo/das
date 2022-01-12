@@ -56,10 +56,10 @@ type AppRepo interface {
 	GetID(appName string) (int, error)
 	// GetAppSystemByName gets the app by name from the middleware
 	GetAppByName(appName string) (App, error)
-	// GetDBsByID gets databases that app uses
-	GetDBsByID(id int) ([]DB, error)
+	// GetDBsByAppID gets databases that app uses
+	GetDBsByAppID(id int) ([]DB, error)
 	// GetUsersByID gets user list that own the app
-	GetUsersByID(id int) ([]User, error)
+	GetUsersByAppID(id int) ([]User, error)
 	// Create creates an app in the middleware
 	Create(appSystem App) (App, error)
 	// Update updates the app in the middleware
@@ -89,10 +89,10 @@ type AppService interface {
 	GetByID(id int) error
 	// GetAppByName gets App from the middleware by name
 	GetAppByName(appName string) error
-	// GetDBsByID gets databases that the app uses
-	GetDBsByID(id int) error
+	// GetDBsByAppID gets databases that the app uses
+	GetDBsByAppID(id int) error
 	// GetUsersByID gets Users that own the app
-	GetUsersByID(id int) error
+	GetUsersByAppID(id int) error
 	// Create creates an app in the middleware
 	Create(fields map[string]interface{}) error
 	// Update gets the app of the given id from the middleware,
