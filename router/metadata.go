@@ -50,9 +50,12 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.GET("/middleware-cluster/get/:id", metadata.GetMiddlewareClusterByID)
 		metadataGroup.GET("/middleware-cluster/cluster-name/:cluster_name", metadata.GetMiddlewareClusterByName)
 		metadataGroup.GET("/middleware-cluster/middleware-server/:id", metadata.GetMiddlewareServers)
+		metadataGroup.GET("/middleware-cluster/user/:id", metadata.GetUsersByMiddlewareClusterID)
 		metadataGroup.POST("/middleware-cluster", metadata.AddMiddlewareCluster)
 		metadataGroup.POST("/middleware-cluster/update/:id", metadata.UpdateMiddlewareClusterByID)
 		metadataGroup.POST("/middleware-cluster/delete/:id", metadata.DeleteMiddlewareClusterByID)
+		metadataGroup.POST("/middleware-cluster/add-user/:id", metadata.MiddlewareClusterAddUser)
+		metadataGroup.POST("/middleware-cluster/delete-user/:id", metadata.MiddlewareClusterDeleteUser)
 		// middleware server
 		metadataGroup.GET("/middleware-server", metadata.GetMiddlewareServer)
 		metadataGroup.GET("/middleware-server/cluster-id/:cluster_id", metadata.GetMiddlewareServerByClusterID)

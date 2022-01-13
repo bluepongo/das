@@ -18,6 +18,10 @@ Content-Type: application/json
 GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/middleware-server/1
 Content-Type: application/json
 
+### get user list by middleware cluster id
+GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/user/1
+Content-Type: application/json
+
 ### add new middleware cluster
 POST http://{{baseURL}}/api/v1/metadata/middleware-cluster
 Content-Type: application/json
@@ -39,3 +43,15 @@ Content-Type: application/json
 ### delete middleware cluster by id
 POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/delete/27
 Content-Type: application/json
+
+### add a new map of middleware cluster and user in the middleware
+POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/add-user/1
+Content-Type: application/json
+
+{"user_id":1}
+
+### delete a map of middleware cluster and user in the middleware
+POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/delete-user/1
+Content-Type: application/json
+
+{"user_id":1}

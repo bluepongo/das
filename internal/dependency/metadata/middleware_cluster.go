@@ -11,8 +11,6 @@ type MiddlewareCluster interface {
 	Identity() int
 	// GetClusterName returns the cluster name
 	GetClusterName() string
-	// GetOwnerID returns the owner id
-	GetOwnerID() int
 	// GetEnvID returns the env id
 	GetEnvID() int
 	// GetDelFlag returns the delete flag
@@ -23,6 +21,8 @@ type MiddlewareCluster interface {
 	GetLastUpdateTime() time.Time
 	// GetMiddlewareServers gets the middleware server id list of this cluster
 	GetMiddlewareServers() ([]MiddlewareServer, error)
+	// GetUsersByMiddlewareClusterID gets user list that own the middleware cluster
+	GetUsersByMiddlewareClusterID() ([]User, error)
 	// Set sets MiddlewareCluster with given fields, key is the field name and value is the relevant value of the key
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
@@ -48,6 +48,12 @@ type MiddlewareClusterRepo interface {
 	GetByName(clusterName string) (MiddlewareCluster, error)
 	// GetID gets the identity with given cluster name and env id from the middleware
 	GetID(clusterName string, envID int) (int, error)
+	// GetUsersByMiddlewareClusterID get user list that own the middleware cluster
+	GetUsersByMiddlewareClusterID(clusterID int) ([]User, error)
+	// MiddlewareClusterAddUser adds a new map of middleware cluster and user in the middleware
+	MiddlewareClusterAddUser(middlewareClusterID, userID int) error
+	// MiddlewareClusterDeleteUser deletes the map of middleware cluster and user in the middleware
+	MiddlewareClusterDeleteUser(middlewareClusterID, userID int) error
 	// Create creates a middleware cluster in the middleware
 	Create(mc MiddlewareCluster) (MiddlewareCluster, error)
 	// Update updates the middleware cluster in the middleware
@@ -69,8 +75,16 @@ type MiddlewareClusterService interface {
 	GetByID(id int) error
 	// GetByName gets a middleware cluster of given cluster name
 	GetByName(clusterName string) error
+	// GetUsers returns users of the service
+	GetUsers() []User
 	// GetMiddlewareServersByID gets the middleware servers of given cluster id
 	GetMiddlewareServersByID(clusterID int) error
+	// GetUsersByMiddlewareClusterID  gets Users that own the middleware cluster
+	GetUsersByMiddlewareClusterID(clusterID int) error
+	// MiddlewareClusterAddUser adds a new map of middleware cluster and user in the middleware
+	MiddlewareClusterAddUser(middlewareClusterID, userID int) error
+	// MiddlewareClusterDeleteUser deletes the map of middleware cluster and user in the middleware
+	MiddlewareClusterDeleteUser(middlewareClusterID, userID int) error
 	// Create creates a middleware cluster in the middleware
 	Create(fields map[string]interface{}) error
 	// Update gets a middleware cluster of the given id from the middleware,
