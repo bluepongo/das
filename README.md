@@ -11,8 +11,10 @@
 The project can be deployed according to the following steps:
 
 1. Use Percona Monitoring and Management to centrally manage MySQL that needs to be monitored (omitted)
-2.  Install a local MySQL database to store das data, and the database table structure is in the sql directory of das 
-3. Create configuration files das.yaml and soar.yaml in the config folder, and configure parameters according to das_default.yaml and soar_default.yaml
+2. Install a local MySQL database to store das data, and the database table structure is in the sql directory of das
+3. Install sql tuning tool [soar](https://github.com/XiaoMi/soar) into the bin directory
+4. Create configuration files das.yaml and soar.yaml in the config directory, there are template yaml files in the config directory
+5. das uses soar as Linux shell command, so on Windows, we need to create a shell environment by installing cygwin or mingw, normally, installing git tool is enough, make sure that the paths of soar.exe and sh.exe are in the PATH environment
 
 ## Quick Start
 
@@ -34,7 +36,7 @@ Start
 ## Contributing
 
 <a href="https://github.com/romberli/das/graphs/contributors">
-  <img src="https://contributors-img.web.app/image?repo=romberli/das" />
+  <img src="https://contributors-img.web.app/image?repo=romberli/das"/>
 </a>
 
 ## License
