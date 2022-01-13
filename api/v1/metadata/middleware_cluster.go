@@ -419,7 +419,7 @@ func MiddlewareClusterAddUser(c *gin.Context) {
 	// init service
 	s := metadata.NewMiddlewareClusterServiceWithDefault()
 	// update entities
-	err = s.MiddlewareClusterAddUser(id, userID)
+	err = s.AddUser(id, userID)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataMiddlewareClusterAddUser, id, err.Error())
 		return
@@ -472,7 +472,7 @@ func MiddlewareClusterDeleteUser(c *gin.Context) {
 	// init service
 	s := metadata.NewMiddlewareClusterServiceWithDefault()
 	// update entities
-	err = s.MiddlewareClusterDeleteUser(id, userID)
+	err = s.DeleteUser(id, userID)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataMiddlewareClusterDeleteUser, id, err.Error())
 		return

@@ -81,10 +81,10 @@ type MiddlewareClusterService interface {
 	GetMiddlewareServersByID(clusterID int) error
 	// GetUsersByMiddlewareClusterID  gets Users that own the middleware cluster
 	GetUsersByMiddlewareClusterID(clusterID int) error
-	// MiddlewareClusterAddUser adds a new map of middleware cluster and user in the middleware
-	MiddlewareClusterAddUser(middlewareClusterID, userID int) error
-	// MiddlewareClusterDeleteUser deletes the map of middleware cluster and user in the middleware
-	MiddlewareClusterDeleteUser(middlewareClusterID, userID int) error
+	// AddUser adds a new map of middleware cluster and user in the middleware
+	AddUser(middlewareClusterID, userID int) error
+	// DeleteUser deletes the map of middleware cluster and user in the middleware
+	DeleteUser(middlewareClusterID, userID int) error
 	// Create creates a middleware cluster in the middleware
 	Create(fields map[string]interface{}) error
 	// Update gets a middleware cluster of the given id from the middleware,
