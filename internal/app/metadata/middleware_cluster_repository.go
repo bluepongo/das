@@ -281,8 +281,8 @@ func (mcr *MiddlewareClusterRepo) Delete(id int) error {
 	return tx.Commit()
 }
 
-// MiddlewareClusterAddUser adds a new map of middleware cluster and user in the middleware
-func (mcr *MiddlewareClusterRepo) MiddlewareClusterAddUser(middlewareClusterID, userID int) error {
+// AddUser adds a new map of middleware cluster and user in the middleware
+func (mcr *MiddlewareClusterRepo) AddUser(middlewareClusterID, userID int) error {
 	userRepo := NewUserRepoWithGlobal()
 	_, err := userRepo.GetByID(userID)
 	if err != nil {
@@ -299,8 +299,8 @@ func (mcr *MiddlewareClusterRepo) MiddlewareClusterAddUser(middlewareClusterID, 
 	return err
 }
 
-// MiddlewareClusterDeleteUser deletes a map of middleware cluster and user in the middleware
-func (mcr *MiddlewareClusterRepo) MiddlewareClusterDeleteUser(middlewareClusterID, userID int) error {
+// DeleteUser deletes a map of middleware cluster and user in the middleware
+func (mcr *MiddlewareClusterRepo) DeleteUser(middlewareClusterID, userID int) error {
 	userRepo := NewUserRepoWithGlobal()
 	_, err := userRepo.GetByID(userID)
 	if err != nil {

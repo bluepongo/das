@@ -165,7 +165,7 @@ func (mcs *MiddlewareClusterService) Delete(id int) error {
 
 // AddUser adds a new map of middleware cluster and user in the middleware
 func (mcs *MiddlewareClusterService) AddUser(middlewareClusterID, userID int) error {
-	err := mcs.MiddlewareClusterRepo.MiddlewareClusterAddUser(middlewareClusterID, userID)
+	err := mcs.MiddlewareClusterRepo.AddUser(middlewareClusterID, userID)
 	if err != nil {
 		return err
 	}
@@ -174,7 +174,7 @@ func (mcs *MiddlewareClusterService) AddUser(middlewareClusterID, userID int) er
 
 // DeleteUser deletes the map of middleware cluster and user in the middleware
 func (mcs *MiddlewareClusterService) DeleteUser(middlewareClusterID, userID int) error {
-	err := mcs.MiddlewareClusterRepo.MiddlewareClusterDeleteUser(middlewareClusterID, userID)
+	err := mcs.MiddlewareClusterRepo.DeleteUser(middlewareClusterID, userID)
 	if err != nil {
 		return err
 	}

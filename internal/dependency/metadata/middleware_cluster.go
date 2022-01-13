@@ -27,6 +27,10 @@ type MiddlewareCluster interface {
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
 	Delete()
+	// AddUser adds a new map of the middleware cluster and user in the middleware
+	AddUser(userID int) error
+	// DeleteUser deletes the new map of the middleware cluster and user in the middleware
+	DeleteUser(userID int) error
 	// MarshalJSON marshals MiddlewareCluster to json string
 	MarshalJSON() ([]byte, error)
 	// MarshalJSONWithFields marshals only specified field of the MiddlewareCluster to json string
@@ -50,10 +54,10 @@ type MiddlewareClusterRepo interface {
 	GetID(clusterName string, envID int) (int, error)
 	// GetUsersByMiddlewareClusterID get user list that own the middleware cluster
 	GetUsersByMiddlewareClusterID(clusterID int) ([]User, error)
-	// MiddlewareClusterAddUser adds a new map of middleware cluster and user in the middleware
-	MiddlewareClusterAddUser(middlewareClusterID, userID int) error
-	// MiddlewareClusterDeleteUser deletes the map of middleware cluster and user in the middleware
-	MiddlewareClusterDeleteUser(middlewareClusterID, userID int) error
+	// AddUser adds a new map of middleware cluster and user in the middleware
+	AddUser(middlewareClusterID, userID int) error
+	// DeleteUser deletes the map of middleware cluster and user in the middleware
+	DeleteUser(middlewareClusterID, userID int) error
 	// Create creates a middleware cluster in the middleware
 	Create(mc MiddlewareCluster) (MiddlewareCluster, error)
 	// Update updates the middleware cluster in the middleware

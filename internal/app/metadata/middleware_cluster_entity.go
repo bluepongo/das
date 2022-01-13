@@ -140,14 +140,14 @@ func (mci *MiddlewareClusterInfo) Delete() {
 	mci.DelFlag = 1
 }
 
-// MiddlewareClusterAddUser adds a new map of middleware cluster and user in the middleware
-func (mci *MiddlewareClusterInfo) MiddlewareClusterAddUser(userID int) error {
-	return mci.MiddlewareClusterRepo.MiddlewareClusterAddUser(mci.Identity(), userID)
+// AddUser adds a new map of middleware cluster and user in the middleware
+func (mci *MiddlewareClusterInfo) AddUser(userID int) error {
+	return mci.MiddlewareClusterRepo.AddUser(mci.Identity(), userID)
 }
 
-// MiddlewareClusterDeleteUser deletes a map of middleware cluster and user in the middleware
-func (mci *MiddlewareClusterInfo) MiddlewareClusterDeleteUser(userID int) error {
-	return mci.MiddlewareClusterRepo.MiddlewareClusterDeleteUser(mci.Identity(), userID)
+// DeleteUser deletes a map of middleware cluster and user in the middleware
+func (mci *MiddlewareClusterInfo) DeleteUser(userID int) error {
+	return mci.MiddlewareClusterRepo.DeleteUser(mci.Identity(), userID)
 }
 
 // MarshalJSON marshals entity to json string, it only marshals fields that has default tag
