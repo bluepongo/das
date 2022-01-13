@@ -42,7 +42,6 @@ func testInitNewAppInfo() *AppInfo {
 		testAppAppID,
 		testAppAppName,
 		testAppLevel,
-		testAppOwnerID,
 		testAppDelFlag,
 		createTime,
 		lastUpdateTime,
@@ -50,14 +49,13 @@ func testInitNewAppInfo() *AppInfo {
 }
 
 func appSystemStructEqual(a, b *AppInfo) bool {
-	return a.ID == b.ID && a.AppName == b.AppName && a.DelFlag == b.DelFlag && a.CreateTime == b.CreateTime && a.LastUpdateTime == b.LastUpdateTime && a.Level == b.Level && a.OwnerID == b.OwnerID
+	return a.ID == b.ID && a.AppName == b.AppName && a.DelFlag == b.DelFlag && a.CreateTime == b.CreateTime && a.LastUpdateTime == b.LastUpdateTime && a.Level == b.Level
 }
 
 func TestAppEntityAll(t *testing.T) {
 	TestAppInfo_Identity(t)
 	TestAppInfo_GetAppName(t)
 	TestAppInfo_GetLevel(t)
-	TestAppInfo_GetOwnerID(t)
 	TestAppInfo_GetDelFlag(t)
 	TestAppInfo_GetCreateTime(t)
 	TestAppInfo_GetLastUpdateTime(t)
@@ -90,12 +88,6 @@ func TestAppInfo_GetLevel(t *testing.T) {
 	asst := assert.New(t)
 
 	asst.Equal(testAppLevel, testAppInfo.GetLevel(), "test GetLevel() failed")
-}
-
-func TestAppInfo_GetOwnerID(t *testing.T) {
-	asst := assert.New(t)
-
-	asst.Equal(testAppOwnerID, testAppInfo.GetOwnerID(), "test GetLevel() failed")
 }
 
 func TestAppInfo_GetDelFlag(t *testing.T) {
@@ -180,7 +172,7 @@ func TestAppInfo_AddAppDB(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
 	dbs, err := testAppInfo.GetDBs()
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
-	asst.Equal(1, len(dbs), common.CombineMessageWithError("test AddDB() failed", err))
+	asst.Equal(0, len(dbs), common.CombineMessageWithError("test AddDB() failed", err))
 	// delete
 	err = testAppInfo.DeleteDB(testAppNewDBID)
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))

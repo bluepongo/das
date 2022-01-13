@@ -53,7 +53,7 @@ func (ar *AppRepo) Transaction() (middleware.Transaction, error) {
 // GetAll gets all apps from the middleware
 func (ar *AppRepo) GetAll() ([]metadata.App, error) {
 	sql := `
-		select id, app_name, level, owner_id, del_flag, create_time, last_update_time
+		select id, app_name, level, del_flag, create_time, last_update_time
 		from t_meta_app_info
 		where del_flag = 0
 		order by id;
@@ -82,7 +82,7 @@ func (ar *AppRepo) GetAll() ([]metadata.App, error) {
 // GetByID gets an app by the identity from the middleware
 func (ar *AppRepo) GetByID(id int) (metadata.App, error) {
 	sql := `
-		select id, app_name, level,owner_id, del_flag, create_time, last_update_time
+		select id, app_name, level, del_flag, create_time, last_update_time
 		from t_meta_app_info
 		where del_flag = 0
 		and id = ?;
@@ -146,7 +146,6 @@ func (ar *AppRepo) GetDBsByAppID(id int) ([]metadata.DB, error) {
 			   di.db_name,
 			   di.cluster_id,
 			   di.cluster_type,
-			   di.owner_id,
 			   di.env_id,
 			   di.del_flag,
 			   di.create_time,
@@ -228,10 +227,10 @@ func (ar *AppRepo) GetUsersByAppID(id int) ([]metadata.User, error) {
 
 // Create creates an app in the middleware
 func (ar *AppRepo) Create(app metadata.App) (metadata.App, error) {
-	sql := `insert into t_meta_app_info(app_name, level, owner_id) values(?, ?, ?);`
+	sql := `insert into t_meta_app_info(app_name, level) values(?, ?);`
 	log.Debugf("metadata AppRepo.Create() insert sql: %s", sql)
 	// execute
-	_, err := ar.Execute(sql, app.GetAppName(), app.GetLevel(), app.GetOwnerID())
+	_, err := ar.Execute(sql, app.GetAppName(), app.GetLevel())
 	if err != nil {
 		return nil, err
 	}
@@ -246,9 +245,9 @@ func (ar *AppRepo) Create(app metadata.App) (metadata.App, error) {
 
 // Update updates the app in the middleware
 func (ar *AppRepo) Update(app metadata.App) error {
-	sql := `update t_meta_app_info set app_name = ?, level = ?, owner_id = ?, del_flag = ? where id = ?;`
+	sql := `update t_meta_app_info set app_name = ?, level = ?, del_flag = ? where id = ?;`
 	log.Debugf("metadata AppRepo.Update() update sql: %s", sql)
-	_, err := ar.Execute(sql, app.GetAppName(), app.GetLevel(), app.GetOwnerID(), app.GetDelFlag(), app.Identity())
+	_, err := ar.Execute(sql, app.GetAppName(), app.GetLevel(), app.GetDelFlag(), app.Identity())
 
 	return err
 }

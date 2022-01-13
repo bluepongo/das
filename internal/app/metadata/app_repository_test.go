@@ -90,12 +90,12 @@ func TestAppRepo_Execute(t *testing.T) {
 func TestAppRepo_Transaction(t *testing.T) {
 	asst := assert.New(t)
 
-	sql := `insert into t_meta_app_info(app_name,level,owner_id) values(?,?,?);`
+	sql := `insert into t_meta_app_info(app_name,level) values(?,?);`
 	tx, err := testAppRepo.Transaction()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	err = tx.Begin()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
-	_, err = tx.Execute(sql, testAppNewAppName, testAppLevel, testAppOwnerID)
+	_, err = tx.Execute(sql, testAppNewAppName, testAppLevel)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	// check if inserted
 	sql = `select app_name from t_meta_app_info where app_name=?`

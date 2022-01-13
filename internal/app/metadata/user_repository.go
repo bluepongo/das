@@ -360,7 +360,7 @@ func (ur *UserRepo) Delete(id int) error {
 // GetAppsByUserID gets app list that this user owns
 func (ur *UserRepo) GetAppsByUserID(userID int) ([]metadata.App, error) {
 	sql := `
-		select app.id, app.app_name, app.level, app.owner_id, app.del_flag
+		select app.id, app.app_name, app.level, app.del_flag
 			, app.create_time, app.last_update_time
 		from t_meta_app_info as app
 			inner join t_meta_app_user_map as map on app.id = map.app_id
@@ -395,7 +395,7 @@ func (ur *UserRepo) GetAppsByUserID(userID int) ([]metadata.App, error) {
 // GetDBsByUserID gets db list that this user owns
 func (ur *UserRepo) GetDBsByUserID(userID int) ([]metadata.DB, error) {
 	sql := `
-		select db.id, db.db_name, db.cluster_id, db.cluster_type, db.owner_id, db.env_id, db.del_flag, db.create_time, db.last_update_time
+		select db.id, db.db_name, db.cluster_id, db.cluster_type, db.env_id, db.del_flag, db.create_time, db.last_update_time
 		from t_meta_db_info as db
 			inner join t_meta_db_user_map as map on db.id = map.db_id
 			inner join t_meta_user_info as user on user.id = map.user_id
@@ -429,7 +429,7 @@ func (ur *UserRepo) GetDBsByUserID(userID int) ([]metadata.DB, error) {
 // GetMiddlewareClustersByUserID gets middlewarecluster list that this user owns
 func (ur *UserRepo) GetMiddlewareClustersByUserID(userID int) ([]metadata.MiddlewareCluster, error) {
 	sql := `
-		select middlewarecluster.id, middlewarecluster.cluster_name, middlewarecluster.owner_id, middlewarecluster.env_id, middlewarecluster.del_flag, middlewarecluster.create_time, middlewarecluster.last_update_time
+		select middlewarecluster.id, middlewarecluster.cluster_name, middlewarecluster.env_id, middlewarecluster.del_flag, middlewarecluster.create_time, middlewarecluster.last_update_time
 		from t_meta_middleware_cluster_info as middlewarecluster
 			inner join t_meta_middleware_cluster_user_map as map on middlewarecluster.id = map.middleware_cluster_id
 			inner join t_meta_user_info as user on user.id = map.user_id
@@ -463,7 +463,7 @@ func (ur *UserRepo) GetMiddlewareClustersByUserID(userID int) ([]metadata.Middle
 // GetMySQLClustersByUserID gets mysqlcluster list that this user owns
 func (ur *UserRepo) GetMySQLClustersByUserID(userID int) ([]metadata.MySQLCluster, error) {
 	sql := `
-		select mysqlcluster.id, mysqlcluster.cluster_name, mysqlcluster.middleware_cluster_id, mysqlcluster.monitor_system_id, mysqlcluster.owner_id, mysqlcluster.env_id, mysqlcluster.del_flag, mysqlcluster.create_time, mysqlcluster.last_update_time
+		select mysqlcluster.id, mysqlcluster.cluster_name, mysqlcluster.middleware_cluster_id, mysqlcluster.monitor_system_id, mysqlcluster.env_id, mysqlcluster.del_flag, mysqlcluster.create_time, mysqlcluster.last_update_time
 		from t_meta_mysql_cluster_info as mysqlcluster
 			inner join t_meta_mysql_cluster_user_map as map on mysqlcluster.id = map.mysql_cluster_id
 			inner join t_meta_user_info as user on user.id = map.user_id

@@ -13,8 +13,6 @@ type App interface {
 	GetAppName() string
 	// GetLevel returns the level
 	GetLevel() int
-	// GetOwnerID returns the owner id
-	GetOwnerID() int
 	// GetDelFlag returns the delete flag
 	GetDelFlag() int
 	// GetCreateTime returns the create time
