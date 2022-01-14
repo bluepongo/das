@@ -357,10 +357,10 @@ func (ur *UserRepo) Delete(id int) error {
 	return err
 }
 
-// GetAppsByID gets app list that this user owns
-func (ur *UserRepo) GetAppsByID(userID int) ([]metadata.App, error) {
+// GetAppsByUserID gets app list that this user owns
+func (ur *UserRepo) GetAppsByUserID(userID int) ([]metadata.App, error) {
 	sql := `
-		select app.id, app.app_name, app.level, app.owner_id, app.del_flag
+		select app.id, app.app_name, app.level, app.del_flag
 			, app.create_time, app.last_update_time
 		from t_meta_app_info as app
 			inner join t_meta_app_user_map as map on app.id = map.app_id
@@ -370,7 +370,7 @@ func (ur *UserRepo) GetAppsByID(userID int) ([]metadata.App, error) {
 			and user.del_flag = 0
 			and user.id = ?;
 	`
-	log.Debugf("metadata UserRepo.GetAppsByID() sql: \n%s\nplaceholders: %d", sql, userID)
+	log.Debugf("metadata UserRepo.GetAppsByUserID() sql: \n%s\nplaceholders: %d", sql, userID)
 
 	result, err := ur.Execute(sql, userID)
 	if err != nil {
@@ -392,38 +392,104 @@ func (ur *UserRepo) GetAppsByID(userID int) ([]metadata.App, error) {
 	return appList, nil
 }
 
-// AddApp adds a new map of the app and user in the middleware
-func (ur *UserRepo) AddApp(userID, appID int) error {
-	appRepo := NewAppRepoWithGlobal()
-	_, err := appRepo.GetByID(appID)
-	if err != nil {
-		return err
-	}
-	_, err = ur.GetByID(userID)
-	if err != nil {
-		return err
-	}
-	sql := `insert into t_meta_app_user_map(app_id, user_id) values(?, ?);`
-	log.Debugf("metadata UserRepo.AddApp() insert sql: %s", sql)
-	_, err = ur.Execute(sql, appID, userID)
+// GetDBsByUserID gets db list that this user owns
+func (ur *UserRepo) GetDBsByUserID(userID int) ([]metadata.DB, error) {
+	sql := `
+		select db.id, db.db_name, db.cluster_id, db.cluster_type, db.env_id, db.del_flag, db.create_time, db.last_update_time
+		from t_meta_db_info as db
+			inner join t_meta_db_user_map as map on db.id = map.db_id
+			inner join t_meta_user_info as user on user.id = map.user_id
+		where db.del_flag = 0 
+			and map.del_flag = 0 
+			and user.del_flag = 0
+			and user.id = ?;
+	`
+	log.Debugf("metadata UserRepo.GetDBsByUserID() sql: \n%s\nplaceholders: %d", sql, userID)
 
-	return err
+	result, err := ur.Execute(sql, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	dbList := make([]metadata.DB, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		dbList[row] = NewEmptyDBInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(dbList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return dbList, nil
 }
 
-// DeleteApp deletes a map of the app and user in the middleware
-func (ur *UserRepo) DeleteApp(userID, appID int) error {
-	appRepo := NewAppRepoWithGlobal()
-	_, err := appRepo.GetByID(appID)
-	if err != nil {
-		return err
-	}
-	_, err = ur.GetByID(userID)
-	if err != nil {
-		return err
-	}
-	sql := `delete from t_meta_app_user_map where app_id = ? and user_id = ?;`
-	log.Debugf("metadata UserRepo.DeleteApp() delete sql: %s", sql)
-	_, err = ur.Execute(sql, appID, userID)
+// GetMiddlewareClustersByUserID gets middlewarecluster list that this user owns
+func (ur *UserRepo) GetMiddlewareClustersByUserID(userID int) ([]metadata.MiddlewareCluster, error) {
+	sql := `
+		select middlewarecluster.id, middlewarecluster.cluster_name, middlewarecluster.env_id, middlewarecluster.del_flag, middlewarecluster.create_time, middlewarecluster.last_update_time
+		from t_meta_middleware_cluster_info as middlewarecluster
+			inner join t_meta_middleware_cluster_user_map as map on middlewarecluster.id = map.middleware_cluster_id
+			inner join t_meta_user_info as user on user.id = map.user_id
+		where middlewarecluster.del_flag = 0 
+			and map.del_flag = 0 
+			and user.del_flag = 0
+			and user.id = ?;
+	`
+	log.Debugf("metadata UserRepo.GetMiddlewareClustersByUserID() sql: \n%s\nplaceholders: %d", sql, userID)
 
-	return err
+	result, err := ur.Execute(sql, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	middlewareclusterList := make([]metadata.MiddlewareCluster, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		middlewareclusterList[row] = NewEmptyMiddlewareClusterInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(middlewareclusterList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return middlewareclusterList, nil
+}
+
+// GetMySQLClustersByUserID gets mysqlcluster list that this user owns
+func (ur *UserRepo) GetMySQLClustersByUserID(userID int) ([]metadata.MySQLCluster, error) {
+	sql := `
+		select mysqlcluster.id, mysqlcluster.cluster_name, mysqlcluster.middleware_cluster_id, mysqlcluster.monitor_system_id, mysqlcluster.env_id, mysqlcluster.del_flag, mysqlcluster.create_time, mysqlcluster.last_update_time
+		from t_meta_mysql_cluster_info as mysqlcluster
+			inner join t_meta_mysql_cluster_user_map as map on mysqlcluster.id = map.mysql_cluster_id
+			inner join t_meta_user_info as user on user.id = map.user_id
+		where mysqlcluster.del_flag = 0 
+			and map.del_flag = 0 
+			and user.del_flag = 0
+			and user.id = ?;
+	`
+	log.Debugf("metadata UserRepo.GetMySQLClustersByUserID() sql: \n%s\nplaceholders: %d", sql, userID)
+
+	result, err := ur.Execute(sql, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	mysqlclusterList := make([]metadata.MySQLCluster, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		mysqlclusterList[row] = NewEmptyMySQLClusterInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(mysqlclusterList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return mysqlclusterList, nil
 }

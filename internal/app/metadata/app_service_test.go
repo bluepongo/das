@@ -19,7 +19,7 @@ func TestAppServiceAll(t *testing.T) {
 	TestAppService_GetEntities(t)
 	TestAppService_GetAll(t)
 	TestAppService_GetByID(t)
-	TestAppService_GetDBsByID(t)
+	TestAppService_GetDBsByAppID(t)
 	TestAppService_Create(t)
 	TestAppService_Update(t)
 	TestAppService_Delete(t)
@@ -58,20 +58,20 @@ func TestAppService_GetByID(t *testing.T) {
 	asst.Equal(testAppAppID, id, common.CombineMessageWithError("test GetByID() failed", err))
 }
 
-func TestAppService_GetDBsByID(t *testing.T) {
+func TestAppService_GetDBsByAppID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testAppService.GetDBsByID(2)
-	asst.Nil(err, common.CombineMessageWithError("test GetDBSByID() failed", err))
-	asst.Equal(1, len(testAppService.DBs), common.CombineMessageWithError("test GetDBSByID() failed", err))
+	err := testAppService.GetDBsByAppID(2)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBSByAppID() failed", err))
+	asst.Equal(1, len(testAppService.DBs), common.CombineMessageWithError("test GetDBSByAppID() failed", err))
 }
 
-func TestAppService_GetUsersByID(t *testing.T) {
+func TestAppService_GetUsersByAppID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testAppService.GetUsersByID(testAppAppID)
-	asst.Nil(err, common.CombineMessageWithError("test GetDBSByID() failed", err))
-	asst.Equal(2, len(testAppService.Users), common.CombineMessageWithError("test GetDBSByID() failed", err))
+	err := testAppService.GetUsersByAppID(testAppAppID)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBSByAppID() failed", err))
+	asst.Equal(2, len(testAppService.Users), common.CombineMessageWithError("test GetDBSByAppID() failed", err))
 }
 
 func TestAppService_Create(t *testing.T) {
@@ -142,7 +142,7 @@ func TestAppService_AddDB(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
 	err = testAppService.AddDB(entity.Identity(), testAppDBID)
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
-	err = testAppService.GetDBsByID(entity.Identity())
+	err = testAppService.GetDBsByAppID(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test AddDB() failed", err))
 	asst.Equal(testAppDBID, testAppService.GetDBs()[constant.ZeroInt].Identity())
 	err = testAppService.DeleteDB(entity.Identity(), testAppDBID)
@@ -159,7 +159,7 @@ func TestAppService_DeleteDB(t *testing.T) {
 	asst.Nil(err, "test DeleteDB() failed")
 	err = testAppService.DeleteDB(entity.Identity(), testAppDBID)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
-	err = testAppService.GetDBsByID(entity.Identity())
+	err = testAppService.GetDBsByAppID(entity.Identity())
 	asst.Zero(len(testAppService.GetDBs()))
 	err = testAppRepo.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test DeleteDB() failed", err))
@@ -171,7 +171,7 @@ func TestAppService_AddUser(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
 	err = testAppService.AddUser(entity.Identity(), testAppUserID)
 	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
-	err = testAppService.GetUsersByID(entity.Identity())
+	err = testAppService.GetUsersByAppID(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
 	asst.Equal(testAppUserID, testAppService.GetUsers()[constant.ZeroInt].Identity())
 	err = testAppService.DeleteUser(entity.Identity(), testAppUserID)
@@ -188,7 +188,7 @@ func TestAppService_DeleteUser(t *testing.T) {
 	asst.Nil(err, "test DeleteUser() failed")
 	err = testAppService.DeleteUser(entity.Identity(), testAppUserID)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
-	err = testAppService.GetUsersByID(entity.Identity())
+	err = testAppService.GetUsersByAppID(entity.Identity())
 	asst.Zero(len(testAppService.GetUsers()))
 	err = testAppRepo.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
