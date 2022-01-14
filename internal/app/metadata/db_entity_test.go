@@ -15,7 +15,8 @@ import (
 
 const (
 	testDBDBID                 = 1
-	testDBDBName               = "test_db_name"
+	testDBDBName               = "db_name"
+	testDBDBName2              = "test_db_name"
 	testDBClusterID            = 2
 	testDBClusterType          = 1
 	testDBEnvID                = 1
@@ -27,7 +28,7 @@ const (
 	testDBNewAppID             = 2
 	testDBNewUserID            = 1
 	testDBMySQLClusterID       = 2
-	testDBUserID               = 1
+	testDBUserID               = 2
 )
 
 var testDBInfo *DBInfo
@@ -154,7 +155,7 @@ func TestDBInfo_GetDBOwners(t *testing.T) {
 
 	dbOwners, err := testDBInfo.GetDBOwners()
 	asst.Nil(err, common.CombineMessageWithError("test GetDBOwners() failed", err))
-	asst.Equal(14, dbOwners[constant.ZeroInt].Identity(), "test GetDBOwners() failed")
+	asst.Equal(2, dbOwners[constant.ZeroInt].Identity(), "test GetDBOwners() failed")
 }
 
 func TestDBInfo_GetAllOwners(t *testing.T) {
@@ -200,7 +201,7 @@ func TestDBInfo_AddApp(t *testing.T) {
 	err := testDBInfo.AddApp(testDBNewAppID)
 	apps, err = testDBInfo.GetAppsByDBID(testDBInfo.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	asst.Equal(3, len(apps), "test AddApp() failed")
+	asst.Equal(2, len(apps), "test AddApp() failed")
 	// delete
 	err = testDBInfo.DeleteApp(testDBNewAppID)
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
@@ -217,7 +218,7 @@ func TestDBInfo_DeleteApp(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
 	apps, err = testDBInfo.GetAppsByDBID(testDBInfo.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	asst.Equal(2, len(apps), "test AddApp() failed")
+	asst.Equal(1, len(apps), "test AddApp() failed")
 }
 
 func TestDBInfo_DBAddUser(t *testing.T) {

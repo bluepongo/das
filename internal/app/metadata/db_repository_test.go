@@ -13,7 +13,7 @@ import (
 const (
 	testDBNewDBName    = "test_new_db_name"
 	testDBUpdateDBName = "test_update_db_name"
-	testDBAllDBNum     = 3
+	testDBAllDBNum     = 5
 )
 
 var testDBRepo *DBRepo
@@ -115,13 +115,13 @@ func TestDBRepo_GetByID(t *testing.T) {
 
 	db, err := testDBRepo.GetByID(testDBDBID)
 	asst.Nil(err, common.CombineMessageWithError("test GetByID() failed", err))
-	asst.Equal(testDBDBName, db.GetDBName(), "test GetByID() failed")
+	asst.Equal(testDBDBName2, db.GetDBName(), "test GetByID() failed")
 }
 
 func TestDBRepo_GetByNameAndClusterInfo(t *testing.T) {
 	asst := assert.New(t)
 
-	db, err := testDBRepo.GetByNameAndClusterInfo(testDBDBName, testDBClusterID, testDBClusterType)
+	db, err := testDBRepo.GetByNameAndClusterInfo(testDBDBName2, testDBClusterID, testDBClusterType)
 	asst.Nil(err, common.CombineMessageWithError("test GetByNameAndClusterInfo() failed", err))
 	asst.Equal(testDBDBID, db.Identity(), "test GetByNameAndClusterInfo() failed")
 }
@@ -147,7 +147,7 @@ func TestDBRepo_GetAppUsersByDBID(t *testing.T) {
 
 	appOwners, err := testDBRepo.GetAppUsersByDBID(testDBDBID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAppUsersByDBID() failed", err))
-	asst.Equal(testDBUserID, appOwners[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
+	asst.Equal(1, appOwners[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
 }
 
 func TestDBRepo_GetUsersByDBID(t *testing.T) {
@@ -163,7 +163,7 @@ func TestDBRepo_GetAllUsersByDBID(t *testing.T) {
 
 	allOwners, err := testDBRepo.GetAllUsersByDBID(testDBDBID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAllUsersByDBID() failed", err))
-	asst.Equal(testDBUserID, allOwners[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
+	asst.Equal(1, allOwners[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
 }
 
 func TestDBRepo_Create(t *testing.T) {

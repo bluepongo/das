@@ -125,7 +125,7 @@ func (ds *DBService) GetAppUsersByDBID(id int) error {
 func (ds *DBService) GetUsersByDBID(id int) error {
 	var err error
 
-	ds.Owners, err = ds.DBRepo.GetAppUsersByDBID(id)
+	ds.Owners, err = ds.DBRepo.GetUsersByDBID(id)
 
 	return err
 }

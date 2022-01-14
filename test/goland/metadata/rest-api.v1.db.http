@@ -52,10 +52,10 @@ Content-Type: application/json
 POST http://{{baseURL}}/api/v1/metadata/db/add-user/1
 Content-Type: application/json
 
-{"user_id": 2}
+{"user_id": 4}
 
 ### delete user by id
 POST http://{{baseURL}}/api/v1/metadata/db/delete-user/1
 Content-Type: application/json
 
-{"user_id": 2}
+{"user_id": 4}
