@@ -21,16 +21,18 @@ func TestDBServiceAll(t *testing.T) {
 	TestDBService_GetByEnv(t)
 	TestDBService_GetByID(t)
 	TestDBService_GetByNameAndClusterInfo(t)
-	TestDBService_GetAppsByID(t)
+	TestDBService_GetAppsByDBID(t)
 	TestDBService_GetMySQLClusterByID(t)
-	TestDBService_GetAppOwnersByID(t)
-	TestDBService_GetDBOwnersByID(t)
-	TestDBService_GetAllOwnersByID(t)
+	TestDBService_GetAppUsersByDBID(t)
+	TestDBService_GetUsersByDBID(t)
+	TestDBService_GetAllUsersByDBID(t)
 	TestDBService_Create(t)
 	TestDBService_Update(t)
 	TestDBService_Delete(t)
 	TestDBService_AddApp(t)
 	TestDBService_DeleteApp(t)
+	TestDBService_DBAddUser(t)
+	TestDBService_DBDeleteUser(t)
 	TestDBService_Marshal(t)
 	TestDBService_MarshalWithFields(t)
 }
@@ -40,7 +42,7 @@ func TestDBService_GetDBs(t *testing.T) {
 
 	err := testDBService.GetAll()
 	asst.Nil(err, "test GetDBs() failed")
-	asst.Equal(3, len(testDBService.GetDBs()), constant.ZeroInt, "test GetDBs() failed")
+	asst.Equal(4, len(testDBService.GetDBs()), "test GetDBs() failed")
 }
 
 func TestDBService_GetAll(t *testing.T) {
@@ -48,7 +50,7 @@ func TestDBService_GetAll(t *testing.T) {
 
 	err := testDBService.GetAll()
 	asst.Nil(err, "test GetAll() failed")
-	asst.Equal(3, len(testDBService.GetDBs()), constant.ZeroInt, "test GetAll() failed")
+	asst.Equal(4, len(testDBService.GetDBs()), "test GetAll() failed")
 }
 
 func TestDBService_GetByEnv(t *testing.T) {
@@ -75,12 +77,12 @@ func TestDBService_GetByNameAndClusterInfo(t *testing.T) {
 	asst.Equal(testDBDBID, testDBService.GetDBs()[constant.ZeroInt].Identity(), "test GetByID() failed")
 }
 
-func TestDBService_GetAppsByID(t *testing.T) {
+func TestDBService_GetAppsByDBID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testDBService.GetAppsByID(testDBDBID)
-	asst.Nil(err, "test GetAppsByID() failed")
-	asst.Equal(testDBAppID, testDBService.GetApps()[constant.ZeroInt].Identity(), "test GetAppsByID() failed")
+	err := testDBService.GetAppsByDBID(testDBDBID)
+	asst.Nil(err, "test GetAppsByDBID() failed")
+	asst.Equal(testDBAppID, testDBService.GetApps()[constant.ZeroInt].Identity(), "test GetAppsByDBID() failed")
 }
 
 func TestDBService_GetMySQLClusterByID(t *testing.T) {
@@ -91,28 +93,28 @@ func TestDBService_GetMySQLClusterByID(t *testing.T) {
 	asst.Equal(testDBMySQLClusterID, testDBService.GetMySQLCluster().Identity(), "test GetMySQLClusterByID() failed")
 }
 
-func TestDBService_GetAppOwnersByID(t *testing.T) {
+func TestDBService_GetAppUsersByDBID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testDBService.GetAppOwnersByID(testDBDBID)
-	asst.Nil(err, "test GetAppOwnersByID() failed")
-	asst.Equal(testDBOwnerID, testDBService.GetOwners()[constant.ZeroInt].Identity(), "test GetAppOwnersByID() failed")
+	err := testDBService.GetAppUsersByDBID(testDBDBID)
+	asst.Nil(err, "test GetAppUsersByDBID() failed")
+	asst.Equal(testDBUserID, testDBService.GetOwners()[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
 }
 
-func TestDBService_GetDBOwnersByID(t *testing.T) {
+func TestDBService_GetUsersByDBID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testDBService.GetDBOwnersByID(testDBDBID)
-	asst.Nil(err, "test GetDBOwnersByID() failed")
-	asst.Equal(testDBOwnerID, testDBService.GetOwners()[constant.ZeroInt].Identity(), "test GetDBOwnersByID() failed")
+	err := testDBService.GetUsersByDBID(testDBDBID)
+	asst.Nil(err, "test GetUsersByDBID() failed")
+	asst.Equal(testDBUserID, testDBService.GetOwners()[constant.ZeroInt].Identity(), "test GetUsersByDBID() failed")
 }
 
-func TestDBService_GetAllOwnersByID(t *testing.T) {
+func TestDBService_GetAllUsersByDBID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testDBService.GetAllOwnersByID(testDBDBID)
-	asst.Nil(err, "test GetAllOwnersByID() failed")
-	asst.Equal(testDBOwnerID, testDBService.GetOwners()[constant.ZeroInt].Identity(), "test GetAllOwnersByID() failed")
+	err := testDBService.GetAllUsersByDBID(testDBDBID)
+	asst.Nil(err, "test GetAllUsersByDBID() failed")
+	asst.Equal(testDBUserID, testDBService.GetOwners()[constant.ZeroInt].Identity(), "test GetAllUsersByDBID() failed")
 }
 
 func TestDBService_Create(t *testing.T) {
@@ -159,26 +161,69 @@ func TestDBService_Delete(t *testing.T) {
 func TestDBService_AddApp(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testDBService.AddApp(testDBDBID, testDBNewAppID)
+	entity, err := testCreateDB()
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	err = testDBService.GetAppsByID(testDBDBID)
+	err = testDBService.AddApp(entity.Identity(), testDBNewAppID)
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	asst.Equal(2, len(testDBService.GetApps()), common.CombineMessageWithError("test AddApp() failed", err))
-	err = testDBService.DeleteApp(testDBDBID, testDBNewAppID)
+	err = testDBService.GetAppsByDBID(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+	asst.Equal(testDBNewAppID, testDBService.GetApps()[constant.ZeroInt].Identity())
+	err = testDBService.DeleteApp(entity.Identity(), testDBNewAppID)
+	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+	// delete
+	err = testDBRepo.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
 }
 
 func TestDBService_DeleteApp(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testDBService.AddApp(testDBDBID, testDBNewAppID)
+	entity, err := testCreateDB()
 	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	err = testDBService.DeleteApp(testDBDBID, testDBNewAppID)
+	err = testDBService.AddApp(entity.Identity(), testDBNewAppID)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	err = testDBService.GetAppsByID(testDBDBID)
+	err = testDBService.DeleteApp(entity.Identity(), testDBNewAppID)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	asst.Equal(1, len(testDBService.GetApps()), common.CombineMessageWithError("test AddApp() failed", err))
+	err = testDBService.GetAppsByDBID(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
+	asst.Equal(0, len(testDBService.GetApps()), "test DeleteApp() failed")
+	// delete
+	err = testDBRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
+}
 
+func TestDBService_DBAddUser(t *testing.T) {
+	asst := assert.New(t)
+
+	entity, err := testCreateDB()
+	asst.Nil(err, common.CombineMessageWithError("test DBAddUser() failed", err))
+	err = testDBService.DBAddUser(entity.Identity(), testDBNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test DBAddUser() failed", err))
+	err = testDBService.GetUsersByDBID(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test DBAddUser() failed", err))
+	asst.Equal(testDBNewUserID, testDBService.GetOwners()[constant.ZeroInt].Identity(), "test DBAddUser() failed")
+	err = testDBService.DBDeleteUser(entity.Identity(), testDBNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test DBAddUser() failed", err))
+	// delete
+	err = testDBRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test DBAddUser() failed", err))
+}
+
+func TestDBService_DBDeleteUser(t *testing.T) {
+	asst := assert.New(t)
+
+	entity, err := testCreateDB()
+	asst.Nil(err, common.CombineMessageWithError("test DBDeleteUser() failed", err))
+	err = testDBService.DBDeleteUser(entity.Identity(), testDBNewAppID)
+	asst.Nil(err, common.CombineMessageWithError("test DBDeleteUser() failed", err))
+	err = testDBService.DBDeleteUser(entity.Identity(), testDBNewAppID)
+	asst.Nil(err, common.CombineMessageWithError("test DBDeleteUser() failed", err))
+	err = testDBService.GetAppsByDBID(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test DBDeleteUser() failed", err))
+	asst.Equal(0, len(testDBService.GetOwners()), "test DBDeleteUser() failed")
+	// delete
+	err = testDBRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test DBDeleteUser() failed", err))
 }
 
 func TestDBService_Marshal(t *testing.T) {

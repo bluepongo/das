@@ -47,3 +47,15 @@ POST http://{{baseURL}}/api/v1/metadata/db/delete-app/1
 Content-Type: application/json
 
 {"app_id": 2}
+
+### add new user by id
+POST http://{{baseURL}}/api/v1/metadata/db/add-user/1
+Content-Type: application/json
+
+{"user_id": 2}
+
+### delete user by id
+POST http://{{baseURL}}/api/v1/metadata/db/delete-user/1
+Content-Type: application/json
+
+{"user_id": 2}
