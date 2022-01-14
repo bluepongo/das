@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -14,10 +15,10 @@ import (
 
 const (
 	testDBDBID                 = 1
-	testDBDBName               = "pmm_test"
-	testDBClusterID            = 1
+	testDBDBName               = "db_name"
+	testDBDBName2              = "test_db_name"
+	testDBClusterID            = 2
 	testDBClusterType          = 1
-	testDBOwnerID              = 1
 	testDBEnvID                = 1
 	testDBDelFlag              = 0
 	testDBCreateTimeString     = "2021-01-21 10:00:00.000000"
@@ -25,7 +26,9 @@ const (
 	testDBDBNameJSON           = "db_name"
 	testDBAppID                = 1
 	testDBNewAppID             = 2
-	testDBMySQLClusterID       = 1
+	testDBNewUserID            = 1
+	testDBMySQLClusterID       = 2
+	testDBUserID               = 2
 )
 
 var testDBInfo *DBInfo
@@ -45,7 +48,6 @@ func testInitNewDBInfo() *DBInfo {
 		testDBDBName,
 		testDBClusterID,
 		testDBClusterType,
-		testDBOwnerID,
 		testDBEnvID,
 		testDBDelFlag,
 		createTime,
@@ -55,7 +57,7 @@ func testInitNewDBInfo() *DBInfo {
 
 func dbEqual(a, b *DBInfo) bool {
 	return a.ID == b.ID && a.DBName == b.DBName && a.ClusterID == b.ClusterID && a.ClusterType == b.ClusterType &&
-		a.OwnerID == b.OwnerID && a.EnvID == b.EnvID && a.DelFlag == b.DelFlag && a.CreateTime == b.CreateTime &&
+		a.EnvID == b.EnvID && a.DelFlag == b.DelFlag && a.CreateTime == b.CreateTime &&
 		a.LastUpdateTime == b.LastUpdateTime
 }
 
@@ -64,7 +66,6 @@ func TestDBEntityAll(t *testing.T) {
 	TestDBInfo_GetDBName(t)
 	TestDBInfo_GetClusterID(t)
 	TestDBInfo_GetClusterType(t)
-	TestDBInfo_GetOwnerID(t)
 	TestDBInfo_GetEnvID(t)
 	TestDBInfo_GetDelFlag(t)
 	TestDBInfo_GetCreateTime(t)
@@ -78,6 +79,8 @@ func TestDBEntityAll(t *testing.T) {
 	TestDBInfo_Delete(t)
 	TestDBInfo_AddApp(t)
 	TestDBInfo_DeleteApp(t)
+	TestDBInfo_DBAddUser(t)
+	TestDBInfo_DBDeleteUser(t)
 	TestDBInfo_MarshalJSON(t)
 	TestDBInfo_MarshalJSONWithFields(t)
 }
@@ -104,12 +107,6 @@ func TestDBInfo_GetClusterType(t *testing.T) {
 	asst := assert.New(t)
 
 	asst.Equal(testDBClusterType, testDBInfo.GetClusterType(), "test GetClusterType() failed")
-}
-
-func TestDBInfo_GetOwnerID(t *testing.T) {
-	asst := assert.New(t)
-
-	asst.Equal(testDBOwnerID, testDBInfo.GetOwnerID(), "test GetOwnerID() failed")
 }
 
 func TestDBInfo_GetEnvID(t *testing.T) {
@@ -149,6 +146,7 @@ func TestDBInfo_GetAppOwners(t *testing.T) {
 
 	appOwners, err := testDBInfo.GetAppOwners()
 	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
+	fmt.Println(appOwners[constant.ZeroInt].Identity())
 	asst.Equal(testAppOwnerID, appOwners[constant.ZeroInt].Identity(), "test GetAppOwners() failed")
 }
 
@@ -157,7 +155,7 @@ func TestDBInfo_GetDBOwners(t *testing.T) {
 
 	dbOwners, err := testDBInfo.GetDBOwners()
 	asst.Nil(err, common.CombineMessageWithError("test GetDBOwners() failed", err))
-	asst.Equal(testAppOwnerID, dbOwners[constant.ZeroInt].Identity(), "test GetDBOwners() failed")
+	asst.Equal(2, dbOwners[constant.ZeroInt].Identity(), "test GetDBOwners() failed")
 }
 
 func TestDBInfo_GetAllOwners(t *testing.T) {
@@ -201,7 +199,7 @@ func TestDBInfo_AddApp(t *testing.T) {
 	asst := assert.New(t)
 
 	err := testDBInfo.AddApp(testDBNewAppID)
-	apps, err = testDBInfo.GetAppsByID(testDBInfo.Identity())
+	apps, err = testDBInfo.GetAppsByDBID(testDBInfo.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
 	asst.Equal(2, len(apps), "test AddApp() failed")
 	// delete
@@ -218,9 +216,32 @@ func TestDBInfo_DeleteApp(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
 	err = testDBInfo.DeleteApp(testDBNewAppID)
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	apps, err = testDBInfo.GetAppsByID(testDBInfo.Identity())
+	apps, err = testDBInfo.GetAppsByDBID(testDBInfo.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
 	asst.Equal(1, len(apps), "test AddApp() failed")
+}
+
+func TestDBInfo_DBAddUser(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testDBInfo.DBAddUser(testDBNewUserID)
+	users, err := testDBInfo.GetDBOwners()
+	asst.Nil(err, common.CombineMessageWithError("test DBAddUser() failed", err))
+	asst.Equal(2, len(users), "test DBAddUser() failed")
+	// delete
+	err = testDBInfo.DBDeleteUser(testDBNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test DBAddUser() failed", err))
+}
+func TestDBInfo_DBDeleteUser(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testDBInfo.DBAddUser(testDBNewUserID)
+	users, err := testDBInfo.GetDBOwners()
+	asst.Nil(err, common.CombineMessageWithError("test DBDeleteUser() failed", err))
+	asst.Equal(2, len(users), "test DBDeleteUser() failed")
+	// delete
+	err = testDBInfo.DBDeleteUser(testDBNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test DBDeleteUser() failed", err))
 }
 
 func TestDBInfo_MarshalJSON(t *testing.T) {
