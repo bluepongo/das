@@ -23,9 +23,12 @@ func TestMiddlewareClusterServiceAll(t *testing.T) {
 	TestMiddlewareClusterService_GetByID(t)
 	TestMiddlewareClusterService_GetByName(t)
 	TestMiddlewareClusterService_GetMiddlewareServers(t)
+	TestMiddlewareClusterService_GetMiddlewareServersByID(t)
 	TestMiddlewareClusterService_Create(t)
 	TestMiddlewareClusterService_Update(t)
 	TestMiddlewareClusterService_Delete(t)
+	TestMiddlewareClusterService_AddUser(t)
+	TestMiddlewareClusterService_DeleteUser(t)
 	TestMiddlewareClusterService_Marshal(t)
 	TestMiddlewareClusterService_MarshalWithFields(t)
 }
@@ -87,12 +90,19 @@ func TestMiddlewareClusterService_GetMiddlewareServersByID(t *testing.T) {
 	asst.Equal(1, len(testMiddlewareClusterService.GetMiddlewareServers()), "test GetMiddlewareServersByID() failed")
 }
 
+func TestMiddlewareClusterService_GetUsersByMiddlewareClusterID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testMiddlewareClusterService.GetUsersByMiddlewareClusterID(testMiddlewareClusterClusterID)
+	asst.Nil(err, "test GetUsersByMiddlewareClusterID() failed")
+	asst.Equal(1, len(testMiddlewareClusterService.Users), common.CombineMessageWithError("test GetUsersByMiddlewareClusterID() failed", err))
+}
+
 func TestMiddlewareClusterService_Create(t *testing.T) {
 	asst := assert.New(t)
 
 	err := testMiddlewareClusterService.Create(map[string]interface{}{
 		middlewareClusterClusterNameStruct: testMiddlewareClusterNewClusterName,
-		middlewareClusterOwnerIDStruct:     testMiddlewareClusterOwnerID,
 		middlewareClusterEnvIDStruct:       testMiddlewareClusterEnvID,
 	})
 	asst.Nil(err, common.CombineMessageWithError("test Create() failed", err))
@@ -125,6 +135,36 @@ func TestMiddlewareClusterService_Delete(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
 	err = testMiddlewareClusterService.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
+}
+
+func TestMiddlewareClusterService_AddUser(t *testing.T) {
+	asst := assert.New(t)
+	entity, err := testCreateMiddlewareCluster()
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+	err = testMiddlewareClusterService.AddUser(entity.Identity(), testMiddlewareClusterClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+	err = testMiddlewareClusterService.GetByID(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+	asst.Equal(testMiddlewareClusterClusterID, testMiddlewareClusterService.GetUsers()[constant.ZeroInt].Identity())
+	err = testMiddlewareClusterService.DeleteUser(entity.Identity(), testMiddlewareClusterClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+	err = testMiddlewareClusterRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+}
+
+func TestMiddlewareClusterService_DeleteUser(t *testing.T) {
+	asst := assert.New(t)
+	entity, err := testCreateMiddlewareCluster()
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+	err = testMiddlewareClusterService.AddUser(entity.Identity(), testMiddlewareClusterClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+	err = testMiddlewareClusterService.DeleteUser(entity.Identity(), testMiddlewareClusterClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+	err = testMiddlewareClusterService.GetUsersByMiddlewareClusterID(entity.Identity())
+	asst.Zero(len(testMiddlewareClusterService.GetUsers()))
+	err = testMiddlewareClusterRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+
 }
 
 func TestMiddlewareClusterService_Marshal(t *testing.T) {
