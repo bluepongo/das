@@ -108,7 +108,7 @@ func TestMiddlewareClusterInfo_GetUsersByMiddlewareClusterID(t *testing.T) {
 	asst := assert.New(t)
 	users, err := testMiddlewareClusterInfo.GetUsersByMiddlewareClusterID()
 	asst.Nil(err, common.CombineMessageWithError("test GetUsersByMiddlewareClusterID() failed", err))
-	asst.Equal(0, len(users), "test GetUsersByMiddlewareClusterID() failed")
+	asst.Equal(1, len(users), "test GetUsersByMiddlewareClusterID() failed")
 }
 
 func TestMiddlewareClusterInfo_Set(t *testing.T) {
@@ -139,7 +139,7 @@ func TestMiddlewareClusterInfo_AddUser(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
 	users, err := testMiddlewareClusterInfo.GetUsersByMiddlewareClusterID()
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
-	asst.Equal(1, len(users), common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+	asst.Equal(2, len(users), common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
 	// delete
 	err = testMiddlewareClusterInfo.DeleteUser(testMiddlewareClusterNewUserID)
 	asst.Nil(err, common.CombineMessageWithError("test testMiddlewareClusterNewUserID() failed", err))
