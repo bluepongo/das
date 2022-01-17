@@ -2,12 +2,10 @@ package metadata
 
 import (
 	"fmt"
-
-	"github.com/romberli/go-util/common"
-	"github.com/romberli/go-util/constant"
-
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/pkg/message"
+	"github.com/romberli/go-util/common"
+	"github.com/romberli/go-util/constant"
 )
 
 const dbDBsStruct = "DBs"
@@ -105,38 +103,38 @@ func (ds *DBService) GetMySQLClusterByID(id int) error {
 	return err
 }
 
-// GetAppsByID gets an apps that uses this db
-func (ds *DBService) GetAppsByID(dbID int) error {
+// GetAppsByDBID gets an apps that uses this db
+func (ds *DBService) GetAppsByDBID(dbID int) error {
 	var err error
 
-	ds.Apps, err = ds.DBRepo.GetAppsByID(dbID)
+	ds.Apps, err = ds.DBRepo.GetAppsByDBID(dbID)
 
 	return err
 }
 
 // GetAppOwnersByID gets the application owners of the given id
-func (ds *DBService) GetAppOwnersByID(id int) error {
+func (ds *DBService) GetAppUsersByDBID(id int) error {
 	var err error
 
-	ds.Owners, err = ds.DBRepo.GetAppOwnersByID(id)
+	ds.Owners, err = ds.DBRepo.GetAppUsersByDBID(id)
 
 	return err
 }
 
 // GetDBOwnersByID gets the db owners of the given id
-func (ds *DBService) GetDBOwnersByID(id int) error {
+func (ds *DBService) GetUsersByDBID(id int) error {
 	var err error
 
-	ds.Owners, err = ds.DBRepo.GetAppOwnersByID(id)
+	ds.Owners, err = ds.DBRepo.GetUsersByDBID(id)
 
 	return err
 }
 
 // GetAllOwnersByID gets both application and db owners of the given id
-func (ds *DBService) GetAllOwnersByID(id int) error {
+func (ds *DBService) GetAllUsersByDBID(id int) error {
 	var err error
 
-	ds.Owners, err = ds.DBRepo.GetAllOwnersByID(id)
+	ds.Owners, err = ds.DBRepo.GetAllUsersByDBID(id)
 
 	return err
 }
@@ -203,7 +201,7 @@ func (ds *DBService) AddApp(dbID, appID int) error {
 		return err
 	}
 
-	return ds.GetAppsByID(dbID)
+	return ds.GetAppsByDBID(dbID)
 }
 
 // DeleteApp deletes the map of app and database in the middleware
@@ -213,7 +211,27 @@ func (ds *DBService) DeleteApp(dbID, appID int) error {
 		return err
 	}
 
-	return ds.GetAppsByID(dbID)
+	return ds.GetAppsByDBID(dbID)
+}
+
+// DBAddUser adds a new map of user and database in the middleware
+func (ds *DBService) DBAddUser(dbID, userID int) error {
+	err := ds.DBRepo.DBAddUser(dbID, userID)
+	if err != nil {
+		return err
+	}
+
+	return ds.GetUsersByDBID(dbID)
+}
+
+// DBDeleteUser deletes the map of user and database in the middleware
+func (ds *DBService) DBDeleteUser(dbID, userID int) error {
+	err := ds.DBRepo.DBDeleteUser(dbID, userID)
+	if err != nil {
+		return err
+	}
+
+	return ds.GetUsersByDBID(dbID)
 }
 
 // Marshal marshals DBService.DBs to json bytes

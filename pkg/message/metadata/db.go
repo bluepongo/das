@@ -24,6 +24,8 @@ const (
 	DebugMetadataDeleteDB                  = 100208
 	DebugMetadataDBAddApp                  = 100209
 	DebugMetadataDBDeleteApp               = 100210
+	DebugMetadataDBAddUser                 = 100211
+	DebugMetadataDBDeleteUser              = 100212
 	// info
 	InfoMetadataGetDBAll                  = 200201
 	InfoMetadataGetDBByEnv                = 200202
@@ -35,6 +37,8 @@ const (
 	InfoMetadataDeleteDB                  = 200208
 	InfoMetadataDBAddApp                  = 200209
 	InfoMetadataDBDeleteApp               = 200210
+	InfoMetadataDBAddUser                 = 200211
+	InfoMetadataDBDeleteUser              = 200212
 	// error
 	ErrMetadataGetDBAll                  = 400201
 	ErrMetadataGetDBByEnv                = 400202
@@ -46,6 +50,8 @@ const (
 	ErrMetadataDeleteDB                  = 400208
 	ErrMetadataDBAddApp                  = 400209
 	ErrMetadataDBDeleteApp               = 400210
+	ErrMetadataDBAddUser                 = 400211
+	ErrMetadataDBDeleteUser              = 400212
 )
 
 func initDebugDBMessage() {
@@ -59,6 +65,8 @@ func initDebugDBMessage() {
 	message.Messages[DebugMetadataDeleteDB] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataDeleteDB, "metadata: delete database completed. message: %s")
 	message.Messages[DebugMetadataDBAddApp] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataDBAddApp, "metadata: add map of database and app completed. message: %s")
 	message.Messages[DebugMetadataDBDeleteApp] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataDBDeleteApp, "metadata: delete map of database and app completed. message: %s")
+	message.Messages[DebugMetadataDBAddUser] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataDBAddUser, "metadata: add map of database and user completed. message: %s")
+	message.Messages[DebugMetadataDBDeleteUser] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataDBDeleteUser, "metadata: delete map of database and user completed. message: %s")
 }
 
 func initInfoDBMessage() {
@@ -72,6 +80,8 @@ func initInfoDBMessage() {
 	message.Messages[InfoMetadataDeleteDB] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataDeleteDB, "metadata: delete database completed. id: %d")
 	message.Messages[InfoMetadataDBAddApp] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataDBAddApp, "metadata: add map of database and app completed. db_id: %d, app_id: %d")
 	message.Messages[InfoMetadataDBDeleteApp] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataDBDeleteApp, "metadata: delete map of database and app completed. db_id: %d, app_id: %d")
+	message.Messages[InfoMetadataDBAddUser] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataDBAddUser, "metadata: add map of database and user completed. db_id: %d, user_id: %d")
+	message.Messages[InfoMetadataDBDeleteUser] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataDBDeleteUser, "metadata: delete map of database and user completed. db_id: %d, user_id: %d")
 }
 
 func initErrorDBMessage() {
@@ -85,4 +95,6 @@ func initErrorDBMessage() {
 	message.Messages[ErrMetadataDeleteDB] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDeleteDB, "metadata: delete database failed. id: %d\n%s")
 	message.Messages[ErrMetadataDBAddApp] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDBAddApp, "metadata: add map of database and app failed. id: %d\n%s")
 	message.Messages[ErrMetadataDBDeleteApp] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDBDeleteApp, "metadata: delete map of database and app failed. id: %d\n%s")
+	message.Messages[ErrMetadataDBAddUser] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDBAddUser, "metadata: add map of database and user failed. id: %d\n%s")
+	message.Messages[ErrMetadataDBDeleteUser] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDBDeleteUser, "metadata: delete map of database and user failed. id: %d\n%s")
 }
