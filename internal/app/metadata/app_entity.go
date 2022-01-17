@@ -21,20 +21,18 @@ type AppInfo struct {
 	ID             int       `middleware:"id" json:"id"`
 	AppName        string    `middleware:"app_name" json:"app_name"`
 	Level          int       `middleware:"level" json:"level"`
-	OwnerID        int       `middleware:"owner_id" json:"owner_id"`
 	DelFlag        int       `middleware:"del_flag" json:"del_flag"`
 	CreateTime     time.Time `middleware:"create_time" json:"create_time"`
 	LastUpdateTime time.Time `middleware:"last_update_time" json:"last_update_time"`
 }
 
 // NewAppInfo returns a new AppInfo
-func NewAppInfo(repo metadata.AppRepo, id int, appName string, level int, ownerID int, delFlag int, createTime time.Time, lastUpdateTime time.Time) *AppInfo {
+func NewAppInfo(repo metadata.AppRepo, id int, appName string, level int, delFlag int, createTime time.Time, lastUpdateTime time.Time) *AppInfo {
 	return &AppInfo{
 		repo,
 		id,
 		appName,
 		level,
-		ownerID,
 		delFlag,
 		createTime,
 		lastUpdateTime,
@@ -42,13 +40,12 @@ func NewAppInfo(repo metadata.AppRepo, id int, appName string, level int, ownerI
 }
 
 // NewAppInfoWithGlobal NewAppInfo returns a new AppInfo with default AppRepo
-func NewAppInfoWithGlobal(id int, appName string, level int, ownerID int, delFlag int, createTime time.Time, lastUpdateTime time.Time) *AppInfo {
+func NewAppInfoWithGlobal(id int, appName string, level int, delFlag int, createTime time.Time, lastUpdateTime time.Time) *AppInfo {
 	return &AppInfo{
 		NewAppRepoWithGlobal(),
 		id,
 		appName,
 		level,
-		ownerID,
 		delFlag,
 		createTime,
 		lastUpdateTime,
@@ -66,7 +63,6 @@ func NewAppInfoWithDefault(appName string, level int) *AppInfo {
 		AppRepo: NewAppRepoWithGlobal(),
 		AppName: appName,
 		Level:   level,
-		OwnerID: constant.DefaultRandomInt,
 	}
 }
 
@@ -96,11 +92,6 @@ func (ai *AppInfo) GetLevel() int {
 	return ai.Level
 }
 
-// GetOwnerID returns the owner id
-func (ai *AppInfo) GetOwnerID() int {
-	return ai.OwnerID
-}
-
 // GetDelFlag returns the delete flag
 func (ai *AppInfo) GetDelFlag() int {
 	return ai.DelFlag
@@ -118,12 +109,12 @@ func (ai *AppInfo) GetLastUpdateTime() time.Time {
 
 // GetDBs gets databases that the app uses
 func (ai *AppInfo) GetDBs() ([]metadata.DB, error) {
-	return ai.AppRepo.GetDBsByID(ai.Identity())
+	return ai.AppRepo.GetDBsByAppID(ai.Identity())
 }
 
 // GetUsers gets user list that own the app
 func (ai *AppInfo) GetUsers() ([]metadata.User, error) {
-	return ai.AppRepo.GetUsersByID(ai.Identity())
+	return ai.AppRepo.GetUsersByAppID(ai.Identity())
 }
 
 // Set sets App with given fields, key is the field name and value is the relevant value of the key

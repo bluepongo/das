@@ -71,8 +71,8 @@ func TestAppRepoAll(t *testing.T) {
 	TestAppRepo_DeleteAppDB(t)
 	TestAppRepo_AddAppUser(t)
 	TestAppRepo_DeleteAppUser(t)
-	TestAppRepo_GetDBsByID(t)
-	TestAppRepo_GetUsersByID(t)
+	TestAppRepo_GetDBsByAppID(t)
+	TestAppRepo_GetUsersByAppID(t)
 
 }
 
@@ -90,12 +90,12 @@ func TestAppRepo_Execute(t *testing.T) {
 func TestAppRepo_Transaction(t *testing.T) {
 	asst := assert.New(t)
 
-	sql := `insert into t_meta_app_info(app_name,level,owner_id) values(?,?,?);`
+	sql := `insert into t_meta_app_info(app_name,level) values(?,?);`
 	tx, err := testAppRepo.Transaction()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	err = tx.Begin()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
-	_, err = tx.Execute(sql, testAppNewAppName, testAppLevel, testAppOwnerID)
+	_, err = tx.Execute(sql, testAppNewAppName, testAppLevel)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	// check if inserted
 	sql = `select app_name from t_meta_app_info where app_name=?`
@@ -182,21 +182,21 @@ func TestAppRepo_GetAppByName(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test GetAppByName() failed", err))
 }
 
-func TestAppRepo_GetDBsByID(t *testing.T) {
+func TestAppRepo_GetDBsByAppID(t *testing.T) {
 	asst := assert.New(t)
 
-	dbs, err := testAppRepo.GetDBsByID(testAppAppID)
-	asst.Nil(err, common.CombineMessageWithError("test GetDBsByID() failed", err))
-	asst.Equal(1, len(dbs), "test GetDBsByID() failed")
+	dbs, err := testAppRepo.GetDBsByAppID(testAppAppID)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBsByAppID() failed", err))
+	asst.Equal(1, len(dbs), "test GetDBsByAppID() failed")
 
 }
 
-func TestAppRepo_GetUsersByID(t *testing.T) {
+func TestAppRepo_GetUsersByAppID(t *testing.T) {
 	asst := assert.New(t)
 
-	users, err := testAppRepo.GetUsersByID(testAppAppID)
-	asst.Nil(err, common.CombineMessageWithError("test GetUsersByID() failed", err))
-	asst.Equal(2, len(users), "test GetUsersByID() failed")
+	users, err := testAppRepo.GetUsersByAppID(testAppAppID)
+	asst.Nil(err, common.CombineMessageWithError("test GetUsersByAppID() failed", err))
+	asst.Equal(2, len(users), "test GetUsersByAppID() failed")
 
 }
 func TestAppRepo_AddAppDB(t *testing.T) {

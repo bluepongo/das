@@ -144,9 +144,9 @@ func GetDBsByAppID(c *gin.Context) {
 	// init service
 	s := metadata.NewAppServiceWithDefault()
 	// get entity
-	err = s.GetDBsByID(id)
+	err = s.GetDBsByAppID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBsByID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBsByAppID, id, err.Error())
 		return
 	}
 	// marshal service
@@ -157,8 +157,8 @@ func GetDBsByAppID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBsByID, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBsByID, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBsByAppID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBsByAppID, id)
 }
 
 // @Tags application
@@ -434,9 +434,9 @@ func GetUsersByAppID(c *gin.Context) {
 	// init service
 	s := metadata.NewAppServiceWithDefault()
 	// get entity
-	err = s.GetUsersByID(id)
+	err = s.GetUsersByAppID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUsersByID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUsersByAppID, id, err.Error())
 		return
 	}
 	// marshal service
@@ -447,8 +447,8 @@ func GetUsersByAppID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetUsersByID, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetUsersByID, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetUsersByAppID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetUsersByAppID, id)
 }
 
 // @Tags application

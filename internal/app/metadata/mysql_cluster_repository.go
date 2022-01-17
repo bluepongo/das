@@ -11,6 +11,7 @@ import (
 	"github.com/romberli/das/internal/dependency/metadata"
 )
 
+// Cluster type code
 const (
 	ClusterTypeSingle = 1
 	ClusterTypeShard  = 2
@@ -59,7 +60,7 @@ func (mcr *MySQLClusterRepo) Transaction() (middleware.Transaction, error) {
 func (mcr *MySQLClusterRepo) GetAll() ([]metadata.MySQLCluster, error) {
 	sql := `
 		select id, cluster_name, middleware_cluster_id, monitor_system_id, 
-			owner_id, env_id, del_flag, create_time, last_update_time
+			env_id, del_flag, create_time, last_update_time
 		from t_meta_mysql_cluster_info
 		where del_flag = 0
 		order by id;
@@ -93,7 +94,7 @@ func (mcr *MySQLClusterRepo) GetAll() ([]metadata.MySQLCluster, error) {
 func (mcr *MySQLClusterRepo) GetByEnv(envID int) ([]metadata.MySQLCluster, error) {
 	sql := `
 		select id, cluster_name, middleware_cluster_id, monitor_system_id, 
-			owner_id, env_id, del_flag, create_time, last_update_time
+			env_id, del_flag, create_time, last_update_time
 		from t_meta_mysql_cluster_info
 		where del_flag = 0
 		and env_id = ?;
@@ -124,7 +125,7 @@ func (mcr *MySQLClusterRepo) GetByEnv(envID int) ([]metadata.MySQLCluster, error
 func (mcr *MySQLClusterRepo) GetByID(id int) (metadata.MySQLCluster, error) {
 	sql := `
 		select id, cluster_name, middleware_cluster_id, monitor_system_id, 
-			owner_id, env_id, del_flag, create_time, last_update_time
+			env_id, del_flag, create_time, last_update_time
 		from t_meta_mysql_cluster_info
 		where del_flag = 0
 		and id = ?;
@@ -156,7 +157,7 @@ func (mcr *MySQLClusterRepo) GetByID(id int) (metadata.MySQLCluster, error) {
 func (mcr *MySQLClusterRepo) GetByName(clusterName string) (metadata.MySQLCluster, error) {
 	sql := `
 		select id, cluster_name, middleware_cluster_id, monitor_system_id, 
-			owner_id, env_id, del_flag, create_time, last_update_time
+			env_id, del_flag, create_time, last_update_time
 		from t_meta_mysql_cluster_info where del_flag = 0 and cluster_name = ?;
 	`
 	log.Debugf("metadata MySQLClusterRepo.GetByName() select sql: %s", sql)
@@ -196,7 +197,7 @@ func (mcr *MySQLClusterRepo) GetID(clusterName string) (int, error) {
 // GetDBsByID gets the databases of the given id from the middleware
 func (mcr *MySQLClusterRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 	sql := `
-		select id, db_name, cluster_id, cluster_type, owner_id, env_id, del_flag, create_time, last_update_time
+		select id, db_name, cluster_id, cluster_type, env_id, del_flag, create_time, last_update_time
 		from t_meta_db_info
 		where del_flag = 0
 		and cluster_id = ?
@@ -224,8 +225,94 @@ func (mcr *MySQLClusterRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 	return dbList, nil
 }
 
-// GetAppOwnersByID gets the application owners of the given id from the middleware
-func (mcr *MySQLClusterRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
+// GetUsersByID gets the users of the given id from the middleware
+func (mcr *MySQLClusterRepo) GetUsersByID(id int) ([]metadata.User, error) {
+	sql := `
+		select distinct user.id,
+						user.user_name,
+						user.department_name,
+						user.employee_id,
+						user.account_name,
+						user.email,
+						user.telephone,
+						user.mobile,
+						user.role,
+						user.del_flag,
+						user.create_time,
+						user.last_update_time
+		from t_meta_user_info as user
+				 inner join t_meta_mysql_cluster_user_map as cum
+							on user.id = cum.user_id
+				 inner join t_meta_mysql_cluster_info as cluster
+							on cluster.id = cum.mysql_cluster_id
+		where user.del_flag = 0
+		  and cum.del_flag = 0
+		  and cluster.del_flag = 0
+		  and cluster.id = ?;
+	`
+	log.Debugf("metadata MySQLClusterRepo.GetUsersByID() sql: \n%s\nplaceholders: %d", sql, id)
+
+	result, err := mcr.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	userList := make([]metadata.User, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		userList[row] = NewEmptyUserInfoWithGlobal()
+	}
+	if len(userList) == 0 {
+		log.Errorf("metadata MySQLClusterRepo.GetUsersByID() failed. No active users are connected to this app, ID %d", id)
+	}
+	// map to struct
+	err = result.MapToStructSlice(userList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return userList, nil
+}
+
+// AddUser add a user for mysql cluster in the middleware
+func (mcr *MySQLClusterRepo) AddUser(mysqlClusterID, userID int) error {
+	userRepo := NewUserRepoWithGlobal()
+	_, err := userRepo.GetByID(userID)
+	if err != nil {
+		return err
+	}
+	_, err = mcr.GetByID(mysqlClusterID)
+	if err != nil {
+		return err
+	}
+	sql := `insert into t_meta_mysql_cluster_user_map(mysql_cluster_id, user_id) values(?, ?);`
+	log.Debugf("metadata MySQLClusterRepo.AddUser() insert sql: %s", sql)
+	_, err = mcr.Execute(sql, mysqlClusterID, userID)
+
+	return err
+}
+
+// DeleteUser delete a user for mysql cluster in the middleware
+func (mcr *MySQLClusterRepo) DeleteUser(mysqlClusterID, userID int) error {
+	userRepo := NewUserRepoWithGlobal()
+	_, err := userRepo.GetByID(userID)
+	if err != nil {
+		return err
+	}
+	_, err = mcr.GetByID(mysqlClusterID)
+	if err != nil {
+		return err
+	}
+	sql := `delete from t_meta_mysql_cluster_user_map where mysql_cluster_id = ? and user_id = ?;`
+	log.Debugf("metadata AppRepo.DeleteUser() delete sql: %s", sql)
+	_, err = mcr.Execute(sql, mysqlClusterID, userID)
+
+	return err
+}
+
+// GetAppUsersByID gets the application users of the given id from the middleware
+func (mcr *MySQLClusterRepo) GetAppUsersByID(id int) ([]metadata.User, error) {
 	sql := `
 		select distinct user.id,
 						user.user_name,
@@ -242,18 +329,18 @@ func (mcr *MySQLClusterRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 		from t_meta_user_info as user
 				 inner join t_meta_app_user_map as aum
 							on user.id = aum.user_id
-				 inner join t_meta_app_db_map as map
-							on aum.app_id = map.app_id
+				 inner join t_meta_app_db_map as adm
+							on aum.app_id = adm.app_id
 				 inner join t_meta_db_info as db
-							on db.id = map.db_id
+							on db.id = adm.db_id
 		where user.del_flag = 0
 		  and aum.del_flag = 0
 		  and db.del_flag = 0
-		  and map.del_flag = 0
+		  and adm.del_flag = 0
 		  and db.cluster_id = ?
 		  and db.cluster_type = ?;
 	`
-	log.Debugf("metadata MySQLClusterRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id, ClusterTypeSingle)
+	log.Debugf("metadata MySQLClusterRepo.GetAppUsersByID() sql: \n%s\nplaceholders: %d, %d", sql, id, ClusterTypeSingle)
 
 	result, err := mcr.Execute(sql, id, ClusterTypeSingle)
 	if err != nil {
@@ -267,7 +354,7 @@ func (mcr *MySQLClusterRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 		userList[row] = NewEmptyUserInfoWithGlobal()
 	}
 	if len(userList) == 0 {
-		log.Errorf("metadata MySQLClusterRepo.GetAppOwnersByID() failed. No active users are connected to this app, ID %d", id)
+		log.Errorf("metadata MySQLClusterRepo.GetAppUsersByID() failed. No active users are connected to this app, ID %d", id)
 	}
 	// map to struct
 	err = result.MapToStructSlice(userList, constant.DefaultMiddlewareTag)
@@ -278,8 +365,8 @@ func (mcr *MySQLClusterRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 	return userList, nil
 }
 
-// GetDBOwnersByID gets the db owners of the given id from the middleware
-func (mcr *MySQLClusterRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
+// GetDBUsersByID gets the db users of the given id from the middleware
+func (mcr *MySQLClusterRepo) GetDBUsersByID(id int) ([]metadata.User, error) {
 	sql := `
 		select distinct user.id,
 						user.user_name,
@@ -293,15 +380,18 @@ func (mcr *MySQLClusterRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
 						user.del_flag,
 						user.create_time,
 						user.last_update_time
-		from t_meta_user_info as user
+		from t_meta_user_info as user 
+				 inner join t_meta_db_user_map as dum
+							on user.id = dum.user_id
 				 inner join t_meta_db_info as db
-							on user.id = db.owner_id
+							on dum.db_id = db.id
 		where user.del_flag = 0
+		  and dum.del_flag = 0
 		  and db.del_flag = 0
 		  and db.cluster_id = ?
 		  and db.cluster_type = ?;
 	`
-	log.Debugf("metadata MySQLClusterRepo.GetDBOwnersByID() sql: \n%s\nplaceholders: %d", sql, id, ClusterTypeSingle)
+	log.Debugf("metadata MySQLClusterRepo.GetDBUsersByID() sql: \n%s\nplaceholders: %d", sql, id, ClusterTypeSingle)
 
 	result, err := mcr.Execute(sql, id, ClusterTypeSingle)
 	if err != nil {
@@ -323,8 +413,8 @@ func (mcr *MySQLClusterRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
 	return userList, nil
 }
 
-// GetAllOwnersByID gets both application and db owners of the given id from the middleware
-func (mcr *MySQLClusterRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
+// GetAllUsersByID gets both application and db users of the given id from the middleware
+func (mcr *MySQLClusterRepo) GetAllUsersByID(id int) ([]metadata.User, error) {
 	sql := `
 		select user.id,
 			   user.user_name,
@@ -364,17 +454,42 @@ func (mcr *MySQLClusterRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
 			   user.del_flag,
 			   user.create_time,
 			   user.last_update_time
-		from t_meta_user_info as user
+		from t_meta_user_info as user 
+				 inner join t_meta_db_user_map as dum
+							on user.id = dum.user_id
 				 inner join t_meta_db_info as db
-							on user.id = db.owner_id
+							on dum.db_id = db.id
 		where user.del_flag = 0
+		  and dum.del_flag = 0
 		  and db.del_flag = 0
 		  and db.cluster_id = ?
-		  and db.cluster_type = ?;
+		  and db.cluster_type = ?
+		union
+		select distinct user.id,
+			   user.user_name,
+			   user.department_name,
+			   user.employee_id,
+			   user.account_name,
+			   user.email,
+			   user.telephone,
+			   user.mobile,
+			   user.role,
+			   user.del_flag,
+			   user.create_time,
+			   user.last_update_time
+		from t_meta_user_info as user
+				 inner join t_meta_mysql_cluster_user_map as cum
+							on user.id = cum.user_id
+				 inner join t_meta_mysql_cluster_info as cluster
+							on cluster.id = cum.mysql_cluster_id
+		where user.del_flag = 0
+		  and cum.del_flag = 0
+		  and cluster.del_flag = 0
+		  and cluster.id = ?;
 	`
-	log.Debugf("metadata MySQLClusterRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d, %d, %d", sql, id, ClusterTypeSingle, id, ClusterTypeSingle)
+	log.Debugf("metadata MySQLClusterRepo.GetAppUsersByID() sql: \n%s\nplaceholders: %d, %d, %d, %d", sql, id, ClusterTypeSingle, id, ClusterTypeSingle)
 
-	result, err := mcr.Execute(sql, id, ClusterTypeSingle, id, ClusterTypeSingle)
+	result, err := mcr.Execute(sql, id, ClusterTypeSingle, id, ClusterTypeSingle, id)
 	if err != nil {
 		return nil, err
 	}
@@ -398,15 +513,15 @@ func (mcr *MySQLClusterRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
 func (mcr *MySQLClusterRepo) Create(mysqlCluster metadata.MySQLCluster) (metadata.MySQLCluster, error) {
 	sql := `
 		insert into t_meta_mysql_cluster_info(cluster_name,middleware_cluster_id,
-			 monitor_system_id, owner_id, env_id) 
-		values(?,?,?,?,?);`
+			 monitor_system_id, env_id) 
+		values(?,?,?,?);`
 	log.Debugf("metadata MySQLClusterRepo.Create() insert sql: %s", sql)
 	// execute
 	_, err := mcr.Execute(sql,
 		mysqlCluster.GetClusterName(),
 		mysqlCluster.GetMiddlewareClusterID(),
 		mysqlCluster.GetMonitorSystemID(),
-		mysqlCluster.GetOwnerID(),
+		// mysqlCluster.GetOwnerID(),
 		mysqlCluster.GetEnvID())
 	if err != nil {
 		return nil, err
@@ -424,8 +539,7 @@ func (mcr *MySQLClusterRepo) Create(mysqlCluster metadata.MySQLCluster) (metadat
 func (mcr *MySQLClusterRepo) Update(entity metadata.MySQLCluster) error {
 	sql := `
 		update t_meta_mysql_cluster_info set cluster_name = ?, middleware_cluster_id = ?, 
-			monitor_system_id = ?, owner_id = ?, 
-			env_id = ?, del_flag = ? 
+			monitor_system_id = ?, env_id = ?, del_flag = ? 
 		where id = ?;`
 	log.Debugf("metadata MySQLClusterRepo.Update() update sql: %s", sql)
 	mysqlClusterInfo := entity.(*MySQLClusterInfo)
@@ -433,7 +547,7 @@ func (mcr *MySQLClusterRepo) Update(entity metadata.MySQLCluster) error {
 		mysqlClusterInfo.ClusterName,
 		mysqlClusterInfo.MiddlewareClusterID,
 		mysqlClusterInfo.MonitorSystemID,
-		mysqlClusterInfo.OwnerID,
+		// mysqlClusterInfo.OwnerID,
 		mysqlClusterInfo.EnvID,
 		mysqlClusterInfo.DelFlag, mysqlClusterInfo.ID)
 

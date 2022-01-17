@@ -964,11 +964,11 @@ func (de *DefaultEngine) getToAddrs() (string, error) {
 	)
 	switch viper.GetString(config.HealthcheckAlertOwnerTypeKey) {
 	case config.HealthcheckAlertOwnerTypeApp:
-		owners, err = mysqlCluster.GetAppOwners()
+		owners, err = mysqlCluster.GetAppUsers()
 	case config.HealthcheckAlertOwnerTypeDB:
-		owners, err = mysqlCluster.GetDBOwners()
+		owners, err = mysqlCluster.GetDBUsers()
 	case config.HealthcheckAlertOwnerTypeAll:
-		owners, err = mysqlCluster.GetAllOwners()
+		owners, err = mysqlCluster.GetAllUsers()
 	}
 	if err != nil {
 		return constant.EmptyString, err
