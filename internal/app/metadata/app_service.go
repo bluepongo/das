@@ -79,20 +79,20 @@ func (as *AppService) GetAppByName(appName string) error {
 	return nil
 }
 
-// GetDBsByID gets databases that the app uses
-func (as *AppService) GetDBsByID(id int) error {
+// GetDBsByAppID gets databases that the app uses
+func (as *AppService) GetDBsByAppID(id int) error {
 	var err error
 
-	as.DBs, err = as.AppRepo.GetDBsByID(id)
+	as.DBs, err = as.AppRepo.GetDBsByAppID(id)
 
 	return err
 }
 
-// GetUsersByID gets Users that own the app
-func (as *AppService) GetUsersByID(id int) error {
+// GetUsersByAppID gets Users that own the app
+func (as *AppService) GetUsersByAppID(id int) error {
 	var err error
 
-	as.Users, err = as.AppRepo.GetUsersByID(id)
+	as.Users, err = as.AppRepo.GetUsersByAppID(id)
 
 	return err
 }
@@ -161,7 +161,7 @@ func (as *AppService) AddDB(appID, dbID int) error {
 		return err
 	}
 
-	return as.GetDBsByID(appID)
+	return as.GetDBsByAppID(appID)
 }
 
 // DeleteDB deletes the map of app and database in the middleware
@@ -171,7 +171,7 @@ func (as *AppService) DeleteDB(appID, dbID int) error {
 		return err
 	}
 
-	return as.GetDBsByID(appID)
+	return as.GetDBsByAppID(appID)
 }
 
 // AddUser adds a new map of app and user in the middleware
@@ -181,7 +181,7 @@ func (as *AppService) AddUser(appID, userID int) error {
 		return err
 	}
 
-	return as.GetUsersByID(appID)
+	return as.GetUsersByAppID(appID)
 }
 
 // DeleteUser deletes the map of app and database in the middleware
@@ -191,7 +191,7 @@ func (as *AppService) DeleteUser(appID, userID int) error {
 		return err
 	}
 
-	return as.GetUsersByID(appID)
+	return as.GetUsersByAppID(appID)
 }
 
 // Marshal marshals AppService.Apps to json bytes
