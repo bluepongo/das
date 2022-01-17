@@ -13,7 +13,7 @@ import (
 const (
 	testDBNewDBName    = "test_new_db_name"
 	testDBUpdateDBName = "test_update_db_name"
-	testDBAllDBNum     = 5
+	testDBAllDBNum     = 6
 )
 
 var testDBRepo *DBRepo
