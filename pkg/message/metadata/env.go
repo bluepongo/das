@@ -36,7 +36,6 @@ const (
 )
 
 func initDebugEnvMessage() {
-	//debug
 	message.Messages[DebugMetadataGetEnvAll] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetEnvAll, "metadata: get all environments message: %s")
 	message.Messages[DebugMetadataGetEnvByID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetEnvByID, "metadata: get environment by id message: %s")
 	message.Messages[DebugMetadataAddEnv] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataAddEnv, "metadata: add new environment message: %s")
@@ -46,12 +45,12 @@ func initDebugEnvMessage() {
 }
 
 func initErrorEnvMessage() {
-	message.Messages[ErrMetadataGetEnvAll] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEnvAll, "metadata: get all environment failed.\n%s")
-	message.Messages[ErrMetadataGetEnvByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEnvByID, "metadata: get environment by id failed. id: %d\n%s")
-	message.Messages[ErrMetadataAddEnv] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAddEnv, "metadata: add new environment failed. env_name: %s\n%s")
-	message.Messages[ErrMetadataUpdateEnv] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataUpdateEnv, "metadata: update environment failed. id: %d\n%s")
-	message.Messages[ErrMetadataGetEnvByName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEnvByName, "metadata: get environment by name failed. id: %d\n%s")
-	message.Messages[ErrMetadataDeleteEnvByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDeleteEnvByID, "metadata: delete environment by ID failed. id: %d\n%s")
+	message.Messages[ErrMetadataGetEnvAll] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEnvAll, "metadata: get all environment failed")
+	message.Messages[ErrMetadataGetEnvByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEnvByID, "metadata: get environment by id failed. id: %d")
+	message.Messages[ErrMetadataAddEnv] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAddEnv, "metadata: add new environment failed. env_name: %s")
+	message.Messages[ErrMetadataUpdateEnv] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataUpdateEnv, "metadata: update environment failed. id: %d")
+	message.Messages[ErrMetadataGetEnvByName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEnvByName, "metadata: get environment by name failed. id: %d")
+	message.Messages[ErrMetadataDeleteEnvByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDeleteEnvByID, "metadata: delete environment by ID failed. id: %d")
 }
 
 func initInfoEnvMessage() {
