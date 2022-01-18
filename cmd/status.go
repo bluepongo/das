@@ -42,7 +42,7 @@ var statusCmd = &cobra.Command{
 		// init config
 		err = initConfig()
 		if err != nil {
-			fmt.Println(message.NewMessage(message.ErrInitConfig, err.Error()).Error())
+			fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.ErrInitConfig, err)))
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 
@@ -50,13 +50,13 @@ var statusCmd = &cobra.Command{
 		if serverPid != constant.DefaultRandomInt {
 			isRunning, err = linux.IsRunningWithPid(serverPid)
 			if err != nil {
-				fmt.Println(message.NewMessage(message.ErrCheckServerRunningStatus, err.Error()).Error())
+				fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.ErrCheckServerRunningStatus, err)))
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 			if isRunning {
-				fmt.Println(message.NewMessage(message.InfoServerIsRunning, serverPid).Error())
+				fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.InfoServerIsRunning, serverPid)))
 			} else {
-				fmt.Println(message.NewMessage(message.InfoServerNotRunning, serverPid).Error())
+				fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.InfoServerNotRunning, serverPid)))
 			}
 
 			os.Exit(constant.DefaultNormalExitCode)
@@ -66,18 +66,18 @@ var statusCmd = &cobra.Command{
 		serverPidFile = viper.GetString(config.ServerPidFileKey)
 		serverPid, err = linux.GetPidFromPidFile(serverPidFile)
 		if err != nil {
-			fmt.Println(message.NewMessage(message.ErrGetPidFromPidFile, serverPidFile, err.Error()).Error())
+			fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.ErrGetPidFromPidFile, err, serverPidFile)))
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 		isRunning, err = linux.IsRunningWithPid(serverPid)
 		if err != nil {
-			fmt.Println(message.NewMessage(message.ErrCheckServerRunningStatus, err.Error()).Error())
+			fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.ErrCheckServerRunningStatus, err)))
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 		if isRunning {
-			fmt.Println(message.NewMessage(message.InfoServerIsRunning, serverPid).Error())
+			fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.InfoServerIsRunning, serverPid)))
 		} else {
-			fmt.Println(message.NewMessage(message.InfoServerNotRunning, serverPid).Error())
+			fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.InfoServerNotRunning, serverPid)))
 		}
 
 		os.Exit(constant.DefaultNormalExitCode)

@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/go-multierror"
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/alert"
 	"github.com/romberli/das/internal/app/metadata"
@@ -18,6 +17,7 @@ import (
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
 	util "github.com/romberli/das/pkg/util/query"
+	"github.com/romberli/go-multierror"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"

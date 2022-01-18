@@ -17,6 +17,7 @@ package message
 
 import (
 	"github.com/romberli/go-util/config"
+	"github.com/romberli/go-util/constant"
 )
 
 const DefaultMessageHeader = "DAS"
@@ -28,7 +29,15 @@ func init() {
 	initErrorMessage()
 }
 
-// NewMessage returns *config.ErrMessage with specified values
+// NewMessage returns *config.ErrMessage with specified values,
+// if the first value is error, it will set the error as Err of *Config.ErrMessage
 func NewMessage(code int, values ...interface{}) *config.ErrMessage {
+	if len(values) > constant.ZeroInt {
+		err, ok := values[constant.ZeroInt].(error)
+		if ok {
+			return Messages[code].Renew(values[1:]...).SetError(err)
+		}
+	}
+
 	return Messages[code].Renew(values...)
 }

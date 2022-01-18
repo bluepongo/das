@@ -21,6 +21,7 @@ import (
 	"os/exec"
 	"time"
 
+	"github.com/pingcap/errors"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"
 	"github.com/romberli/log"
@@ -48,7 +49,7 @@ var startCmd = &cobra.Command{
 		// init config
 		err = initConfig()
 		if err != nil {
-			fmt.Println(message.NewMessage(message.ErrInitConfig, err.Error()).Error())
+			fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.ErrInitConfig, err)))
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 
@@ -56,17 +57,17 @@ var startCmd = &cobra.Command{
 		serverPidFile = viper.GetString(config.ServerPidFileKey)
 		pidFileExists, err = linux.PathExists(serverPidFile)
 		if err != nil {
-			log.Error(message.NewMessage(message.ErrCheckServerPid, err.Error()).Error())
+			log.Errorf("%+v", message.NewMessage(message.ErrCheckServerPid, err))
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 		if pidFileExists {
 			isRunning, err = linux.IsRunningWithPidFile(serverPidFile)
 			if err != nil {
-				log.Error(message.NewMessage(message.ErrCheckServerRunningStatus, err.Error()).Error())
+				log.Errorf("%+v", message.NewMessage(message.ErrCheckServerRunningStatus, err))
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 			if isRunning {
-				log.Error(message.NewMessage(message.ErrServerIsRunning, serverPidFile).Error())
+				log.Errorf("%+v", message.NewMessage(message.ErrServerIsRunning, serverPidFile))
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 		}
@@ -86,7 +87,7 @@ var startCmd = &cobra.Command{
 			startCommand := exec.Command(os.Args[0], args...)
 			err = startCommand.Start()
 			if err != nil {
-				log.Error(message.NewMessage(message.ErrStartAsForeground, err.Error()).Error())
+				log.Errorf("%+v", message.NewMessage(message.ErrStartAsForeground, errors.Trace(err)))
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 
@@ -99,16 +100,16 @@ var startCmd = &cobra.Command{
 			// save pid
 			err = linux.SavePid(serverPid, serverPidFile, constant.DefaultFileMode)
 			if err != nil {
-				log.Error(message.NewMessage(message.ErrSavePidToFile, err.Error()).Error())
+				log.Errorf("%+v", message.NewMessage(message.ErrSavePidToFile, err))
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 
-			log.CloneStdoutLogger().Info(message.NewMessage(message.InfoServerStart, serverPid, serverPidFile).Error())
+			log.CloneStdoutLogger().Infof("%+v", message.NewMessage(message.InfoServerStart, serverPid, serverPidFile))
 
 			// init connection pool
 			err = global.InitDASMySQLPool()
 			if err != nil {
-				log.Error(message.NewMessage(message.ErrInitConnectionPool, err.Error()).Error())
+				log.Errorf("%+v", message.NewMessage(message.ErrInitConnectionPool, err))
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 

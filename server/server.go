@@ -107,7 +107,7 @@ func (s *server) Run() {
 
 	err := s.router.Run(s.addr)
 	if err != nil {
-		log.Errorf("server run failed.\n%s", err.Error())
+		log.Errorf("server run failed.\n%+v", err)
 	}
 }
 
@@ -115,7 +115,7 @@ func (s *server) Run() {
 func (s *server) Stop() {
 	err := linux.RemovePidFile(s.pidFile)
 	if err != nil {
-		log.Error(message.NewMessage(message.ErrRemovePidFile, s.pidFile, err.Error()).Error())
+		log.Errorf("%+v", message.NewMessage(message.ErrRemovePidFile, err, s.pidFile))
 	}
 
 	os.Exit(constant.DefaultNormalExitCode)
