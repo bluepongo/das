@@ -104,7 +104,7 @@ var startCmd = &cobra.Command{
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 
-			log.CloneStdoutLogger().Infof("%+v", message.NewMessage(message.InfoServerStart, serverPid, serverPidFile))
+			log.CloneStdoutLogger().Info(message.NewMessage(message.InfoServerStart, serverPid, serverPidFile).Error())
 
 			// init connection pool
 			err = global.InitDASMySQLPool()

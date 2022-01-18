@@ -55,7 +55,7 @@ var stopCmd = &cobra.Command{
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 
-			log.CloneStdoutLogger().Infof("%+v", message.NewMessage(message.InfoServerStop, serverPid))
+			log.CloneStdoutLogger().Info(message.NewMessage(message.InfoServerStop, serverPid).Error())
 			os.Exit(constant.DefaultNormalExitCode)
 		}
 
@@ -76,7 +76,7 @@ var stopCmd = &cobra.Command{
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 
-		log.CloneStdoutLogger().Infof("%+v", message.NewMessage(message.InfoServerStop, serverPid, serverPidFile))
+		log.CloneStdoutLogger().Info(message.NewMessage(message.InfoServerStop, serverPid, serverPidFile).Error())
 		os.Exit(constant.DefaultNormalExitCode)
 	},
 }

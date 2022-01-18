@@ -54,9 +54,9 @@ var statusCmd = &cobra.Command{
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 			if isRunning {
-				fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.InfoServerIsRunning, serverPid)))
+				fmt.Println(message.NewMessage(message.InfoServerIsRunning, serverPid).Error())
 			} else {
-				fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.InfoServerNotRunning, serverPid)))
+				fmt.Println(message.NewMessage(message.InfoServerNotRunning, serverPid).Error())
 			}
 
 			os.Exit(constant.DefaultNormalExitCode)
@@ -75,9 +75,9 @@ var statusCmd = &cobra.Command{
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 		if isRunning {
-			fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.InfoServerIsRunning, serverPid)))
+			fmt.Println(message.NewMessage(message.InfoServerIsRunning, serverPid).Error())
 		} else {
-			fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.InfoServerNotRunning, serverPid)))
+			fmt.Println(message.NewMessage(message.InfoServerNotRunning, serverPid).Error())
 		}
 
 		os.Exit(constant.DefaultNormalExitCode)
