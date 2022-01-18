@@ -23,7 +23,7 @@ func NewMiddlewareClusterRepo(db middleware.Pool) *MiddlewareClusterRepo {
 	return &MiddlewareClusterRepo{db}
 }
 
-// NewMiddlewareClusterRepo returns *MiddlewareClusterRepo with global mysql pool
+// NewMiddlewareClusterRepoWithGlobal returns *MiddlewareClusterRepo with global mysql pool
 func NewMiddlewareClusterRepoWithGlobal() *MiddlewareClusterRepo {
 	return NewMiddlewareClusterRepo(global.DASMySQLPool)
 }

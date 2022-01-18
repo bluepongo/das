@@ -15,8 +15,6 @@ type DB interface {
 	GetClusterID() int
 	// GetClusterType returns the cluster type
 	GetClusterType() int
-	// GetOwnerID returns the owner id
-	GetOwnerID() int
 	// GetEnvID returns the env id
 	GetEnvID() int
 	// GetDelFlag returns the delete flag
@@ -39,10 +37,14 @@ type DB interface {
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
 	Delete()
-	// AddDB adds a new map of the app and database in the middleware
+	// AddApp adds a new map of the app and database in the middleware
 	AddApp(appID int) error
 	// DeleteApp deletes a new map of the app and database in the middleware
 	DeleteApp(appID int) error
+	// DBAddUser adds a new map of the user and database in the middleware
+	DBAddUser(userID int) error
+	// DBDeleteUser deletes a new map of the user and database in the middleware
+	DBDeleteUser(userID int) error
 	// MarshalJSON marshals DB to json string
 	MarshalJSON() ([]byte, error)
 	// MarshalJSONWithFields marshals only specified field of the DB to json string
@@ -66,14 +68,14 @@ type DBRepo interface {
 	GetID(dbName string, clusterID int, clusterType int) (int, error)
 	// GetMySQLCLusterByID gets the mysql cluster of the given id from the middleware
 	GetMySQLCLusterByID(id int) (MySQLCluster, error)
-	// GetAppsByID gets an apps that uses this db
-	GetAppsByID(id int) ([]App, error)
-	// GetAppOwnersByID gets the application owners of the given id from the middleware
-	GetAppOwnersByID(id int) ([]User, error)
-	// GetDBOwnersByID gets the db owners of the given id from the middleware
-	GetDBOwnersByID(id int) ([]User, error)
-	// GetAllOwnersByID gets both application and db owners of the given id from the middleware
-	GetAllOwnersByID(id int) ([]User, error)
+	// GetAppsByDBID gets an apps that uses this db
+	GetAppsByDBID(id int) ([]App, error)
+	// GetAppUsersByDBID gets the application owners of the given id from the middleware
+	GetAppUsersByDBID(id int) ([]User, error)
+	// GetUsersByDBID gets the db owners of the given id from the middleware
+	GetUsersByDBID(id int) ([]User, error)
+	// GetAllUsersByDBID gets both application and db owners of the given id from the middleware
+	GetAllUsersByDBID(id int) ([]User, error)
 	// Create creates a database in the middleware
 	Create(db DB) (DB, error)
 	// Update updates the database in the middleware
@@ -84,6 +86,10 @@ type DBRepo interface {
 	AddApp(dbID, appID int) error
 	// DeleteApp deletes a map of the app and database in the middleware
 	DeleteApp(dbID, appID int) error
+	// DBAddUser adds a new map of the user and database in the middleware
+	DBAddUser(dbID, userID int) error
+	// DBDeleteUser deletes a map of the user and database in the middleware
+	DBDeleteUser(dbID, userID int) error
 }
 
 type DBService interface {
@@ -106,13 +112,13 @@ type DBService interface {
 	// GetMySQLClusterByID gets the cluster of the db
 	GetMySQLClusterByID(id int) error
 	// GetAppsByID gets apps that uses this db
-	GetAppsByID(id int) error
+	GetAppsByDBID(id int) error
 	// GetAppOwnersByID gets the application owners of the given id
-	GetAppOwnersByID(id int) error
+	GetAppUsersByDBID(id int) error
 	// GetDBOwnersByID gets the db owners of the given id
-	GetDBOwnersByID(id int) error
+	GetUsersByDBID(id int) error
 	// GetAllOwnersByID gets both application and db owners of the given id
-	GetAllOwnersByID(id int) error
+	GetAllUsersByDBID(id int) error
 	// Create creates a database in the middleware
 	Create(fields map[string]interface{}) error
 	// Update gets a database of the given id from the middleware,
@@ -126,6 +132,10 @@ type DBService interface {
 	AddApp(dbID, appID int) error
 	// DeleteApp deletes the map of app and database in the middleware
 	DeleteApp(dbID, appID int) error
+	// DBAddUser adds a new map of the user and database in the middleware
+	DBAddUser(dbID, userID int) error
+	// DBDeleteUser deletes a map of the user and database in the middleware
+	DBDeleteUser(dbID, userID int) error
 	// Marshal marshals DBService.DBs to json bytes
 	Marshal() ([]byte, error)
 	// MarshalWithFields marshals only specified fields of the DBService to json bytes

@@ -55,8 +55,8 @@ func TestMiddlewareClusterEntityAll(t *testing.T) {
 	TestMiddlewareClusterInfo_GetUsersByMiddlewareClusterID(t)
 	TestMiddlewareClusterInfo_Set(t)
 	TestMiddlewareClusterInfo_Delete(t)
-	TestMiddlewareClusterInfo_MiddlewareClusterAddUser(t)
-	TestMiddlewareClusterInfo_MiddlewareClusterDeleteUser(t)
+	TestMiddlewareClusterInfo_AddUser(t)
+	TestMiddlewareClusterInfo_DeleteUser(t)
 	TestMiddlewareClusterInfo_MarshalJSON(t)
 	TestMiddlewareClusterInfo_MarshalJSONWithFields(t)
 }
@@ -132,25 +132,25 @@ func TestMiddlewareClusterInfo_Delete(t *testing.T) {
 	asst.Equal(constant.ZeroInt, testMiddlewareClusterInfo.GetDelFlag(), "test Delete() failed")
 }
 
-func TestMiddlewareClusterInfo_MiddlewareClusterAddUser(t *testing.T) {
+func TestMiddlewareClusterInfo_AddUser(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testMiddlewareClusterInfo.MiddlewareClusterAddUser(testMiddlewareClusterNewUserID)
+	err := testMiddlewareClusterInfo.AddUser(testMiddlewareClusterNewUserID)
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
 	users, err := testMiddlewareClusterInfo.GetUsersByMiddlewareClusterID()
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
 	asst.Equal(2, len(users), common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
 	// delete
-	err = testMiddlewareClusterInfo.MiddlewareClusterDeleteUser(testMiddlewareClusterNewUserID)
+	err = testMiddlewareClusterInfo.DeleteUser(testMiddlewareClusterNewUserID)
 	asst.Nil(err, common.CombineMessageWithError("test testMiddlewareClusterNewUserID() failed", err))
 }
 
-func TestMiddlewareClusterInfo_MiddlewareClusterDeleteUser(t *testing.T) {
+func TestMiddlewareClusterInfo_DeleteUser(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testMiddlewareClusterInfo.MiddlewareClusterAddUser(testMiddlewareClusterNewUserID)
+	err := testMiddlewareClusterInfo.AddUser(testMiddlewareClusterNewUserID)
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
-	err = testMiddlewareClusterInfo.MiddlewareClusterDeleteUser(testMiddlewareClusterNewUserID)
+	err = testMiddlewareClusterInfo.DeleteUser(testMiddlewareClusterNewUserID)
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterDeleteUser() failed", err))
 	users, err := testMiddlewareClusterInfo.GetUsersByMiddlewareClusterID()
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterDeleteUser() failed", err))

@@ -25,7 +25,6 @@ type DBInfo struct {
 	DBName         string    `middleware:"db_name" json:"db_name"`
 	ClusterID      int       `middleware:"cluster_id" json:"cluster_id"`
 	ClusterType    int       `middleware:"cluster_type" json:"cluster_type"`
-	OwnerID        int       `middleware:"owner_id" json:"owner_id"`
 	EnvID          int       `middleware:"env_id" json:"env_id"`
 	DelFlag        int       `middleware:"del_flag" json:"del_flag"`
 	CreateTime     time.Time `middleware:"create_time" json:"create_time"`
@@ -33,7 +32,7 @@ type DBInfo struct {
 }
 
 // NewDBInfo returns a new *DBInfo
-func NewDBInfo(repo *DBRepo, id int, dbName string, clusterID int, clusterType int, ownerID int,
+func NewDBInfo(repo *DBRepo, id int, dbName string, clusterID int, clusterType int,
 	envID int, delFlag int, createTime time.Time, lastUpdateTime time.Time) *DBInfo {
 	return &DBInfo{
 		repo,
@@ -41,7 +40,6 @@ func NewDBInfo(repo *DBRepo, id int, dbName string, clusterID int, clusterType i
 		dbName,
 		clusterID,
 		clusterType,
-		ownerID,
 		envID,
 		delFlag,
 		createTime,
@@ -50,7 +48,7 @@ func NewDBInfo(repo *DBRepo, id int, dbName string, clusterID int, clusterType i
 }
 
 // NewDBInfoWithGlobal NewDBInfo returns a new DBInfo with default DBRepo
-func NewDBInfoWithGlobal(id int, dbName string, clusterID, clusterType, ownerID, envID, delFlag int,
+func NewDBInfoWithGlobal(id int, dbName string, clusterID, clusterType, envID, delFlag int,
 	createTime, lastUpdateTime time.Time) *DBInfo {
 	return &DBInfo{
 		NewDBRepoWithGlobal(),
@@ -58,7 +56,6 @@ func NewDBInfoWithGlobal(id int, dbName string, clusterID, clusterType, ownerID,
 		dbName,
 		clusterID,
 		clusterType,
-		ownerID,
 		envID,
 		delFlag,
 		createTime,
@@ -83,7 +80,6 @@ func NewDBInfoWithDefault(dbName string, clusterID, clusterType, envID int) *DBI
 		DBName:      dbName,
 		ClusterID:   clusterID,
 		ClusterType: clusterType,
-		OwnerID:     constant.DefaultRandomInt,
 		EnvID:       envID,
 	}
 }
@@ -119,11 +115,6 @@ func (di *DBInfo) GetClusterType() int {
 	return di.ClusterType
 }
 
-// GetOwnerID returns the owner id
-func (di *DBInfo) GetOwnerID() int {
-	return di.OwnerID
-}
-
 // GetEnvID returns the env id
 func (di *DBInfo) GetEnvID() int {
 	return di.EnvID
@@ -146,7 +137,7 @@ func (di *DBInfo) GetLastUpdateTime() time.Time {
 
 // GetApps gets app identity list that uses this db
 func (di *DBInfo) GetApps() ([]metadata.App, error) {
-	return di.DBRepo.GetAppsByID(di.ID)
+	return di.DBRepo.GetAppsByDBID(di.ID)
 }
 
 // GetMySQLCluster gets the mysql cluster of this db
@@ -156,17 +147,17 @@ func (di *DBInfo) GetMySQLCluster() (metadata.MySQLCluster, error) {
 
 // GetAllOwners gets the application owners of this db
 func (di *DBInfo) GetAppOwners() ([]metadata.User, error) {
-	return di.DBRepo.GetAppOwnersByID(di.ID)
+	return di.DBRepo.GetAppUsersByDBID(di.ID)
 }
 
 // GetAllOwners gets the db owners of this db
 func (di *DBInfo) GetDBOwners() ([]metadata.User, error) {
-	return di.DBRepo.GetDBOwnersByID(di.ID)
+	return di.DBRepo.GetUsersByDBID(di.ID)
 }
 
 // GetAllOwners gets both application and db owners of this db
 func (di *DBInfo) GetAllOwners() ([]metadata.User, error) {
-	return di.DBRepo.GetAllOwnersByID(di.ID)
+	return di.DBRepo.GetAllUsersByDBID(di.ID)
 }
 
 // Set sets DB with given fields, key is the field name and value is the relevant value of the key
@@ -194,6 +185,16 @@ func (di *DBInfo) AddApp(appID int) error {
 // DeleteApp delete the map of application system and database in the middleware
 func (di *DBInfo) DeleteApp(appID int) error {
 	return di.DBRepo.DeleteApp(di.ID, appID)
+}
+
+// DBAddUser adds a new map of user and database in the middleware
+func (di *DBInfo) DBAddUser(userID int) error {
+	return di.DBRepo.DBAddUser(di.ID, userID)
+}
+
+// DBDeleteUser delete the map of user and database in the middleware
+func (di *DBInfo) DBDeleteUser(userID int) error {
+	return di.DBRepo.DBDeleteUser(di.ID, userID)
 }
 
 // MarshalJSON marshals DB to json string
