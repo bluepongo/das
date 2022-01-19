@@ -5,9 +5,9 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/hashicorp/go-multierror"
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/dependency/alert"
+	"github.com/romberli/go-multierror"
 	"github.com/romberli/go-util/constant"
 	"github.com/spf13/viper"
 )

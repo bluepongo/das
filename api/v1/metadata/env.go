@@ -35,13 +35,13 @@ func GetEnv(c *gin.Context) {
 	// get entities
 	err := s.GetAll()
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvAll, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvAll, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -66,7 +66,7 @@ func GetEnvByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	// init service
@@ -74,13 +74,13 @@ func GetEnvByID(c *gin.Context) {
 	// get entity
 	err = s.GetByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByID, id, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -106,13 +106,13 @@ func GetEnvByName(c *gin.Context) {
 	// get entity
 	err := s.GetEnvByName(envName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByName, envName, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByName, envName, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -134,13 +134,13 @@ func AddEnv(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, err)
 		return
 	}
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.EnvInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, ok := fields[envEnvNameStruct]
@@ -153,13 +153,13 @@ func AddEnv(c *gin.Context) {
 	// insert into middleware
 	err = s.Create(fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddEnv, fields[envEnvNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddEnv, err, fields[envEnvNameStruct])
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -185,18 +185,18 @@ func UpdateEnvByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, err)
 		return
 	}
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.EnvInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, envNameExists := fields[envEnvNameStruct]
@@ -210,14 +210,14 @@ func UpdateEnvByID(c *gin.Context) {
 	// update entity
 	err = s.Update(id, fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateEnv, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateEnv, err, id)
 		return
 	}
 
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// resp
@@ -242,7 +242,7 @@ func DeleteEnvByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	// init service
@@ -250,13 +250,13 @@ func DeleteEnvByID(c *gin.Context) {
 	// update entities
 	err = s.Delete(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteEnvByID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteEnvByID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response

@@ -1,9 +1,9 @@
 package sqladvisor
 
 import (
-	"github.com/hashicorp/go-multierror"
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/dependency/sqladvisor"
+	"github.com/romberli/go-multierror"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/log"
 	"github.com/spf13/viper"

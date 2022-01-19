@@ -14,48 +14,48 @@ func init() {
 
 const (
 	// debug
-	DebugMetadataGetAppAll     = 100101
-	DebugMetadataGetAppByID    = 100102
-	DebugMetadataGetAppByName  = 100103
-	DebugMetadataGetDBIDList   = 100104
-	DebugMetadataAddApp        = 100105
-	DebugMetadataUpdateApp     = 100106
-	DebugMetadataDeleteApp     = 100107
-	DebugMetadataAppAddDB      = 100108
-	DebugMetadataAppDeleteDB   = 100109
-	DebugMetadataGetDBsByID    = 100110
-	DebugMetadataGetUsersByID  = 100111
-	DebugMetadataAppAddUser    = 100112
-	DebugMetadataAppDeleteUser = 100113
+	DebugMetadataGetAppAll       = 100101
+	DebugMetadataGetAppByID      = 100102
+	DebugMetadataGetAppByName    = 100103
+	DebugMetadataGetDBIDList     = 100104
+	DebugMetadataAddApp          = 100105
+	DebugMetadataUpdateApp       = 100106
+	DebugMetadataDeleteApp       = 100107
+	DebugMetadataAppAddDB        = 100108
+	DebugMetadataAppDeleteDB     = 100109
+	DebugMetadataGetDBsByAppID   = 100110
+	DebugMetadataGetUsersByAppID = 100111
+	DebugMetadataAppAddUser      = 100112
+	DebugMetadataAppDeleteUser   = 100113
 	// info
-	InfoMetadataGetAppAll     = 200101
-	InfoMetadataGetAppByID    = 200102
-	InfoMetadataGetAppByName  = 200103
-	InfoMetadataGetDBIDList   = 200104
-	InfoMetadataAddApp        = 200105
-	InfoMetadataUpdateApp     = 200106
-	InfoMetadataDeleteApp     = 200107
-	InfoMetadataAppAddDB      = 200108
-	InfoMetadataAppDeleteDB   = 200109
-	InfoMetadataGetDBsByID    = 200110
-	InfoMetadataGetUsersByID  = 200111
-	InfoMetadataAppAddUser    = 200112
-	InfoMetadataAppDeleteUser = 200113
+	InfoMetadataGetAppAll       = 200101
+	InfoMetadataGetAppByID      = 200102
+	InfoMetadataGetAppByName    = 200103
+	InfoMetadataGetDBIDList     = 200104
+	InfoMetadataAddApp          = 200105
+	InfoMetadataUpdateApp       = 200106
+	InfoMetadataDeleteApp       = 200107
+	InfoMetadataAppAddDB        = 200108
+	InfoMetadataAppDeleteDB     = 200109
+	InfoMetadataGetDBsByAppID   = 200110
+	InfoMetadataGetUsersByAppID = 200111
+	InfoMetadataAppAddUser      = 200112
+	InfoMetadataAppDeleteUser   = 200113
 
 	// error
-	ErrMetadataGetAppAll     = 400101
-	ErrMetadataGetAppByID    = 400102
-	ErrMetadataGetAppByName  = 400103
-	ErrMetadataGetDBIDList   = 400104
-	ErrMetadataAddApp        = 400105
-	ErrMetadataUpdateApp     = 400106
-	ErrMetadataDeleteApp     = 400107
-	ErrMetadataAppAddDB      = 400108
-	ErrMetadataAppDeleteDB   = 400109
-	ErrMetadataGetDBsByID    = 400110
-	ErrMetadataGetUsersByID  = 400111
-	ErrMetadataAppAddUser    = 400112
-	ErrMetadataAppDeleteUser = 400113
+	ErrMetadataGetAppAll       = 400101
+	ErrMetadataGetAppByID      = 400102
+	ErrMetadataGetAppByName    = 400103
+	ErrMetadataGetDBIDList     = 400104
+	ErrMetadataAddApp          = 400105
+	ErrMetadataUpdateApp       = 400106
+	ErrMetadataDeleteApp       = 400107
+	ErrMetadataAppAddDB        = 400108
+	ErrMetadataAppDeleteDB     = 400109
+	ErrMetadataGetDBsByAppID   = 400110
+	ErrMetadataGetUsersByAppID = 400111
+	ErrMetadataAppAddUser      = 400112
+	ErrMetadataAppDeleteUser   = 400113
 )
 
 func initDebugAppMessage() {
@@ -70,8 +70,8 @@ func initDebugAppMessage() {
 	message.Messages[DebugMetadataAppAddUser] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataAppAddUser, "metadata: add map of app and user completed. message: %s")
 	message.Messages[DebugMetadataAppDeleteDB] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataAppDeleteDB, "metadata: delete map of app and database completed. message: %s")
 	message.Messages[DebugMetadataAppDeleteUser] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataAppDeleteUser, "metadata: delete map of app and user completed. message: %s")
-	message.Messages[DebugMetadataGetDBsByID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetDBsByID, "metadata: get dbs by id completed. message: %s")
-	message.Messages[DebugMetadataGetUsersByID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetUsersByID, "metadata: get dbs by id completed. message: %s")
+	message.Messages[DebugMetadataGetDBsByAppID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetDBsByAppID, "metadata: get dbs by id completed. message: %s")
+	message.Messages[DebugMetadataGetUsersByAppID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetUsersByAppID, "metadata: get dbs by id completed. message: %s")
 }
 
 func initInfoAppMessage() {
@@ -86,8 +86,8 @@ func initInfoAppMessage() {
 	message.Messages[InfoMetadataAppAddUser] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataAppAddUser, "metadata: add map of app and user completed. app_id: %d, db_id: %d")
 	message.Messages[InfoMetadataAppDeleteDB] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataAppDeleteDB, "metadata: delete map of app and database completed. app_id: %d, db_id: %d")
 	message.Messages[InfoMetadataAppDeleteUser] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataAppDeleteUser, "metadata: delete map of app and user completed. app_id: %d, db_id: %d")
-	message.Messages[InfoMetadataGetDBsByID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetDBsByID, "metadata: get dbs by id completed. app_id: %d")
-	message.Messages[InfoMetadataGetUsersByID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetUsersByID, "metadata: get dbs by id completed. app_id: %d")
+	message.Messages[InfoMetadataGetDBsByAppID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetDBsByAppID, "metadata: get dbs by id completed. app_id: %d")
+	message.Messages[InfoMetadataGetUsersByAppID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetUsersByAppID, "metadata: get dbs by id completed. app_id: %d")
 
 }
 
@@ -103,6 +103,6 @@ func initErrorAppMessage() {
 	message.Messages[ErrMetadataAppAddUser] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAppAddUser, "metadata: add map of app and user failed. id: %d\n%s")
 	message.Messages[ErrMetadataAppDeleteDB] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAppDeleteDB, "metadata: delete map of app and database failed. id: %d\n%s")
 	message.Messages[ErrMetadataAppDeleteUser] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAppDeleteUser, "metadata: delete map of app and user failed. id: %d\n%s")
-	message.Messages[ErrMetadataGetDBsByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetDBsByID, "metadata: get dbs by id failed. app_id: %d\n%s")
-	message.Messages[ErrMetadataGetUsersByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetUsersByID, "metadata: get dbs by id failed. app_id: %d\n%s")
+	message.Messages[ErrMetadataGetDBsByAppID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetDBsByAppID, "metadata: get dbs by id failed. app_id: %d\n%s")
+	message.Messages[ErrMetadataGetUsersByAppID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetUsersByAppID, "metadata: get dbs by id failed. app_id: %d\n%s")
 }
