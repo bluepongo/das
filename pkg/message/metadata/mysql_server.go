@@ -12,6 +12,7 @@ func init() {
 	initErrorMySQLServerMessage()
 }
 
+// Message code
 const (
 	// debug
 	DebugMetadataGetMySQLServerAll         = 100801
@@ -23,8 +24,6 @@ const (
 	DebugMetadataAddMySQLServer            = 100807
 	DebugMetadataUpdateMySQLServer         = 100808
 	DebugMetadataDeleteMySQLServer         = 100809
-)
-const (
 	// info
 	InfoMetadataGetMySQLServerAll         = 200801
 	InfoMetadataGetMySQLServerByClusterID = 200802
@@ -35,8 +34,6 @@ const (
 	InfoMetadataAddMySQLServer            = 200807
 	InfoMetadataUpdateMySQLServer         = 200808
 	InfoMetadataDeleteMySQLServer         = 200809
-)
-const (
 	// error
 	ErrMetadataGetMySQLServerAll         = 400801
 	ErrMetadataGetMySQLServerByClusterID = 400802
@@ -131,37 +128,37 @@ func initErrorMySQLServerMessage() {
 	message.Messages[ErrMetadataGetMySQLServerAll] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLServerAll,
-		"metadata: get all mysql server failed.\n%s")
+		"metadata: get all mysql server failed")
 	message.Messages[ErrMetadataGetMySQLServerByClusterID] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLServerByClusterID,
-		"metadata: get mysql server by cluster id failed. cluster_id: %d\n%s")
+		"metadata: get mysql server by cluster id failed. cluster_id: %d")
 	message.Messages[ErrMetadataGetMySQLServerByID] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLServerByID,
-		"metadata: get mysql server by id failed. id: %d\n%s")
+		"metadata: get mysql server by id failed. id: %d")
 	message.Messages[ErrMetadataGetMySQLServerByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLServerByHostInfo,
-		"metadata: get mysql server by host info failed. host_ip: %s, port_num: %d\n%s")
+		"metadata: get mysql server by host info failed. host_ip: %s, port_num: %d")
 	message.Messages[ErrMetadataIsMaster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataIsMaster,
-		"metadata: check if server is master failed. host_ip: %s, port_num: %d\n%s")
+		"metadata: check if server is master failed. host_ip: %s, port_num: %d")
 	message.Messages[ErrMetadataGetMySQLServerByClusterID] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterByServerID,
-		"metadata: get mysql cluster by server id failed. server_id: %d\n%s")
+		"metadata: get mysql cluster by server id failed. server_id: %d")
 	message.Messages[ErrMetadataAddMySQLServer] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataAddMySQLServer,
-		"metadata: add new mysql server failed. server_name: server_name: %s, cluster_id: %d, host_ip: %s, port_num: %d, deployment_type: %d\n%s")
+		"metadata: add new mysql server failed. server_name: server_name: %s, cluster_id: %d, host_ip: %s, port_num: %d, deployment_type: %d")
 	message.Messages[ErrMetadataUpdateMySQLServer] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataUpdateMySQLServer,
-		"metadata: update mysql server failed. server_name: %s\n%s")
+		"metadata: update mysql server failed. server_name: %s")
 	message.Messages[ErrMetadataDeleteMySQLServer] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataDeleteMySQLServer,
-		"metadata: delete mysql server failed. id: %s\n%s")
+		"metadata: delete mysql server failed. id: %s")
 }
