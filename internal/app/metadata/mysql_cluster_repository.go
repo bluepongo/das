@@ -263,9 +263,6 @@ func (mcr *MySQLClusterRepo) GetUsersByID(id int) ([]metadata.User, error) {
 	for row := 0; row < resultNum; row++ {
 		userList[row] = NewEmptyUserInfoWithGlobal()
 	}
-	if len(userList) == 0 {
-		log.Errorf("metadata MySQLClusterRepo.GetUsersByID() failed. No active users are connected to this app, ID %d", id)
-	}
 	// map to struct
 	err = result.MapToStructSlice(userList, constant.DefaultMiddlewareTag)
 	if err != nil {
@@ -352,9 +349,6 @@ func (mcr *MySQLClusterRepo) GetAppUsersByID(id int) ([]metadata.User, error) {
 
 	for row := 0; row < resultNum; row++ {
 		userList[row] = NewEmptyUserInfoWithGlobal()
-	}
-	if len(userList) == 0 {
-		log.Errorf("metadata MySQLClusterRepo.GetAppUsersByID() failed. No active users are connected to this app, ID %d", id)
 	}
 	// map to struct
 	err = result.MapToStructSlice(userList, constant.DefaultMiddlewareTag)
