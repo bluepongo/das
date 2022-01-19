@@ -210,7 +210,7 @@ func IsMaster(c *gin.Context) {
 	// get entity
 	isMaster, err := s.IsMaster(hostIP, portNum)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataIsMaster, hostIP, portNum, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataIsMaster, err, hostIP, portNum)
 		return
 	}
 	// response

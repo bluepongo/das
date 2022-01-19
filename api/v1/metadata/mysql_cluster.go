@@ -394,7 +394,7 @@ func MySQLClusterDeleteUser(c *gin.Context) {
 	dataMap := make(map[string]int)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataMySQLClusterDeleteUser, id, errors.Trace(err))
+		resp.ResponseNOK(c, msgmeta.ErrMetadataMySQLClusterDeleteUser, errors.Trace(err), id)
 		return
 	}
 	userID, userIDExists := dataMap[mysqlClusterUserIDJSON]
