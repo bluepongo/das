@@ -1,9 +1,9 @@
 package metadata
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
@@ -37,7 +37,7 @@ func (mcr *MiddlewareClusterRepo) Execute(command string, args ...interface{}) (
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("metadata MiddlewareClusterRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata MiddlewareClusterRepo.Execute(): close database connection failed.\n%+v", err)
 		}
 	}()
 
@@ -263,7 +263,7 @@ func (mcr *MiddlewareClusterRepo) Delete(id int) error {
 	defer func() {
 		err = tx.Close()
 		if err != nil {
-			log.Errorf("metadata MiddlewareClusterRepo.Delete(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata MiddlewareClusterRepo.Delete(): close database connection failed.\n%+v", err)
 		}
 	}()
 

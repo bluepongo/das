@@ -80,15 +80,15 @@ func initInfoMiddlewareClusterMessage() {
 }
 
 func initErrorMiddlewareClusterMessage() {
-	message.Messages[ErrMetadataGetMiddlewareClusterAll] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareClusterAll, "metadata: get all middleware clusters failed.\n%s")
-	message.Messages[ErrMetadataGetMiddlewareClusterByEnv] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareClusterByEnv, "metadata: get middleware cluster by environment failed.\n%s")
-	message.Messages[ErrMetadataGetMiddlewareClusterByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareClusterByID, "metadata: get middleware cluster by id failed. id: %d\n%s")
-	message.Messages[ErrMetadataGetMiddlewareClusterByName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareClusterByName, "metadata: get middleware cluster by name failed. id: %d\n%s")
-	message.Messages[ErrMetadataGetMiddlewareServers] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareServers, "metadata: get middleware servers failed.\n%s")
-	message.Messages[ErrMetadataAddMiddlewareCluster] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAddMiddlewareCluster, "metadata: add new middleware cluster failed. env_name: %s\n%s")
-	message.Messages[ErrMetadataUpdateMiddlewareCluster] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataUpdateMiddlewareCluster, "metadata: update middleware cluster failed. id: %d\n%s")
-	message.Messages[ErrMetadataDeleteMiddlewareCluster] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDeleteMiddlewareCluster, "metadata: delete middleware cluster failed. cluster_name: %s\n%s")
-	message.Messages[ErrMetadataGetUsersByMiddlewareClusterID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetUsersByMiddlewareClusterID, "metadata: get users by middleware cluster id failed.\n%s")
-	message.Messages[ErrMetadataMiddlewareClusterAddUser] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataMiddlewareClusterAddUser, "metadata: add map of middleware cluster and user failed. id: %d\n%s")
-	message.Messages[ErrMetadataMiddlewareClusterDeleteUser] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataMiddlewareClusterDeleteUser, "metadata: delete map of middleware cluster and user failed. id: %d\n%s")
+	message.Messages[ErrMetadataGetMiddlewareClusterAll] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareClusterAll, "metadata: get all middleware clusters failed")
+	message.Messages[ErrMetadataGetMiddlewareClusterByEnv] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareClusterByEnv, "metadata: get middleware cluster by environment failed")
+	message.Messages[ErrMetadataGetMiddlewareClusterByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareClusterByID, "metadata: get middleware cluster by id failed. id: %d")
+	message.Messages[ErrMetadataGetMiddlewareClusterByName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareClusterByName, "metadata: get middleware cluster by name failed. id: %d")
+	message.Messages[ErrMetadataGetMiddlewareServers] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareServers, "metadata: get middleware servers failed")
+	message.Messages[ErrMetadataAddMiddlewareCluster] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAddMiddlewareCluster, "metadata: add new middleware cluster failed. env_name: %s")
+	message.Messages[ErrMetadataUpdateMiddlewareCluster] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataUpdateMiddlewareCluster, "metadata: update middleware cluster failed. id: %d")
+	message.Messages[ErrMetadataDeleteMiddlewareCluster] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDeleteMiddlewareCluster, "metadata: delete middleware cluster failed. cluster_name: %s")
+	message.Messages[ErrMetadataGetUsersByMiddlewareClusterID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetUsersByMiddlewareClusterID, "metadata: get users by middleware cluster id failed")
+	message.Messages[ErrMetadataMiddlewareClusterAddUser] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataMiddlewareClusterAddUser, "metadata: add map of middleware cluster and user failed. id: %d")
+	message.Messages[ErrMetadataMiddlewareClusterDeleteUser] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataMiddlewareClusterDeleteUser, "metadata: delete map of middleware cluster and user failed. id: %d")
 }

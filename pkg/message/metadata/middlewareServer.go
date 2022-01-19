@@ -60,11 +60,11 @@ func initInfoMiddlewareServerMessage() {
 }
 
 func initErrorMiddlewareServerMessage() {
-	message.Messages[ErrMetadataGetMiddlewareServerAll] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareServerAll, "metadata: get all middleware server failed.\n%s")
-	message.Messages[ErrMetadataGetMiddlewareSeverByClusterID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareSeverByClusterID, "metadata: get middleware cluster by cluster failed.\n%s")
-	message.Messages[ErrMetadataGetMiddlewareServerByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareServerByID, "metadata: get middleware server by id failed. id: %d\n%s")
-	message.Messages[ErrMetadataGetMiddlewareServerByHostInfo] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareServerByHostInfo, "metadata: get middleware cluster by host info failed. host ip: %s, port num: %d\n%s")
-	message.Messages[ErrMetadataAddMiddlewareServer] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAddMiddlewareServer, "metadata: add new middleware server failed. server_name: %s\n%s")
-	message.Messages[ErrMetadataUpdateMiddlewareServer] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataUpdateMiddlewareServer, "metadata: update middleware server failed. id: %d\n%s")
-	message.Messages[ErrMetadataDeleteMiddlewareServer] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDeleteMiddlewareServer, "metadata: delete middleware server failed. server_name: %s\n%s")
+	message.Messages[ErrMetadataGetMiddlewareServerAll] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareServerAll, "metadata: get all middleware server failed")
+	message.Messages[ErrMetadataGetMiddlewareSeverByClusterID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareSeverByClusterID, "metadata: get middleware cluster by cluster failed")
+	message.Messages[ErrMetadataGetMiddlewareServerByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareServerByID, "metadata: get middleware server by id failed. id: %d")
+	message.Messages[ErrMetadataGetMiddlewareServerByHostInfo] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareServerByHostInfo, "metadata: get middleware cluster by host info failed. host ip: %s, port num: %d")
+	message.Messages[ErrMetadataAddMiddlewareServer] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAddMiddlewareServer, "metadata: add new middleware server failed. server_name: %s")
+	message.Messages[ErrMetadataUpdateMiddlewareServer] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataUpdateMiddlewareServer, "metadata: update middleware server failed. id: %d")
+	message.Messages[ErrMetadataDeleteMiddlewareServer] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDeleteMiddlewareServer, "metadata: delete middleware server failed. server_name: %s")
 }

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/romberli/das/internal/dependency/metadata"
-
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 )
@@ -49,7 +48,7 @@ func NewMiddlewareServerInfo(repo metadata.MiddlewareServerRepo, id int, cluster
 	}
 }
 
-// NewMiddlewareServerInfo returns a new MiddlewareServerInfo with default MiddlewareServerRepo
+// NewMiddlewareServerInfoWithGlobal returns a new MiddlewareServerInfo with default MiddlewareServerRepo
 func NewMiddlewareServerInfoWithGlobal(id int, clusterID int, serverName string, middlewareRole int, hostIP string, portNum int, delFlag int, createTime time.Time, lastUpdateTime time.Time) *MiddlewareServerInfo {
 	return &MiddlewareServerInfo{
 		NewMiddlewareServerRepoWithGlobal(),
@@ -122,7 +121,7 @@ func (msi *MiddlewareServerInfo) GetPortNum() int {
 	return msi.PortNum
 }
 
-// IsDeleted checks if delete flag had been set
+// GetDelFlag checks if delete flag had been set
 func (msi *MiddlewareServerInfo) GetDelFlag() int {
 	return msi.DelFlag
 }
