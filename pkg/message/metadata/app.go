@@ -93,7 +93,7 @@ func initInfoAppMessage() {
 
 func initErrorAppMessage() {
 	message.Messages[ErrMetadataGetAppAll] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetAppAll, "metadata: get all app failed.\n%s")
-	message.Messages[ErrMetadataGetAppByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetAppByID, "metadata: get app by id failed. id: %d\n%s")
+	message.Messages[ErrMetadataGetAppByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetAppByID, "metadata: get app by id failed. id: %d")
 	message.Messages[ErrMetadataGetAppByName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetAppByName, "metadata: get app by name failed. app_name: %s\n%s")
 	message.Messages[ErrMetadataGetDBIDList] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetDBIDList, "metadata: get db list failed. id: %d\n%s")
 	message.Messages[ErrMetadataAddApp] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAddApp, "metadata: add new app failed. app_name: %s\n%s")
