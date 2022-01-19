@@ -2,7 +2,6 @@ package metadata
 
 import (
 	"encoding/json"
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -16,7 +15,7 @@ import (
 const (
 	testDBDBID                 = 1
 	testDBDBName               = "db_name"
-	testDBDBName2              = "test_db_name"
+	testDBDBName2              = "pmm_test"
 	testDBClusterID            = 2
 	testDBClusterType          = 1
 	testDBEnvID                = 1
@@ -146,7 +145,6 @@ func TestDBInfo_GetAppOwners(t *testing.T) {
 
 	appOwners, err := testDBInfo.GetAppOwners()
 	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
-	fmt.Println(appOwners[constant.ZeroInt].Identity())
 	asst.Equal(testAppOwnerID, appOwners[constant.ZeroInt].Identity(), "test GetAppOwners() failed")
 }
 

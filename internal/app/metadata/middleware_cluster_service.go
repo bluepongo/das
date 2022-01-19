@@ -18,6 +18,7 @@ type MiddlewareClusterService struct {
 	metadata.MiddlewareClusterRepo
 	MiddlewareClusters []metadata.MiddlewareCluster `json:"middleware_clusters"`
 	MiddlewareServers  []metadata.MiddlewareServer  `json:"middleware_servers"`
+	Users              []metadata.User              `json:"users"`
 }
 
 // NewMiddlewareClusterService returns a new *MiddlewareClusterService
@@ -87,6 +88,11 @@ func (mcs *MiddlewareClusterService) GetByName(clusterName string) error {
 	return nil
 }
 
+// GetUsers returns users of the service
+func (mcs *MiddlewareClusterService) GetUsers() []metadata.User {
+	return mcs.Users
+}
+
 // GetMiddlewareServersByID gets the middleware server id list of given cluster id
 func (mcs *MiddlewareClusterService) GetMiddlewareServersByID(clusterID int) error {
 	middlewareCluster, err := mcs.MiddlewareClusterRepo.GetByID(clusterID)
@@ -96,6 +102,13 @@ func (mcs *MiddlewareClusterService) GetMiddlewareServersByID(clusterID int) err
 
 	mcs.MiddlewareServers, err = middlewareCluster.GetMiddlewareServers()
 
+	return err
+}
+
+// GetUsersByMiddlewareClusterID gets user list that own the middleware cluster
+func (mcs *MiddlewareClusterService) GetUsersByMiddlewareClusterID(clusterID int) error {
+	var err error
+	mcs.Users, err = mcs.MiddlewareClusterRepo.GetUsersByMiddlewareClusterID(clusterID)
 	return err
 }
 
@@ -150,12 +163,30 @@ func (mcs *MiddlewareClusterService) Delete(id int) error {
 	return mcs.MiddlewareClusterRepo.Delete(id)
 }
 
+// AddUser adds a new map of middleware cluster and user in the middleware
+func (mcs *MiddlewareClusterService) AddUser(middlewareClusterID, userID int) error {
+	err := mcs.MiddlewareClusterRepo.AddUser(middlewareClusterID, userID)
+	if err != nil {
+		return err
+	}
+	return mcs.GetUsersByMiddlewareClusterID(middlewareClusterID)
+}
+
+// DeleteUser deletes the map of middleware cluster and user in the middleware
+func (mcs *MiddlewareClusterService) DeleteUser(middlewareClusterID, userID int) error {
+	err := mcs.MiddlewareClusterRepo.DeleteUser(middlewareClusterID, userID)
+	if err != nil {
+		return err
+	}
+	return mcs.GetUsersByMiddlewareClusterID(middlewareClusterID)
+}
+
 // Marshal marshals service.Envs
 func (mcs *MiddlewareClusterService) Marshal() ([]byte, error) {
 	return mcs.MarshalWithFields(middlewareClusterMiddlewareClustersStruct)
 }
 
-// Marshal marshals service.Envs with given fields
+// MarshalWithFields marshals service.Envs with given fields
 func (mcs *MiddlewareClusterService) MarshalWithFields(fields ...string) ([]byte, error) {
 	return common.MarshalStructWithFields(mcs, fields...)
 }

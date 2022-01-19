@@ -195,12 +195,12 @@ func (dr *DBRepo) GetID(dbName string, clusterID int, clusterType int) (int, err
 // GetMySQLCLusterByID gets the mysql cluster of the given id from the middleware
 func (dr *DBRepo) GetMySQLCLusterByID(id int) (metadata.MySQLCluster, error) {
 	sql := `
-		select cluster.id, cluster.cluster_name, cluster.middleware_cluster_id, cluster.monitor_system_id, 
-			cluster.env_id, cluster.del_flag, cluster.create_time, cluster.last_update_time
-		from t_meta_mysql_cluster_info as cluster
+		select mci.id, mci.cluster_name, mci.middleware_cluster_id, mci.monitor_system_id, 
+			mci.env_id, mci.del_flag, mci.create_time, mci.last_update_time
+		from t_meta_mysql_cluster_info as mci
 		inner join t_meta_db_info as db
-		on cluster.id = db.cluster_id
-		where cluster.del_flag = 0 and db.del_flag = 0
+		on mci.id = db.cluster_id
+		where mci.del_flag = 0 and db.del_flag = 0
 		and db.id = ?;
 			
 	`
@@ -233,10 +233,10 @@ func (dr *DBRepo) GetAppsByDBID(dbID int) ([]metadata.App, error) {
 		select app.id, app.app_name, app.level, app.del_flag
 			, app.create_time, app.last_update_time
 		from t_meta_app_info as app
-			inner join t_meta_app_db_map as map on app.id = map.app_id
-			inner join t_meta_db_info as db on db.id = map.db_id
+			inner join t_meta_app_db_map as adm on app.id = adm.app_id
+			inner join t_meta_db_info as db on db.id = adm.db_id
 		where app.del_flag = 0 
-			and map.del_flag = 0 
+			and adm.del_flag = 0 
 			and db.del_flag = 0
 			and db.id = ?;
 	`
@@ -278,13 +278,13 @@ func (dr *DBRepo) GetAppUsersByDBID(id int) ([]metadata.User, error) {
 			   user.create_time,
 			   user.last_update_time
 		from t_meta_user_info as user
-				 inner join t_meta_app_user_map as app on user.id = app.user_id
-				 inner join t_meta_app_db_map as map on app.id = map.app_id
-				 inner join t_meta_db_info as db on db.id = map.db_id
+				 inner join t_meta_app_user_map as aum on user.id = aum.user_id
+				 inner join t_meta_app_db_map as adm on aum.app_id = adm.app_id
+				 inner join t_meta_db_info as db on db.id = adm.db_id
 		where user.del_flag = 0
-		  and app.del_flag = 0
+		  and aum.del_flag = 0
 		  and db.del_flag = 0
-		  and map.del_flag = 0
+		  and adm.del_flag = 0
 		  and db.id = ?;
 	`
 	log.Debugf("metadata DBRepo.GetAppUsersByDBID() sql: \n%s\nplaceholders: %d, %d", sql, id)
@@ -360,12 +360,12 @@ func (dr *DBRepo) GetAllUsersByDBID(id int) ([]metadata.User, error) {
 			, user.create_time, user.last_update_time 
 		from t_meta_user_info as user 
 			inner join t_meta_app_user_map as aum on user.id = aum.user_id
-			inner join t_meta_app_db_map as map on aum.id = map.app_id
-			inner join t_meta_db_info as db on db.id = map.db_id
+			inner join t_meta_app_db_map as adm on aum.app_id = adm.app_id
+			inner join t_meta_db_info as db on db.id = adm.db_id
 		where user.del_flag = 0 
 			and aum.del_flag = 0 
 			and db.del_flag = 0 
-			and map.del_flag = 0
+			and adm.del_flag = 0
 			and db.id = ? 
 		union
 		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name
@@ -375,7 +375,7 @@ func (dr *DBRepo) GetAllUsersByDBID(id int) ([]metadata.User, error) {
 			inner join t_meta_db_user_map as dum on user.id = dum.user_id
 		where user.del_flag = 0 
 			and dum.del_flag = 0
-			and dum.id = ?;
+			and dum.db_id = ?;
 	`
 	log.Debugf("metadata DBRepo.GetAllUsersByDBID() sql: \n%s\nplaceholders: %d, %d", sql, id, id)
 

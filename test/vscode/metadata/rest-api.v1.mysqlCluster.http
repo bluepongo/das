@@ -22,16 +22,46 @@ Accept: application/json
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/mysql-server/97
 Accept: application/json
 
+### get get dbs by id
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/db/1
+Accept: application/json
+
+### get mysql cluster users
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/user/1
+Accept: application/json
+
+### get app users
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/app-user/1
+Accept: application/json
+
+### get db users
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/db-user/1
+Accept: application/json
+
+### get all users
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/all-user/1
+Accept: application/json
+
+### add user map
+POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/add-user/1
+Content-Type: application/json
+
+{"user_id": 14}
+
+### delete user map
+POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/delete-user/1
+Content-Type: application/json
+
+{"user_id": 14}
+
 ### add new mysql cluster
 POST http://{{baseURL}}/api/v1/metadata/mysql-cluster
 Content-Type: application/json
-
 {"cluster_name": "api_test", "env_id": 1}
 
 ### update mysql cluster by id
 POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/update/97
 Content-Type: application/json
-
 {"cluster_name": "test", "del_flag": 0}
 
 ### delete mysql cluster by id

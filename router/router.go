@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pingcap/errors"
 	"github.com/romberli/log"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -55,7 +56,7 @@ func (gr *GinRouter) Register() {
 }
 
 func (gr *GinRouter) Run(addr ...string) error {
-	return gr.Engine.Run(addr...)
+	return errors.Trace(gr.Engine.Run(addr...))
 }
 
 func (gr *GinRouter) Swagger() {

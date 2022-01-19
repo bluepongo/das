@@ -25,7 +25,6 @@ func init() {
 func testCreateMiddlewareCluster() (metadata.MiddlewareCluster, error) {
 	middlewareClusterInfo := NewMiddlewareClusterInfoWithDefault(
 		testMiddlewareClusterNewClusterName,
-		testMiddlewareClusterOwnerID,
 		testMiddlewareClusterEnvID,
 	)
 	entity, err := testMiddlewareClusterRepo.Create(middlewareClusterInfo)
@@ -43,10 +42,14 @@ func TestMiddlewareClusterRepoAll(t *testing.T) {
 	TestMiddlewareClusterRepo_GetByEnv(t)
 	TestMiddlewareClusterRepo_GetByID(t)
 	TestMiddlewareClusterRepo_GetByName(t)
+	TestMiddlewareClusterRepo_GetUsersByMiddlewareClusterID(t)
 	TestMiddlewareClusterRepo_GetID(t)
 	TestMiddlewareClusterRepo_Create(t)
 	TestMiddlewareClusterRepo_Update(t)
 	TestMiddlewareClusterRepo_Delete(t)
+	TestMiddlewareClusterRepo_AddUser(t)
+	TestMiddlewareClusterRepo_DeleteUser(t)
+
 }
 func TestMiddlewareClusterRepo_Execute(t *testing.T) {
 	asst := assert.New(t)
@@ -67,7 +70,7 @@ func TestMiddlewareClusterRepo_Transaction(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	err = tx.Begin()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
-	_, err = tx.Execute(sql, testMiddlewareClusterNewClusterName, testMiddlewareClusterOwnerID, testMiddlewareClusterEnvID)
+	_, err = tx.Execute(sql, testMiddlewareClusterNewClusterName, testMiddlewareClusterEnvID)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	// check if inserted
 	sql = `select cluster_name from t_meta_middleware_cluster_info where cluster_name=?`
@@ -131,6 +134,14 @@ func TestMiddlewareClusterRepo_GetID(t *testing.T) {
 	asst.Equal(testMiddlewareClusterClusterID, id, "test GetID() failed")
 }
 
+func TestMiddlewareClusterRepo_GetUsersByMiddlewareClusterID(t *testing.T) {
+	asst := assert.New(t)
+
+	users, err := testMiddlewareClusterRepo.GetUsersByMiddlewareClusterID(testMiddlewareClusterClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetUsersByMiddlewareClusterID() failed", err))
+	asst.Equal(1, len(users), "test GetUsersByMiddlewareClusterID() failed", err)
+}
+
 func TestMiddlewareClusterRepo_Create(t *testing.T) {
 	asst := assert.New(t)
 
@@ -167,4 +178,34 @@ func TestMiddlewareClusterRepo_Delete(t *testing.T) {
 	// delete
 	err = testMiddlewareClusterRepo.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
+}
+
+func TestMiddlewareClusterRepo_AddUser(t *testing.T) {
+	asst := assert.New(t)
+
+	entity, err := testCreateMiddlewareCluster()
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+	err = testMiddlewareClusterRepo.AddUser(entity.Identity(), testMiddlewareClusterNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+	users, err := entity.GetUsersByMiddlewareClusterID()
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+	asst.Equal(1, len(users), "test MiddlewareClusterAddUser() failed", err)
+	// delete
+	err = testMiddlewareClusterRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+}
+
+func TestMiddlewareClusterRepo_DeleteUser(t *testing.T) {
+	asst := assert.New(t)
+
+	entity, err := testCreateMiddlewareCluster()
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterDeleteUser() failed", err))
+	err = testMiddlewareClusterRepo.DeleteUser(entity.Identity(), testUserID)
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterDeleteUser() failed", err))
+	users, err := entity.GetUsersByMiddlewareClusterID()
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterDeleteUser() failed", err))
+	asst.Zero(len(users), "test MiddlewareClusterDeleteUser() failed")
+	// delete
+	err = testMiddlewareClusterRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterDeleteUser() failed", err))
 }

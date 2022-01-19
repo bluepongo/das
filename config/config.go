@@ -21,15 +21,15 @@ import (
 	"strings"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/hashicorp/go-multierror"
+	"github.com/pingcap/errors"
+	"github.com/romberli/das/pkg/message"
+	"github.com/romberli/go-multierror"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
-
-	"github.com/romberli/das/pkg/message"
 )
 
 var (
@@ -150,14 +150,14 @@ func ValidateConfig() (err error) {
 		merr = multierror.Append(merr, err)
 	}
 
-	return merr.ErrorOrNil()
+	return errors.Trace(merr.ErrorOrNil())
 }
 
 // ValidateDaemon validates if daemon section is valid
 func ValidateDaemon() error {
 	_, err := cast.ToBoolE(viper.Get(DaemonKey))
 
-	return err
+	return errors.Trace(err)
 }
 
 // ValidateLog validates if log section is valid.
@@ -169,74 +169,75 @@ func ValidateLog() error {
 	// validate log.FileName
 	logFileName, err := cast.ToStringE(viper.Get(LogFileKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	logFileName = strings.TrimSpace(logFileName)
-	if logFileName == constant.EmptyString {
-		merr = multierror.Append(merr, message.NewMessage(message.ErrEmptyLogFileName))
-	}
-	isAbs := filepath.IsAbs(logFileName)
-	if !isAbs {
-		logFileName, err = filepath.Abs(logFileName)
-		if err != nil {
-			merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
+	} else {
+		logFileName = strings.TrimSpace(logFileName)
+		if logFileName == constant.EmptyString {
+			merr = multierror.Append(merr, message.NewMessage(message.ErrEmptyLogFileName))
 		}
-	}
-	valid, _ = govalidator.IsFilePath(logFileName)
-	if !valid {
-		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogFileName, logFileName))
+
+		isAbs := filepath.IsAbs(logFileName)
+		if !isAbs {
+			logFileName, err = filepath.Abs(logFileName)
+			if err != nil {
+				merr = multierror.Append(merr, errors.Trace(err))
+			}
+		}
+		valid, _ = govalidator.IsFilePath(logFileName)
+		if !valid {
+			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogFileName, logFileName))
+		}
 	}
 
 	// validate log.level
 	logLevel, err := cast.ToStringE(viper.Get(LogLevelKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	valid, err = common.ElementInSlice(ValidLogLevels, logLevel)
-	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	if !valid {
-		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogLevel, logLevel))
+		merr = multierror.Append(merr, errors.Trace(err))
+	} else {
+		valid, err = common.ElementInSlice(ValidLogLevels, logLevel)
+		if err != nil {
+			merr = multierror.Append(merr, err)
+		}
+		if !valid {
+			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogLevel, logLevel))
+		}
 	}
 
 	// validate log.format
 	logFormat, err := cast.ToStringE(viper.Get(LogFormatKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	valid, err = common.ElementInSlice(ValidLogFormats, logFormat)
-	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	if !valid {
-		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogFormat, logFormat))
+		merr = multierror.Append(merr, errors.Trace(err))
+	} else {
+		valid, err = common.ElementInSlice(ValidLogFormats, logFormat)
+		if err != nil {
+			merr = multierror.Append(merr, err)
+		}
+		if !valid {
+			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogFormat, logFormat))
+		}
 	}
 
 	// validate log.maxSize
 	logMaxSize, err := cast.ToIntE(viper.Get(LogMaxSizeKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	if logMaxSize < MinLogMaxSize || logMaxSize > MaxLogMaxSize {
+		merr = multierror.Append(merr, errors.Trace(err))
+	} else if logMaxSize < MinLogMaxSize || logMaxSize > MaxLogMaxSize {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogMaxSize, MinLogMaxSize, MaxLogMaxSize, logMaxSize))
 	}
 
 	// validate log.maxDays
 	logMaxDays, err := cast.ToIntE(viper.Get(LogMaxDaysKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	if logMaxDays < MinLogMaxDays || logMaxDays > MaxLogMaxDays {
+		merr = multierror.Append(merr, errors.Trace(err))
+	} else if logMaxDays < MinLogMaxDays || logMaxDays > MaxLogMaxDays {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogMaxDays, MinLogMaxDays, MaxLogMaxDays, logMaxDays))
 	}
 
 	// validate log.maxBackups
 	logMaxBackups, err := cast.ToIntE(viper.Get(LogMaxBackupsKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
-	}
-	if logMaxBackups < MinLogMaxDays || logMaxBackups > MaxLogMaxDays {
+		merr = multierror.Append(merr, errors.Trace(err))
+	} else if logMaxBackups < MinLogMaxDays || logMaxBackups > MaxLogMaxDays {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidLogMaxBackups, MinLogMaxBackups, MaxLogMaxBackups, logMaxBackups))
 	}
 
@@ -250,7 +251,7 @@ func ValidateServer() error {
 	// validate server.addr
 	serverAddr, err := cast.ToStringE(viper.Get(ServerAddrKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	serverAddrList := strings.Split(serverAddr, constant.ColonString)
 
@@ -267,13 +268,13 @@ func ValidateServer() error {
 	// validate server.pidFile
 	serverPidFile, err := cast.ToStringE(viper.Get(ServerPidFileKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	isAbs := filepath.IsAbs(serverPidFile)
 	if !isAbs {
 		serverPidFile, err = filepath.Abs(serverPidFile)
 		if err != nil {
-			merr = multierror.Append(merr, err)
+			merr = multierror.Append(merr, errors.Trace(err))
 		}
 	}
 	ok, _ := govalidator.IsFilePath(serverPidFile)
@@ -284,7 +285,7 @@ func ValidateServer() error {
 	// validate server.readTimeout
 	serverReadTimeout, err := cast.ToIntE(viper.Get(ServerReadTimeoutKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	if serverReadTimeout < MinServerReadTimeout || serverReadTimeout > MaxServerReadTimeout {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidServerReadTimeout, MinServerReadTimeout, MaxServerWriteTimeout, serverReadTimeout))
@@ -293,7 +294,7 @@ func ValidateServer() error {
 	// validate server.writeTimeout
 	serverWriteTimeout, err := cast.ToIntE(viper.Get(ServerWriteTimeoutKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	if serverWriteTimeout < MinServerWriteTimeout || serverWriteTimeout > MaxServerWriteTimeout {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidServerWriteTimeout, MinServerWriteTimeout, MaxServerWriteTimeout, serverWriteTimeout))
@@ -309,7 +310,7 @@ func ValidateDatabase() error {
 	// validate db.das.mysql.addr
 	dbDASAddr, err := cast.ToStringE(viper.Get(DBDASMySQLAddrKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	dasAddr := strings.Split(dbDASAddr, constant.ColonString)
 	if len(dasAddr) != 2 {
@@ -325,22 +326,22 @@ func ValidateDatabase() error {
 	// validate db.das.mysql.name
 	_, err = cast.ToStringE(viper.Get(DBDASMySQLNameKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate db.das.mysql.user
 	_, err = cast.ToStringE(viper.Get(DBDASMySQLUserKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate db.das.mysql.pass
 	_, err = cast.ToStringE(viper.Get(DBDASMySQLPassKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate db.pool.maxConnections
 	maxConnections, err := cast.ToIntE(viper.Get(DBPoolMaxConnectionsKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	if maxConnections < MinDBPoolMaxConnections || maxConnections > MaxDBPoolMaxConnections {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBPoolMaxConnections, MinDBPoolMaxConnections, MaxDBPoolMaxConnections, maxConnections))
@@ -348,7 +349,7 @@ func ValidateDatabase() error {
 	// validate db.pool.initConnections
 	initConnections, err := cast.ToIntE(viper.Get(DBPoolInitConnectionsKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	if initConnections < MinDBPoolInitConnections || initConnections > MaxDBPoolInitConnections {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBPoolInitConnections, MinDBPoolInitConnections, MaxDBPoolInitConnections, initConnections))
@@ -356,7 +357,7 @@ func ValidateDatabase() error {
 	// validate db.pool.maxIdleConnections
 	maxIdleConnections, err := cast.ToIntE(viper.Get(DBPoolMaxIdleConnectionsKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	if maxIdleConnections < MinDBPoolMaxIdleConnections || maxIdleConnections > MaxDBPoolMaxIdleConnections {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBPoolMaxIdleConnections, MinDBPoolMaxIdleConnections, MaxDBPoolMaxIdleConnections, maxIdleConnections))
@@ -364,7 +365,7 @@ func ValidateDatabase() error {
 	// validate db.pool.maxIdleTime
 	maxIdleTime, err := cast.ToIntE(viper.Get(DBPoolMaxIdleTimeKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	if maxIdleTime < MinDBPoolMaxIdleTime || maxIdleTime > MaxDBPoolMaxIdleTime {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBPoolMaxIdleTime, MinDBPoolMaxIdleTime, MaxDBPoolMaxIdleTime, maxIdleTime))
@@ -372,7 +373,7 @@ func ValidateDatabase() error {
 	// validate db.pool.keepAliveInterval
 	keepAliveInterval, err := cast.ToIntE(viper.Get(DBPoolKeepAliveIntervalKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	if keepAliveInterval < MinDBPoolKeepAliveInterval || keepAliveInterval > MaxDBPoolKeepAliveInterval {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBPoolKeepAliveInterval, MinDBPoolKeepAliveInterval, MaxDBPoolKeepAliveInterval, keepAliveInterval))
@@ -380,49 +381,49 @@ func ValidateDatabase() error {
 	// validate db.application.mysql.user
 	_, err = cast.ToStringE(viper.Get(DBApplicationMySQLUserKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate db.application.mysql.pass
 	_, err = cast.ToStringE(viper.Get(DBApplicationMySQLPassKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate db.monitor.prometheus.user
 	_, err = cast.ToStringE(viper.Get(DBMonitorPrometheusUserKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate db.monitor.prometheus.pass
 	_, err = cast.ToStringE(viper.Get(DBMonitorPrometheusPassKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate db.monitor.clickhouse.user
 	_, err = cast.ToStringE(viper.Get(DBMonitorClickhouseUserKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate db.monitor.clickhouse.pass
 	_, err = cast.ToStringE(viper.Get(DBMonitorClickhousePassKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate db.monitor.mysql.user
 	_, err = cast.ToStringE(viper.Get(DBMonitorMySQLUserKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate db.monitor.mysql.pass
 	_, err = cast.ToStringE(viper.Get(DBMonitorMySQLPassKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate db.soar.mysql.addr
 	dbSoarAddr, err := cast.ToStringE(viper.Get(DBDASMySQLAddrKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
-	soarAddr := strings.Split(dbSoarAddr, ":")
+	soarAddr := strings.Split(dbSoarAddr, constant.ColonString)
 	if len(soarAddr) != 2 {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbSoarAddr))
 	} else {
@@ -433,24 +434,8 @@ func ValidateDatabase() error {
 			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbSoarAddr))
 		}
 	}
-	// todo remove
-	// // validate db.soar.mysql.name
-	// _, err = cast.ToStringE(viper.Get(DBSoarMySQLNameKey))
-	// if err != nil {
-	// 	merr = multierror.Append(merr, err)
-	// }
-	// // validate db.soar.mysql.user
-	// _, err = cast.ToStringE(viper.Get(DBSoarMySQLUserKey))
-	// if err != nil {
-	// 	merr = multierror.Append(merr, err)
-	// }
-	// // validate db.soar.mysql.pass
-	// _, err = cast.ToStringE(viper.Get(DBSoarMySQLPassKey))
-	// if err != nil {
-	// 	merr = multierror.Append(merr, err)
-	// }
 
-	return merr.ErrorOrNil()
+	return errors.Trace(merr.ErrorOrNil())
 }
 
 // ValidateAlert validates if alert section is valid
@@ -460,12 +445,12 @@ func ValidateAlert() error {
 	// validate alert.smtp.enabled
 	_, err := cast.ToBoolE(viper.Get(AlertSMTPEnabledKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate alert.smtp.format
 	format, err := cast.ToStringE(viper.Get(AlertSMTPFormatKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	valid, err := common.ElementInSlice(ValidAlertSTMPFormat, format)
 	if err != nil {
@@ -477,33 +462,33 @@ func ValidateAlert() error {
 	// validate alert.smtp.addr
 	_, err = cast.ToStringE(viper.Get(AlertSMTPURLKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate alert.smtp.user
 	_, err = cast.ToStringE(viper.Get(AlertSMTPUserKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate alert.smtp.pass
 	_, err = cast.ToStringE(viper.Get(AlertSMTPPassKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate alert.smtp.from
 	_, err = cast.ToStringE(viper.Get(AlertSMTPFromKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 
 	// validate alert.http.enabled
 	_, err = cast.ToBoolE(viper.Get(AlertHTTPEnabledKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate alert.http.url
 	url, err := cast.ToStringE(viper.Get(AlertHTTPURLKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	if !govalidator.IsURL(url) {
 
@@ -515,10 +500,10 @@ func ValidateAlert() error {
 	// validate alert.config
 	_, err = cast.ToStringMapStringE(viper.Get(AlertHTTPConfigKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 
-	return merr.ErrorOrNil()
+	return errors.Trace(merr.ErrorOrNil())
 }
 
 // ValidateHealthcheck validates if health check section is valid
@@ -528,7 +513,7 @@ func ValidateHealthcheck() error {
 	// validate healthcheck.alert.ownerType
 	ownerType, err := cast.ToStringE(viper.Get(HealthcheckAlertOwnerTypeKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 
 	valid, err := common.ElementInSlice(ValidHealthcheckAlertOwnerType, ownerType)
@@ -539,7 +524,7 @@ func ValidateHealthcheck() error {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidHealthcheckAlertOwnerType, ownerType))
 	}
 
-	return merr.ErrorOrNil()
+	return errors.Trace(merr.ErrorOrNil())
 }
 
 // ValidateQuery validates if query section is valid
@@ -549,10 +534,10 @@ func ValidateQuery() error {
 	// validate query.minRowsExamined
 	_, err := cast.ToIntE(viper.Get(QueryMinRowsExaminedKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 
-	return merr.ErrorOrNil()
+	return errors.Trace(merr.ErrorOrNil())
 }
 
 // ValidateSQLAdvisor validates if sql advisor section is valid
@@ -562,7 +547,7 @@ func ValidateSQLAdvisor() error {
 	// validate sqladvisor.soar.bin
 	soarBin, err := cast.ToStringE(viper.Get(SQLAdvisorSoarBinKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	soarBin = strings.TrimSpace(soarBin)
 	if soarBin == constant.EmptyString {
@@ -572,7 +557,7 @@ func ValidateSQLAdvisor() error {
 	if !isAbs {
 		soarBin, err = filepath.Abs(soarBin)
 		if err != nil {
-			merr = multierror.Append(merr, err)
+			merr = multierror.Append(merr, errors.Trace(err))
 		}
 	}
 	valid, _ := govalidator.IsFilePath(soarBin)
@@ -583,7 +568,7 @@ func ValidateSQLAdvisor() error {
 	// validate sqladvisor.soar.config
 	config, err := cast.ToStringE(viper.Get(SQLAdvisorSoarConfigKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	config = strings.TrimSpace(config)
 	if soarBin == constant.EmptyString {
@@ -593,7 +578,7 @@ func ValidateSQLAdvisor() error {
 	if !isAbs {
 		config, err = filepath.Abs(config)
 		if err != nil {
-			merr = multierror.Append(merr, err)
+			merr = multierror.Append(merr, errors.Trace(err))
 		}
 	}
 	valid, _ = govalidator.IsFilePath(config)
@@ -604,25 +589,25 @@ func ValidateSQLAdvisor() error {
 	// validate sqladvisor.soar.sampling
 	_, err = cast.ToBoolE(viper.Get(SQLAdvisorSoarSamplingKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate sqladvisor.soar.profiling
 	_, err = cast.ToBoolE(viper.Get(SQLAdvisorSoarProfilingKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate sqladvisor.soar.trace
 	_, err = cast.ToBoolE(viper.Get(SQLAdvisorSoarTraceKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 	// validate sqladvisor.soar.explain
 	_, err = cast.ToBoolE(viper.Get(SQLAdvisorSoarExplainKey))
 	if err != nil {
-		merr = multierror.Append(merr, err)
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 
-	return merr.ErrorOrNil()
+	return errors.Trace(merr.ErrorOrNil())
 }
 
 // TrimSpaceOfArg trims spaces of given argument
