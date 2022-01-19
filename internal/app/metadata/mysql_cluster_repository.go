@@ -3,6 +3,7 @@ package metadata
 import (
 	"fmt"
 
+	"github.com/pingcap/errors"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/log"
@@ -44,7 +45,7 @@ func (mcr *MySQLClusterRepo) Execute(command string, args ...interface{}) (middl
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("metadata MySQLClusterRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata MySQLClusterRepo.Execute(): close database connection failed.\n%+v", err)
 		}
 	}()
 
@@ -136,7 +137,7 @@ func (mcr *MySQLClusterRepo) GetByID(id int) (metadata.MySQLCluster, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, fmt.Errorf("metadata MySQLClusterInfo.GetByID(): data does not exists, id: %d", id)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterInfo.GetByID(): data does not exists, id: %d", id))
 	case 1:
 		mysqlClusterInfo := NewEmptyMySQLClusterInfoWithGlobal()
 		// map to struct
@@ -147,7 +148,7 @@ func (mcr *MySQLClusterRepo) GetByID(id int) (metadata.MySQLCluster, error) {
 
 		return mysqlClusterInfo, nil
 	default:
-		return nil, fmt.Errorf("metadata MySQLClusterInfo.GetByID(): duplicate key exists, id: %d", id)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterInfo.GetByID(): duplicate key exists, id: %d", id))
 	}
 }
 
@@ -165,7 +166,7 @@ func (mcr *MySQLClusterRepo) GetByName(clusterName string) (metadata.MySQLCluste
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, fmt.Errorf("metadata MySQLClusterInfo.GetByID(): data does not exists, clusterName: %s", clusterName)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterInfo.GetByID(): data does not exists, clusterName: %s", clusterName))
 	case 1:
 		mysqlClusterInfo := NewEmptyMySQLClusterInfoWithGlobal()
 		// map to struct
@@ -176,7 +177,7 @@ func (mcr *MySQLClusterRepo) GetByName(clusterName string) (metadata.MySQLCluste
 
 		return mysqlClusterInfo, nil
 	default:
-		return nil, fmt.Errorf("metadata MySQLClusterInfo.GetByID(): duplicate key exists, clusterName: %s", clusterName)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterInfo.GetByID(): duplicate key exists, clusterName: %s", clusterName))
 	}
 }
 

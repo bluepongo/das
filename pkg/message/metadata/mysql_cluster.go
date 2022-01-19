@@ -209,65 +209,65 @@ func initErrorMySQLCLusterMessage() {
 	message.Messages[ErrMetadataGetMySQLClusterAll] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterAll,
-		"metadata: get all mysql cluster failed.\n%s")
+		"metadata: get all mysql cluster failed.")
 	message.Messages[ErrMetadataGetMySQLClusterByEnv] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterByEnv,
-		"metadata: get mysql cluster by env failed. env_id: %d\n%s")
+		"metadata: get mysql cluster by env failed. env_id: %d")
 	message.Messages[ErrMetadataGetMySQLClusterByID] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterByID,
-		"metadata: get mysql cluster by id failed. id: %d\n%s")
+		"metadata: get mysql cluster by id failed. id: %d")
 	message.Messages[ErrMetadataGetMySQLClusterByName] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterByName,
-		"metadata: get mysql cluster by name failed. cluster_name: %s\n%s")
+		"metadata: get mysql cluster by name failed. cluster_name: %s")
 	message.Messages[ErrMetadataGetMySQLServers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLServers,
-		"metadata: get mysql servers from mysql cluster failed. id: %d\n%s")
+		"metadata: get mysql servers from mysql cluster failed. id: %d")
 	message.Messages[ErrMetadataGetMasterServers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMasterServers,
-		"metadata: get master servers from mysql cluster failed. id: %d\n%s")
+		"metadata: get master servers from mysql cluster failed. id: %d")
 	message.Messages[ErrMetadataGetDBs] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetDBs,
-		"metadata: get databases from mysql cluster failed. id: %d\n%s")
+		"metadata: get databases from mysql cluster failed. id: %d")
 	message.Messages[ErrMetadataGetUsers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetUsers,
-		"metadata: get users from mysql cluster failed. id: %d\n%s")
+		"metadata: get users from mysql cluster failed. id: %d")
 	message.Messages[ErrMetadataMySQLClusterAddUser] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataMySQLClusterAddUser,
-		"metadata: add user for mysql cluster failed. id: %d, user_id: %d\n%s")
+		"metadata: add user for mysql cluster failed. id: %d, user_id: %d")
 	message.Messages[ErrMetadataMySQLClusterDeleteUser] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataMySQLClusterDeleteUser,
-		"metadata: delete user for mysql cluster failed. id: %d, user_id: %d\n%s")
+		"metadata: delete user for mysql cluster failed. id: %d, user_id: %d")
 	message.Messages[ErrMetadataGetAppUsers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetAppUsers,
-		"metadata: get app users from mysql cluster failed. id: %d\n%s")
+		"metadata: get app users from mysql cluster failed. id: %d")
 	message.Messages[ErrMetadataGetDBUsers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetDBUsers,
-		"metadata: get database users from mysql cluster failed. id: %d\n%s")
+		"metadata: get database users from mysql cluster failed. id: %d")
 	message.Messages[ErrMetadataGetAllUsers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetAllUsers,
-		"metadata: get all users from mysql cluster failed. id: %d\n%s")
+		"metadata: get all users from mysql cluster failed. id: %d")
 	message.Messages[ErrMetadataAddMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataAddMySQLCluster,
-		"metadata: add new mysql cluster failed. cluster_name: %s, env_id: %d\n%s")
+		"metadata: add new mysql cluster failed. cluster_name: %s, env_id: %d")
 	message.Messages[ErrMetadataUpdateMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataUpdateMySQLCluster,
-		"metadata: update mysql cluster failed. id: %d\n%s")
+		"metadata: update mysql cluster failed. id: %d")
 	message.Messages[ErrMetadataDeleteMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataDeleteMySQLCluster,
-		"metadata: delete mysql cluster failed. id: %d\n%s")
+		"metadata: delete mysql cluster failed. id: %d")
 }
