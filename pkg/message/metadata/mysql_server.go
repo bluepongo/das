@@ -12,6 +12,7 @@ func init() {
 	initErrorMySQLServerMessage()
 }
 
+// Message code
 const (
 	// debug
 	DebugMetadataGetMySQLServerAll         = 100801
@@ -23,8 +24,6 @@ const (
 	DebugMetadataAddMySQLServer            = 100807
 	DebugMetadataUpdateMySQLServer         = 100808
 	DebugMetadataDeleteMySQLServer         = 100809
-)
-const (
 	// info
 	InfoMetadataGetMySQLServerAll         = 200801
 	InfoMetadataGetMySQLServerByClusterID = 200802
@@ -35,8 +34,6 @@ const (
 	InfoMetadataAddMySQLServer            = 200807
 	InfoMetadataUpdateMySQLServer         = 200808
 	InfoMetadataDeleteMySQLServer         = 200809
-)
-const (
 	// error
 	ErrMetadataGetMySQLServerAll         = 400801
 	ErrMetadataGetMySQLServerByClusterID = 400802
@@ -131,7 +128,7 @@ func initErrorMySQLServerMessage() {
 	message.Messages[ErrMetadataGetMySQLServerAll] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLServerAll,
-		"metadata: get all mysql server failed.")
+		"metadata: get all mysql server failed")
 	message.Messages[ErrMetadataGetMySQLServerByClusterID] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLServerByClusterID,

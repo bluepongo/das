@@ -209,7 +209,7 @@ func initErrorMySQLCLusterMessage() {
 	message.Messages[ErrMetadataGetMySQLClusterAll] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterAll,
-		"metadata: get all mysql cluster failed.")
+		"metadata: get all mysql cluster failed")
 	message.Messages[ErrMetadataGetMySQLClusterByEnv] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterByEnv,
