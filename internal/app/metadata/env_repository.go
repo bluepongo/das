@@ -62,7 +62,7 @@ func (er *EnvRepo) GetAll() ([]metadata.Env, error) {
 		return nil, err
 	}
 	// init []*EnvInfo
-	envInfoList := make([]*EnvInfo, result.RowNumber())
+	envInfoList := make([]metadata.Env, result.RowNumber())
 	for i := range envInfoList {
 		envInfoList[i] = NewEmptyEnvInfoWithGlobal()
 	}
@@ -71,13 +71,8 @@ func (er *EnvRepo) GetAll() ([]metadata.Env, error) {
 	if err != nil {
 		return nil, err
 	}
-	// init []dependency.
-	entityList := make([]metadata.Env, result.RowNumber())
-	for i := range entityList {
-		entityList[i] = envInfoList[i]
-	}
 
-	return entityList, nil
+	return envInfoList, nil
 }
 
 // GetByID gets an environment by the identity from the middleware
