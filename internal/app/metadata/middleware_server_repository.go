@@ -1,15 +1,14 @@
 package metadata
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/pingcap/errors"
+	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/log"
-
-	"github.com/romberli/das/global"
 )
 
 var _ metadata.MiddlewareServerRepo = (*MiddlewareServerRepo)(nil)
@@ -23,7 +22,7 @@ func NewMiddlewareServerRepo(db middleware.Pool) *MiddlewareServerRepo {
 	return &MiddlewareServerRepo{db}
 }
 
-// NewMiddlewareServerRepo returns *MiddlewareServerRepo with global mysql pool
+// NewMiddlewareServerRepoWithGlobal returns *MiddlewareServerRepo with global mysql pool
 func NewMiddlewareServerRepoWithGlobal() *MiddlewareServerRepo {
 	return NewMiddlewareServerRepo(global.DASMySQLPool)
 }
@@ -38,7 +37,7 @@ func (msr *MiddlewareServerRepo) Execute(command string, args ...interface{}) (m
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("metadata MiddlewareServerRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata MiddlewareServerRepo.Execute(): close database connection failed.\n%+v", err)
 		}
 	}()
 
@@ -229,7 +228,7 @@ func (msr *MiddlewareServerRepo) Delete(id int) error {
 	defer func() {
 		err = tx.Close()
 		if err != nil {
-			log.Errorf("metadata MiddlewareServerRepo.Delete(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata MiddlewareServerRepo.Delete(): close database connection failed.\n%+v", err)
 		}
 	}()
 
