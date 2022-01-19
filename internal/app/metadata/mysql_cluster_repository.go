@@ -106,10 +106,8 @@ func (mcr *MySQLClusterRepo) GetByEnv(envID int) ([]metadata.MySQLCluster, error
 		return nil, err
 	}
 
-	resultNum := result.RowNumber()
-	mysqlClusterList := make([]metadata.MySQLCluster, resultNum)
-
-	for row := 0; row < resultNum; row++ {
+	mysqlClusterList := make([]metadata.MySQLCluster, result.RowNumber())
+	for row := range mysqlClusterList {
 		mysqlClusterList[row] = NewEmptyMySQLClusterInfoWithGlobal()
 	}
 	// map to struct
@@ -210,10 +208,8 @@ func (mcr *MySQLClusterRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 		return nil, err
 	}
 
-	resultNum := result.RowNumber()
-	dbList := make([]metadata.DB, resultNum)
-
-	for row := 0; row < resultNum; row++ {
+	dbList := make([]metadata.DB, result.RowNumber())
+	for row := range dbList {
 		dbList[row] = NewEmptyDBInfoWithGlobal()
 	}
 	// map to struct
@@ -257,10 +253,8 @@ func (mcr *MySQLClusterRepo) GetUsersByID(id int) ([]metadata.User, error) {
 		return nil, err
 	}
 
-	resultNum := result.RowNumber()
-	userList := make([]metadata.User, resultNum)
-
-	for row := 0; row < resultNum; row++ {
+	userList := make([]metadata.User, result.RowNumber())
+	for row := range userList {
 		userList[row] = NewEmptyUserInfoWithGlobal()
 	}
 	// map to struct
@@ -344,10 +338,8 @@ func (mcr *MySQLClusterRepo) GetAppUsersByID(id int) ([]metadata.User, error) {
 		return nil, err
 	}
 
-	resultNum := result.RowNumber()
-	userList := make([]metadata.User, resultNum)
-
-	for row := 0; row < resultNum; row++ {
+	userList := make([]metadata.User, result.RowNumber())
+	for row := range userList {
 		userList[row] = NewEmptyUserInfoWithGlobal()
 	}
 	// map to struct
@@ -392,10 +384,8 @@ func (mcr *MySQLClusterRepo) GetDBUsersByID(id int) ([]metadata.User, error) {
 		return nil, err
 	}
 
-	resultNum := result.RowNumber()
-	userList := make([]metadata.User, resultNum)
-
-	for row := 0; row < resultNum; row++ {
+	userList := make([]metadata.User, result.RowNumber())
+	for row := range userList {
 		userList[row] = NewEmptyUserInfoWithGlobal()
 	}
 	// map to struct
@@ -488,10 +478,8 @@ func (mcr *MySQLClusterRepo) GetAllUsersByID(id int) ([]metadata.User, error) {
 		return nil, err
 	}
 
-	resultNum := result.RowNumber()
-	userList := make([]metadata.User, resultNum)
-
-	for row := 0; row < resultNum; row++ {
+	userList := make([]metadata.User, result.RowNumber())
+	for row := range userList {
 		userList[row] = NewEmptyUserInfoWithGlobal()
 	}
 	// map to struct
