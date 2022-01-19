@@ -74,7 +74,7 @@ func GetEnvByID(c *gin.Context) {
 	// get entity
 	err = s.GetByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByID, id, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByID, err, id)
 		return
 	}
 	// marshal service
@@ -106,7 +106,7 @@ func GetEnvByName(c *gin.Context) {
 	// get entity
 	err := s.GetEnvByName(envName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByName, envName, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByName, err, envName)
 		return
 	}
 	// marshal service
