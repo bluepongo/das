@@ -53,7 +53,7 @@ func (dr *DBRepo) Transaction() (middleware.Transaction, error) {
 // GetAll gets all databases from the middleware
 func (dr *DBRepo) GetAll() ([]metadata.DB, error) {
 	sql := `
-		select id, db_name, cluster_id, cluster_type, owner_id, env_id, del_flag, create_time, last_update_time
+		select id, db_name, cluster_id, cluster_type, env_id, del_flag, create_time, last_update_time
 		from t_meta_db_info
 		where del_flag = 0
 		order by id;
@@ -86,7 +86,7 @@ func (dr *DBRepo) GetAll() ([]metadata.DB, error) {
 // GetByEnv gets databases of given env id from the middleware
 func (dr *DBRepo) GetByEnv(envID int) ([]metadata.DB, error) {
 	sql := `
-		select id, db_name, cluster_id, cluster_type, owner_id, env_id, del_flag, create_time, last_update_time
+		select id, db_name, cluster_id, cluster_type, env_id, del_flag, create_time, last_update_time
 		from t_meta_db_info
 		where del_flag = 0
 		and env_id = ? 
@@ -120,7 +120,7 @@ func (dr *DBRepo) GetByEnv(envID int) ([]metadata.DB, error) {
 // GetByID gets a database by the identity from the middleware
 func (dr *DBRepo) GetByID(id int) (metadata.DB, error) {
 	sql := `
-		select id, db_name, cluster_id, cluster_type, owner_id, env_id, del_flag, create_time, last_update_time
+		select id, db_name, cluster_id, cluster_type, env_id, del_flag, create_time, last_update_time
 		from t_meta_db_info
 		where del_flag = 0
 		and id = ?;
@@ -151,7 +151,7 @@ func (dr *DBRepo) GetByID(id int) (metadata.DB, error) {
 // GetByNameAndClusterInfo gets a database by the db name and cluster info from the middleware
 func (dr *DBRepo) GetByNameAndClusterInfo(name string, clusterID, clusterType int) (metadata.DB, error) {
 	sql := `
-		select id, db_name, cluster_id, cluster_type, owner_id, env_id, del_flag, create_time, last_update_time
+		select id, db_name, cluster_id, cluster_type, env_id, del_flag, create_time, last_update_time
 		from t_meta_db_info
 		where del_flag = 0
 		and db_name = ?
@@ -196,7 +196,7 @@ func (dr *DBRepo) GetID(dbName string, clusterID int, clusterType int) (int, err
 func (dr *DBRepo) GetMySQLCLusterByID(id int) (metadata.MySQLCluster, error) {
 	sql := `
 		select cluster.id, cluster.cluster_name, cluster.middleware_cluster_id, cluster.monitor_system_id, 
-			cluster.owner_id, cluster.env_id, cluster.del_flag, cluster.create_time, cluster.last_update_time
+			cluster.env_id, cluster.del_flag, cluster.create_time, cluster.last_update_time
 		from t_meta_mysql_cluster_info as cluster
 		inner join t_meta_db_info as db
 		on cluster.id = db.cluster_id
@@ -227,10 +227,10 @@ func (dr *DBRepo) GetMySQLCLusterByID(id int) (metadata.MySQLCluster, error) {
 	}
 }
 
-// GetAppsByID gets an apps that uses this db
-func (dr *DBRepo) GetAppsByID(dbID int) ([]metadata.App, error) {
+// GetAppsByDBID gets an apps that uses this db
+func (dr *DBRepo) GetAppsByDBID(dbID int) ([]metadata.App, error) {
 	sql := `
-		select app.id, app.app_name, app.level, app.owner_id, app.del_flag
+		select app.id, app.app_name, app.level, app.del_flag
 			, app.create_time, app.last_update_time
 		from t_meta_app_info as app
 			inner join t_meta_app_db_map as map on app.id = map.app_id
@@ -240,7 +240,7 @@ func (dr *DBRepo) GetAppsByID(dbID int) ([]metadata.App, error) {
 			and db.del_flag = 0
 			and db.id = ?;
 	`
-	log.Debugf("metadata DBRepo.GetAppsByID() sql: \n%s\nplaceholders: %d", sql, dbID)
+	log.Debugf("metadata DBRepo.GetAppsByDBID() sql: \n%s\nplaceholders: %d", sql, dbID)
 
 	result, err := dr.Execute(sql, dbID)
 	if err != nil {
@@ -262,8 +262,8 @@ func (dr *DBRepo) GetAppsByID(dbID int) ([]metadata.App, error) {
 	return appList, nil
 }
 
-// GetAppOwnersByID gets the application owners of the given id from the middleware
-func (dr *DBRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
+// GetAppUsersByDBID gets the application owners of the given id from the middleware
+func (dr *DBRepo) GetAppUsersByDBID(id int) ([]metadata.User, error) {
 	sql := `
 		select user.id,
 			   user.user_name,
@@ -278,7 +278,7 @@ func (dr *DBRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 			   user.create_time,
 			   user.last_update_time
 		from t_meta_user_info as user
-				 inner join t_meta_app_info as app on user.id = app.owner_id
+				 inner join t_meta_app_user_map as app on user.id = app.user_id
 				 inner join t_meta_app_db_map as map on app.id = map.app_id
 				 inner join t_meta_db_info as db on db.id = map.db_id
 		where user.del_flag = 0
@@ -287,7 +287,7 @@ func (dr *DBRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 		  and map.del_flag = 0
 		  and db.id = ?;
 	`
-	log.Debugf("metadata DBRepo.GetAppOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id)
+	log.Debugf("metadata DBRepo.GetAppUsersByDBID() sql: \n%s\nplaceholders: %d, %d", sql, id)
 
 	result, err := dr.Execute(sql, id)
 	if err != nil {
@@ -309,8 +309,8 @@ func (dr *DBRepo) GetAppOwnersByID(id int) ([]metadata.User, error) {
 	return userList, nil
 }
 
-// GetDBOwnersByID gets the db owners of the given id from the middleware
-func (dr *DBRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
+// GetUsersByDBID gets the db owners of the given id from the middleware
+func (dr *DBRepo) GetUsersByDBID(id int) ([]metadata.User, error) {
 	sql := `
 		select distinct user.id,
 						user.user_name,
@@ -321,17 +321,16 @@ func (dr *DBRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
 						user.telephone,
 						user.mobile,
 						user.role,
-						user.del_flag
-				,
+						user.del_flag,
 						user.create_time,
 						user.last_update_time
 		from t_meta_user_info as user
-				 inner join t_meta_db_info as db on user.id = db.owner_id
+				 inner join t_meta_db_user_map as dum on user.id = dum.user_id
 		where user.del_flag = 0
-		  and db.del_flag = 0
-		  and db.id = ?;
+		  and dum.del_flag = 0
+		  and dum.db_id = ?;
 	`
-	log.Debugf("metadata DBRepo.GetDBOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id)
+	log.Debugf("metadata DBRepo.GetUsersByDBID() sql: \n%s\nplaceholders: %d, %d", sql, id)
 
 	result, err := dr.Execute(sql, id)
 	if err != nil {
@@ -353,18 +352,18 @@ func (dr *DBRepo) GetDBOwnersByID(id int) ([]metadata.User, error) {
 	return userList, nil
 }
 
-// GetAllOwnersByID gets both application and db owners of the given id from the middleware
-func (dr *DBRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
+// GetAllUsersByDBID gets both application and db owners of the given id from the middleware
+func (dr *DBRepo) GetAllUsersByDBID(id int) ([]metadata.User, error) {
 	sql := `
 		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name
 			, user.email, user.telephone, user.mobile, user.role, user.del_flag
 			, user.create_time, user.last_update_time 
 		from t_meta_user_info as user 
-			inner join t_meta_app_info as app on user.id = app.owner_id
-			inner join t_meta_app_db_map as map on app.id = map.app_id
+			inner join t_meta_app_user_map as aum on user.id = aum.user_id
+			inner join t_meta_app_db_map as map on aum.id = map.app_id
 			inner join t_meta_db_info as db on db.id = map.db_id
 		where user.del_flag = 0 
-			and app.del_flag = 0 
+			and aum.del_flag = 0 
 			and db.del_flag = 0 
 			and map.del_flag = 0
 			and db.id = ? 
@@ -373,12 +372,12 @@ func (dr *DBRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
 			, user.email, user.telephone, user.mobile, user.role, user.del_flag
 			, user.create_time, user.last_update_time 
 		from t_meta_user_info as user 
-			inner join t_meta_db_info as db on user.id = db.owner_id
+			inner join t_meta_db_user_map as dum on user.id = dum.user_id
 		where user.del_flag = 0 
-			and db.del_flag = 0
-			and db.id = ?;
+			and dum.del_flag = 0
+			and dum.id = ?;
 	`
-	log.Debugf("metadata DBRepo.GetAllOwnersByID() sql: \n%s\nplaceholders: %d, %d", sql, id, id)
+	log.Debugf("metadata DBRepo.GetAllUsersByDBID() sql: \n%s\nplaceholders: %d, %d", sql, id, id)
 
 	result, err := dr.Execute(sql, id, id)
 	if err != nil {
@@ -402,11 +401,11 @@ func (dr *DBRepo) GetAllOwnersByID(id int) ([]metadata.User, error) {
 
 // Create creates a database in the middleware
 func (dr *DBRepo) Create(db metadata.DB) (metadata.DB, error) {
-	sql := `insert into t_meta_db_info(db_name, cluster_id, cluster_type, owner_id, env_id) values(?, ?, ?, ?, ?);`
+	sql := `insert into t_meta_db_info(db_name, cluster_id, cluster_type, env_id) values(?, ?, ?, ?);`
 	log.Debugf("metadata DBRepo.Create() insert sql: %s", sql)
 
 	// execute
-	_, err := dr.Execute(sql, db.GetDBName(), db.GetClusterID(), db.GetClusterType(), db.GetOwnerID(), db.GetEnvID())
+	_, err := dr.Execute(sql, db.GetDBName(), db.GetClusterID(), db.GetClusterType(), db.GetEnvID())
 	if err != nil {
 		return nil, err
 	}
@@ -421,9 +420,9 @@ func (dr *DBRepo) Create(db metadata.DB) (metadata.DB, error) {
 
 // Update updates the database in the middleware
 func (dr *DBRepo) Update(db metadata.DB) error {
-	sql := `update t_meta_db_info set db_name = ?, cluster_id = ?, cluster_type = ?, owner_id = ?, env_id = ?, del_flag = ? where id = ?;`
+	sql := `update t_meta_db_info set db_name = ?, cluster_id = ?, cluster_type = ?, env_id = ?, del_flag = ? where id = ?;`
 	log.Debugf("metadata DBRepo.Update() update sql: %s", sql)
-	_, err := dr.Execute(sql, db.GetDBName(), db.GetClusterID(), db.GetClusterType(), db.GetOwnerID(), db.GetEnvID(), db.GetDelFlag(), db.Identity())
+	_, err := dr.Execute(sql, db.GetDBName(), db.GetClusterID(), db.GetClusterType(), db.GetEnvID(), db.GetDelFlag(), db.Identity())
 
 	return err
 }
@@ -493,6 +492,42 @@ func (dr *DBRepo) DeleteApp(dbID, appID int) error {
 	sql := `delete from t_meta_app_db_map where app_id = ? and db_id = ?;`
 	log.Debugf("metadata DBRepo.DeleteApp() delete sql: %s", sql)
 	_, err = dr.Execute(sql, appID, dbID)
+
+	return err
+}
+
+// AddUser adds a new map of app and user in the middleware
+func (dr *DBRepo) DBAddUser(dbID, userID int) error {
+	userRepo := NewUserRepoWithGlobal()
+	_, err := userRepo.GetByID(userID)
+	if err != nil {
+		return err
+	}
+	_, err = dr.GetByID(dbID)
+	if err != nil {
+		return err
+	}
+	sql := `insert into t_meta_db_user_map(db_id, user_id) values(?, ?);`
+	log.Debugf("metadata DBRepo.DBAddUser() insert sql: %s", sql)
+	_, err = dr.Execute(sql, dbID, userID)
+
+	return err
+}
+
+// DeleteUser delete the map of app and user in the middleware
+func (dr *DBRepo) DBDeleteUser(dbID, userID int) error {
+	userRepo := NewUserRepoWithGlobal()
+	_, err := userRepo.GetByID(userID)
+	if err != nil {
+		return err
+	}
+	_, err = dr.GetByID(dbID)
+	if err != nil {
+		return err
+	}
+	sql := `delete from t_meta_db_user_map where db_id = ? and user_id = ?;`
+	log.Debugf("metadata DBRepo.DBDeleteUser() delete sql: %s", sql)
+	_, err = dr.Execute(sql, dbID, userID)
 
 	return err
 }
