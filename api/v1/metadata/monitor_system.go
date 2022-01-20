@@ -43,13 +43,13 @@ func GetMonitorSystem(c *gin.Context) {
 	// get entities
 	err := s.GetAll()
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMonitorSystemAll, errors.Trace(err))
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMonitorSystemAll, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -81,13 +81,13 @@ func GetMonitorSystemByEnv(c *gin.Context) {
 	// get entity
 	err = s.GetByEnv(envID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMonitorSystemByEnv, errors.Trace(err))
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMonitorSystemByEnv, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -119,13 +119,13 @@ func GetMonitorSystemByID(c *gin.Context) {
 	// get entity
 	err = s.GetByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMonitorSystemByID, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMonitorSystemByID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -153,13 +153,13 @@ func GetMonitorSystemByHostInfo(c *gin.Context) {
 	// get entity
 	err = s.GetByHostInfo(rd.GetHostIP(), rd.GetPortNum())
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMonitorSystemByHostInfo, errors.Trace(err), rd.GetHostIP(), rd.GetPortNum())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMonitorSystemByHostInfo, err, rd.GetHostIP(), rd.GetPortNum())
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -185,7 +185,7 @@ func AddMonitorSystem(c *gin.Context) {
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.MonitorSystemInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, systemNameExists := fields[monitorSystemNameStruct]
@@ -206,7 +206,7 @@ func AddMonitorSystem(c *gin.Context) {
 	// insert into middleware
 	err = s.Create(fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddMonitorSystem, errors.Trace(err),
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddMonitorSystem, err,
 			fields[monitorSystemNameStruct], fields[monitorSystemTypeStruct], fields[monitorSystemHostIPStruct],
 			fields[monitorSystemPortNumStruct], fields[monitorSystemPortNumSlowStruct], fields[monitorSystemBaseUrlStruct],
 			fields[monitorSystemEnvIDStruct])
@@ -215,7 +215,7 @@ func AddMonitorSystem(c *gin.Context) {
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -253,7 +253,7 @@ func UpdateMonitorSystemByID(c *gin.Context) {
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.MonitorSystemInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, systemNameExists := fields[monitorSystemNameStruct]
@@ -275,13 +275,13 @@ func UpdateMonitorSystemByID(c *gin.Context) {
 	// update entity
 	err = s.Update(id, fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateMonitorSystem, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateMonitorSystem, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// resp
@@ -312,13 +312,13 @@ func DeleteMonitorSystemByID(c *gin.Context) {
 	// update entity
 	err = s.Delete(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMonitorSystem, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMonitorSystem, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// resp

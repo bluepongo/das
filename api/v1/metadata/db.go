@@ -48,13 +48,13 @@ func GetDB(c *gin.Context) {
 	// get entities
 	err := s.GetAll()
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBAll, errors.Trace(err))
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBAll, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -86,13 +86,13 @@ func GetDBByEnv(c *gin.Context) {
 	// get entity
 	err = s.GetByEnv(envID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByEnv, errors.Trace(err))
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByEnv, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -123,13 +123,13 @@ func GetDBByID(c *gin.Context) {
 	// get entity
 	err = s.GetByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByID, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -148,7 +148,7 @@ func GetDBByNameAndClusterInfo(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData,errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	// unmarshal data
@@ -162,13 +162,13 @@ func GetDBByNameAndClusterInfo(c *gin.Context) {
 	// get entity
 	err = s.GetByNameAndClusterInfo(dbInfo.DBName, dbInfo.ClusterID, dbInfo.ClusterType)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByNameAndClusterInfo, errors.Trace(err), dbInfo.DBName, dbInfo.ClusterID, dbInfo.ClusterType)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByNameAndClusterInfo, err, dbInfo.DBName, dbInfo.ClusterID, dbInfo.ClusterType)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -199,13 +199,13 @@ func GetAppsByDBID(c *gin.Context) {
 	// get entity
 	err = s.GetAppsByDBID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppsByID, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppsByID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(dbAppsStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -237,13 +237,13 @@ func GetMySQLClusterByDBID(c *gin.Context) {
 	// get entity
 	err = s.GetMySQLClusterByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByID, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(dbMySQLClusterStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -274,13 +274,13 @@ func GetAppUsersByDBID(c *gin.Context) {
 	// get entity
 	err = s.GetAppUsersByDBID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppOwners, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppOwners, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(dbAppOwnersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -311,13 +311,13 @@ func GetUsersByDBID(c *gin.Context) {
 	// get entity
 	err = s.GetUsersByDBID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBOwners, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBOwners, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(dbDBOwnersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -348,13 +348,13 @@ func GetAllUsersByDBID(c *gin.Context) {
 	// get entity
 	err = s.GetAllUsersByDBID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAllOwners, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAllOwners, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(dbAllOwnersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -380,7 +380,7 @@ func AddDB(c *gin.Context) {
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.DBInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, dbNameExists := fields[dbDBNameStruct]
@@ -397,14 +397,14 @@ func AddDB(c *gin.Context) {
 	// insert into middleware
 	err = s.Create(fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddDB, errors.Trace(err),
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddDB, err,
 			fields[dbDBNameStruct], fields[dbClusterIDStruct], fields[dbClusterTypeStruct], fields[dbEnvIDStruct])
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -440,7 +440,7 @@ func UpdateDBByID(c *gin.Context) {
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.DBInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, dbNameExists := fields[dbDBNameStruct]
@@ -459,13 +459,13 @@ func UpdateDBByID(c *gin.Context) {
 	// update entity
 	err = s.Update(id, fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateDB, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateDB, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// resp
@@ -496,13 +496,13 @@ func DeleteDBByID(c *gin.Context) {
 	// update entity
 	err = s.Delete(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteDB, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteDB, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// resp
@@ -549,13 +549,13 @@ func DBAddApp(c *gin.Context) {
 	// update entities
 	err = s.AddApp(id, appID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDBAddApp, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDBAddApp, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(dbAppsStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -578,7 +578,7 @@ func DBDeleteApp(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion,errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	data, err := c.GetRawData()
@@ -602,13 +602,13 @@ func DBDeleteApp(c *gin.Context) {
 	// update entities
 	err = s.DeleteApp(id, appID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDBDeleteApp, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDBDeleteApp, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(dbAppsStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -656,13 +656,13 @@ func DBAddUser(c *gin.Context) {
 	// update entities
 	err = s.DBAddUser(id, userID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDBAddUser, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDBAddUser, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(dbUsersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -709,13 +709,13 @@ func DBDeleteUser(c *gin.Context) {
 	// update entities
 	err = s.DBDeleteUser(id, userID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDBDeleteUser, errors.Trace(err), id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDBDeleteUser, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(dbUsersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response

@@ -48,20 +48,20 @@ func GetByMySQLClusterID(c *gin.Context) {
 	}
 	config, err := rd.GetConfig()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	// init server
 	service := query.NewServiceWithDefault(config)
 	err = service.GetByMySQLClusterID(mysqlClusterID)
 	if err != nil {
-		resp.ResponseNOK(c, msgquery.ErrQueryGetByMySQLClusterID, errors.Trace(err), mysqlClusterID)
+		resp.ResponseNOK(c, msgquery.ErrQueryGetByMySQLClusterID, err, mysqlClusterID)
 		return
 	}
 	// marshal
 	jsonBytes, err := service.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	jsonStr := string(jsonBytes)
@@ -97,21 +97,21 @@ func GetByMySQLServerID(c *gin.Context) {
 	}
 	config, err := rd.GetConfig()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	// init service
 	service := query.NewServiceWithDefault(config)
 	err = service.GetByMySQLServerID(mysqlServerID)
 	if err != nil {
-		resp.ResponseNOK(c, msgquery.ErrQueryGetByMySQLServerID, errors.Trace(err), mysqlServerID)
+		resp.ResponseNOK(c, msgquery.ErrQueryGetByMySQLServerID, err, mysqlServerID)
 		return
 	}
 
 	// marshal
 	jsonBytes, err := service.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	jsonStr := string(jsonBytes)
@@ -148,21 +148,21 @@ func GetByDBID(c *gin.Context) {
 	}
 	config, err := rd.GetConfig()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	// init service
 	service := query.NewServiceWithDefault(config)
 	err = service.GetByDBID(rd.GetMySQLServerID(), dbID)
 	if err != nil {
-		resp.ResponseNOK(c, msgquery.DebugQueryGetByDBID, errors.Trace(err), dbID)
+		resp.ResponseNOK(c, msgquery.DebugQueryGetByDBID, err, dbID)
 		return
 	}
 
 	// marshal
 	jsonBytes, err := service.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 	}
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgquery.DebugQueryGetByDBID, dbID, jsonStr).Error())
@@ -192,21 +192,21 @@ func GetBySQLID(c *gin.Context) {
 	}
 	config, err := rd.GetConfig()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData,errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	// init service
 	service := query.NewServiceWithDefault(config)
 	err = service.GetBySQLID(rd.GetMySQLServerID(), sqlIDStr)
 	if err != nil {
-		resp.ResponseNOK(c, msgquery.DebugQueryGetBySQLID, rd.GetMySQLServerID(), errors.Trace(err), sqlIDStr)
+		resp.ResponseNOK(c, msgquery.DebugQueryGetBySQLID, rd.GetMySQLServerID(), err, sqlIDStr)
 		return
 	}
 
 	// marshal
 	jsonBytes, err := service.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 	}
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgquery.DebugQueryGetBySQLID, rd.GetMySQLServerID(), sqlIDStr).Error())
