@@ -118,7 +118,7 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 	if err != nil {
 		updateErr := s.GetDASRepo().UpdateOperationStatus(operationID, defaultFailedStatus, err.Error())
 		if updateErr != nil {
-			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
+			log.Errorf("%+v", message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr))
 		}
 
 		return operationID, err
@@ -214,8 +214,8 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 		conn, err := mysql.NewConn(slowQueryAddr, defaultMonitorMySQLDBName, s.getMonitorMySQLUser(), s.getMonitorMySQLPass())
 		if err != nil {
 			return operationID, errors.New(
-				fmt.Sprintf("create monitor mysql connection failed. addr: %s, user: %s. error:\n%s",
-					slowQueryAddr, s.getMonitorMySQLUser(), err.Error()))
+				fmt.Sprintf("create monitor mysql connection failed. addr: %s, user: %s. error:\n%+v",
+					slowQueryAddr, s.getMonitorMySQLUser(), err))
 		}
 		queryRepo = NewMySQLQueryRepo(s.GetOperationInfo(), conn)
 	case 2:
@@ -226,8 +226,8 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 		conn, err := clickhouse.NewConnWithDefault(slowQueryAddr, defaultMonitorClickhouseDBName, s.getMonitorClickhouseUser(), s.getMonitorClickhousePass())
 		if err != nil {
 			return operationID, errors.New(
-				fmt.Sprintf("create monitor clickhouse connection failed. addr: %s, user: %s. error:\n%s",
-					slowQueryAddr, s.getMonitorClickhouseUser(), err.Error()))
+				fmt.Sprintf("create monitor clickhouse connection failed. addr: %s, user: %s. error:\n%+v",
+					slowQueryAddr, s.getMonitorClickhouseUser(), err))
 		}
 		queryRepo = NewClickhouseQueryRepo(s.GetOperationInfo(), conn)
 	default:
@@ -237,8 +237,8 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 	prometheusConn, err := prometheus.NewConnWithConfig(prometheusConfig)
 	if err != nil {
 		return operationID, errors.New(
-			fmt.Sprintf("create prometheus connection failed. addr: %s, user: %s. error:\n%s",
-				prometheusAddr, s.getMonitorPrometheusUser(), err.Error()))
+			fmt.Sprintf("create prometheus connection failed. addr: %s, user: %s. error:\n%+v",
+				prometheusAddr, s.getMonitorPrometheusUser(), err))
 	}
 	prometheusRepo := NewPrometheusRepo(s.GetOperationInfo(), prometheusConn)
 	s.Engine = NewDefaultEngine(s.GetOperationInfo(), s.GetDASRepo(), applicationMySQLRepo, prometheusRepo, queryRepo)

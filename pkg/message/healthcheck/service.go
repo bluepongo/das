@@ -64,21 +64,21 @@ func initServiceInfoMessage() {
 func initServiceErrorMessage() {
 	message.Messages[ErrHealthcheckDefaultEngineRun] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckDefaultEngineRun,
-		"default engine run failed.\n%s")
+		"default engine run failed")
 	message.Messages[ErrHealthcheckGetResultByOperationID] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckGetResultByOperationID,
-		"healthcheck: get result by operation id failed. operation id: %d\n%s")
+		"healthcheck: get result by operation id failed. operation id: %d")
 	message.Messages[ErrHealthcheckCheck] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCheck,
-		"healthcheck: check failed. operation id: %d\n%s")
+		"healthcheck: check failed. operation id: %d")
 	message.Messages[ErrHealthcheckCheckByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCheckByHostInfo,
-		"healthcheck: check by host info failed. operation id: %d.\n%s")
+		"healthcheck: check by host info failed. operation id: %d")
 	message.Messages[ErrHealthcheckReviewAccuracy] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckReviewAccuracy,
-		"healthcheck: review accuracy failed. operation id: %d.\n%s")
+		"healthcheck: review accuracy failed. operation id: %d")
 	message.Messages[ErrHealthcheckCloseConnection] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCloseConnection,
-		"healthcheck: close middleware connection failed.\n%s")
+		"healthcheck: close middleware connection failed")
 
 }
