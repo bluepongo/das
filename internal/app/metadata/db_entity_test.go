@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"encoding/json"
+	"github.com/pingcap/errors"
 	"reflect"
 	"testing"
 
@@ -250,7 +251,7 @@ func TestDBInfo_MarshalJSON(t *testing.T) {
 	data, err := testDBInfo.MarshalJSON()
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
 	err = json.Unmarshal(data, &dbInfoUnmarshal)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(errors.Trace(err), common.CombineMessageWithError("test MarshalJSON() failed", errors.Trace(err)))
 	asst.True(dbEqual(testDBInfo, dbInfoUnmarshal), "test MarshalJSON() failed")
 }
 
@@ -260,6 +261,6 @@ func TestDBInfo_MarshalJSONWithFields(t *testing.T) {
 	data, err := testDBInfo.MarshalJSONWithFields(dbDBNameStruct)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 	expect, err := json.Marshal(map[string]interface{}{testDBDBNameJSON: testDBDBName})
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
+	asst.Nil(errors.Trace(err), common.CombineMessageWithError("test MarshalJSONWithFields() failed", errors.Trace(err)))
 	asst.Equal(string(expect), string(data), "test MarshalJSONWithFields() failed")
 }
