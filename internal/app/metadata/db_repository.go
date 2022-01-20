@@ -1,8 +1,8 @@
 package metadata
 
 import (
-	"errors"
 	"fmt"
+	"github.com/pingcap/errors"
 
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
@@ -436,7 +436,7 @@ func (dr *DBRepo) Delete(id int) error {
 	defer func() {
 		err = tx.Close()
 		if err != nil {
-			log.Errorf("metadata DBRepo.Delete(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata DBRepo.Delete(): close database connection failed. err:\n%+v", err)
 		}
 	}()
 
