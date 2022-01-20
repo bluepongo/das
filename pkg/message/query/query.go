@@ -47,11 +47,11 @@ func initQueryInfoMessage() {
 }
 
 func initQueryErrorMessage() {
-	message.Messages[ErrQueryGetByMySQLClusterID] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryGetByMySQLClusterID, "get by mysql cluster id failed. mysql_cluster_id: %d.\n%s")
-	message.Messages[ErrQueryGetByMySQLServerID] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryGetByMySQLServerID, "get by mysql server id failed. mysql_server_id: %d.\n%s")
-	message.Messages[ErrQueryGetByDBID] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryGetByDBID, "get by db id failed. db_id: %d.\n%s")
-	message.Messages[ErrQueryGetBySQLID] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryGetBySQLID, "get by sql id failed. mysql_server_id: %d, sql_id: %s.\n%s")
+	message.Messages[ErrQueryGetByMySQLClusterID] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryGetByMySQLClusterID, "get by mysql cluster id failed. mysql_cluster_id: %d.")
+	message.Messages[ErrQueryGetByMySQLServerID] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryGetByMySQLServerID, "get by mysql server id failed. mysql_server_id: %d.")
+	message.Messages[ErrQueryGetByDBID] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryGetByDBID, "get by db id failed. db_id: %d.")
+	message.Messages[ErrQueryGetBySQLID] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryGetBySQLID, "get by sql id failed. mysql_server_id: %d, sql_id: %s.")
 	message.Messages[ErrQueryConfigNotValid] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryConfigNotValid, "config is not valid. start_time: %s, end_time: %s, limit: %d")
 	message.Messages[ErrQueryMonitorSystemType] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryMonitorSystemType, "monitor system type version should be either 1 or 2, %d is not valid")
-	message.Messages[ErrQueryCloseMonitorRepo] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCloseMonitorRepo, "close monitor repo failed.\n%s")
+	message.Messages[ErrQueryCloseMonitorRepo] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCloseMonitorRepo, "close monitor repo failed.")
 }

@@ -1,8 +1,8 @@
 package query
 
 import (
-	"errors"
 	"fmt"
+	"github.com/pingcap/errors"
 
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/metadata"
@@ -146,7 +146,7 @@ func (q *Querier) GetByMySQLServerID(mysqlServerID int) ([]query.Query, error) {
 	defer func() {
 		err = monitorRepo.Close()
 		if err != nil {
-			log.Error(message.NewMessage(msgquery.ErrQueryCloseMonitorRepo, err.Error()).Error())
+			log.Error(message.NewMessage(msgquery.ErrQueryCloseMonitorRepo, errors.Trace(err)).Error())
 		}
 	}()
 	// get mysql server
@@ -172,7 +172,7 @@ func (q *Querier) GetByDBID(mysqlServerID int, dbID int) ([]query.Query, error) 
 	defer func() {
 		err = monitorRepo.Close()
 		if err != nil {
-			log.Error(message.NewMessage(msgquery.ErrQueryCloseMonitorRepo, err.Error()).Error())
+			log.Error(message.NewMessage(msgquery.ErrQueryCloseMonitorRepo, errors.Trace(err)).Error())
 		}
 	}()
 	// get mysql server
@@ -203,7 +203,7 @@ func (q *Querier) GetBySQLID(mysqlServerID int, sqlID string) ([]query.Query, er
 	defer func() {
 		err = monitorRepo.Close()
 		if err != nil {
-			log.Error(message.NewMessage(msgquery.ErrQueryCloseMonitorRepo, err.Error()).Error())
+			log.Error(message.NewMessage(msgquery.ErrQueryCloseMonitorRepo, errors.Trace(err)).Error())
 		}
 	}()
 	// get mysql server
