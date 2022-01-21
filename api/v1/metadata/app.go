@@ -40,13 +40,13 @@ func GetApp(c *gin.Context) {
 	// get entities
 	err := s.GetAll()
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppAll, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppAll, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -69,7 +69,7 @@ func GetAppByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	// init service
@@ -77,13 +77,13 @@ func GetAppByID(c *gin.Context) {
 	// get entity
 	err = s.GetByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppByID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppByID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -109,13 +109,13 @@ func GetAppByName(c *gin.Context) {
 	// get entity
 	err := s.GetAppByName(appName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppByName, appName, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppByName, err, appName)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -138,7 +138,7 @@ func GetDBsByAppID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	// init service
@@ -146,13 +146,13 @@ func GetDBsByAppID(c *gin.Context) {
 	// get entity
 	err = s.GetDBsByAppID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBsByAppID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBsByAppID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(appDBsStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -172,13 +172,13 @@ func AddApp(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, err)
 		return
 	}
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.AppInfo{}, constant.DefaultJSONTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, ok := fields[appAppNameStruct]
@@ -196,13 +196,13 @@ func AddApp(c *gin.Context) {
 	// insert into middleware
 	err = s.Create(fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddApp, fields[appAppNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddApp, err, fields[appAppNameStruct])
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -227,18 +227,18 @@ func UpdateAppByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, err)
 		return
 	}
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.AppInfo{}, constant.DefaultJSONTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, AppNameExists := fields[appAppNameStruct]
@@ -253,13 +253,13 @@ func UpdateAppByID(c *gin.Context) {
 	// update entities
 	err = s.Update(id, fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateApp, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateApp, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -284,7 +284,7 @@ func DeleteAppByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	// init service
@@ -292,13 +292,13 @@ func DeleteAppByID(c *gin.Context) {
 	// update entities
 	err = s.Delete(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteApp, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteApp, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -321,19 +321,19 @@ func AppAddDB(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, err)
 		return
 	}
 
 	dataMap := make(map[string]int)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAppAddDB, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAppAddDB, err, id)
 		return
 	}
 	dbID, dbIDExists := dataMap[appDBIDJSON]
@@ -346,13 +346,13 @@ func AppAddDB(c *gin.Context) {
 	// update entities
 	err = s.AddDB(id, dbID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAppAddDB, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAppAddDB, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(appDBsStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -375,18 +375,18 @@ func AppDeleteDB(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, err)
 		return
 	}
 	dataMap := make(map[string]int)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAppDeleteDB, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAppDeleteDB, err, id)
 		return
 	}
 	dbID, dbIDExists := dataMap[appDBIDJSON]
@@ -399,13 +399,13 @@ func AppDeleteDB(c *gin.Context) {
 	// update entities
 	err = s.DeleteDB(id, dbID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAppDeleteDB, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAppDeleteDB, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(appDBsStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -428,7 +428,7 @@ func GetUsersByAppID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	// init service
@@ -436,13 +436,13 @@ func GetUsersByAppID(c *gin.Context) {
 	// get entity
 	err = s.GetUsersByAppID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUsersByAppID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUsersByAppID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(appUsersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -465,19 +465,19 @@ func AppAddUser(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, err)
 		return
 	}
 
 	dataMap := make(map[string]int)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAppAddUser, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAppAddUser, err, id)
 		return
 	}
 	userID, userIDExists := dataMap[appUserIDJSON]
@@ -490,13 +490,13 @@ func AppAddUser(c *gin.Context) {
 	// update entities
 	err = s.AddUser(id, userID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAppAddUser, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAppAddUser, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(appUsersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -519,18 +519,18 @@ func AppDeleteUser(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, err)
 		return
 	}
 	dataMap := make(map[string]int)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAppDeleteUser, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAppDeleteUser, err, id)
 		return
 	}
 	userID, userIDExists := dataMap[appUserIDJSON]
@@ -543,13 +543,13 @@ func AppDeleteUser(c *gin.Context) {
 	// update entities
 	err = s.DeleteUser(id, userID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAppDeleteUser, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAppDeleteUser, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(appUsersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
