@@ -199,7 +199,7 @@ func GetBySQLID(c *gin.Context) {
 	service := query.NewServiceWithDefault(config)
 	err = service.GetBySQLID(rd.GetMySQLServerID(), sqlIDStr)
 	if err != nil {
-		resp.ResponseNOK(c, msgquery.DebugQueryGetBySQLID, rd.GetMySQLServerID(), err, sqlIDStr)
+		resp.ResponseNOK(c, msgquery.DebugQueryGetBySQLID, err, rd.GetMySQLServerID(), sqlIDStr)
 		return
 	}
 

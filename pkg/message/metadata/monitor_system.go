@@ -60,7 +60,7 @@ func initInfoMonitorSystemMessage() {
 }
 
 func initErrorMonitorSystemMessage() {
-	message.Messages[ErrMetadataGetMonitorSystemAll] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMonitorSystemAll, "metadata: get all monitor systems failed.")
+	message.Messages[ErrMetadataGetMonitorSystemAll] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMonitorSystemAll, "metadata: get all monitor systems failed")
 	message.Messages[ErrMetadataGetMonitorSystemByEnv] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMonitorSystemByEnv, "metadata: get monitor systems by environment failed. env_id: %d")
 	message.Messages[ErrMetadataGetMonitorSystemByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMonitorSystemByID, "metadata: get monitor system by id failed. id: %d")
 	message.Messages[ErrMetadataGetMonitorSystemByHostInfo] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMonitorSystemByHostInfo, "metadata: get monitor system by host info failed. host_ip: %s, port_num: %d")

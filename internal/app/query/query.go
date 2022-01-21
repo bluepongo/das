@@ -144,7 +144,7 @@ func (q *Querier) GetByMySQLServerID(mysqlServerID int) ([]query.Query, error) {
 	defer func() {
 		err = monitorRepo.Close()
 		if err != nil {
-			log.Error(message.NewMessage(msgquery.ErrQueryCloseMonitorRepo, err).Error())
+			log.Errorf("query Querier.GetByMySQLServerID(): close monitor repo failed. err: \n%+v", err)
 		}
 	}()
 	// get mysql server
@@ -170,7 +170,7 @@ func (q *Querier) GetByDBID(mysqlServerID int, dbID int) ([]query.Query, error) 
 	defer func() {
 		err = monitorRepo.Close()
 		if err != nil {
-			log.Error(message.NewMessage(msgquery.ErrQueryCloseMonitorRepo, err).Error())
+			log.Errorf("query Querier.GetByDBID(): close monitor repo failed. err: \n%+v", err)
 		}
 	}()
 	// get mysql server
@@ -201,7 +201,7 @@ func (q *Querier) GetBySQLID(mysqlServerID int, sqlID string) ([]query.Query, er
 	defer func() {
 		err = monitorRepo.Close()
 		if err != nil {
-			log.Error(message.NewMessage(msgquery.ErrQueryCloseMonitorRepo, err).Error())
+			log.Errorf("query Querier.GetBySQLID(): close monitor repo failed. err: \n%+v", err)
 		}
 	}()
 	// get mysql server

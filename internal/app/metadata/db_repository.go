@@ -38,7 +38,7 @@ func (dr *DBRepo) Execute(command string, args ...interface{}) (middleware.Resul
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("metadata DBRepo.Execute(): close database connection failed.\n%+v", err)
+			log.Errorf("metadata DBRepo.Execute(): close database connection failed. err: \n%+v", err)
 		}
 	}()
 

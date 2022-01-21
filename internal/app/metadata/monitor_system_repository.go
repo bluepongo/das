@@ -38,7 +38,7 @@ func (msr *MonitorSystemRepo) Execute(command string, args ...interface{}) (midd
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("metadata MonitorSystemRepo.Execute(): close database connection failed. err:\n%+v", err)
+			log.Errorf("metadata MonitorSystemRepo.Execute(): close database connection failed. err: \n%+v", err)
 		}
 	}()
 
@@ -217,7 +217,7 @@ func (msr *MonitorSystemRepo) Delete(id int) error {
 	defer func() {
 		err = tx.Close()
 		if err != nil {
-			log.Errorf("metadata MonitorSystemRepo.Delete(): close database connection failed. err:\n%+v", err)
+			log.Errorf("metadata MonitorSystemRepo.Delete(): close database connection failed. err: \n%+v", err)
 		}
 	}()
 
