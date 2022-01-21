@@ -3,12 +3,13 @@ package alert
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"time"
+
+	"github.com/pingcap/errors"
 
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/dependency/alert"
@@ -86,14 +87,14 @@ func (hs *HTTPSender) Send() error {
 	// get request body
 	reqBody, err := hs.buildRequestBody()
 	if err != nil {
-		return err
+		return errors.Trace(err)
 	}
 
 	log.Infof("http body: %s", string(reqBody))
 	// call http api
 	resp, err := hs.GetClient().Post(hs.GetURL(), defaultContentType, bytes.NewBuffer(reqBody))
 	if err != nil {
-		return err
+		return errors.Trace(err)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -106,7 +107,7 @@ func (hs *HTTPSender) Send() error {
 func (hs *HTTPSender) buildRequestBody() ([]byte, error) {
 	jsonBytes, err := json.MarshalIndent(hs.GetConfig(), constant.EmptyString, constant.DefaultIndentString)
 	if err != nil {
-		return nil, err
+		return nil, errors.Trace(err)
 	}
 
 	return pretty.Pretty(jsonBytes), nil
@@ -121,7 +122,7 @@ func (hs *HTTPSender) parseResponse(resp *http.Response) error {
 	// read response body
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return errors.Trace(err)
 	}
 	if resp.StatusCode != http.StatusOK {
 		return errors.New(fmt.Sprintf("got http error when calling alert http api. status code: %d, message: %s",
@@ -131,7 +132,7 @@ func (hs *HTTPSender) parseResponse(resp *http.Response) error {
 	response := NewEmptyResponse()
 	err = json.Unmarshal(respBody, &response)
 	if err != nil {
-		return err
+		return errors.Trace(err)
 	}
 	// get value from the map
 	if response.GetCode() != constant.ZeroInt {

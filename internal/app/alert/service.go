@@ -2,8 +2,9 @@ package alert
 
 import (
 	"encoding/json"
-	"errors"
 	"strings"
+
+	"github.com/pingcap/errors"
 
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/dependency/alert"
