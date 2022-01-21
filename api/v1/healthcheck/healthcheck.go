@@ -94,7 +94,7 @@ func Check(c *gin.Context) {
 	// check health
 	operationID, err := s.Check(rd.GetServerID(), startTime, endTime, step)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, operationID, err)
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err, operationID)
 		return
 	}
 
@@ -135,7 +135,7 @@ func CheckByHostInfo(c *gin.Context) {
 	// get entities
 	operationID, err := s.CheckByHostInfo(rd.GetHostIP(), rd.GetPortNum(), startTime, endTime, step)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, operationID, err)
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, err, operationID)
 		return
 	}
 
