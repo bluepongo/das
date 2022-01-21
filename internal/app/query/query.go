@@ -2,8 +2,6 @@ package query
 
 import (
 	"fmt"
-	"github.com/pingcap/errors"
-
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/metadata"
 	depmeta "github.com/romberli/das/internal/dependency/metadata"
@@ -284,18 +282,14 @@ func (q *Querier) getMonitorRepo(monitorSystem depmeta.MonitorSystem) (query.Mon
 		// pmm 1.x
 		mysqlConn, err := mysql.NewConn(addr, pmmMySQLDBName, q.getMonitorMySQLUser(), q.getMonitorMySQLPass())
 		if err != nil {
-			return nil, errors.New(
-				fmt.Sprintf("create monitor mysql connection failed. addr: %s, user: %s. error:\n%+v",
-					addr, q.getMonitorMySQLUser(), err))
+			return nil, message.NewMessage(msgquery.ErrQueryCreateMonitorMysqlConnection, err, addr, q.getMonitorMySQLUser())
 		}
 		monitorRepo = NewMySQLRepo(q.getConfig(), mysqlConn)
 	case 2:
 		// pmm 2.x
 		clickhouseConn, err := clickhouse.NewConnWithDefault(addr, pmmClickhouseDBName, q.getMonitorClickhouseUser(), q.getMonitorClickhousePass())
 		if err != nil {
-			return nil, errors.New(
-				fmt.Sprintf("create monitor clickhouse connection failed. addr: %s, user: %s. error:\n%+v",
-					addr, q.getMonitorClickhouseUser(), err))
+			return nil, message.NewMessage(msgquery.ErrQueryCreateMonitorClickhouseConnection, err, addr, q.getMonitorClickhouseUser())
 		}
 		monitorRepo = NewClickHouseRepo(q.getConfig(), clickhouseConn)
 	default:

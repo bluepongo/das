@@ -23,13 +23,15 @@ const (
 	InfoQueryGetByDBID           = 203003
 	InfoQueryGetBySQLID          = 203004
 	// error
-	ErrQueryGetByMySQLClusterID = 403001
-	ErrQueryGetByMySQLServerID  = 403002
-	ErrQueryGetByDBID           = 403003
-	ErrQueryGetBySQLID          = 403004
-	ErrQueryConfigNotValid      = 403005
-	ErrQueryMonitorSystemType   = 403006
-	ErrQueryCloseMonitorRepo    = 403007
+	ErrQueryGetByMySQLClusterID               = 403001
+	ErrQueryGetByMySQLServerID                = 403002
+	ErrQueryGetByDBID                         = 403003
+	ErrQueryGetBySQLID                        = 403004
+	ErrQueryConfigNotValid                    = 403005
+	ErrQueryMonitorSystemType                 = 403006
+	ErrQueryCloseMonitorRepo                  = 403007
+	ErrQueryCreateMonitorMysqlConnection      = 403008
+	ErrQueryCreateMonitorClickhouseConnection = 403009
 )
 
 func initQueryDebugMessage() {
@@ -54,4 +56,7 @@ func initQueryErrorMessage() {
 	message.Messages[ErrQueryConfigNotValid] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryConfigNotValid, "config is not valid. start_time: %s, end_time: %s, limit: %d")
 	message.Messages[ErrQueryMonitorSystemType] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryMonitorSystemType, "monitor system type version should be either 1 or 2, %d is not valid")
 	message.Messages[ErrQueryCloseMonitorRepo] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCloseMonitorRepo, "close monitor repo failed.")
+	message.Messages[ErrQueryCreateMonitorMysqlConnection] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCreateMonitorMysqlConnection, "close monitor repo failed. add: %s, user: %s")
+	message.Messages[ErrQueryCreateMonitorClickhouseConnection] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCreateMonitorClickhouseConnection, "close monitor repo failed. add: %s, user: %s")
+
 }
