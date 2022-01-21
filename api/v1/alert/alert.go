@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pingcap/errors"
+
 	"github.com/romberli/das/internal/app/alert"
 	"github.com/romberli/das/pkg/message"
 	msgalert "github.com/romberli/das/pkg/message/alert"
@@ -36,7 +38,7 @@ func SendEmail(c *gin.Context) {
 	dataMap := make(map[string]string)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 
@@ -45,7 +47,7 @@ func SendEmail(c *gin.Context) {
 	if configExists {
 		err = json.Unmarshal([]byte(configStr), &config)
 		if err != nil {
-			resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
+			resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 			return
 		}
 	}
