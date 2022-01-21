@@ -233,7 +233,7 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 	prometheusConn, err := prometheus.NewConnWithConfig(prometheusConfig)
 	if err != nil {
 		return operationID, message.NewMessage(
-			msghc.ErrHealthcheckCreatePrometheusConnection, err, prometheusAddr, s.getMonitorPrometheusUser())
+			msghc.ErrHealthcheckCreateMonitorPrometheusConnection, err, prometheusAddr, s.getMonitorPrometheusUser())
 	}
 	prometheusRepo := NewPrometheusRepo(s.GetOperationInfo(), prometheusConn)
 	s.Engine = NewDefaultEngine(s.GetOperationInfo(), s.GetDASRepo(), applicationMySQLRepo, prometheusRepo, queryRepo)

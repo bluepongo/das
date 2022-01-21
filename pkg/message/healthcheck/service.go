@@ -32,7 +32,7 @@ const (
 	ErrHealthcheckCreateApplicationMySQLConnection  = 402107
 	ErrHealthcheckCreateMonitorMySQLConnection      = 402108
 	ErrHealthcheckCreateMonitorClickhouseConnection = 402109
-	ErrHealthcheckCreatePrometheusConnection        = 402110
+	ErrHealthcheckCreateMonitorPrometheusConnection = 402110
 )
 
 func initServiceDebugMessage() {
@@ -93,8 +93,8 @@ func initServiceErrorMessage() {
 	message.Messages[ErrHealthcheckCreateMonitorClickhouseConnection] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCreateMonitorClickhouseConnection,
 		"create monitor clickhouse connection failed. addr: %s, user: %s")
-	message.Messages[ErrHealthcheckCreatePrometheusConnection] = config.NewErrMessage(
-		message.DefaultMessageHeader, ErrHealthcheckCreatePrometheusConnection,
+	message.Messages[ErrHealthcheckCreateMonitorPrometheusConnection] = config.NewErrMessage(
+		message.DefaultMessageHeader, ErrHealthcheckCreateMonitorPrometheusConnection,
 		"create prometheus connection failed. addr: %s, user: %s")
 
 }
