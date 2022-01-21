@@ -23,12 +23,16 @@ const (
 	InfoHealthcheckCheckByHostInfo        = 202103
 	InfoHealthcheckReviewAccuracy         = 202104
 	// error
-	ErrHealthcheckDefaultEngineRun       = 402101
-	ErrHealthcheckGetResultByOperationID = 402102
-	ErrHealthcheckCheck                  = 402103
-	ErrHealthcheckCheckByHostInfo        = 402104
-	ErrHealthcheckReviewAccuracy         = 402105
-	ErrHealthcheckCloseConnection        = 402106
+	ErrHealthcheckDefaultEngineRun                  = 402101
+	ErrHealthcheckGetResultByOperationID            = 402102
+	ErrHealthcheckCheck                             = 402103
+	ErrHealthcheckCheckByHostInfo                   = 402104
+	ErrHealthcheckReviewAccuracy                    = 402105
+	ErrHealthcheckCloseConnection                   = 402106
+	ErrHealthcheckCreateApplicationMySQLConnection  = 402107
+	ErrHealthcheckCreateMonitorMySQLConnection      = 402108
+	ErrHealthcheckCreateMonitorClickhouseConnection = 402109
+	ErrHealthcheckCreatePrometheusConnection        = 402110
 )
 
 func initServiceDebugMessage() {
@@ -80,5 +84,17 @@ func initServiceErrorMessage() {
 	message.Messages[ErrHealthcheckCloseConnection] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCloseConnection,
 		"healthcheck: close middleware connection failed")
+	message.Messages[ErrHealthcheckCreateApplicationMySQLConnection] = config.NewErrMessage(
+		message.DefaultMessageHeader, ErrHealthcheckCreateApplicationMySQLConnection,
+		"create application mysql connection failed. addr: %s, user: %s")
+	message.Messages[ErrHealthcheckCreateMonitorMySQLConnection] = config.NewErrMessage(
+		message.DefaultMessageHeader, ErrHealthcheckCreateMonitorMySQLConnection,
+		"create monitor mysql connection failed. addr: %s, user: %s")
+	message.Messages[ErrHealthcheckCreateMonitorClickhouseConnection] = config.NewErrMessage(
+		message.DefaultMessageHeader, ErrHealthcheckCreateMonitorClickhouseConnection,
+		"create monitor clickhouse connection failed. addr: %s, user: %s")
+	message.Messages[ErrHealthcheckCreatePrometheusConnection] = config.NewErrMessage(
+		message.DefaultMessageHeader, ErrHealthcheckCreatePrometheusConnection,
+		"create prometheus connection failed. addr: %s, user: %s")
 
 }
