@@ -3,6 +3,7 @@ package healthcheck
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/pingcap/errors"
 	"strconv"
 	"strings"
 	"time"
@@ -143,18 +144,18 @@ func (de *DefaultEngine) Run() {
 	defer func() {
 		err := de.closeConnections()
 		if err != nil {
-			log.Error(message.NewMessage(msghc.ErrHealthcheckCloseConnection, err.Error()).Error())
+			log.Errorf("%+v", message.NewMessage(msghc.ErrHealthcheckCloseConnection, err))
 		}
 	}()
 
 	// run
 	err := de.run()
 	if err != nil {
-		log.Error(message.NewMessage(msghc.ErrHealthcheckDefaultEngineRun, err.Error()).Error())
+		log.Errorf("%+v", message.NewMessage(msghc.ErrHealthcheckDefaultEngineRun, err))
 		// update status
 		updateErr := de.getDASRepo().UpdateOperationStatus(de.GetOperationInfo().GetOperationID(), defaultFailedStatus, err.Error())
 		if updateErr != nil {
-			log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
+			log.Errorf("%+v", message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr))
 			return
 		}
 		return
@@ -164,7 +165,7 @@ func (de *DefaultEngine) Run() {
 	msg := fmt.Sprintf("healthcheck completed successfully. engine: default, operation_id: %d", de.GetOperationInfo().GetOperationID())
 	updateErr := de.getDASRepo().UpdateOperationStatus(de.GetOperationInfo().GetOperationID(), defaultSuccessStatus, msg)
 	if updateErr != nil {
-		log.Error(message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr.Error()).Error())
+		log.Errorf("%+v", message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr))
 	}
 }
 
@@ -319,7 +320,7 @@ func (de *DefaultEngine) loadEngineConfig() error {
 	log.Debugf("healthcheck DASRepo.loadEngineConfig() sql: \n%s\n", sql)
 	result, err := de.getDASRepo().Execute(sql)
 	if err != nil {
-		return nil
+		return err
 	}
 	// init []*DefaultItemConfig
 	defaultEngineConfigList := make([]*DefaultItemConfig, result.RowNumber())
@@ -368,7 +369,7 @@ func (de *DefaultEngine) checkDBConfig() error {
 		case dbConfigMaxUserConnection:
 			maxUserConnection, err := strconv.Atoi(value)
 			if err != nil {
-				return err
+				return errors.Trace(err)
 			}
 			if maxUserConnection < dbConfigMaxUserConnectionValid {
 				dbConfigCount++
@@ -378,7 +379,7 @@ func (de *DefaultEngine) checkDBConfig() error {
 		case dbConfigSlaveParallelWorkers:
 			workers, err := strconv.Atoi(value)
 			if err != nil {
-				return err
+				return errors.Trace(err)
 			}
 			if workers != dbConfigSlaveParallelWorkersValid {
 				dbConfigCount++
@@ -406,13 +407,13 @@ func (de *DefaultEngine) checkDBConfig() error {
 	// database config data
 	jsonBytesTotal, err := json.Marshal(globalVariables)
 	if err != nil {
-		return nil
+		return errors.Trace(err)
 	}
 	de.result.DBConfigData = string(jsonBytesTotal)
 	// database config advice
 	jsonBytesVariables, err := json.Marshal(variables)
 	if err != nil {
-		return nil
+		return errors.Trace(err)
 	}
 	de.result.DBConfigAdvice = string(jsonBytesVariables)
 	// database config score deduction
@@ -592,13 +593,13 @@ func (de *DefaultEngine) checkTableRows() error {
 	// table rows data
 	jsonBytesTotal, err := json.Marshal(tables)
 	if err != nil {
-		return nil
+		return errors.Trace(err)
 	}
 	de.result.TableRowsData = string(jsonBytesTotal)
 	// table rows high
 	jsonBytesHigh, err := json.Marshal(tableRowsHigh)
 	if err != nil {
-		return nil
+		return errors.Trace(err)
 	}
 	de.result.TableRowsHigh = string(jsonBytesHigh)
 
@@ -661,13 +662,13 @@ func (de *DefaultEngine) checkTableSize() error {
 	// table size data
 	jsonBytesTotal, err := json.Marshal(tables)
 	if err != nil {
-		return nil
+		return errors.Trace(err)
 	}
 	de.result.TableSizeData = string(jsonBytesTotal)
 	// table size high
 	jsonBytesHigh, err := json.Marshal(tableSizeHigh)
 	if err != nil {
-		return nil
+		return errors.Trace(err)
 	}
 	de.result.TableSizeHigh = string(jsonBytesHigh)
 
@@ -718,7 +719,7 @@ func (de *DefaultEngine) checkSlowQuery() error {
 	// slow query data
 	jsonBytesRowsExamined, err := json.Marshal(slowQueries)
 	if err != nil {
-		return err
+		return errors.Trace(err)
 	}
 	de.result.SlowQueryData = string(jsonBytesRowsExamined)
 
@@ -811,7 +812,7 @@ func (de *DefaultEngine) checkSlowQuery() error {
 		} else {
 			jsonBytes, err := json.Marshal(sql)
 			if err != nil {
-				return err
+				return errors.Trace(err)
 			}
 			advice = string(jsonBytes)
 		}
@@ -912,11 +913,11 @@ func (de *DefaultEngine) parsePrometheusDatas(item string, datas []healthcheck.P
 
 	jsonBytesTotal, err := json.Marshal(datas)
 	if err != nil {
-		return constant.ZeroInt, constant.EmptyString, constant.EmptyString, err
+		return constant.ZeroInt, constant.EmptyString, constant.EmptyString, errors.Trace(err)
 	}
 	jsonBytesHigh, err := json.Marshal(highDatas)
 	if err != nil {
-		return constant.ZeroInt, constant.EmptyString, constant.EmptyString, err
+		return constant.ZeroInt, constant.EmptyString, constant.EmptyString, errors.Trace(err)
 	}
 
 	return score, string(jsonBytesTotal), string(jsonBytesHigh), nil

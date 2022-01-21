@@ -38,7 +38,7 @@ func GetResultByOperationID(c *gin.Context) {
 	}
 	operationID, err := strconv.Atoi(operationIDStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, err)
 		return
 	}
 	// init service
@@ -46,13 +46,13 @@ func GetResultByOperationID(c *gin.Context) {
 	// get entities
 	err = s.GetResultByOperationID(operationID)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckGetResultByOperationID, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckGetResultByOperationID, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -71,7 +71,7 @@ func Check(c *gin.Context) {
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetStartTime(), time.Local)
@@ -94,7 +94,7 @@ func Check(c *gin.Context) {
 	// check health
 	operationID, err := s.Check(rd.GetServerID(), startTime, endTime, step)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, operationID, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err, operationID)
 		return
 	}
 
@@ -112,7 +112,7 @@ func CheckByHostInfo(c *gin.Context) {
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetStartTime(), time.Local)
@@ -135,7 +135,7 @@ func CheckByHostInfo(c *gin.Context) {
 	// get entities
 	operationID, err := s.CheckByHostInfo(rd.GetHostIP(), rd.GetPortNum(), startTime, endTime, step)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, operationID, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, err, operationID)
 		return
 	}
 
@@ -152,13 +152,13 @@ func ReviewAccuracy(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, err)
 		return
 	}
 	dataMap := make(map[string]int)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err)
 		return
 	}
 	operationID, operationIDExists := dataMap[operationIDJSON]
@@ -176,7 +176,7 @@ func ReviewAccuracy(c *gin.Context) {
 	// review accuracy
 	err = s.ReviewAccuracy(operationID, review)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckReviewAccuracy, operationID, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckReviewAccuracy, err, operationID)
 		return
 	}
 

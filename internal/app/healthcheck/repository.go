@@ -2,6 +2,7 @@ package healthcheck
 
 import (
 	"fmt"
+	"github.com/pingcap/errors"
 	"time"
 
 	"github.com/hashicorp/go-version"
@@ -73,7 +74,7 @@ func (dr *DASRepo) Execute(command string, args ...interface{}) (middleware.Resu
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("healthcheck DASRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("healthcheck DASRepo.Execute(): close database connection failed.\n%+v", err)
 		}
 	}()
 
@@ -332,11 +333,11 @@ func (amr *ApplicationMySQLRepo) GetVariables(items []string) ([]healthcheck.Var
 	// check mysql version
 	mysqlVersion, err := version.NewVersion(amr.GetOperationInfo().GetMySQLServer().GetVersion())
 	if err != nil {
-		return nil, err
+		return nil, errors.Trace(err)
 	}
 	defaultVersion, err := version.NewVersion(mysql57)
 	if err != nil {
-		return nil, err
+		return nil, errors.Trace(err)
 	}
 	// prepare sql
 	sql := fmt.Sprintf(applicationMySQLVariables, performanceSchema, inClause)

@@ -3,6 +3,7 @@ package metadata
 import (
 	"fmt"
 
+	"github.com/pingcap/errors"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/log"
@@ -44,7 +45,7 @@ func (mcr *MySQLClusterRepo) Execute(command string, args ...interface{}) (middl
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("metadata MySQLClusterRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata MySQLClusterRepo.Execute(): close database connection failed.\n%+v", err)
 		}
 	}()
 
@@ -106,10 +107,8 @@ func (mcr *MySQLClusterRepo) GetByEnv(envID int) ([]metadata.MySQLCluster, error
 		return nil, err
 	}
 
-	resultNum := result.RowNumber()
-	mysqlClusterList := make([]metadata.MySQLCluster, resultNum)
-
-	for row := 0; row < resultNum; row++ {
+	mysqlClusterList := make([]metadata.MySQLCluster, result.RowNumber())
+	for row := range mysqlClusterList {
 		mysqlClusterList[row] = NewEmptyMySQLClusterInfoWithGlobal()
 	}
 	// map to struct
@@ -138,7 +137,7 @@ func (mcr *MySQLClusterRepo) GetByID(id int) (metadata.MySQLCluster, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, fmt.Errorf("metadata MySQLClusterInfo.GetByID(): data does not exists, id: %d", id)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterInfo.GetByID(): data does not exists, id: %d", id))
 	case 1:
 		mysqlClusterInfo := NewEmptyMySQLClusterInfoWithGlobal()
 		// map to struct
@@ -149,7 +148,7 @@ func (mcr *MySQLClusterRepo) GetByID(id int) (metadata.MySQLCluster, error) {
 
 		return mysqlClusterInfo, nil
 	default:
-		return nil, fmt.Errorf("metadata MySQLClusterInfo.GetByID(): duplicate key exists, id: %d", id)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterInfo.GetByID(): duplicate key exists, id: %d", id))
 	}
 }
 
@@ -167,7 +166,7 @@ func (mcr *MySQLClusterRepo) GetByName(clusterName string) (metadata.MySQLCluste
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, fmt.Errorf("metadata MySQLClusterInfo.GetByID(): data does not exists, clusterName: %s", clusterName)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterInfo.GetByID(): data does not exists, clusterName: %s", clusterName))
 	case 1:
 		mysqlClusterInfo := NewEmptyMySQLClusterInfoWithGlobal()
 		// map to struct
@@ -178,7 +177,7 @@ func (mcr *MySQLClusterRepo) GetByName(clusterName string) (metadata.MySQLCluste
 
 		return mysqlClusterInfo, nil
 	default:
-		return nil, fmt.Errorf("metadata MySQLClusterInfo.GetByID(): duplicate key exists, clusterName: %s", clusterName)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterInfo.GetByID(): duplicate key exists, clusterName: %s", clusterName))
 	}
 }
 
@@ -210,10 +209,8 @@ func (mcr *MySQLClusterRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 		return nil, err
 	}
 
-	resultNum := result.RowNumber()
-	dbList := make([]metadata.DB, resultNum)
-
-	for row := 0; row < resultNum; row++ {
+	dbList := make([]metadata.DB, result.RowNumber())
+	for row := range dbList {
 		dbList[row] = NewEmptyDBInfoWithGlobal()
 	}
 	// map to struct
@@ -257,14 +254,9 @@ func (mcr *MySQLClusterRepo) GetUsersByID(id int) ([]metadata.User, error) {
 		return nil, err
 	}
 
-	resultNum := result.RowNumber()
-	userList := make([]metadata.User, resultNum)
-
-	for row := 0; row < resultNum; row++ {
+	userList := make([]metadata.User, result.RowNumber())
+	for row := range userList {
 		userList[row] = NewEmptyUserInfoWithGlobal()
-	}
-	if len(userList) == 0 {
-		log.Errorf("metadata MySQLClusterRepo.GetUsersByID() failed. No active users are connected to this app, ID %d", id)
 	}
 	// map to struct
 	err = result.MapToStructSlice(userList, constant.DefaultMiddlewareTag)
@@ -347,14 +339,9 @@ func (mcr *MySQLClusterRepo) GetAppUsersByID(id int) ([]metadata.User, error) {
 		return nil, err
 	}
 
-	resultNum := result.RowNumber()
-	userList := make([]metadata.User, resultNum)
-
-	for row := 0; row < resultNum; row++ {
+	userList := make([]metadata.User, result.RowNumber())
+	for row := range userList {
 		userList[row] = NewEmptyUserInfoWithGlobal()
-	}
-	if len(userList) == 0 {
-		log.Errorf("metadata MySQLClusterRepo.GetAppUsersByID() failed. No active users are connected to this app, ID %d", id)
 	}
 	// map to struct
 	err = result.MapToStructSlice(userList, constant.DefaultMiddlewareTag)
@@ -398,10 +385,8 @@ func (mcr *MySQLClusterRepo) GetDBUsersByID(id int) ([]metadata.User, error) {
 		return nil, err
 	}
 
-	resultNum := result.RowNumber()
-	userList := make([]metadata.User, resultNum)
-
-	for row := 0; row < resultNum; row++ {
+	userList := make([]metadata.User, result.RowNumber())
+	for row := range userList {
 		userList[row] = NewEmptyUserInfoWithGlobal()
 	}
 	// map to struct
@@ -494,10 +479,8 @@ func (mcr *MySQLClusterRepo) GetAllUsersByID(id int) ([]metadata.User, error) {
 		return nil, err
 	}
 
-	resultNum := result.RowNumber()
-	userList := make([]metadata.User, resultNum)
-
-	for row := 0; row < resultNum; row++ {
+	userList := make([]metadata.User, result.RowNumber())
+	for row := range userList {
 		userList[row] = NewEmptyUserInfoWithGlobal()
 	}
 	// map to struct

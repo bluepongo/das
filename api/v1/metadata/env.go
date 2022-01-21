@@ -5,14 +5,14 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/romberli/go-util/common"
-	"github.com/romberli/go-util/constant"
-	"github.com/romberli/log"
-
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/pkg/message"
 	msgmeta "github.com/romberli/das/pkg/message/metadata"
 	"github.com/romberli/das/pkg/resp"
+	"github.com/romberli/go-util/common"
+	"github.com/romberli/go-util/constant"
+	"github.com/romberli/log"
 )
 
 const (
@@ -66,7 +66,7 @@ func GetEnvByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err)
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -74,7 +74,7 @@ func GetEnvByID(c *gin.Context) {
 	// get entity
 	err = s.GetByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByID, id, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByID, err, id)
 		return
 	}
 	// marshal service
@@ -106,7 +106,7 @@ func GetEnvByName(c *gin.Context) {
 	// get entity
 	err := s.GetEnvByName(envName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByName, envName, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByName, err, envName)
 		return
 	}
 	// marshal service
@@ -134,7 +134,7 @@ func AddEnv(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err)
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	// unmarshal data
@@ -185,12 +185,12 @@ func UpdateEnvByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err)
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err)
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	// unmarshal data
@@ -242,7 +242,7 @@ func DeleteEnvByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err)
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service

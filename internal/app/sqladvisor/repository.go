@@ -9,6 +9,7 @@ import (
 
 var _ sqladvisor.Repository = (*Repository)(nil)
 
+// Repository of sqladvisor
 type Repository struct {
 	Database middleware.Pool
 }
@@ -18,7 +19,7 @@ func NewRepository(db middleware.Pool) *Repository {
 	return &Repository{Database: db}
 }
 
-// NewRepository returns *Repository with global mysql pool
+// NewRepositoryWithGlobal returns *Repository with global mysql pool
 func NewRepositoryWithGlobal() *Repository {
 	return NewRepository(global.DASMySQLPool)
 }
@@ -32,7 +33,7 @@ func (r *Repository) Execute(command string, args ...interface{}) (middleware.Re
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("sqladvisor DASRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("sqladvisor DASRepo.Execute(): close database connection failed.\n%+v", err)
 		}
 	}()
 
