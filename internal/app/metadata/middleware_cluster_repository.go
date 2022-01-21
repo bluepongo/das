@@ -286,11 +286,11 @@ func (mcr *MiddlewareClusterRepo) AddUser(middlewareClusterID, userID int) error
 	userRepo := NewUserRepoWithGlobal()
 	_, err := userRepo.GetByID(userID)
 	if err != nil {
-		return nil
+		return err
 	}
 	_, err = mcr.GetByID(middlewareClusterID)
 	if err != nil {
-		return nil
+		return err
 	}
 	sql := `insert into t_meta_middleware_cluster_user_map(middleware_cluster_id, user_id) values(?, ?);`
 	log.Debugf("metadata MiddlewareClusterRepo.MiddlewareClusterAddUser() insert sql: %s", sql)
