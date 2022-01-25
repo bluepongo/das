@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/pkg/message"
 	msgmeta "github.com/romberli/das/pkg/message/metadata"
@@ -50,13 +51,13 @@ func GetUser(c *gin.Context) {
 	// get entities
 	err := s.GetAll()
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserAll, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserAll, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// responseF
@@ -82,13 +83,13 @@ func GetUserByName(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByName(userName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByName, userName, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByName, err, userName)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -111,7 +112,7 @@ func GetUserByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByID, errors.Trace(err), id)
 		return
 	}
 	// init service
@@ -119,13 +120,13 @@ func GetUserByID(c *gin.Context) {
 	// get UserRepo
 	err = s.GetByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -151,13 +152,13 @@ func GetUserByEmployeeID(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByEmployeeID(employeeID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEmployeeID, employeeID, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEmployeeID, err, employeeID)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -183,13 +184,13 @@ func GetUserByAccountName(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByAccountName(accountName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAccountName, accountName, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAccountName, err, accountName)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -215,13 +216,13 @@ func GetUserByEmail(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByEmail(email)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEmail, email, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEmail, err, email)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -247,13 +248,13 @@ func GetUserByTelephone(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByTelephone(telephone)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetTelephone, telephone, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetTelephone, err, telephone)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -279,13 +280,13 @@ func GetUserByMobile(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByMobile(mobile)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMobile, mobile, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMobile, err, mobile)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -305,13 +306,13 @@ func AddUser(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.UserInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, ok := fields[userNameStruct]
@@ -349,13 +350,13 @@ func AddUser(c *gin.Context) {
 	// insert into middleware
 	err = s.Create(fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddUser, fields[userNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddUser, err, fields[userNameStruct])
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -379,18 +380,18 @@ func UpdateUserByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.UserInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, userNameExists := fields[userNameStruct]
@@ -411,13 +412,13 @@ func UpdateUserByID(c *gin.Context) {
 	// update UserRepo
 	err = s.Update(id, fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateUser, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateUser, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, id, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err, id)
 		return
 	}
 	// resp
@@ -442,7 +443,7 @@ func DeleteUserByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -450,13 +451,13 @@ func DeleteUserByID(c *gin.Context) {
 	// update entities
 	err = s.Delete(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteUserByID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteUserByID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -479,7 +480,7 @@ func GetAppsByUserID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -487,13 +488,13 @@ func GetAppsByUserID(c *gin.Context) {
 	// get entity
 	err = s.GetAppsByUserID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppsByUserID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppsByUserID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(userAppsStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -517,7 +518,7 @@ func GetDBsByUserID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -525,13 +526,13 @@ func GetDBsByUserID(c *gin.Context) {
 	// get entity
 	err = s.GetDBsByUserID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBsByUserID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBsByUserID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(userDBsStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -555,7 +556,7 @@ func GetMiddlewareClustersByUserID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -563,13 +564,13 @@ func GetMiddlewareClustersByUserID(c *gin.Context) {
 	// get entity
 	err = s.GetMiddlewareClustersByUserID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareClustersByUserID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareClustersByUserID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(userMiddlewareClustersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -593,7 +594,7 @@ func GetMySQLClustersByUserID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -601,13 +602,13 @@ func GetMySQLClustersByUserID(c *gin.Context) {
 	// get entity
 	err = s.GetMySQLClustersByUserID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClustersByUserID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClustersByUserID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(userMySQLClustersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
