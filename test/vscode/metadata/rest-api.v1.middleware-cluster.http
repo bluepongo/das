@@ -9,7 +9,7 @@ GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/env/1
 Accept: application/json
 
 ### get middleware cluster by id
-GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/get/13
+GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/get/1
 Accept: application/json
 
 ### get middleware cluster by name
@@ -24,14 +24,14 @@ Accept: application/json
 POST http://{{baseURL}}/api/v1/metadata/middleware-cluster
 Content-Type: application/json
 
-{"cluster_name": "rest_test", "owner_id": 1, "envid": 1}
+{"cluster_name": "rest_test", "env_id": 1}
 
 ### update middleware cluster by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/update/13
+POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/update/62
 Content-Type: application/json
 
-{"cluster_name": "new_test", "del_flag": 1}
+{"cluster_name": "new_test", "del_flag": 0}
 
 ### delete middleware cluster by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/delete/14
+POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/delete/62
 Content-Type: application/json
