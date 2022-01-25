@@ -199,7 +199,7 @@ func GetAppsByDBID(c *gin.Context) {
 	// get entity
 	err = s.GetAppsByDBID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppsByID, err, id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppsByDBID, err, id)
 		return
 	}
 	// marshal service
@@ -210,8 +210,8 @@ func GetAppsByDBID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppsByID, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppsByID, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppsByDBID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppsByDBID, id)
 
 }
 
@@ -237,7 +237,7 @@ func GetMySQLClusterByDBID(c *gin.Context) {
 	// get entity
 	err = s.GetMySQLClusterByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByID, err, id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByDBID, err, id)
 		return
 	}
 	// marshal service
@@ -248,8 +248,8 @@ func GetMySQLClusterByDBID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLClusterByID, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClusterByID, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLClusterByDBID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClusterByDBID, id)
 }
 
 // @Tags db
@@ -274,7 +274,7 @@ func GetAppUsersByDBID(c *gin.Context) {
 	// get entity
 	err = s.GetAppUsersByDBID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppOwners, err, id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppUsersByDBID, err, id)
 		return
 	}
 	// marshal service
@@ -285,8 +285,8 @@ func GetAppUsersByDBID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppUsers, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsers, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppUsersByDBID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsersByDBID, id)
 }
 
 // @Tags db
@@ -311,7 +311,7 @@ func GetUsersByDBID(c *gin.Context) {
 	// get entity
 	err = s.GetUsersByDBID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBOwners, err, id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUsersByDBID, err, id)
 		return
 	}
 	// marshal service
@@ -322,8 +322,8 @@ func GetUsersByDBID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBUsers, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBUsers, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetUsersByDBID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetUsersByDBID, id)
 }
 
 // @Tags db
@@ -348,7 +348,7 @@ func GetAllUsersByDBID(c *gin.Context) {
 	// get entity
 	err = s.GetAllUsersByDBID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAllOwners, err, id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAllUsersByDBID, err, id)
 		return
 	}
 	// marshal service
@@ -359,8 +359,8 @@ func GetAllUsersByDBID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAllUsers, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllUsers, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAllUsersByDBID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllUsersByDBID, id)
 }
 
 // @Tags database
