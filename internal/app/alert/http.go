@@ -87,7 +87,7 @@ func (hs *HTTPSender) Send() error {
 	// get request body
 	reqBody, err := hs.buildRequestBody()
 	if err != nil {
-		return errors.Trace(err)
+		return err
 	}
 
 	log.Infof("http body: %s", string(reqBody))
