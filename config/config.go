@@ -150,7 +150,7 @@ func ValidateConfig() (err error) {
 		merr = multierror.Append(merr, err)
 	}
 
-	return errors.Trace(merr.ErrorOrNil())
+	return merr.ErrorOrNil()
 }
 
 // ValidateDaemon validates if daemon section is valid
