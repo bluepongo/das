@@ -10,15 +10,19 @@ import (
 )
 
 const (
-	testUserNewUserName    = "test_new_user_name"
-	testUserUpdateUserName = "test_update_user_name"
-	testUserNewEmployeeID  = "200001"
-	testUserNewAccountName = "test_new_account_name"
-	testUserNewEmail       = "test_new_account_name@163.com"
-	testUserNewTelephone   = "02112345678"
-	testUserNewMobile      = "13112345678"
-	testUserAppID          = 1
-	testUser2ID            = 15
+	testUserNewUserName         = "test_new_user_name"
+	testUserUpdateUserName      = "test_update_user_name"
+	testUserNewEmployeeID       = "200001"
+	testUserNewAccountName      = "test_new_account_name"
+	testUserNewEmail            = "test_new_account_name@163.com"
+	testUserNewTelephone        = "02112345678"
+	testUserNewMobile           = "13112345678"
+	testUserAppID               = 1
+	testUserDBID                = 1
+	testUserDB2ID               = 2
+	testUserMiddlewareClusterID = 1
+	testUserMySQLClusterID      = 1
+	testUser2ID                 = 15
 )
 
 var testUserRepo *UserRepo
@@ -59,9 +63,11 @@ func TestUserRepoAll(t *testing.T) {
 	TestUserRepo_Create(t)
 	TestUserRepo_Update(t)
 	TestUserRepo_Delete(t)
-	TestUserRepo_GetAppsByID(t)
-	TestUserRepo_AddUserApp(t)
-	TestUserRepo_DeleteUserApp(t)
+	TestUserRepo_GetAppsByUserID(t)
+	TestUserRepo_GetDBsByUserID(t)
+	TestUserRepo_GetMiddlewareClustersByUserID(t)
+	TestUserRepo_GetMySQLClustersByUserID(t)
+
 }
 
 func TestUserRepo_Execute(t *testing.T) {
@@ -227,42 +233,34 @@ func TestUserRepo_Delete(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
 }
 
-func TestUserRepo_GetAppsByID(t *testing.T) {
+func TestUserRepo_GetAppsByUserID(t *testing.T) {
 	asst := assert.New(t)
 
-	apps, err := testUserRepo.GetAppsByID(testUser2ID)
-	asst.Nil(err, common.CombineMessageWithError("test GetAppsByID() failed", err))
-	asst.Equal(testUserAppID, apps[constant.ZeroInt].Identity(), "test GetAppsByID() failed")
+	apps, err := testUserRepo.GetAppsByUserID(testUser2ID)
+	asst.Nil(err, common.CombineMessageWithError("test GetAppsByUserID() failed", err))
+	asst.Equal(testUserAppID, apps[constant.ZeroInt].Identity(), "test GetAppsByUserID() failed")
 }
 
-func TestUserRepo_AddUserApp(t *testing.T) {
+func TestUserRepo_GetDBsByUserID(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := testCreateUser()
-	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	err = testUserRepo.AddApp(entity.Identity(), testUserAppID)
-	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	apps, err := testUserRepo.GetAppsByID(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	asst.Equal(testUserAppID, apps[constant.ZeroInt].Identity(), "test AddApp() failed")
-	// delete
-	err = testUserRepo.Delete(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
+	dbs, err := testUserRepo.GetDBsByUserID(testUserID)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBsByUserID() failed", err))
+	asst.Equal(testUserDB2ID, dbs[constant.ZeroInt].Identity(), "test GetDBsByUserID() failed")
 }
 
-func TestUserRepo_DeleteUserApp(t *testing.T) {
+func TestUserRepo_GetMiddlewareClustersByUserID(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := testCreateUser()
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	err = testUserRepo.AddApp(entity.Identity(), testUserAppID)
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	err = testUserRepo.DeleteApp(entity.Identity(), testUserAppID)
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	apps, err := testUserRepo.GetAppsByID(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	asst.Zero(len(apps), "test DeleteApp() failed")
-	// delete
-	err = testUserRepo.Delete(entity.Identity())
-	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
+	dbs, err := testUserRepo.GetMiddlewareClustersByUserID(testUserID)
+	asst.Nil(err, common.CombineMessageWithError("test GetMiddlewareClustersByUserID() failed", err))
+	asst.Equal(testUserMiddlewareClusterID, dbs[constant.ZeroInt].Identity(), "test GetMiddlewareClustersByUserID() failed")
+}
+
+func TestUserRepo_GetMySQLClustersByUserID(t *testing.T) {
+	asst := assert.New(t)
+
+	dbs, err := testUserRepo.GetMySQLClustersByUserID(testUserID)
+	asst.Nil(err, common.CombineMessageWithError("test GetMySQLClustersByUserID() failed", err))
+	asst.Equal(testUserMySQLClusterID, dbs[constant.ZeroInt].Identity(), "test GetMySQLClustersByUserID() failed")
 }

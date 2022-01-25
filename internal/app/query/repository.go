@@ -249,7 +249,7 @@ func (dr *DASRepo) Execute(command string, args ...interface{}) (middleware.Resu
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("query DASRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("query DASRepo.Execute(): close database connection failed. err: \n%+v", err)
 		}
 	}()
 

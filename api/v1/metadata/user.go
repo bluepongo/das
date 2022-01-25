@@ -1,11 +1,11 @@
 package metadata
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/pkg/message"
 	msgmeta "github.com/romberli/das/pkg/message/metadata"
@@ -25,15 +25,18 @@ const (
 	telephoneJSON   = "telephone"
 	mobileJSON      = "mobile"
 
-	userAppsStruct       = "Apps"
-	userNameStruct       = "UserName"
-	departmentNameStruct = "DepartmentName"
-	employeeIDStruct     = "EmployeeID"
-	accountNameStruct    = "AccountName"
-	emailStruct          = "Email"
-	telephoneStruct      = "Telephone"
-	roleStruct           = "Role"
-	mobileStruct         = "Mobile"
+	userAppsStruct               = "Apps"
+	userDBsStruct                = "DBs"
+	userMiddlewareClustersStruct = "MiddlewareClusters"
+	userMySQLClustersStruct      = "MySQLClusters"
+	userNameStruct               = "UserName"
+	departmentNameStruct         = "DepartmentName"
+	employeeIDStruct             = "EmployeeID"
+	accountNameStruct            = "AccountName"
+	emailStruct                  = "Email"
+	telephoneStruct              = "Telephone"
+	roleStruct                   = "Role"
+	mobileStruct                 = "Mobile"
 )
 
 // @Tags user
@@ -48,13 +51,13 @@ func GetUser(c *gin.Context) {
 	// get entities
 	err := s.GetAll()
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserAll, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserAll, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// responseF
@@ -80,13 +83,13 @@ func GetUserByName(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByName(userName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByName, userName, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByName, err, userName)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -108,18 +111,22 @@ func GetUserByID(c *gin.Context) {
 		return
 	}
 	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByID, errors.Trace(err), id)
+		return
+	}
 	// init service
 	s := metadata.NewUserServiceWithDefault()
 	// get UserRepo
 	err = s.GetByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -145,13 +152,13 @@ func GetUserByEmployeeID(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByEmployeeID(employeeID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEmployeeID, employeeID, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEmployeeID, err, employeeID)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -177,13 +184,13 @@ func GetUserByAccountName(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByAccountName(accountName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAccountName, accountName, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAccountName, err, accountName)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -209,13 +216,13 @@ func GetUserByEmail(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByEmail(email)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEmail, email, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEmail, err, email)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -241,13 +248,13 @@ func GetUserByTelephone(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByTelephone(telephone)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetTelephone, telephone, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetTelephone, err, telephone)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -273,13 +280,13 @@ func GetUserByMobile(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByMobile(mobile)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMobile, mobile, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMobile, err, mobile)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -299,13 +306,13 @@ func AddUser(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.UserInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, ok := fields[userNameStruct]
@@ -343,13 +350,13 @@ func AddUser(c *gin.Context) {
 	// insert into middleware
 	err = s.Create(fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddUser, fields[userNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddUser, err, fields[userNameStruct])
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -372,15 +379,19 @@ func UpdateUserByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 	}
 	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		return
+	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.UserInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, userNameExists := fields[userNameStruct]
@@ -401,13 +412,13 @@ func UpdateUserByID(c *gin.Context) {
 	// update UserRepo
 	err = s.Update(id, fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateUser, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateUser, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, id, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err, id)
 		return
 	}
 	// resp
@@ -432,7 +443,7 @@ func DeleteUserByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -440,13 +451,13 @@ func DeleteUserByID(c *gin.Context) {
 	// update entities
 	err = s.Delete(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteUserByID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteUserByID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -469,21 +480,21 @@ func GetAppsByUserID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
 	s := metadata.NewUserServiceWithDefault()
 	// get entity
-	err = s.GetAppsByID(id)
+	err = s.GetAppsByUserID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppsByUserID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppsByUserID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(userAppsStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -494,12 +505,12 @@ func GetAppsByUserID(c *gin.Context) {
 }
 
 // @Tags user
-// @Summary add application map
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [1, 2]}"
-// @Router /api/v1/metadata/user/add-app/:id [post]
-func UserAddApp(c *gin.Context) {
-	// get params
+// @Summary get dbs by id
+// @Produce  db/json
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Router /api/v1/metadata/user/db/:id [get]
+func GetDBsByUserID(c *gin.Context) {
+	// get param
 	idStr := c.Param(userIDJSON)
 	if idStr == constant.EmptyString {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, userIDJSON)
@@ -507,52 +518,37 @@ func UserAddApp(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
-		return
-	}
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
-		return
-	}
-	dataMap := make(map[string]int)
-	err = json.Unmarshal(data, &dataMap)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUserAddApp, id, err.Error())
-		return
-	}
-	appID, appIDExists := dataMap[userAppIDJSON]
-	if !appIDExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, userAppIDJSON)
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
 	s := metadata.NewUserServiceWithDefault()
-	// update entities
-	err = s.AddApp(id, appID)
+	// get entity
+	err = s.GetDBsByUserID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUserAddApp, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBsByUserID, err, id)
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(userAppsStruct)
+	jsonBytes, err := s.MarshalWithFields(userDBsStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataUserAddApp, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataUserAddApp, id, appID)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBsByUserID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBsByUserID, id)
+
 }
 
 // @Tags user
-// @Summary delete application map
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [1]}"
-// @Router /api/v1/metadata/user/delete-app/:id [post]
-func UserDeleteApp(c *gin.Context) {
-	// get params
+// @Summary get middlewareclusters by id
+// @Produce  middlewarecluster/json
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Router /api/v1/metadata/user/middlewarecluster/:id [get]
+func GetMiddlewareClustersByUserID(c *gin.Context) {
+	// get param
 	idStr := c.Param(userIDJSON)
 	if idStr == constant.EmptyString {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, userIDJSON)
@@ -560,41 +556,64 @@ func UserDeleteApp(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
-		return
-	}
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
-		return
-	}
-	dataMap := make(map[string]int)
-	err = json.Unmarshal(data, &dataMap)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUserDeleteApp, id, err.Error())
-		return
-	}
-	appID, appIDExists := dataMap[userAppIDJSON]
-	if !appIDExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, userAppIDJSON)
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
 	s := metadata.NewUserServiceWithDefault()
-	// update entities
-	err = s.DeleteApp(id, appID)
+	// get entity
+	err = s.GetMiddlewareClustersByUserID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUserDeleteApp, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareClustersByUserID, err, id)
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(userAppsStruct)
+	jsonBytes, err := s.MarshalWithFields(userMiddlewareClustersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataUserAddApp, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataUserDeleteApp, id, appID)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMiddlewareClustersByUserID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMiddlewareClustersByUserID, id)
+
+}
+
+// @Tags user
+// @Summary get mysqlclusterclusters by id
+// @Produce  mysqlclustercluster/json
+// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Router /api/v1/metadata/user/mysqlclustercluster/:id [get]
+func GetMySQLClustersByUserID(c *gin.Context) {
+	// get param
+	idStr := c.Param(userIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, userIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// get entity
+	err = s.GetMySQLClustersByUserID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClustersByUserID, err, id)
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(userMySQLClustersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLClustersByUserID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClustersByUserID, id)
+
 }

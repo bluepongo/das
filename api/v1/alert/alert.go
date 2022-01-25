@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pingcap/errors"
+
 	"github.com/romberli/das/internal/app/alert"
 	"github.com/romberli/das/pkg/message"
 	msgalert "github.com/romberli/das/pkg/message/alert"
@@ -30,13 +32,13 @@ func SendEmail(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, err)
 		return
 	}
 	dataMap := make(map[string]string)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 
@@ -45,7 +47,7 @@ func SendEmail(c *gin.Context) {
 	if configExists {
 		err = json.Unmarshal([]byte(configStr), &config)
 		if err != nil {
-			resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+			resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 			return
 		}
 	}
@@ -70,7 +72,7 @@ func SendEmail(c *gin.Context) {
 	s := alert.NewServiceWithDefault(config)
 	err = s.SendEmail(toAddrs, ccAddrs, subject, content)
 	if err != nil {
-		resp.ResponseNOK(c, msgalert.ErrServiceSendEmail, toAddrs, ccAddrs, subject, content, err.Error())
+		resp.ResponseNOK(c, msgalert.ErrServiceSendEmail, err, toAddrs, ccAddrs, subject, content)
 		return
 	}
 

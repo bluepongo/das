@@ -29,6 +29,11 @@ func TestUserServiceAll(t *testing.T) {
 	TestUserService_Delete(t)
 	TestUserService_Marshal(t)
 	TestUserService_MarshalWithFields(t)
+	TestUserService_GetAppsByUserID(t)
+	TestUserService_GetDBsByUserID(t)
+	TestUserService_GetMiddlewareClustersByUserID(t)
+	TestUserService_GetMySQLClustersByUserID(t)
+
 }
 
 func TestUserService_GetUsers(t *testing.T) {
@@ -158,35 +163,34 @@ func TestUserService_MarshalWithFields(t *testing.T) {
 	t.Log(string(jsonBytes))
 }
 
-func TestUserService_GetAppsByID(t *testing.T) {
+func TestUserService_GetAppsByUserID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testUserService.GetAppsByID(testUser2ID)
-	asst.Nil(err, "test GetAppsByID() failed")
-	asst.Equal(testUserAppID, testUserService.GetApps()[constant.ZeroInt].Identity(), "test GetAppsByID() failed")
+	err := testUserService.GetAppsByUserID(testUser2ID)
+	asst.Nil(err, "test GetAppsByUserID() failed")
+	asst.Equal(testUserAppID, testUserService.GetApps()[constant.ZeroInt].Identity(), "test GetAppsByUserID() failed")
 }
 
-func TestUserService_AddApp(t *testing.T) {
+func TestUserService_GetDBsByUserID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testUserService.AddApp(testUser2ID, testUserNewAppID)
-	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	err = testUserService.GetAppsByID(testUser2ID)
-	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
-	asst.Equal(2, len(testUserService.GetApps()), common.CombineMessageWithError("test AddApp() failed", err))
-	err = testUserService.DeleteApp(testUser2ID, testUserNewAppID)
-	asst.Nil(err, common.CombineMessageWithError("test AddApp() failed", err))
+	err := testUserService.GetDBsByUserID(testUserID)
+	asst.Nil(err, "test GetDBsByUserID() failed")
+	asst.Equal(testUserDB2ID, testUserService.GetDBs()[constant.ZeroInt].Identity(), "test GetDBsByUserID() failed")
 }
 
-func TestUserService_DeleteApp(t *testing.T) {
+func TestUserService_GetMiddlewareClustersByUserID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testUserService.AddApp(testUser2ID, testUserNewAppID)
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	err = testUserService.DeleteApp(testUser2ID, testUserNewAppID)
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	err = testUserService.GetAppsByID(testUser2ID)
-	asst.Nil(err, common.CombineMessageWithError("test DeleteApp() failed", err))
-	asst.Equal(1, len(testUserService.GetApps()), common.CombineMessageWithError("test AddApp() failed", err))
+	err := testUserService.GetMiddlewareClustersByUserID(testUserID)
+	asst.Nil(err, "test GetMiddlewareClustersByUserID() failed")
+	asst.Equal(testUserMiddlewareClusterID, testUserService.GetMiddlewareClusters()[constant.ZeroInt].Identity(), "test GetMiddlewareClustersByUserID() failed")
+}
 
+func TestUserService_GetMySQLClustersByUserID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testUserService.GetMySQLClustersByUserID(testUserID)
+	asst.Nil(err, "test GetMySQLClustersByUserID() failed")
+	asst.Equal(testUserMySQLClusterID, testUserService.GetMySQLClusters()[constant.ZeroInt].Identity(), "test GetMySQLClustersByUserID() failed")
 }

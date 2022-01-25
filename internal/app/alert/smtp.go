@@ -2,11 +2,12 @@ package alert
 
 import (
 	"crypto/tls"
-	"errors"
 	"fmt"
 	"net"
 	"net/smtp"
 	"strings"
+
+	"github.com/pingcap/errors"
 
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/dependency/alert"
@@ -48,12 +49,12 @@ func NewSMTPSenderWithDefault(cfg alert.Config) (alert.Sender, error) {
 	// init tls connection
 	conn, err := tls.Dial(constant.TransportProtocolTCP, url, nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.Trace(err)
 	}
 	// get smtp client
 	client, err := smtp.NewClient(conn, host)
 	if err != nil {
-		return nil, err
+		return nil, errors.Trace(err)
 	}
 	// auth
 	err = client.Auth(
@@ -65,7 +66,7 @@ func NewSMTPSenderWithDefault(cfg alert.Config) (alert.Sender, error) {
 		),
 	)
 	if err != nil {
-		return nil, err
+		return nil, errors.Trace(err)
 	}
 
 	return newSMTPSender(client, cfg, url), nil
@@ -121,37 +122,37 @@ func (ss *SMTPSender) Send() error {
 func (ss *SMTPSender) sendMail(from string, toList, ccList []string, message []byte) error {
 	err := ss.GetClient().Mail(from)
 	if err != nil {
-		return err
+		return errors.Trace(err)
 	}
 	if len(toList) == constant.ZeroInt {
-		return fmt.Errorf("toList could not be empty")
+		return errors.New("toList could not be empty")
 	}
 	for _, to := range toList {
 		err = ss.GetClient().Rcpt(to)
 		if err != nil {
-			return err
+			return errors.Trace(err)
 		}
 	}
 	ccList = toList
 	for _, cc := range ccList {
 		err = ss.GetClient().Rcpt(cc)
 		if err != nil {
-			return err
+			return errors.Trace(err)
 		}
 	}
 
 	w, err := ss.GetClient().Data()
 	if err != nil {
-		return err
+		return errors.Trace(err)
 	}
 
 	_, err = w.Write(message)
 	if err != nil {
-		return err
+		return errors.Trace(err)
 	}
 	err = w.Close()
 	if err != nil {
-		return err
+		return errors.Trace(err)
 	}
 
 	return ss.GetClient().Quit()

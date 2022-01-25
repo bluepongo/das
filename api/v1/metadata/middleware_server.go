@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"fmt"
+	"github.com/pingcap/errors"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -38,13 +39,13 @@ func GetMiddlewareServer(c *gin.Context) {
 	// get entities
 	err := s.GetAll()
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareServerAll, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareServerAll, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -67,7 +68,7 @@ func GetMiddlewareServerByClusterID(c *gin.Context) {
 	}
 	clusterID, err := strconv.Atoi(clusterIDStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -75,13 +76,13 @@ func GetMiddlewareServerByClusterID(c *gin.Context) {
 	// get entity
 	err = s.GetByClusterID(clusterID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareSeverByClusterID, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareSeverByClusterID, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -104,7 +105,7 @@ func GetMiddlewareServerByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -112,13 +113,13 @@ func GetMiddlewareServerByID(c *gin.Context) {
 	// get entity
 	err = s.GetByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareServerByID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareServerByID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -137,7 +138,7 @@ func GetMiddlewareServerByHostInfo(c *gin.Context) {
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 
@@ -151,7 +152,7 @@ func GetMiddlewareServerByHostInfo(c *gin.Context) {
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -171,13 +172,13 @@ func AddMiddlewareServer(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.MiddlewareServerInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, ok := fields[middlewareServerClusterIDStruct]
@@ -210,13 +211,13 @@ func AddMiddlewareServer(c *gin.Context) {
 	// insert into middleware
 	err = s.Create(fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddMiddlewareServer, fields[middlewareServerNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddMiddlewareServer, err, fields[middlewareServerNameStruct])
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -240,18 +241,18 @@ func UpdateMiddlewareServerByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.MiddlewareServerInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, middlewareServerClusterIDExists := fields[middlewareServerClusterIDStruct]
@@ -269,13 +270,13 @@ func UpdateMiddlewareServerByID(c *gin.Context) {
 	// update entity
 	err = s.Update(id, fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateMiddlewareServer, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateMiddlewareServer, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, id, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err, id)
 		return
 	}
 	// resp
@@ -300,7 +301,7 @@ func DeleteMiddlewareServerByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -308,13 +309,13 @@ func DeleteMiddlewareServerByID(c *gin.Context) {
 	// update entities
 	err = s.Delete(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMiddlewareServer, fields[middlewareClusterClusterNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMiddlewareServer, err, fields[middlewareClusterClusterNameStruct])
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response

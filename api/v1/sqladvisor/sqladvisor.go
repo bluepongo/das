@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/sqladvisor"
 	"github.com/romberli/das/pkg/message"
 	msgadvisor "github.com/romberli/das/pkg/message/sqladvisor"
@@ -28,14 +29,14 @@ func GetFingerprint(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 
 	dataMap := make(map[string]string)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 
@@ -51,7 +52,7 @@ func GetFingerprint(c *gin.Context) {
 	respData := map[string]string{sqlTextJSON: sqlText, fingerprintJSON: fingerprint}
 	respMessage, err := json.Marshal(respData)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
 		return
 	}
 
@@ -67,14 +68,14 @@ func GetSQLID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 
 	dataMap := make(map[string]string)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 
@@ -90,7 +91,7 @@ func GetSQLID(c *gin.Context) {
 	respData := map[string]string{sqlTextJSON: sqlText, sqlIDJSON: sqlID}
 	respMessage, err := json.Marshal(respData)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
 		return
 	}
 
@@ -111,20 +112,20 @@ func Advise(c *gin.Context) {
 	}
 	dbID, err := strconv.Atoi(dbIDStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err)
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 
 	dataMap := make(map[string]string)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 
@@ -137,7 +138,7 @@ func Advise(c *gin.Context) {
 	service := sqladvisor.NewServiceWithDefault()
 	advice, err := service.Advise(dbID, sqlText)
 	if err != nil {
-		resp.ResponseNOK(c, msgadvisor.ErrSQLAdvisorAdvice, dbID, sqlText, err.Error())
+		resp.ResponseNOK(c, msgadvisor.ErrSQLAdvisorAdvice, err, dbID, sqlText)
 		return
 	}
 

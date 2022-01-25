@@ -1,16 +1,13 @@
 package metadata
 
 import (
-	"errors"
-	"fmt"
-
-	"github.com/romberli/go-util/constant"
-	"github.com/romberli/go-util/middleware"
-
-	"github.com/romberli/log"
+	"github.com/pingcap/errors"
 
 	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/dependency/metadata"
+	"github.com/romberli/go-util/constant"
+	"github.com/romberli/go-util/middleware"
+	"github.com/romberli/log"
 )
 
 var _ metadata.EnvRepo = (*EnvRepo)(nil)
@@ -38,7 +35,7 @@ func (er *EnvRepo) Execute(command string, args ...interface{}) (middleware.Resu
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("metadata EnvRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata EnvRepo.Execute(): close database connection failed.\n%+v", err)
 		}
 	}()
 
@@ -65,7 +62,7 @@ func (er *EnvRepo) GetAll() ([]metadata.Env, error) {
 		return nil, err
 	}
 	// init []*EnvInfo
-	envInfoList := make([]*EnvInfo, result.RowNumber())
+	envInfoList := make([]metadata.Env, result.RowNumber())
 	for i := range envInfoList {
 		envInfoList[i] = NewEmptyEnvInfoWithGlobal()
 	}
@@ -74,13 +71,8 @@ func (er *EnvRepo) GetAll() ([]metadata.Env, error) {
 	if err != nil {
 		return nil, err
 	}
-	// init []dependency.
-	entityList := make([]metadata.Env, result.RowNumber())
-	for i := range entityList {
-		entityList[i] = envInfoList[i]
-	}
 
-	return entityList, nil
+	return envInfoList, nil
 }
 
 // GetByID gets an environment by the identity from the middleware
@@ -99,7 +91,7 @@ func (er *EnvRepo) GetByID(id int) (metadata.Env, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.New(fmt.Sprintf("metadata EnvInfo.GetByID(): data does not exists, id: %d", id))
+		return nil, errors.Errorf("metadata EnvInfo.GetByID(): data does not exists, id: %d", id)
 	case 1:
 		envInfo := NewEmptyEnvInfoWithGlobal()
 		// map to struct
@@ -110,7 +102,7 @@ func (er *EnvRepo) GetByID(id int) (metadata.Env, error) {
 
 		return envInfo, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("metadata EnvInfo.GetByID(): duplicate key exists, id: %d", id))
+		return nil, errors.Errorf("metadata EnvInfo.GetByID(): duplicate key exists, id: %d", id)
 	}
 }
 
@@ -142,7 +134,7 @@ func (er *EnvRepo) GetEnvByName(envName string) (metadata.Env, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.New(fmt.Sprintf("metadata EnvInfo.GetEnvByName(): data does not exists, env_name: %s", envName))
+		return nil, errors.Errorf("metadata EnvInfo.GetEnvByName(): data does not exists, env_name: %s", envName)
 	case 1:
 		envInfo := NewEmptyEnvInfoWithGlobal()
 		// map to struct
@@ -153,7 +145,7 @@ func (er *EnvRepo) GetEnvByName(envName string) (metadata.Env, error) {
 
 		return envInfo, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("metadata EnvInfo.GetEnvByName(): duplicate key exists, env_name: %s", envName))
+		return nil, errors.Errorf("metadata EnvInfo.GetEnvByName(): duplicate key exists, env_name: %s", envName)
 	}
 }
 
@@ -193,7 +185,7 @@ func (er *EnvRepo) Delete(id int) error {
 	defer func() {
 		err = tx.Close()
 		if err != nil {
-			log.Errorf("metadata EnvRepo.Delete(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata EnvRepo.Delete(): close database connection failed.\n%+v", err)
 		}
 	}()
 

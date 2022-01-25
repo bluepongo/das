@@ -13,7 +13,7 @@ const (
 	mysqlClusterClusterNameStruct         = "ClusterName"
 	mysqlCLusterMiddlewareClusterIDStruct = "MiddlewareClusterID"
 	mysqlClusterMonitorSystemIDStruct     = "MonitorSystemID"
-	mysqlClusterOwnerIDStruct             = "OwnerID"
+	mysqlClusterUserIDStruct              = "UserID"
 	mysqlClusterEnvIDStruct               = "EnvID"
 	mysqlClusterDelFlagStruct             = "DelFlag"
 )
@@ -23,15 +23,15 @@ var _ metadata.MySQLCluster = (*MySQLClusterInfo)(nil)
 // MySQLClusterInfo is a struct map to table in the database
 type MySQLClusterInfo struct {
 	MySQLClusterRepo    metadata.MySQLClusterRepo
-	ID                  int       `middleware:"id" json:"id"`
-	ClusterName         string    `middleware:"cluster_name" json:"cluster_name"`
-	MiddlewareClusterID int       `middleware:"middleware_cluster_id" json:"middleware_cluster_id"`
-	MonitorSystemID     int       `middleware:"monitor_system_id" json:"monitor_system_id"`
-	OwnerID             int       `middleware:"owner_id" json:"owner_id"`
-	EnvID               int       `middleware:"env_id" json:"env_id"`
-	DelFlag             int       `middleware:"del_flag" json:"del_flag"`
-	CreateTime          time.Time `middleware:"create_time" json:"create_time"`
-	LastUpdateTime      time.Time `middleware:"last_update_time" json:"last_update_time"`
+	ID                  int    `middleware:"id" json:"id"`
+	ClusterName         string `middleware:"cluster_name" json:"cluster_name"`
+	MiddlewareClusterID int    `middleware:"middleware_cluster_id" json:"middleware_cluster_id"`
+	MonitorSystemID     int    `middleware:"monitor_system_id" json:"monitor_system_id"`
+	// OwnerID             int       `middleware:"owner_id" json:"owner_id"`
+	EnvID          int       `middleware:"env_id" json:"env_id"`
+	DelFlag        int       `middleware:"del_flag" json:"del_flag"`
+	CreateTime     time.Time `middleware:"create_time" json:"create_time"`
+	LastUpdateTime time.Time `middleware:"last_update_time" json:"last_update_time"`
 }
 
 // NewMySQLClusterInfo returns a new MySQLClusterInfo
@@ -40,7 +40,7 @@ func NewMySQLClusterInfo(repo *MySQLClusterRepo,
 	clusterName string,
 	middlewareClusterID int,
 	monitorSystemID int,
-	ownerID int,
+	// ownerID int,
 	envID int,
 	delFlag int,
 	createTime, lastUpdateTime time.Time) *MySQLClusterInfo {
@@ -50,7 +50,7 @@ func NewMySQLClusterInfo(repo *MySQLClusterRepo,
 		clusterName,
 		middlewareClusterID,
 		monitorSystemID,
-		ownerID,
+		// ownerID,
 		envID,
 		delFlag,
 		createTime,
@@ -64,7 +64,7 @@ func NewMySQLClusterInfoWithGlobal(
 	clusterName string,
 	middlewareClusterID int,
 	monitorSystemID int,
-	ownerID int,
+	// ownerID int,
 	envID int,
 	delFlag int,
 	createTime, lastUpdateTime time.Time) *MySQLClusterInfo {
@@ -74,7 +74,7 @@ func NewMySQLClusterInfoWithGlobal(
 		clusterName,
 		middlewareClusterID,
 		monitorSystemID,
-		ownerID,
+		// ownerID,
 		envID,
 		delFlag,
 		createTime,
@@ -96,8 +96,8 @@ func NewMySQLClusterInfoWithDefault(
 		ClusterName:         clusterName,
 		MiddlewareClusterID: constant.DefaultRandomInt,
 		MonitorSystemID:     constant.DefaultRandomInt,
-		OwnerID:             constant.DefaultRandomInt,
-		EnvID:               envID,
+		// OwnerID:             constant.DefaultRandomInt,
+		EnvID: envID,
 	}
 }
 
@@ -131,10 +131,10 @@ func (mci *MySQLClusterInfo) GetMonitorSystemID() int {
 	return mci.MonitorSystemID
 }
 
-// GetOwnerID returns the owner id
-func (mci *MySQLClusterInfo) GetOwnerID() int {
-	return mci.OwnerID
-}
+// // GetOwnerID returns the owner id
+// func (mci *MySQLClusterInfo) GetOwnerID() int {
+// 	return mci.OwnerID
+// }
 
 // GetEnvID returns the env id
 func (mci *MySQLClusterInfo) GetEnvID() int {
@@ -192,19 +192,36 @@ func (mci *MySQLClusterInfo) GetDBs() ([]metadata.DB, error) {
 	return mci.MySQLClusterRepo.GetDBsByID(mci.Identity())
 }
 
-// GetAllOwners gets the application owners of this cluster
-func (mci *MySQLClusterInfo) GetAppOwners() ([]metadata.User, error) {
-	return mci.MySQLClusterRepo.GetAppOwnersByID(mci.Identity())
+// GetUsers gets the users of this cluster
+func (mci *MySQLClusterInfo) GetUsers() ([]metadata.User, error) {
+	return mci.MySQLClusterRepo.GetUsersByID(mci.Identity())
 }
 
-// GetAllOwners gets the db owners of this cluster
-func (mci *MySQLClusterInfo) GetDBOwners() ([]metadata.User, error) {
-	return mci.MySQLClusterRepo.GetDBOwnersByID(mci.Identity())
+// AddUser add a user for mysql cluster in the middleware
+func (mci *MySQLClusterInfo) AddUser(userID int) error {
+	return mci.MySQLClusterRepo.AddUser(mci.Identity(), userID)
 }
 
-// GetAllOwners gets both application and db owners of this cluster
-func (mci *MySQLClusterInfo) GetAllOwners() ([]metadata.User, error) {
-	return mci.MySQLClusterRepo.GetAllOwnersByID(mci.Identity())
+// DeleteUser delete a user for mysql cluster in the middleware
+func (mci *MySQLClusterInfo) DeleteUser(userID int) error {
+	return mci.MySQLClusterRepo.DeleteUser(mci.Identity(), userID)
+}
+
+// DeleteUser delete a user for mysql cluster in the middleware
+
+// GetAppUsers gets the application users of this cluster
+func (mci *MySQLClusterInfo) GetAppUsers() ([]metadata.User, error) {
+	return mci.MySQLClusterRepo.GetAppUsersByID(mci.Identity())
+}
+
+// GetDBUsers gets the db users of this cluster
+func (mci *MySQLClusterInfo) GetDBUsers() ([]metadata.User, error) {
+	return mci.MySQLClusterRepo.GetDBUsersByID(mci.Identity())
+}
+
+// GetAllUsers gets both application and db users of this cluster
+func (mci *MySQLClusterInfo) GetAllUsers() ([]metadata.User, error) {
+	return mci.MySQLClusterRepo.GetAllUsersByID(mci.Identity())
 }
 
 // Set sets mysql cluster with given fields, key is the field name and value is the relevant value of the key

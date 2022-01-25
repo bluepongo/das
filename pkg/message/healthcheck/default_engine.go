@@ -41,7 +41,7 @@ func initDefaultEngineInfoMessage() {
 }
 
 func initDefaultEngineErrorMessage() {
-	message.Messages[ErrHealthcheckUpdateOperationStatus] = config.NewErrMessage(message.DefaultMessageHeader, ErrHealthcheckUpdateOperationStatus, "got error when updating operation status\n%s")
+	message.Messages[ErrHealthcheckUpdateOperationStatus] = config.NewErrMessage(message.DefaultMessageHeader, ErrHealthcheckUpdateOperationStatus, "got error when updating operation status")
 	message.Messages[ErrHealthcheckDefaultEngineEmpty] = config.NewErrMessage(message.DefaultMessageHeader, ErrHealthcheckDefaultEngineEmpty, "default engine config should not be empty")
 	message.Messages[ErrHealthcheckItemWeightItemInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrHealthcheckItemWeightItemInvalid, "item weight of %s must be in [1, 100], %d is not valid")
 	message.Messages[ErrHealthcheckLowWatermarkItemInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrHealthcheckLowWatermarkItemInvalid, "low watermark of %s must be higher than 0, %f is not valid")
@@ -53,5 +53,5 @@ func initDefaultEngineErrorMessage() {
 	message.Messages[ErrHealthcheckMaxScoreDeductionMediumItemInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrHealthcheckMaxScoreDeductionMediumItemInvalid, "max score deduction medium of %s must be in [1, 100], %f is not valid")
 	message.Messages[ErrHealthcheckItemWeightSummaryInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrHealthcheckItemWeightSummaryInvalid, "summary of all item weights should be 100, %d is not valid")
 	message.Messages[ErrHealthcheckPmmVersionInvalid] = config.NewErrMessage(message.DefaultMessageHeader, ErrHealthcheckPmmVersionInvalid, "pmm version should be 1 or 2, %d is not valid")
-	message.Messages[ErrHealthcheckSQLAdvisorAdvice] = config.NewErrMessage(message.DefaultMessageHeader, ErrHealthcheckSQLAdvisorAdvice, "sql advisor returned error. error:\n%s")
+	message.Messages[ErrHealthcheckSQLAdvisorAdvice] = config.NewErrMessage(message.DefaultMessageHeader, ErrHealthcheckSQLAdvisorAdvice, "sql advisor returned error")
 }

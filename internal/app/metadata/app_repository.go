@@ -1,8 +1,7 @@
 package metadata
 
 import (
-	"errors"
-	"fmt"
+	"github.com/pingcap/errors"
 
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
@@ -38,7 +37,7 @@ func (ar *AppRepo) Execute(command string, args ...interface{}) (middleware.Resu
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("metadata AppRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata AppRepo.Execute(): close database connection failed.\n%+v", err)
 		}
 	}()
 
@@ -53,7 +52,7 @@ func (ar *AppRepo) Transaction() (middleware.Transaction, error) {
 // GetAll gets all apps from the middleware
 func (ar *AppRepo) GetAll() ([]metadata.App, error) {
 	sql := `
-		select id, app_name, level, owner_id, del_flag, create_time, last_update_time
+		select id, app_name, level, del_flag, create_time, last_update_time
 		from t_meta_app_info
 		where del_flag = 0
 		order by id;
@@ -82,7 +81,7 @@ func (ar *AppRepo) GetAll() ([]metadata.App, error) {
 // GetByID gets an app by the identity from the middleware
 func (ar *AppRepo) GetByID(id int) (metadata.App, error) {
 	sql := `
-		select id, app_name, level,owner_id, del_flag, create_time, last_update_time
+		select id, app_name, level, del_flag, create_time, last_update_time
 		from t_meta_app_info
 		where del_flag = 0
 		and id = ?;
@@ -95,7 +94,7 @@ func (ar *AppRepo) GetByID(id int) (metadata.App, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.New(fmt.Sprintf("metadata AppInfo.GetByID(): data does not exists, id: %d", id))
+		return nil, errors.Errorf("metadata AppInfo.GetByID(): data does not exists, id: %d", id)
 	case 1:
 		appInfo := NewEmptyAppInfoWithGlobal()
 		// map to struct
@@ -106,7 +105,7 @@ func (ar *AppRepo) GetByID(id int) (metadata.App, error) {
 
 		return appInfo, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("metadata AppInfo.GetByID(): duplicate key exists, id: %d", id))
+		return nil, errors.Errorf("metadata AppInfo.GetByID(): duplicate key exists, id: %d", id)
 	}
 }
 
@@ -139,14 +138,13 @@ func (ar *AppRepo) GetAppByName(appName string) (metadata.App, error) {
 	return ar.GetByID(id)
 }
 
-// GetDBsByID gets databases that app uses
-func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
+// GetDBsByAppID gets databases that app uses
+func (ar *AppRepo) GetDBsByAppID(id int) ([]metadata.DB, error) {
 	sql := `
 		select di.id,
 			   di.db_name,
 			   di.cluster_id,
 			   di.cluster_type,
-			   di.owner_id,
 			   di.env_id,
 			   di.del_flag,
 			   di.create_time,
@@ -160,7 +158,7 @@ func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 		  and di.del_flag = 0
 		  and ai.id = ?
 	`
-	log.Debugf("metadata AppRepo.GetDBsByID() select sql: %s", sql)
+	log.Debugf("metadata AppRepo.GetDBsByAppID() select sql: %s", sql)
 	result, err := ar.Execute(sql, id)
 	if err != nil {
 		return nil, err
@@ -181,8 +179,8 @@ func (ar *AppRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 
 }
 
-// GetUsersByID gets user list that own the app
-func (ar *AppRepo) GetUsersByID(id int) ([]metadata.User, error) {
+// GetUsersByAppID gets user list that own the app
+func (ar *AppRepo) GetUsersByAppID(id int) ([]metadata.User, error) {
 	sql := `
 		select ui.id,
 			   ui.user_name,
@@ -228,10 +226,10 @@ func (ar *AppRepo) GetUsersByID(id int) ([]metadata.User, error) {
 
 // Create creates an app in the middleware
 func (ar *AppRepo) Create(app metadata.App) (metadata.App, error) {
-	sql := `insert into t_meta_app_info(app_name, level, owner_id) values(?, ?, ?);`
+	sql := `insert into t_meta_app_info(app_name, level) values(?, ?);`
 	log.Debugf("metadata AppRepo.Create() insert sql: %s", sql)
 	// execute
-	_, err := ar.Execute(sql, app.GetAppName(), app.GetLevel(), app.GetOwnerID())
+	_, err := ar.Execute(sql, app.GetAppName(), app.GetLevel())
 	if err != nil {
 		return nil, err
 	}
@@ -246,9 +244,9 @@ func (ar *AppRepo) Create(app metadata.App) (metadata.App, error) {
 
 // Update updates the app in the middleware
 func (ar *AppRepo) Update(app metadata.App) error {
-	sql := `update t_meta_app_info set app_name = ?, level = ?, owner_id = ?, del_flag = ? where id = ?;`
+	sql := `update t_meta_app_info set app_name = ?, level = ?, del_flag = ? where id = ?;`
 	log.Debugf("metadata AppRepo.Update() update sql: %s", sql)
-	_, err := ar.Execute(sql, app.GetAppName(), app.GetLevel(), app.GetOwnerID(), app.GetDelFlag(), app.Identity())
+	_, err := ar.Execute(sql, app.GetAppName(), app.GetLevel(), app.GetDelFlag(), app.Identity())
 
 	return err
 }
@@ -262,7 +260,7 @@ func (ar *AppRepo) Delete(id int) error {
 	defer func() {
 		err = tx.Close()
 		if err != nil {
-			log.Errorf("metadata AppRepo.Delete(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata AppRepo.Delete(): close database connection failed.\n%+v", err)
 		}
 	}()
 

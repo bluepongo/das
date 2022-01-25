@@ -12,49 +12,59 @@ func init() {
 	initErrorMySQLCLusterMessage()
 }
 
+// Message code
 const (
 	// debug
-	DebugMetadataGetMySQLClusterAll    = 100701
-	DebugMetadataGetMySQLClusterByEnv  = 100702
-	DebugMetadataGetMySQLClusterByID   = 100703
-	DebugMetadataGetMySQLClusterByName = 100704
-	DebugMetadataGetMySQLServers       = 100705
-	DebugMetadataGetMasterServers      = 100706
-	DebugMetadataGetDBs                = 100707
-	DebugMetadataGetAppOwners          = 100708
-	DebugMetadataGetDBOwners           = 100709
-	DebugMetadataGetAllOwners          = 100710
-	DebugMetadataAddMySQLCluster       = 100711
-	DebugMetadataUpdateMySQLCluster    = 100712
-	DebugMetadataDeleteMySQLCluster    = 100713
+	DebugMetadataGetMySQLClusterAll     = 100701
+	DebugMetadataGetMySQLClusterByEnv   = 100702
+	DebugMetadataGetMySQLClusterByID    = 100703
+	DebugMetadataGetMySQLClusterByName  = 100704
+	DebugMetadataGetMySQLServers        = 100705
+	DebugMetadataGetMasterServers       = 100706
+	DebugMetadataGetDBs                 = 100707
+	DebugMetadataGetUsers               = 100708
+	DebugMetadataMySQLClusterAddUser    = 100709
+	DebugMetadataMySQLClusterDeleteUser = 100710
+	DebugMetadataGetAppUsers            = 100711
+	DebugMetadataGetDBUsers             = 100712
+	DebugMetadataGetAllUsers            = 100713
+	DebugMetadataAddMySQLCluster        = 100714
+	DebugMetadataUpdateMySQLCluster     = 100715
+	DebugMetadataDeleteMySQLCluster     = 100716
 	// debug
-	InfoMetadataGetMySQLClusterAll    = 200701
-	InfoMetadataGetMySQLClusterByEnv  = 200702
-	InfoMetadataGetMySQLClusterByID   = 200703
-	InfoMetadataGetMySQLClusterByName = 200704
-	InfoMetadataGetMySQLServers       = 200705
-	InfoMetadataGetMasterServers      = 200706
-	InfoMetadataGetDBs                = 200707
-	InfoMetadataGetAppOwners          = 200708
-	InfoMetadataGetDBOwners           = 200709
-	InfoMetadataGetAllOwners          = 200710
-	InfoMetadataAddMySQLCluster       = 200711
-	InfoMetadataUpdateMySQLCluster    = 200712
-	InfoMetadataDeleteMySQLCluster    = 200713
+	InfoMetadataGetMySQLClusterAll     = 200701
+	InfoMetadataGetMySQLClusterByEnv   = 200702
+	InfoMetadataGetMySQLClusterByID    = 200703
+	InfoMetadataGetMySQLClusterByName  = 200704
+	InfoMetadataGetMySQLServers        = 200705
+	InfoMetadataGetMasterServers       = 200706
+	InfoMetadataGetDBs                 = 200707
+	InfoMetadataGetUsers               = 200708
+	InfoMetadataGetAppUsers            = 200709
+	InfoMetadataMySQLClusterAddUser    = 100710
+	InfoMetadataMySQLClusterDeleteUser = 100711
+	InfoMetadataGetDBUsers             = 200712
+	InfoMetadataGetAllUsers            = 200713
+	InfoMetadataAddMySQLCluster        = 200714
+	InfoMetadataUpdateMySQLCluster     = 200715
+	InfoMetadataDeleteMySQLCluster     = 200716
 	// error
-	ErrMetadataGetMySQLClusterAll    = 400701
-	ErrMetadataGetMySQLClusterByEnv  = 400702
-	ErrMetadataGetMySQLClusterByID   = 400703
-	ErrMetadataGetMySQLClusterByName = 400704
-	ErrMetadataGetMySQLServers       = 400705
-	ErrMetadataGetMasterServers      = 400706
-	ErrMetadataGetDBs                = 400707
-	ErrMetadataGetAppOwners          = 400708
-	ErrMetadataGetDBOwners           = 400709
-	ErrMetadataGetAllOwners          = 400710
-	ErrMetadataAddMySQLCluster       = 400711
-	ErrMetadataUpdateMySQLCluster    = 400712
-	ErrMetadataDeleteMySQLCluster    = 400713
+	ErrMetadataGetMySQLClusterAll     = 400701
+	ErrMetadataGetMySQLClusterByEnv   = 400702
+	ErrMetadataGetMySQLClusterByID    = 400703
+	ErrMetadataGetMySQLClusterByName  = 400704
+	ErrMetadataGetMySQLServers        = 400705
+	ErrMetadataGetMasterServers       = 400706
+	ErrMetadataGetDBs                 = 400707
+	ErrMetadataGetUsers               = 400708
+	ErrMetadataMySQLClusterAddUser    = 100709
+	ErrMetadataMySQLClusterDeleteUser = 100710
+	ErrMetadataGetAppUsers            = 400711
+	ErrMetadataGetDBUsers             = 400712
+	ErrMetadataGetAllUsers            = 400713
+	ErrMetadataAddMySQLCluster        = 400714
+	ErrMetadataUpdateMySQLCluster     = 400715
+	ErrMetadataDeleteMySQLCluster     = 400716
 )
 
 func initDebugMySQLCLusterMessage() {
@@ -86,18 +96,34 @@ func initDebugMySQLCLusterMessage() {
 		message.DefaultMessageHeader,
 		DebugMetadataGetDBs,
 		"metadata: get databases from mysql cluster message: %s")
-	message.Messages[DebugMetadataGetAppOwners] = config.NewErrMessage(
+	message.Messages[DebugMetadataGetUsers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
-		DebugMetadataGetAppOwners,
-		"metadata: get app owners from mysql cluster message: %s")
-	message.Messages[DebugMetadataGetDBOwners] = config.NewErrMessage(
+		DebugMetadataGetUsers,
+		"metadata: get users from mysql cluster message: %s")
+	message.Messages[DebugMetadataMySQLClusterAddUser] = config.NewErrMessage(
 		message.DefaultMessageHeader,
-		DebugMetadataGetDBOwners,
-		"metadata: get database owners from mysql cluster message: %s")
-	message.Messages[DebugMetadataGetAllOwners] = config.NewErrMessage(
+		DebugMetadataMySQLClusterAddUser,
+		"metadata: add new user for mysql cluster message: %s")
+	message.Messages[DebugMetadataMySQLClusterDeleteUser] = config.NewErrMessage(
 		message.DefaultMessageHeader,
-		DebugMetadataGetAllOwners,
-		"metadata: get all owners from mysql cluster message: %s")
+		DebugMetadataMySQLClusterDeleteUser,
+		"metadata: delete users for mysql cluster message: %s")
+	message.Messages[DebugMetadataGetUsers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		DebugMetadataGetUsers,
+		"metadata: get users from mysql cluster message: %s")
+	message.Messages[DebugMetadataGetAppUsers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		DebugMetadataGetAppUsers,
+		"metadata: get app users from mysql cluster message: %s")
+	message.Messages[DebugMetadataGetDBUsers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		DebugMetadataGetDBUsers,
+		"metadata: get database users from mysql cluster message: %s")
+	message.Messages[DebugMetadataGetAllUsers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		DebugMetadataGetAllUsers,
+		"metadata: get all users from mysql cluster message: %s")
 	message.Messages[DebugMetadataAddMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataAddMySQLCluster,
@@ -141,18 +167,30 @@ func initInfoMySQLCLusterMessage() {
 		message.DefaultMessageHeader,
 		InfoMetadataGetDBs,
 		"metadata: get databases from mysql cluster completed. id: %d")
-	message.Messages[InfoMetadataGetAppOwners] = config.NewErrMessage(
+	message.Messages[InfoMetadataGetUsers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
-		InfoMetadataGetAppOwners,
-		"metadata: get app owners from mysql cluster completed. id: %d")
-	message.Messages[InfoMetadataGetDBOwners] = config.NewErrMessage(
+		InfoMetadataGetUsers,
+		"metadata: get users from mysql cluster completed. id: %d")
+	message.Messages[InfoMetadataMySQLClusterAddUser] = config.NewErrMessage(
 		message.DefaultMessageHeader,
-		InfoMetadataGetDBOwners,
-		"metadata: get database owners from mysql cluster completed. id: %d")
-	message.Messages[InfoMetadataGetAllOwners] = config.NewErrMessage(
+		InfoMetadataMySQLClusterAddUser,
+		"metadata: add user for mysql cluster completed. id: %d, user_id: %d")
+	message.Messages[InfoMetadataMySQLClusterDeleteUser] = config.NewErrMessage(
 		message.DefaultMessageHeader,
-		InfoMetadataGetAllOwners,
-		"metadata: get all owners from mysql cluster completed. id: %d")
+		InfoMetadataMySQLClusterDeleteUser,
+		"metadata: delete user for mysql cluster completed. id: %d, user_id: %d")
+	message.Messages[InfoMetadataGetAppUsers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		InfoMetadataGetAppUsers,
+		"metadata: get app users from mysql cluster completed. id: %d")
+	message.Messages[InfoMetadataGetDBUsers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		InfoMetadataGetDBUsers,
+		"metadata: get database users from mysql cluster completed. id: %d")
+	message.Messages[InfoMetadataGetAllUsers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		InfoMetadataGetAllUsers,
+		"metadata: get all users from mysql cluster completed. id: %d")
 	message.Messages[InfoMetadataAddMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		InfoMetadataAddMySQLCluster,
@@ -171,53 +209,65 @@ func initErrorMySQLCLusterMessage() {
 	message.Messages[ErrMetadataGetMySQLClusterAll] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterAll,
-		"metadata: get all mysql cluster failed.\n%s")
+		"metadata: get all mysql cluster failed")
 	message.Messages[ErrMetadataGetMySQLClusterByEnv] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterByEnv,
-		"metadata: get mysql cluster by env failed. env_id: %d\n%s")
+		"metadata: get mysql cluster by env failed. env_id: %d")
 	message.Messages[ErrMetadataGetMySQLClusterByID] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterByID,
-		"metadata: get mysql cluster by id failed. id: %d\n%s")
+		"metadata: get mysql cluster by id failed. id: %d")
 	message.Messages[ErrMetadataGetMySQLClusterByName] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterByName,
-		"metadata: get mysql cluster by name failed. cluster_name: %s\n%s")
+		"metadata: get mysql cluster by name failed. cluster_name: %s")
 	message.Messages[ErrMetadataGetMySQLServers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLServers,
-		"metadata: get mysql servers from mysql cluster failed. id: %d\n%s")
+		"metadata: get mysql servers from mysql cluster failed. id: %d")
 	message.Messages[ErrMetadataGetMasterServers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMasterServers,
-		"metadata: get master servers from mysql cluster failed. id: %d\n%s")
+		"metadata: get master servers from mysql cluster failed. id: %d")
 	message.Messages[ErrMetadataGetDBs] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetDBs,
-		"metadata: get databases from mysql cluster failed. id: %d\n%s")
-	message.Messages[ErrMetadataGetAppOwners] = config.NewErrMessage(
+		"metadata: get databases from mysql cluster failed. id: %d")
+	message.Messages[ErrMetadataGetUsers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
-		ErrMetadataGetAppOwners,
-		"metadata: get app owners from mysql cluster failed. id: %d\n%s")
-	message.Messages[ErrMetadataGetDBOwners] = config.NewErrMessage(
+		ErrMetadataGetUsers,
+		"metadata: get users from mysql cluster failed. id: %d")
+	message.Messages[ErrMetadataMySQLClusterAddUser] = config.NewErrMessage(
 		message.DefaultMessageHeader,
-		ErrMetadataGetDBOwners,
-		"metadata: get database owners from mysql cluster failed. id: %d\n%s")
-	message.Messages[ErrMetadataGetAllOwners] = config.NewErrMessage(
+		ErrMetadataMySQLClusterAddUser,
+		"metadata: add user for mysql cluster failed. id: %d, user_id: %d")
+	message.Messages[ErrMetadataMySQLClusterDeleteUser] = config.NewErrMessage(
 		message.DefaultMessageHeader,
-		ErrMetadataGetAllOwners,
-		"metadata: get all owners from mysql cluster failed. id: %d\n%s")
+		ErrMetadataMySQLClusterDeleteUser,
+		"metadata: delete user for mysql cluster failed. id: %d, user_id: %d")
+	message.Messages[ErrMetadataGetAppUsers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		ErrMetadataGetAppUsers,
+		"metadata: get app users from mysql cluster failed. id: %d")
+	message.Messages[ErrMetadataGetDBUsers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		ErrMetadataGetDBUsers,
+		"metadata: get database users from mysql cluster failed. id: %d")
+	message.Messages[ErrMetadataGetAllUsers] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		ErrMetadataGetAllUsers,
+		"metadata: get all users from mysql cluster failed. id: %d")
 	message.Messages[ErrMetadataAddMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataAddMySQLCluster,
-		"metadata: add new mysql cluster failed. cluster_name: %s, env_id: %d\n%s")
+		"metadata: add new mysql cluster failed. cluster_name: %s, env_id: %d")
 	message.Messages[ErrMetadataUpdateMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataUpdateMySQLCluster,
-		"metadata: update mysql cluster failed. id: %d\n%s")
+		"metadata: update mysql cluster failed. id: %d")
 	message.Messages[ErrMetadataDeleteMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataDeleteMySQLCluster,
-		"metadata: delete mysql cluster failed. id: %d\n%s")
+		"metadata: delete mysql cluster failed. id: %d")
 }
