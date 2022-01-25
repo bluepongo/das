@@ -218,6 +218,25 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/metadata/app/add-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "add user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/metadata/app/app-name/:name": {
             "get": {
                 "produces": [
@@ -256,6 +275,25 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/metadata/app/delete-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "delete user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [1]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/metadata/app/delete/:id": {
             "post": {
                 "produces": [
@@ -264,10 +302,10 @@ var doc = `{
                 "tags": [
                     "application"
                 ],
-                "summary": "delete middleware cluster by id",
+                "summary": "delete app by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": []}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -286,7 +324,7 @@ var doc = `{
                 "summary": "get all databases",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -303,7 +341,7 @@ var doc = `{
                 "summary": "add a new database",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -320,6 +358,25 @@ var doc = `{
                     "database"
                 ],
                 "summary": "add application map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [1, 2]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/db/add-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "database"
+                ],
+                "summary": "add user map",
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [1, 2]}",
@@ -379,7 +436,7 @@ var doc = `{
                 "summary": "get apps by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8,\"owner_group\": \"k\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8, \"owner_group\": \"k\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -425,6 +482,25 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/metadata/db/delete-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "database"
+                ],
+                "summary": "delete user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [1]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/metadata/db/delete/:id": {
             "post": {
                 "produces": [
@@ -436,7 +512,7 @@ var doc = `{
                 "summary": "delete database by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -455,7 +531,7 @@ var doc = `{
                 "summary": "get database by env_id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -474,7 +550,7 @@ var doc = `{
                 "summary": "get database by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -493,7 +569,7 @@ var doc = `{
                 "summary": "get mysql cluster by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"middleware_cluster_id\":1,\"monitor_system_id\":1,\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-02-23T20:57:24.603009+08:00\",\"last_update_time\":\"2021-02-23T20:57:24.603009+08:00\",\"id\":1,\"cluster_name\":\"cluster_name_init\",\"owner_id\":1},{\"monitor_system_id\":1,\"owner_id\":1,\"env_id\":1,\"create_time\":\"2021-02-23T04:14:23.707238+08:00\",\"last_update_time\":\"2021-02-23T04:14:23.707238+08:00\",\"id\":2,\"cluster_name\":\"newTest\",\"middleware_cluster_id\":1,\"del_flag\":0}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"middleware_cluster_id\":1,\"monitor_system_id\":1,\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-02-23T20:57:24.603009+08:00\",\"last_update_time\":\"2021-02-23T20:57:24.603009+08:00\",\"id\":1,\"cluster_name\":\"cluster_name_init\"},{\"monitor_system_id\":1, \"env_id\":1,\"create_time\":\"2021-02-23T04:14:23.707238+08:00\",\"last_update_time\":\"2021-02-23T04:14:23.707238+08:00\",\"id\":2,\"cluster_name\":\"newTest\",\"middleware_cluster_id\":1,\"del_flag\":0}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -512,7 +588,7 @@ var doc = `{
                 "summary": "get database by db name and cluster info",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -531,7 +607,7 @@ var doc = `{
                 "summary": "update database by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -703,7 +779,7 @@ var doc = `{
                 "summary": "get all middleware clusters",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"test001\",\"owner_id\":1,\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"test001\",\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -720,7 +796,26 @@ var doc = `{
                 "summary": "add a new middleware cluster",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"del_flag\":0,\"create_time\":\"2021-04-09T16:02:25.541701+08:00\",\"last_update_time\":\"2021-04-09T16:02:25.541701+08:00\",\"id\":14,\"cluster_name\":\"rest_test\",\"owner_id\":1,\"env_id\":1}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"del_flag\":0,\"create_time\":\"2021-04-09T16:02:25.541701+08:00\",\"last_update_time\":\"2021-04-09T16:02:25.541701+08:00\",\"id\":14,\"cluster_name\":\"rest_test\",\"env_id\":1}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/middleware-cluster/add-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "add user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"users\":[{\"del_flag\":0,\"id\":1,\"user_name\":\"zhangsan\",\"department_name\":\"arch\",\"account_name\":\"zs001\",\"email\":\"allinemailtest@163.com\",\"mobile\":\"13012345678\",\"role\":3,\"create_time\":\"2021-10-25T09:21:50.364327+08:00\",\"employee_id\":\"100001\",\"telephone\":\"01012345678\",\"last_update_time\":\"2021-11-22T13:46:20.430926+08:00\"}]}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -739,7 +834,26 @@ var doc = `{
                 "summary": "get middleware cluster by name",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"test001\",\"owner_id\":1,\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"test001\", \"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/middleware-cluster/delete-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "delete user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": {\"users\":[]}}",
                         "schema": {
                             "type": "string"
                         }
@@ -758,7 +872,7 @@ var doc = `{
                 "summary": "get middleware cluster by env",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\",\"id\":13,\"cluster_name\":\"test001\",\"owner_id\":1,\"env_id\":1}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\",\"id\":13,\"cluster_name\":\"test001\",\"env_id\":1}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -777,7 +891,7 @@ var doc = `{
                 "summary": "get middleware cluster by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"test001\",\"owner_id\":1,\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"test001\",\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -796,7 +910,7 @@ var doc = `{
                 "summary": "update middleware cluster by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"new_test\",\"owner_id\":1,\"env_id\":1,\"del_flag\":1,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"new_test\",\"env_id\":1,\"del_flag\":1,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -1138,7 +1252,26 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/all-owner/:id": {
+        "/api/v1/metadata/mysql-cluster/add-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mysql cluster"
+                ],
+                "summary": "add user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"user_id\": 1}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/mysql-cluster/all-user/:id": {
             "get": {
                 "produces": [
                     "application/json"
@@ -1146,7 +1279,7 @@ var doc = `{
                 "tags": [
                     "mysql cluster"
                 ],
-                "summary": "get all owners",
+                "summary": "get all users",
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"department_name\": \"dn\",\"accountNameStruct = \"AccountName\"\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
@@ -1157,7 +1290,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/app-owner/:id": {
+        "/api/v1/metadata/mysql-cluster/app-user/:id": {
             "get": {
                 "produces": [
                     "application/json"
@@ -1165,7 +1298,7 @@ var doc = `{
                 "tags": [
                     "mysql cluster"
                 ],
-                "summary": "get app owners",
+                "summary": "get app users",
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"department_name\": \"dn\",\"accountNameStruct = \"AccountName\"\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
@@ -1195,7 +1328,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/db-owner/:id": {
+        "/api/v1/metadata/mysql-cluster/db-user/:id": {
             "get": {
                 "produces": [
                     "application/json"
@@ -1203,7 +1336,7 @@ var doc = `{
                 "tags": [
                     "mysql cluster"
                 ],
-                "summary": "get db owners",
+                "summary": "get db users",
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"department_name\": \"dn\",\"accountNameStruct = \"AccountName\"\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
@@ -1226,6 +1359,25 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"department_name\": \"dn\",\"accountNameStruct = \"AccountName\"\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/mysql-cluster/delete-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mysql cluster"
+                ],
+                "summary": "delete user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"user_id\": 1}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -1264,6 +1416,25 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"owner_id\":1,\"del_flag\":0,\"create_time\":\"2021-02-23T20:57:24.603009+08:00\",\"id\":1,\"monitor_system_id\":1,\"env_id\":1,\"last_update_time\":\"2021-02-23T20:57:24.603009+08:00\",\"cluster_name\":\"cluster_name_init\",\"middleware_cluster_id\":1}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/mysql-cluster/user/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mysql cluster"
+                ],
+                "summary": "get mysql cluster users",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"department_name\": \"dn\",\"accountNameStruct = \"AccountName\"\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -1476,6 +1647,44 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/metadata/user/app/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "get apps by id",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8,\"owner_group\": \"k\"}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/user/db/:id": {
+            "get": {
+                "produces": [
+                    "db/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "get dbs by id",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8,\"owner_group\": \"k\"}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/metadata/user/delete/:id": {
             "get": {
                 "produces": [
@@ -1552,6 +1761,25 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/metadata/user/middlewarecluster/:id": {
+            "get": {
+                "produces": [
+                    "middlewarecluster/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "get middlewareclusters by id",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8,\"owner_group\": \"k\"}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/metadata/user/mobile/:mobile": {
             "get": {
                 "produces": [
@@ -1564,6 +1792,25 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"department_name\": \"dn\",\"accountNameStruct = \"AccountName\"\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/user/mysqlclustercluster/:id": {
+            "get": {
+                "produces": [
+                    "mysqlclustercluster/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "get mysqlclusterclusters by id",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8,\"owner_group\": \"k\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -1761,7 +2008,7 @@ var doc = `{
                 }
             }
         },
-        "/api/vi/metadata/app/dbs/:id": {
+        "/api/vi/metadata/app/db/:id": {
             "get": {
                 "produces": [
                     "application/json"
@@ -1773,6 +2020,44 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [1, 2]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/vi/metadata/app/user/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "get users",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [1, 2]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/vi/metadata/middleware-cluster/users/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "get middleware servers by cluster id",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"users\":[{\"id\":1,\"department_name\":\"arch\",\"email\":\"allinemailtest@163.com\",\"mobile\":\"13012345678\",\"last_update_time\":\"2021-11-22T13:46:20.430926+08:00\",\"create_time\":\"2021-10-25T09:21:50.364327+08:00\",\"user_name\":\"zhangsan\",\"employee_id\":\"100001\",\"account_name\":\"zs001\",\"telephone\":\"01012345678\",\"role\":3,\"del_flag\":0}]}]}",
                         "schema": {
                             "type": "string"
                         }
