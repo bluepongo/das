@@ -18,7 +18,7 @@ const (
 	testDASMySQLAddr = "127.0.0.1:3306"
 	testDASMySQLName = "das"
 	testDASMySQLUser = "root"
-	testDASMySQLPass = "rootroot"
+	testDASMySQLPass = "root"
 
 	testAppNewAppName    = "test_new_app_name"
 	testAppUpdateAppName = "test_update_app_name"
