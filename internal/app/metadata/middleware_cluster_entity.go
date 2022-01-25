@@ -4,14 +4,12 @@ import (
 	"time"
 
 	"github.com/romberli/das/internal/dependency/metadata"
-
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 )
 
 const (
 	middlewareClusterClusterNameStruct = "ClusterName"
-	middlewareClusterOwnerIDStruct     = "OwnerID"
 	middlewareClusterEnvIDStruct       = "EnvID"
 	middlewareClusterDelFlagStruct     = "DelFlag"
 )
@@ -22,7 +20,6 @@ type MiddlewareClusterInfo struct {
 	metadata.MiddlewareClusterRepo
 	ID             int       `middleware:"id" json:"id"`
 	ClusterName    string    `middleware:"cluster_name" json:"cluster_name"`
-	OwnerID        int       `middleware:"owner_id" json:"owner_id"`
 	EnvID          int       `middleware:"env_id" json:"env_id"`
 	DelFlag        int       `middleware:"del_flag" json:"del_flag"`
 	CreateTime     time.Time `middleware:"create_time" json:"create_time"`
@@ -30,12 +27,11 @@ type MiddlewareClusterInfo struct {
 }
 
 // NewMiddlewareClusterInfo returns a new MiddlewareClusterInfo
-func NewMiddlewareClusterInfo(repo metadata.MiddlewareClusterRepo, id int, middlewareClusterName string, ownerID int, envID int, delFlag int, createTime time.Time, lastUpdateTime time.Time) *MiddlewareClusterInfo {
+func NewMiddlewareClusterInfo(repo metadata.MiddlewareClusterRepo, id int, middlewareClusterName string, envID int, delFlag int, createTime time.Time, lastUpdateTime time.Time) *MiddlewareClusterInfo {
 	return &MiddlewareClusterInfo{
 		repo,
 		id,
 		middlewareClusterName,
-		ownerID,
 		envID,
 		delFlag,
 		createTime,
@@ -43,13 +39,12 @@ func NewMiddlewareClusterInfo(repo metadata.MiddlewareClusterRepo, id int, middl
 	}
 }
 
-// NewMiddlewareClusterInfo returns a new MiddlewareClusterInfo with default MiddlewareClusterRepo
-func NewMiddlewareClusterInfoWithGlobal(id int, middlewareClusterName string, ownerID int, envID int, delFlag int, createTime time.Time, lastUpdateTime time.Time) *MiddlewareClusterInfo {
+// NewMiddlewareClusterInfoWithGlobal returns a new MiddlewareClusterInfo with default MiddlewareClusterRepo
+func NewMiddlewareClusterInfoWithGlobal(id int, middlewareClusterName string, envID int, delFlag int, createTime time.Time, lastUpdateTime time.Time) *MiddlewareClusterInfo {
 	return &MiddlewareClusterInfo{
 		NewMiddlewareClusterRepoWithGlobal(),
 		id,
 		middlewareClusterName,
-		ownerID,
 		envID,
 		delFlag,
 		createTime,
@@ -63,11 +58,10 @@ func NewEmptyMiddlewareClusterInfoWithGlobal() *MiddlewareClusterInfo {
 }
 
 // NewMiddlewareClusterInfoWithDefault returns a new MiddlewareClusterInfo with default MiddlewareClusterRepo
-func NewMiddlewareClusterInfoWithDefault(middlewareClusterName string, ownerID, envID int) *MiddlewareClusterInfo {
+func NewMiddlewareClusterInfoWithDefault(middlewareClusterName string, envID int) *MiddlewareClusterInfo {
 	return &MiddlewareClusterInfo{
 		MiddlewareClusterRepo: NewMiddlewareClusterRepoWithGlobal(),
 		ClusterName:           middlewareClusterName,
-		OwnerID:               ownerID,
 		EnvID:                 envID,
 	}
 }
@@ -91,11 +85,6 @@ func (mci *MiddlewareClusterInfo) Identity() int {
 // GetClusterName returns the cluster name
 func (mci *MiddlewareClusterInfo) GetClusterName() string {
 	return mci.ClusterName
-}
-
-// GetOwnerID returns the owner id
-func (mci *MiddlewareClusterInfo) GetOwnerID() int {
-	return mci.OwnerID
 }
 
 // GetEnvID returns the env id
@@ -129,6 +118,11 @@ func (mci *MiddlewareClusterInfo) GetMiddlewareServers() ([]metadata.MiddlewareS
 	return middlewareServerService.GetMiddlewareServers(), nil
 }
 
+// GetUsersByMiddlewareClusterID gets user list that own the middleware cluster
+func (mci *MiddlewareClusterInfo) GetUsersByMiddlewareClusterID() ([]metadata.User, error) {
+	return mci.MiddlewareClusterRepo.GetUsersByMiddlewareClusterID(mci.Identity())
+}
+
 // Set sets entity with given fields, key is the field name and value is the relevant value of the key
 func (mci *MiddlewareClusterInfo) Set(fields map[string]interface{}) error {
 	for fieldName, fieldValue := range fields {
@@ -143,6 +137,16 @@ func (mci *MiddlewareClusterInfo) Set(fields map[string]interface{}) error {
 // Delete sets DelFlag to true, need to use Save to write to the middleware
 func (mci *MiddlewareClusterInfo) Delete() {
 	mci.DelFlag = 1
+}
+
+// AddUser adds a new map of middleware cluster and user in the middleware
+func (mci *MiddlewareClusterInfo) AddUser(userID int) error {
+	return mci.MiddlewareClusterRepo.AddUser(mci.Identity(), userID)
+}
+
+// DeleteUser deletes a map of middleware cluster and user in the middleware
+func (mci *MiddlewareClusterInfo) DeleteUser(userID int) error {
+	return mci.MiddlewareClusterRepo.DeleteUser(mci.Identity(), userID)
 }
 
 // MarshalJSON marshals entity to json string, it only marshals fields that has default tag

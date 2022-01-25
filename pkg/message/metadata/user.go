@@ -13,50 +13,53 @@ func init() {
 
 const (
 	// debug
-	DebugMetadataGetUserAll      = 100901
-	DebugMetadataGetUserByID     = 100902
-	DebugMetadataAddUser         = 100903
-	DebugMetadataUpdateUser      = 100904
-	DebugMetadataGetUserByName   = 100905
-	DebugMetadataGetEmployeeID   = 100906
-	DebugMetadataGetAccountName  = 100907
-	DebugMetadataGetEmail        = 100908
-	DebugMetadataGetTelephone    = 100909
-	DebugMetadataGetMobile       = 100910
-	DebugMetadataDeleteUserByID  = 100911
-	DebugMetadataGetAppsByUserID = 100912
-	DebugMetadataUserAddApp      = 100913
-	DebugMetadataUserDeleteApp   = 100914
+	DebugMetadataGetUserAll                    = 100901
+	DebugMetadataGetUserByID                   = 100902
+	DebugMetadataAddUser                       = 100903
+	DebugMetadataUpdateUser                    = 100904
+	DebugMetadataGetUserByName                 = 100905
+	DebugMetadataGetEmployeeID                 = 100906
+	DebugMetadataGetAccountName                = 100907
+	DebugMetadataGetEmail                      = 100908
+	DebugMetadataGetTelephone                  = 100909
+	DebugMetadataGetMobile                     = 100910
+	DebugMetadataDeleteUserByID                = 100911
+	DebugMetadataGetAppsByUserID               = 100912
+	DebugMetadataGetDBsByUserID                = 100913
+	DebugMetadataGetMiddlewareClustersByUserID = 100914
+	DebugMetadataGetMySQLClustersByUserID      = 100915
 	// info
-	InfoMetadataGetUserAll      = 200901
-	InfoMetadataGetUserByID     = 200902
-	InfoMetadataAddUser         = 200903
-	InfoMetadataUpdateUser      = 200904
-	InfoMetadataGetUserByName   = 200905
-	InfoMetadataGetEmployeeID   = 200906
-	InfoMetadataGetAccountName  = 200907
-	InfoMetadataGetEmail        = 200908
-	InfoMetadataGetTelephone    = 200909
-	InfoMetadataGetMobile       = 200910
-	InfoMetadataDeleteUserByID  = 200911
-	InfoMetadataGetAppsByUserID = 200912
-	InfoMetadataUserAddApp      = 200913
-	InfoMetadataUserDeleteApp   = 200914
+	InfoMetadataGetUserAll                    = 200901
+	InfoMetadataGetUserByID                   = 200902
+	InfoMetadataAddUser                       = 200903
+	InfoMetadataUpdateUser                    = 200904
+	InfoMetadataGetUserByName                 = 200905
+	InfoMetadataGetEmployeeID                 = 200906
+	InfoMetadataGetAccountName                = 200907
+	InfoMetadataGetEmail                      = 200908
+	InfoMetadataGetTelephone                  = 200909
+	InfoMetadataGetMobile                     = 200910
+	InfoMetadataDeleteUserByID                = 200911
+	InfoMetadataGetAppsByUserID               = 200912
+	InfoMetadataGetDBsByUserID                = 200913
+	InfoMetadataGetMiddlewareClustersByUserID = 200914
+	InfoMetadataGetMySQLClustersByUserID      = 200915
 	// error
-	ErrMetadataGetUserAll      = 400901
-	ErrMetadataGetUserByID     = 400902
-	ErrMetadataAddUser         = 400903
-	ErrMetadataUpdateUser      = 400904
-	ErrMetadataGetUserByName   = 400905
-	ErrMetadataGetEmployeeID   = 400906
-	ErrMetadataGetAccountName  = 400907
-	ErrMetadataGetEmail        = 400908
-	ErrMetadataGetTelephone    = 400909
-	ErrMetadataGetMobile       = 400910
-	ErrMetadataDeleteUserByID  = 400911
-	ErrMetadataGetAppsByUserID = 400912
-	ErrMetadataUserAddApp      = 400913
-	ErrMetadataUserDeleteApp   = 400914
+	ErrMetadataGetUserAll                    = 400901
+	ErrMetadataGetUserByID                   = 400902
+	ErrMetadataAddUser                       = 400903
+	ErrMetadataUpdateUser                    = 400904
+	ErrMetadataGetUserByName                 = 400905
+	ErrMetadataGetEmployeeID                 = 400906
+	ErrMetadataGetAccountName                = 400907
+	ErrMetadataGetEmail                      = 400908
+	ErrMetadataGetTelephone                  = 400909
+	ErrMetadataGetMobile                     = 400910
+	ErrMetadataDeleteUserByID                = 400911
+	ErrMetadataGetAppsByUserID               = 400912
+	ErrMetadataGetDBsByUserID                = 400913
+	ErrMetadataGetMiddlewareClustersByUserID = 400914
+	ErrMetadataGetMySQLClustersByUserID      = 400915
 )
 
 func initDebugUserMessage() {
@@ -72,8 +75,9 @@ func initDebugUserMessage() {
 	message.Messages[DebugMetadataGetMobile] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetMobile, "metadata: get user by mobile message: %s")
 	message.Messages[DebugMetadataDeleteUserByID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataDeleteUserByID, "metadata: delete user by ID message: %s")
 	message.Messages[DebugMetadataGetAppsByUserID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetAppsByUserID, "metadata: get app id list completed. message: %s")
-	message.Messages[DebugMetadataUserAddApp] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataUserAddApp, "metadata: add map of user and app completed. message: %s")
-	message.Messages[DebugMetadataUserDeleteApp] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataUserDeleteApp, "metadata: delete map of user and app completed. message: %s")
+	message.Messages[DebugMetadataGetDBsByUserID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetDBsByUserID, "metadata: get db id list completed. message: %s")
+	message.Messages[DebugMetadataGetMiddlewareClustersByUserID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetMiddlewareClustersByUserID, "metadata: get middlewarecluster id list completed. message: %s")
+	message.Messages[DebugMetadataGetMySQLClustersByUserID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetMySQLClustersByUserID, "metadata: get mysqlcluster id list completed. message: %s")
 }
 
 func initInfoUserMessage() {
@@ -89,8 +93,9 @@ func initInfoUserMessage() {
 	message.Messages[InfoMetadataGetMobile] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetMobile, "metadata: get user by mobile completed.mobile: %s\n%s")
 	message.Messages[InfoMetadataDeleteUserByID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataDeleteUserByID, "metadata: delete user by ID completed. id: %d")
 	message.Messages[InfoMetadataGetAppsByUserID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetAppsByUserID, "metadata: get app id list completed. id: %d")
-	message.Messages[InfoMetadataUserAddApp] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataUserAddApp, "metadata: add map of user and app completed. db_id: %d, app_id: %d")
-	message.Messages[InfoMetadataUserDeleteApp] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataUserDeleteApp, "metadata: delete map of user and app completed. db_id: %d, app_id: %d")
+	message.Messages[InfoMetadataGetDBsByUserID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetDBsByUserID, "metadata: get db id list completed. id: %d")
+	message.Messages[InfoMetadataGetMiddlewareClustersByUserID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetMiddlewareClustersByUserID, "metadata: get middlewarecluster id list completed. id: %d")
+	message.Messages[InfoMetadataGetMySQLClustersByUserID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetMySQLClustersByUserID, "metadata: get mysqlcluster id list completed. id: %d")
 }
 
 func initErrorUserMessage() {
@@ -106,6 +111,7 @@ func initErrorUserMessage() {
 	message.Messages[ErrMetadataGetMobile] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMobile, "metadata: get user by mobile failed.mobile: %s\n%s")
 	message.Messages[ErrMetadataDeleteUserByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDeleteUserByID, "metadata: delete user by ID failed. id: %d\n%s")
 	message.Messages[ErrMetadataGetAppsByUserID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetAppsByUserID, "metadata: get app id list failed. id: %d\n%s")
-	message.Messages[ErrMetadataUserAddApp] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataUserAddApp, "metadata: add map of user and app failed. id: %d\n%s")
-	message.Messages[ErrMetadataUserDeleteApp] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataUserDeleteApp, "metadata: delete map of user and app failed. id: %d\n%s")
+	message.Messages[ErrMetadataGetDBsByUserID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetDBsByUserID, "metadata: get db id list failed. id: %d\n%s")
+	message.Messages[ErrMetadataGetMiddlewareClustersByUserID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMiddlewareClustersByUserID, "metadata: get middlewarecluster id list failed. id: %d\n%s")
+	message.Messages[ErrMetadataGetMySQLClustersByUserID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMySQLClustersByUserID, "metadata: get mysqlcluster id list failed. id: %d\n%s")
 }

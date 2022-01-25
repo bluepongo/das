@@ -33,10 +33,6 @@ type User interface {
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
 	Delete()
-	// AddApp adds a new map of the app and user in the middleware
-	AddApp(appID int) error
-	// DeleteApp deletes a new map of the app and user in the middleware
-	DeleteApp(appID int) error
 	// MarshalJSON marshals User to json string
 	MarshalJSON() ([]byte, error)
 	// MarshalJSONWithFields marshals only specified field of the User to json string
@@ -72,12 +68,14 @@ type UserRepo interface {
 	Delete(id int) error
 	// GetByEmployeeID gets a user of given employee id from the middleware
 	GetByEmployeeID(employeeID string) (User, error)
-	// GetAppsByID gets app list that this user owns
-	GetAppsByID(id int) ([]App, error)
-	// AddApp adds a new map of the app and user in the middleware
-	AddApp(userID, appID int) error
-	// DeleteApp deletes a map of the app and user in the middleware
-	DeleteApp(userID, appID int) error
+	// GetAppsByUserID gets app list that this user owns
+	GetAppsByUserID(id int) ([]App, error)
+	// GetDBsByUserID gets app list that this user owns
+	GetDBsByUserID(id int) ([]DB, error)
+	// GetMiddlewareClustersByUserID gets MiddlewareCluster list that this user owns
+	GetMiddlewareClustersByUserID(id int) ([]MiddlewareCluster, error)
+	// GetMySQLClustersByUserID gets MySQLCluster list that this user owns
+	GetMySQLClustersByUserID(id int) ([]MySQLCluster, error)
 }
 
 type UserService interface {
@@ -87,6 +85,12 @@ type UserService interface {
 	GetAll() error
 	// GetApps returns the apps of the service
 	GetApps() []App
+	// GetDBs returns the dbs of the service
+	GetDBs() []DB
+	// GetMiddlewareClusters returns the MiddlewareClusters of the service
+	GetMiddlewareClusters() []MiddlewareCluster
+	// GetMySQLClusters returns the MySQLClusters of the service
+	GetMySQLClusters() []MySQLCluster
 	// GetByName gets users of given user name
 	GetByName(userName string) error
 	// GetByID gets a user by the identity
@@ -114,10 +118,12 @@ type UserService interface {
 	Marshal() ([]byte, error)
 	// MarshalWithFields marshals only specified fields of the UserService to json bytes
 	MarshalWithFields(fields ...string) ([]byte, error)
-	// GetAppsByID gets apps that this user owns
-	GetAppsByID(id int) error
-	// AddApp adds a new map of app and user in the middleware
-	AddApp(userID, appID int) error
-	// DeleteApp deletes the map of app and user in the middleware
-	DeleteApp(userID, appID int) error
+	// GetAppsByUserID gets apps that this user owns
+	GetAppsByUserID(id int) error
+	// GetDBsByUserID gets apps that this user owns
+	GetDBsByUserID(id int) error
+	// GetMiddlewareClustersByUserID gets MiddlewareClusters that this user owns
+	GetMiddlewareClustersByUserID(id int) error
+	// GetMySQLClustersByUserID gets MySQLClusters that this user owns
+	GetMySQLClustersByUserID(id int) error
 }

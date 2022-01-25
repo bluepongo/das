@@ -285,8 +285,8 @@ func GetAppUsersByDBID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppOwners, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppOwners, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppUsers, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsers, id)
 }
 
 // @Tags db
@@ -322,8 +322,8 @@ func GetUsersByDBID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBOwners, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBOwners, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBUsers, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBUsers, id)
 }
 
 // @Tags db
@@ -359,8 +359,8 @@ func GetAllUsersByDBID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAllOwners, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllOwners, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAllUsers, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllUsers, id)
 }
 
 // @Tags database

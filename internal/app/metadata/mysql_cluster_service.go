@@ -20,7 +20,7 @@ type MySQLClusterService struct {
 	MySQLClusters    []metadata.MySQLCluster `json:"mysql_clusters"`
 	MySQLServers     []metadata.MySQLServer  `json:"mysql_servers"`
 	DBs              []metadata.DB           `json:"dbs"`
-	Owners           []metadata.User         `json:"owners"`
+	Users            []metadata.User         `json:"users"`
 }
 
 // NewMySQLClusterService returns a new *MySQLClusterService
@@ -54,9 +54,9 @@ func (mcs *MySQLClusterService) GetDBs() []metadata.DB {
 	return mcs.DBs
 }
 
-// GetOwners returns the owners of the service
-func (mcs *MySQLClusterService) GetOwners() []metadata.User {
-	return mcs.Owners
+// GetUsers returns the users of the service
+func (mcs *MySQLClusterService) GetUsers() []metadata.User {
+	return mcs.Users
 }
 
 // GetAll gets all mysql cluster entities from the middleware
@@ -132,29 +132,57 @@ func (mcs *MySQLClusterService) GetDBsByID(id int) error {
 	return err
 }
 
-// GetAppOwnersByID gets the application owners of the given id
-func (mcs *MySQLClusterService) GetAppOwnersByID(id int) error {
+// GetUsersByID gets the users of the given id
+func (mcs *MySQLClusterService) GetUsersByID(id int) error {
 	var err error
 
-	mcs.Owners, err = mcs.MySQLClusterRepo.GetAppOwnersByID(id)
+	mcs.Users, err = mcs.MySQLClusterRepo.GetUsersByID(id)
 
 	return err
 }
 
-// GetDBOwnersByID gets the db owners of the given id
-func (mcs *MySQLClusterService) GetDBOwnersByID(id int) error {
+// AddUser adds a new map of mysql cluster and user in the middleware
+func (mcs *MySQLClusterService) AddUser(mysqlClusterID, userID int) error {
+	if err := mcs.MySQLClusterRepo.AddUser(mysqlClusterID, userID); err != nil {
+		return err
+	}
+
+	return mcs.GetUsersByID(mysqlClusterID)
+}
+
+// DeleteUser deletes the map of mysql cluster and user in the middleware
+func (mcs *MySQLClusterService) DeleteUser(mysqlClusterID, userID int) error {
+	err := mcs.MySQLClusterRepo.DeleteUser(mysqlClusterID, userID)
+	if err != nil {
+		return err
+	}
+
+	return mcs.GetUsersByID(mysqlClusterID)
+}
+
+// GetAppUsersByID gets the application users of the given id
+func (mcs *MySQLClusterService) GetAppUsersByID(id int) error {
 	var err error
 
-	mcs.Owners, err = mcs.MySQLClusterRepo.GetDBOwnersByID(id)
+	mcs.Users, err = mcs.MySQLClusterRepo.GetAppUsersByID(id)
 
 	return err
 }
 
-// GetAllOwnersByID gets both application and db owners of the given id
-func (mcs *MySQLClusterService) GetAllOwnersByID(id int) error {
+// GetDBUsersByID gets the db users of the given id
+func (mcs *MySQLClusterService) GetDBUsersByID(id int) error {
 	var err error
 
-	mcs.Owners, err = mcs.MySQLClusterRepo.GetAllOwnersByID(id)
+	mcs.Users, err = mcs.MySQLClusterRepo.GetDBUsersByID(id)
+
+	return err
+}
+
+// GetAllUsersByID gets both application and db users of the given id
+func (mcs *MySQLClusterService) GetAllUsersByID(id int) error {
+	var err error
+
+	mcs.Users, err = mcs.MySQLClusterRepo.GetAllUsersByID(id)
 
 	return err
 }

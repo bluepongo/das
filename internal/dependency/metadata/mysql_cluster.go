@@ -16,8 +16,8 @@ type MySQLCluster interface {
 	GetMiddlewareClusterID() int
 	// GetMonitorSystemID returns the monitor system id
 	GetMonitorSystemID() int
-	// GetOwnerID returns the owner id
-	GetOwnerID() int
+	// // GetOwnerID returns the owner id
+	// GetOwnerID() int
 	// GetEnvID returns the env id
 	GetEnvID() int
 	// GetDelFlag returns the delete flag
@@ -32,12 +32,18 @@ type MySQLCluster interface {
 	GetMasterServers() ([]MySQLServer, error)
 	// GetDBs gets the databases of this cluster
 	GetDBs() ([]DB, error)
-	// GetAppOwners gets the application owners of this cluster
-	GetAppOwners() ([]User, error)
-	// GetDBOwners gets the db owners of this cluster
-	GetDBOwners() ([]User, error)
-	// GetAllOwners gets both application and db owners of this cluster
-	GetAllOwners() ([]User, error)
+	// GetUsers gets the users that own the cluster
+	GetUsers() ([]User, error)
+	// AddUser add a map of the mysql cluster and user in the middleware
+	AddUser(userID int) error
+	// DeleteUser delete the map of the mysql cluster and user in the middleware
+	DeleteUser(userID int) error
+	// GetAppUsers gets the application users of this cluster
+	GetAppUsers() ([]User, error)
+	// GetDBUsers gets the db users of this cluster
+	GetDBUsers() ([]User, error)
+	// GetAllUsers gets mysql cluster, application and db users of this cluster
+	GetAllUsers() ([]User, error)
 	// Set sets MySQLCluster with given fields, key is the field name and value is the relevant value of the key
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
@@ -66,12 +72,18 @@ type MySQLClusterRepo interface {
 	GetID(clusterName string) (int, error)
 	// GetDBsByID gets the databases of the given id from the middleware
 	GetDBsByID(id int) ([]DB, error)
-	// GetAppOwnersByID gets the application owners of the given id from the middleware
-	GetAppOwnersByID(id int) ([]User, error)
-	// GetDBOwnersByID gets the db owners of the given id from the middleware
-	GetDBOwnersByID(id int) ([]User, error)
-	// GetAllOwnersByID gets both application and db owners of the given id from the middleware
-	GetAllOwnersByID(id int) ([]User, error)
+	// GetUsersByID gets the users that the mysql cluster uses
+	GetUsersByID(id int) ([]User, error)
+	// AddUser add a new map of mysql cluster and user in the middleware
+	AddUser(mysqlClusterID, userID int) error
+	// DeleteUser delete the map of mysql cluster and user in the middleware
+	DeleteUser(mysqlClusterID, userID int) error
+	// GetAppUserssByID gets the application users of the given id from the middleware
+	GetAppUsersByID(id int) ([]User, error)
+	// GetDBUsersByID gets the db users of the given id from the middleware
+	GetDBUsersByID(id int) ([]User, error)
+	// GetAllUsersByID gets mysql cluster, application and db users of the given id from the middleware
+	GetAllUsersByID(id int) ([]User, error)
 	// Create creates a mysql cluster in the middleware
 	Create(mc MySQLCluster) (MySQLCluster, error)
 	// Update updates the mysql cluster in the middleware
@@ -88,8 +100,8 @@ type MySQLClusterService interface {
 	GetMySQLServers() []MySQLServer
 	// GetDBs returns the dbs of the service
 	GetDBs() []DB
-	// GetOwners returns the owners of the service
-	GetOwners() []User
+	// // GetOwners returns the users of the service
+	// GetOwners() []User
 	// GetAll gets all mysql clusters from the middleware
 	GetAll() error
 	// GetByEnv gets mysql clusters of given env id
@@ -104,12 +116,18 @@ type MySQLClusterService interface {
 	GetMasterServersByID(id int) error
 	// GetDBsByID gets the databases of the given id
 	GetDBsByID(id int) error
-	// GetAppOwnersByID gets the application owners of the given id
-	GetAppOwnersByID(id int) error
-	// GetDBOwnersByID gets the db owners of the given id
-	GetDBOwnersByID(id int) error
-	// GetAllOwnersByID gets both application and db owners of the given id
-	GetAllOwnersByID(id int) error
+	// GetUsersByID gets the user that own the mysql cluster
+	GetUsersByID(id int) error
+	// AddUser add a new map of mysql cluster and user in the middleware
+	AddUser(mysqlClusterID, userID int) error
+	// DeleteUser delete the map of mysql cluster and user in the middleware
+	DeleteUser(mysqlClusterID, userID int) error
+	// GetAppUserssByID gets the application users of the given id
+	GetAppUsersByID(id int) error
+	// GetDBUsersByID gets the db users of the given id
+	GetDBUsersByID(id int) error
+	// GetAllUsersByID gets mysql cluster, application and db users of the given id
+	GetAllUsersByID(id int) error
 	// Create creates a mysql cluster in the middleware
 	Create(fields map[string]interface{}) error
 	// Update gets a mysql cluster of the given id from the middleware,

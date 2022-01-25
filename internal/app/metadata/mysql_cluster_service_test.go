@@ -23,9 +23,11 @@ func TestMySQLClusterServiceAll(t *testing.T) {
 	TestMySQLClusterService_GetMySQLServersByID(t)
 	TestMySQLClusterService_GetMasterServersByID(t)
 	TestMySQLClusterService_GetDBsByID(t)
-	TestMySQLClusterService_GetAppOwnersByID(t)
-	TestMySQLClusterService_GetDBOwnersByID(t)
-	TestMySQLClusterService_GetAllOwnersByID(t)
+	TestMySQLClusterService_AddUser(t)
+	TestMySQLClusterService_DeleteUser(t)
+	TestMySQLClusterService_GetAppUsersByID(t)
+	TestMySQLClusterService_GetDBUsersByID(t)
+	TestMySQLClusterService_GetAllUsersByID(t)
 	TestMySQLClusterService_Create(t)
 	TestMySQLClusterService_Update(t)
 	TestMySQLClusterService_Delete(t)
@@ -89,30 +91,67 @@ func TestMySQLClusterService_GetDBsByID(t *testing.T) {
 	asst.Equal(2, len(testMySQLClusterService.GetDBs()), "test GetDBsByID() failed")
 }
 
-func TestMySQLClusterService_GetAppOwnersByID(t *testing.T) {
+func TestMySQLClusterService_GetUsersByID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testMySQLClusterService.GetAppOwnersByID(testMySQLClusterID)
-	asst.Nil(err, common.CombineMessageWithError("test GetAppOwnersByID() failed", err))
-	asst.Equal(14, testMySQLClusterService.GetOwners()[constant.ZeroInt].Identity(), "test GetAppOwnersByID() failed")
-	asst.Equal(2, len(testMySQLClusterService.GetOwners()), "test GetAppOwnersByID() failed")
+	err := testMySQLClusterService.GetUsersByID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBSByID() failed", err))
+	asst.Equal(1, len(testMySQLClusterService.Users), common.CombineMessageWithError("test GetDBSByID() failed", err))
 }
 
-func TestMySQLClusterService_GetDBOwnersByID(t *testing.T) {
+func TestMySQLClusterService_AddUser(t *testing.T) {
 	asst := assert.New(t)
-
-	err := testMySQLClusterService.GetDBOwnersByID(testMySQLClusterID)
-	asst.Nil(err, common.CombineMessageWithError("test GetDBOwnersByID() failed", err))
-	asst.Equal(1, testMySQLClusterService.GetOwners()[constant.ZeroInt].Identity(), "test GetDBOwnersByID() failed")
+	entity, err := testCreateMySQLCluster()
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	err = testMySQLClusterService.AddUser(entity.Identity(), testMySQLClusterUserID)
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	err = testMySQLClusterService.GetUsersByID(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	asst.Equal(testMySQLClusterUserID, testMySQLClusterService.GetUsers()[constant.ZeroInt].Identity())
+	err = testMySQLClusterService.DeleteUser(entity.Identity(), testMySQLClusterUserID)
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
+	err = testMySQLClusterRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test AddUser() failed", err))
 }
 
-func TestMySQLClusterService_GetAllOwnersByID(t *testing.T) {
+func TestMySQLClusterService_DeleteUser(t *testing.T) {
+	asst := assert.New(t)
+	entity, err := testCreateMySQLCluster()
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+	err = testMySQLClusterService.AddUser(entity.Identity(), testMySQLClusterUserID)
+	asst.Nil(err, "test DeleteUser() failed")
+	err = testMySQLClusterService.DeleteUser(entity.Identity(), testMySQLClusterUserID)
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+	err = testMySQLClusterService.GetUsersByID(entity.Identity())
+	asst.Zero(len(testMySQLClusterService.GetUsers()))
+	err = testMySQLClusterRepo.Delete(entity.Identity())
+	asst.Nil(err, common.CombineMessageWithError("test DeleteUser() failed", err))
+}
+
+func TestMySQLClusterService_GetAppUsersByID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testMySQLClusterService.GetAllOwnersByID(testMySQLClusterID)
-	asst.Nil(err, common.CombineMessageWithError("test GetAllOwnersByID() failed", err))
-	asst.Equal(14, testMySQLClusterService.GetOwners()[constant.ZeroInt].Identity(), "test GetAllOwnersByID() failed")
-	asst.Equal(3, len(testMySQLClusterService.GetOwners()), "test GetAllOwnersByID() failed")
+	err := testMySQLClusterService.GetAppUsersByID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetAppUsersByID() failed", err))
+	asst.Equal(15, testMySQLClusterService.Users[constant.ZeroInt].Identity(), "test GetAppUsersByID() failed")
+	asst.Equal(1, len(testMySQLClusterService.Users), "test GetAppUsersByID() failed")
+}
+
+func TestMySQLClusterService_GetDBUsersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testMySQLClusterService.GetDBUsersByID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBUsersByID() failed", err))
+	asst.Equal(1, testMySQLClusterService.Users[constant.ZeroInt].Identity(), "test GetDBUsersByID() failed")
+}
+
+func TestMySQLClusterService_GetAllUsersByID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testMySQLClusterService.GetAllUsersByID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetAllUsersByID() failed", err))
+	asst.Equal(15, testMySQLClusterService.Users[constant.ZeroInt].Identity(), "test GetAllUsersByID() failed")
+	asst.Equal(2, len(testMySQLClusterService.Users), "test GetAllOwnersByID() failed")
 }
 
 func TestMySQLClusterService_Create(t *testing.T) {
@@ -122,8 +161,8 @@ func TestMySQLClusterService_Create(t *testing.T) {
 		mysqlClusterClusterNameStruct:         testMySQLClusterNewClusterName,
 		mysqlCLusterMiddlewareClusterIDStruct: testMySQLClusterMiddlewareClusterID,
 		mysqlClusterMonitorSystemIDStruct:     testMySQLClusterMonitorSystemID,
-		mysqlClusterOwnerIDStruct:             testMySQLClusterOwnerID,
-		mysqlClusterEnvIDStruct:               testMySQLClusterEnvID,
+		// mysqlClusterOwnerIDStruct:             testMySQLClusterOwnerID,
+		mysqlClusterEnvIDStruct: testMySQLClusterEnvID,
 	})
 	asst.Nil(err, common.CombineMessageWithError("test Create() failed", err))
 	// delete

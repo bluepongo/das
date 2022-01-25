@@ -13,11 +13,12 @@ import (
 const (
 	testMiddlewareClusterClusterID            = 1
 	testMiddlewareClusterClusterName          = "middleware-cluster-1"
-	testMiddlewareClusterOwnerID              = 1
 	testMiddlewareClusterEnvID                = 1
 	testMiddlewareClusterDelFlag              = 0
 	testMiddlewareClusterCreateTimeString     = "2021-01-21 10:00:00.000000"
 	testMiddlewareClusterLastUpdateTimeString = "2021-01-21 13:00:00.000000"
+
+	testMiddlewareClusterNewUserID = 14
 )
 
 var testMiddlewareClusterInfo *MiddlewareClusterInfo
@@ -35,7 +36,6 @@ func testInitNewMiddlewareClusterInfo() *MiddlewareClusterInfo {
 	return NewMiddlewareClusterInfoWithGlobal(
 		testMiddlewareClusterClusterID,
 		testMiddlewareClusterClusterName,
-		testMiddlewareClusterOwnerID,
 		testMiddlewareClusterEnvID,
 		testMiddlewareClusterDelFlag,
 		createTime,
@@ -46,15 +46,17 @@ func testInitNewMiddlewareClusterInfo() *MiddlewareClusterInfo {
 func TestMiddlewareClusterEntityAll(t *testing.T) {
 	TestMiddlewareClusterInfo_Identity(t)
 	TestMiddlewareClusterInfo_GetClusterName(t)
-	TestMiddlewareClusterInfo_GetOwnerID(t)
 	TestMiddlewareClusterInfo_GetEnvID(t)
 	TestMiddlewareClusterInfo_GetDelFlag(t)
 	TestMiddlewareClusterInfo_GetCreateTime(t)
 	TestMiddlewareClusterInfo_GetLastUpdateTime(t)
 	TestMiddlewareClusterInfo_GetCreateTime(t)
 	TestMiddlewareClusterInfo_GetMiddlewareServers(t)
+	TestMiddlewareClusterInfo_GetUsersByMiddlewareClusterID(t)
 	TestMiddlewareClusterInfo_Set(t)
 	TestMiddlewareClusterInfo_Delete(t)
+	TestMiddlewareClusterInfo_AddUser(t)
+	TestMiddlewareClusterInfo_DeleteUser(t)
 	TestMiddlewareClusterInfo_MarshalJSON(t)
 	TestMiddlewareClusterInfo_MarshalJSONWithFields(t)
 }
@@ -69,12 +71,6 @@ func TestMiddlewareClusterInfo_GetClusterName(t *testing.T) {
 	asst := assert.New(t)
 
 	asst.Equal(testMiddlewareClusterClusterName, testMiddlewareClusterInfo.GetClusterName(), "test GetClusterName() failed")
-}
-
-func TestMiddlewareClusterInfo_GetOwnerID(t *testing.T) {
-	asst := assert.New(t)
-
-	asst.Equal(testMiddlewareClusterOwnerID, testMiddlewareClusterInfo.GetOwnerID(), "test GetOwnerID() failed")
 }
 
 func TestMiddlewareClusterInfo_GetEnvID(t *testing.T) {
@@ -108,6 +104,13 @@ func TestMiddlewareClusterInfo_GetMiddlewareServers(t *testing.T) {
 	asst.Equal(1, len(middlewareServers), "test GetMiddlewareServersByID() failed")
 }
 
+func TestMiddlewareClusterInfo_GetUsersByMiddlewareClusterID(t *testing.T) {
+	asst := assert.New(t)
+	users, err := testMiddlewareClusterInfo.GetUsersByMiddlewareClusterID()
+	asst.Nil(err, common.CombineMessageWithError("test GetUsersByMiddlewareClusterID() failed", err))
+	asst.Equal(1, len(users), "test GetUsersByMiddlewareClusterID() failed")
+}
+
 func TestMiddlewareClusterInfo_Set(t *testing.T) {
 	asst := assert.New(t)
 
@@ -123,10 +126,35 @@ func TestMiddlewareClusterInfo_Delete(t *testing.T) {
 	asst := assert.New(t)
 
 	testMiddlewareClusterInfo.Delete()
-	asst.Equal(1, testMiddlewareClusterInfo.GetDelFlag(), "test Delete() failed")
+	asst.Equal(0, testMiddlewareClusterInfo.GetDelFlag(), "test Delete() failed")
 	err := testMiddlewareClusterInfo.Set(map[string]interface{}{middlewareClusterDelFlagStruct: constant.ZeroInt})
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
 	asst.Equal(constant.ZeroInt, testMiddlewareClusterInfo.GetDelFlag(), "test Delete() failed")
+}
+
+func TestMiddlewareClusterInfo_AddUser(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testMiddlewareClusterInfo.AddUser(testMiddlewareClusterNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+	users, err := testMiddlewareClusterInfo.GetUsersByMiddlewareClusterID()
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+	asst.Equal(2, len(users), common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+	// delete
+	err = testMiddlewareClusterInfo.DeleteUser(testMiddlewareClusterNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test testMiddlewareClusterNewUserID() failed", err))
+}
+
+func TestMiddlewareClusterInfo_DeleteUser(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testMiddlewareClusterInfo.AddUser(testMiddlewareClusterNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
+	err = testMiddlewareClusterInfo.DeleteUser(testMiddlewareClusterNewUserID)
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterDeleteUser() failed", err))
+	users, err := testMiddlewareClusterInfo.GetUsersByMiddlewareClusterID()
+	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterDeleteUser() failed", err))
+	asst.Equal(testMiddlewareClusterClusterID, users[constant.ZeroInt].Identity(), common.CombineMessageWithError("test MiddlewareClusterDeleteUser() failed", err))
 }
 
 func TestMiddlewareClusterInfo_MarshalJSON(t *testing.T) {
