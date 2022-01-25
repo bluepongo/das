@@ -35,10 +35,10 @@ const (
 )
 
 func initQueryDebugMessage() {
-	message.Messages[DebugQueryGetByMySQLClusterID] = config.NewErrMessage(message.DefaultMessageHeader, DebugQueryGetByMySQLClusterID, "get by mysql cluster id completed. mysql_cluster_id: %d.\n%s")
-	message.Messages[DebugQueryGetByMySQLServerID] = config.NewErrMessage(message.DefaultMessageHeader, DebugQueryGetByMySQLServerID, "get by mysql server id completed. mysql_server_id: %d.\n%s")
-	message.Messages[DebugQueryGetByDBID] = config.NewErrMessage(message.DefaultMessageHeader, DebugQueryGetByDBID, "get by db id completed. db_id: %d.\n%s")
-	message.Messages[DebugQueryGetBySQLID] = config.NewErrMessage(message.DefaultMessageHeader, DebugQueryGetBySQLID, "get by sql id completed. mysql_server_id: %d, sql_id: %s.\n%s")
+	message.Messages[DebugQueryGetByMySQLClusterID] = config.NewErrMessage(message.DefaultMessageHeader, DebugQueryGetByMySQLClusterID, "get by mysql cluster id. mysql_cluster_id: %d.\n%s")
+	message.Messages[DebugQueryGetByMySQLServerID] = config.NewErrMessage(message.DefaultMessageHeader, DebugQueryGetByMySQLServerID, "get by mysql server id. mysql_server_id: %d.\n%s")
+	message.Messages[DebugQueryGetByDBID] = config.NewErrMessage(message.DefaultMessageHeader, DebugQueryGetByDBID, "get by db id. db_id: %d.\n%s")
+	message.Messages[DebugQueryGetBySQLID] = config.NewErrMessage(message.DefaultMessageHeader, DebugQueryGetBySQLID, "get by sql id. mysql_server_id: %d, sql_id: %s.\n%s")
 }
 
 func initQueryInfoMessage() {
