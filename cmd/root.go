@@ -104,7 +104,7 @@ var rootCmd = &cobra.Command{
 		if len(args) == 0 {
 			err := cmd.Help()
 			if err != nil {
-				fmt.Println(message.NewMessage(message.ErrPrintHelpInfo, errors.Trace(err)))
+				fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.ErrPrintHelpInfo, errors.Trace(err))))
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 

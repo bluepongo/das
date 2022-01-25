@@ -19,13 +19,12 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/romberli/das/config"
+	"github.com/romberli/das/pkg/message"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/romberli/das/config"
-	"github.com/romberli/das/pkg/message"
 )
 
 // statusCmd represents the status command

@@ -22,16 +22,15 @@ import (
 	"time"
 
 	"github.com/pingcap/errors"
+	"github.com/romberli/das/config"
+	"github.com/romberli/das/global"
+	"github.com/romberli/das/pkg/message"
+	"github.com/romberli/das/server"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"
 	"github.com/romberli/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/romberli/das/config"
-	"github.com/romberli/das/global"
-	"github.com/romberli/das/pkg/message"
-	"github.com/romberli/das/server"
 )
 
 // startCmd represents the start command
