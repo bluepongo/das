@@ -40,13 +40,13 @@ const (
 )
 
 func initDebugMonitorSystemMessage() {
-	message.Messages[DebugMetadataGetMonitorSystemAll] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetMonitorSystemAll, "metadata: get all monitor systems. message: %s")
-	message.Messages[DebugMetadataGetMonitorSystemByEnv] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetMonitorSystemByEnv, "metadata: get monitor systems by environment. message: %s")
-	message.Messages[DebugMetadataGetMonitorSystemByID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetMonitorSystemByID, "metadata: get monitor system by id. message: %s")
-	message.Messages[DebugMetadataGetMonitorSystemByHostInfo] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetMonitorSystemByHostInfo, "metadata: get monitor system by host info. message: %s")
-	message.Messages[DebugMetadataAddMonitorSystem] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataAddMonitorSystem, "metadata: add new monitor system. message: %s")
-	message.Messages[DebugMetadataUpdateMonitorSystem] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataUpdateMonitorSystem, "metadata: update monitor system. message: %s")
-	message.Messages[DebugMetadataDeleteMonitorSystem] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataDeleteMonitorSystem, "metadata: delete monitor system. message: %s")
+	message.Messages[DebugMetadataGetMonitorSystemAll] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetMonitorSystemAll, "metadata: get all monitor systems completed. message: %s")
+	message.Messages[DebugMetadataGetMonitorSystemByEnv] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetMonitorSystemByEnv, "metadata: get monitor systems by environment completed. message: %s")
+	message.Messages[DebugMetadataGetMonitorSystemByID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetMonitorSystemByID, "metadata: get monitor system by id completed. message: %s")
+	message.Messages[DebugMetadataGetMonitorSystemByHostInfo] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetMonitorSystemByHostInfo, "metadata: get monitor system by host info completed. message: %s")
+	message.Messages[DebugMetadataAddMonitorSystem] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataAddMonitorSystem, "metadata: add new monitor system completed. message: %s")
+	message.Messages[DebugMetadataUpdateMonitorSystem] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataUpdateMonitorSystem, "metadata: update monitor system completed. message: %s")
+	message.Messages[DebugMetadataDeleteMonitorSystem] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataDeleteMonitorSystem, "metadata: delete monitor system completed. message: %s")
 }
 
 func initInfoMonitorSystemMessage() {
