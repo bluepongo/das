@@ -1,14 +1,26 @@
 # description: configuration file path, if it's specified as relative path,
 # then directory of binary file will be the base directory of configuration file,
 # it is recommended to specify absolute path.
+# command-line-argument: --config
 # type: string
 # default: None
 config: das.yaml
+
+# shell configuration
+shell:
+  # description: shell file path, if it's specified as relative path,
+  # then directory of binary file will be the base directory of configuration file,
+  # it is recommended to specify absolute path.
+  # command-line-argument: --shell
+  # type: string
+  # default: /bin/bash
+  path: /bin/bash
 
 # description: specify whether das runs as daemon mode, if true, das will run as a daemon process.
 # never set this argument to true in config file, always use command line argument by using --daemon=true,
 # das ignore this argument setting in the configuration file, because this may cause endless loop,
 # writing here only for describing purpose.
+# command-line-argument: --daemon
 # type: bool
 # default: false
 daemon: false
@@ -18,31 +30,37 @@ log:
   # description: log file path, if it's specified as relative path,
   # then directory of binary file will be the base directory of log file,
   # it is recommended to specify absolute path.
+  # command-line-argument: --log-file
   # type: string
   # default: log/run.log
   file: log/run.log
   # description: log level
+  # command-line-argument: --log-level
   # type: string
   # available: [debug, info, warn, error, fatal]
   # default: info
   level: info
   # description: log format
+  # command-line-argument: --log-format
   # type: string
   # available: [text, json]
   # default: text
   format: text
   # description: log file max size
+  # command-line-argument: --log-max-size
   # unit: MB
   # type: int
   # default: 100
   maxSize: 100
   # description: specify how many days the log file will be kept after rotating,
   # older than max-days files will be removed automatically.
+  # command-line-argument: --log-max-days
   # type: int
   # default: 7
   maxDays: 7
   # description: specify how many files will be kept after rotating,
   # the oldest log files will be removed automatically.
+  # command-line-argument: --log-max-backups
   # type: int
   # default: 5
   maxBackups: 5
@@ -50,22 +68,26 @@ log:
 # server configuration
 server:
   # description: specify the server listening address, format: host:port
+  # command-line-argument: --server-addr
   # type: string
   # default: 0.0.0.0:6090
   addr: "0.0.0.0:6090"
   # description: pid file path, if it's specified as relative path,
   # then directory of binary file will be the base directory of log file,
   # it is recommended to specify absolute path.
+  # command-line-argument: --server-pid-file
   # type: string
   # default: das.pid
   pidFile: das.pid
   # description: specify the read timeout of http request, 0 means no timeout
+  # command-line-argument: --server-read-timeout
   # unit: second
   # type: int
   # available: 0 - 60
   # default: 5
   readTimeout: 5
   # description: specify the write timeout of http resp, 0 means no timeout
+  # command-line-argument: --server-write-timeout
   # unit: second
   # type: int
   # available: 0 - 60
@@ -79,42 +101,51 @@ db:
     # mysql configuration
     mysql:
       # description: database address, format: host:port
+      # command-line-argument: --db-das-mysql-addr
       # type: string
       # default: 127.0.0.1:3306
       addr: "127.0.0.1:3306"
       # description: database name
+      # command-line-argument: --db-das-mysql-name
       # type: string
       # default: das
       name: das
       # description: database username
+      # command-line-argument: --db-das-mysql-user
       # type: string
       # default: root
       user: root
       # description: database password
+      # command-line-argument: --db-das-mysql-pass
       # type: string
       # default: root
       pass: root
   # connection pool configuration
   pool:
     # description: connection pool could create up to this value of connections
+    # command-line-argument: --db-pool-max-connections
     # type: int
     # default: 20
     maxConnections: 20
     # description: connection pool will create {init-connections} connections at the beginning,
     # connection pool could grow up necessarily, up to db-max-connection
+    # command-line-argument: --db-pool-init-connections
     # type: int
     # default: 5
     initConnections: 5
     # description: connections more than this value will be released soon to save database resource
+    # command-line-argument: --db-pool-max-idle-connections
     # type: int
     # default: 20
     maxIdleConnections: 10
     # description: connection pool will release connections more than {max-idle-connections} every this value of seconds
+    # command-line-argument: --db-pool-max-idle-time
     # unit: second
     # type: int
     # default: 1800
     maxIdleTime: 1800
     # description: connection pool keeps alive of connections in the pool every this value of seconds to avoid database connection timeout
+    # command-line-argument: --db-pool-keep-alive-interval
     # unit: second
     # type: int
     # das.yaml: 300
@@ -124,10 +155,12 @@ db:
     # mysql configuration
     mysql:
       # description: mysql username
+      # command-line-argument: --db-application-mysql-user
       # type: string
       # default: root
       user: root
       # description: mysql password
+      # command-line-argument: --db-application-mysql-pass
       # type: string
       # default: root
       pass: root
@@ -136,29 +169,35 @@ db:
     # prometheus configuration
     prometheus:
       # description: prometheus username
+      # command-line-argument: --monitor-prometheus-user
       # type: string
-      # default: root
-      user: root
+      # default: admin
+      user: admin
       # description: prometheus password
+      # command-line-argument: --monitor-prometheus-pass
       # type: string
-      # default: root
-      pass: root
+      # default: admin
+      pass: admin
     # clickhouse configuration
     clickhouse:
       # description: clickhouse username
+      # command-line-argument: --monitor-clickhouse-user
       # type: string
       # default: root
       user: root
       # description: clickhouse password
+      # command-line-argument: --monitor-clickhouse-pass
       # type: string
       # default: root
-      pass: root
+      pass: ""
     mysql:
       # description: mysql username
+      # command-line-argument: --monitor-mysql-user
       # type: string
       # default: root
       user: root
       # description: mysql password
+      # command-line-argument: --monitor-mysql-pass
       # type: string
       # default: root
       pass: root
@@ -168,41 +207,50 @@ alert:
   # send alert message via smtp server
   smtp:
     # description: specify if enables smtp method, note that only one of these two ways could be enabled, because sending email twice is meaningless
+    # command-line-argument: --alert-smtp-enabled
     # type: bool
     # default: true
     enabled: true
     # description: specify the email content format
+    # command-line-argument: --alert-smtp-format
     # type: string
     # available: [text, html]
     # default: html
     format: html
     # description: specify the address of the smtp server
+    # command-line-argument: --alert-smtp-url
     # type: string
     # default: "127.0.0.1:25"
     url: "127.0.0.1:25"
     # description: specify the username of the smtp server
+    # command-line-argument: --alert-smtp-user
     # type: string
     # default: root
     user: root
     # description: specify the password of the smtp server
+    # command-line-argument: --alert-smtp-pass
     # type: string
     # default: root
     pass: root
     # description: specify the from email address
+    # command-line-argument: --alert-smtp-from
     # type: string
     # default: "mail@example.com"
     from: "mail@example.com"
   # send alert message via calling http api
   http:
     # description: specify if enables http method, note that only one of these two ways could be enabled, because sending email twice is meaningless
+    # command-line-argument: --alert-http-enabled
     # type: bool
     # default: false
     enabled: false
     # description: specify alert api url, alert module calls this api to send alert messages
+    # command-line-argument: --alert-http-url
     # type: string
     # default: "http://127.0.0.1:8080"
     url: http://127.0.0.1:8080
     # description: specify alert api parameters, these may be needed by the api, such as username, token, and other information
+    # command-line-argument: --alert-http-config
     # type: map[string]string
     # default: {}
     config: {}
@@ -212,6 +260,7 @@ healthcheck:
   # alert configuration
   alert:
     # description: specify owner type
+    # command-line-argument: --healthcheck-alert-owner-type
     # type: string
     # available: [app, db, all]
     # default: "all"
@@ -220,6 +269,7 @@ healthcheck:
 # query configuration
 query:
   # description: specify min rows examined, slow queries which scanned less than this value will be ignored
+  # command-line-argument: --query-min-rows-examined
   # type: int
   # default: 100000
   minRowsExamined: 100000
@@ -229,26 +279,32 @@ sqladvisor:
   # soar configuration
   soar:
     # description: specify soar binary path
+    # command-line-argument: --sql-sqladvisor-soar-bin
     # type: string
     # default: "./bin/soar"
     bin: "./bin/soar"
     # description: specify soar configuration file path
+    # command-line-argument: --sql-sqladvisor-soar-config
     # type: string
     # default: "./config/soar.yaml"
     config: "./config/soar.yaml"
     # description: specify if enabling sampling feature
+    # command-line-argument: --sql-sqladvisor-soar-sampling
     # type: bool
     # default: false
     sampling: false
     # description: specify if enabling profiling feature
+    # command-line-argument: --sql-sqladvisor-soar-profiling
     # type: bool
     # default: false
     profiling: false
     # description: specify if enabling trace feature
+    # command-line-argument: --sql-sqladvisor-soar-trace
     # type: bool
     # default: false
     trace: false
     # description: specify if enabling explain feature
+    # command-line-argument: --sql-sqladvisor-soar-explain
     # type: bool
     # default: false
     explain: false
