@@ -2,6 +2,7 @@ package query
 
 import (
 	"fmt"
+
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/metadata"
 	depmeta "github.com/romberli/das/internal/dependency/metadata"

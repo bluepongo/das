@@ -4,12 +4,11 @@ import (
 	"fmt"
 
 	"github.com/pingcap/errors"
+	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/log"
-
-	"github.com/romberli/das/global"
 )
 
 var _ metadata.MiddlewareClusterRepo = (*MiddlewareClusterRepo)(nil)

@@ -2,7 +2,6 @@ package metadata
 
 import (
 	"github.com/pingcap/errors"
-
 	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/constant"

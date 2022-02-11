@@ -5,13 +5,12 @@ import (
 	"testing"
 
 	"github.com/romberli/das/global"
+	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/romberli/das/internal/dependency/metadata"
 )
 
 const (

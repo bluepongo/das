@@ -2,11 +2,11 @@ package metadata
 
 import (
 	"encoding/json"
-	"github.com/pingcap/errors"
 	"reflect"
 	"testing"
 
 	"github.com/jinzhu/now"
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"

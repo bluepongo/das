@@ -3,7 +3,6 @@ package alert
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -125,8 +124,8 @@ func (hs *HTTPSender) parseResponse(resp *http.Response) error {
 		return errors.Trace(err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return errors.New(fmt.Sprintf("got http error when calling alert http api. status code: %d, message: %s",
-			resp.StatusCode, string(respBody)))
+		return errors.Errorf("got http error when calling alert http api. status code: %d, message: %s",
+			resp.StatusCode, string(respBody))
 	}
 	// unmarshal to a map
 	response := NewEmptyResponse()
@@ -136,8 +135,8 @@ func (hs *HTTPSender) parseResponse(resp *http.Response) error {
 	}
 	// get value from the map
 	if response.GetCode() != constant.ZeroInt {
-		return errors.New(fmt.Sprintf("got internal error when calling alert http api. code: %d, message: %s",
-			response.GetCode(), response.GetMessage()))
+		return errors.Errorf("got internal error when calling alert http api. code: %d, message: %s",
+			response.GetCode(), response.GetMessage())
 	}
 
 	return nil

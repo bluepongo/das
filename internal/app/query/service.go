@@ -3,6 +3,7 @@ package query
 import (
 	"encoding/json"
 
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/go-util/constant"
 )
@@ -111,5 +112,10 @@ func (s *Service) Save(mysqlClusterID, mysqlServerID, dbID int, sqlID string) er
 
 // Marshal marshals Service.Queries to json bytes
 func (s *Service) Marshal() ([]byte, error) {
-	return json.Marshal(s.GetQueries())
+	bytes, err := json.Marshal(s.GetQueries())
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	return bytes, nil
 }

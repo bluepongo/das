@@ -217,9 +217,11 @@ const (
     `
 )
 
-var _ query.DASRepo = (*DASRepo)(nil)
-var _ query.MonitorRepo = (*MySQLRepo)(nil)
-var _ query.MonitorRepo = (*ClickhouseRepo)(nil)
+var (
+	_ query.DASRepo     = (*DASRepo)(nil)
+	_ query.MonitorRepo = (*MySQLRepo)(nil)
+	_ query.MonitorRepo = (*ClickhouseRepo)(nil)
+)
 
 type DASRepo struct {
 	Database middleware.Pool

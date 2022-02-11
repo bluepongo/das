@@ -5,15 +5,13 @@ import (
 
 	"github.com/pingcap/errors"
 	"github.com/romberli/das/config"
+	"github.com/romberli/das/global"
+	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/go-util/middleware/mysql"
-	"github.com/spf13/viper"
-
 	"github.com/romberli/log"
-
-	"github.com/romberli/das/global"
-	"github.com/romberli/das/internal/dependency/metadata"
+	"github.com/spf13/viper"
 )
 
 var _ metadata.MySQLServerRepo = (*MySQLServerRepo)(nil)

@@ -160,6 +160,7 @@ func (s *Service) Save(toAddrs, ccAddrs, subject, content, message string) error
 	if httpEnabled {
 		return s.saveHTTP(toAddrs, ccAddrs, content, message)
 	}
+
 	return errors.New("none of smtp or http is enabled, can not save the email")
 }
 
@@ -169,7 +170,7 @@ func (s *Service) saveSMTP(toAddrs, ccAddrs, subject, content, message string) e
 	s.GetConfig().Set(smtpPassJSON, defaultPassEncrypted)
 	cfg, err := json.Marshal(s.GetConfig())
 	if err != nil {
-		return err
+		return errors.Trace(err)
 	}
 
 	return s.GetRepository().Save(
@@ -187,7 +188,7 @@ func (s *Service) saveSMTP(toAddrs, ccAddrs, subject, content, message string) e
 func (s *Service) saveHTTP(toAddrs, ccAddrs, content, message string) error {
 	cfg, err := json.Marshal(s.GetConfig())
 	if err != nil {
-		return err
+		return errors.Trace(err)
 	}
 
 	return s.GetRepository().Save(

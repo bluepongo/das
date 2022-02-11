@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/internal/dependency/healthcheck"
@@ -141,7 +142,7 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 		return operationID, err
 	}
 	if isRunning {
-		return operationID, fmt.Errorf("healthcheck of mysql server is still running. mysql server id: %d", mysqlServerID)
+		return operationID, errors.Errorf("healthcheck of mysql server is still running. mysql server id: %d", mysqlServerID)
 	}
 	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
 	err = mysqlServerService.GetByID(mysqlServerID)
