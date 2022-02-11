@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/healthcheck"
 	"github.com/romberli/das/pkg/message"
 	msghealth "github.com/romberli/das/pkg/message/healthcheck"
@@ -38,7 +39,7 @@ func GetResultByOperationID(c *gin.Context) {
 	}
 	operationID, err := strconv.Atoi(operationIDStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err)
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -71,22 +72,22 @@ func Check(c *gin.Context) {
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetStartTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetStartTime())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, errors.Trace(err), rd.GetStartTime())
 		return
 	}
 	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetEndTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetEndTime())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, errors.Trace(err), rd.GetEndTime())
 		return
 	}
 	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, rd.GetStep())
+		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, errors.Trace(err), rd.GetStep())
 		return
 	}
 	// init service
@@ -112,22 +113,22 @@ func CheckByHostInfo(c *gin.Context) {
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetStartTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetStartTime())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, errors.Trace(err), rd.GetStartTime())
 		return
 	}
 	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetEndTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetEndTime())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, errors.Trace(err), rd.GetEndTime())
 		return
 	}
 	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, rd.GetStep())
+		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, errors.Trace(err), rd.GetStep())
 		return
 	}
 	// init service
@@ -152,13 +153,13 @@ func ReviewAccuracy(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err)
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	dataMap := make(map[string]int)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err)
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, errors.Trace(err))
 		return
 	}
 	operationID, operationIDExists := dataMap[operationIDJSON]

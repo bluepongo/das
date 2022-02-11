@@ -7,14 +7,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
-	"github.com/romberli/go-util/common"
-	"github.com/romberli/go-util/constant"
-	"github.com/romberli/log"
-
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/pkg/message"
 	msgmeta "github.com/romberli/das/pkg/message/metadata"
 	"github.com/romberli/das/pkg/resp"
+	"github.com/romberli/go-util/common"
+	"github.com/romberli/go-util/constant"
+	"github.com/romberli/log"
 )
 
 const (

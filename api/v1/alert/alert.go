@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
-
 	"github.com/romberli/das/internal/app/alert"
 	"github.com/romberli/das/pkg/message"
 	msgalert "github.com/romberli/das/pkg/message/alert"
