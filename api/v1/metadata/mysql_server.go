@@ -30,8 +30,7 @@ const (
 	mysqlServerPortNumStruct        = "PortNum"
 	mysqlServerDeploymentTypeStruct = "DeploymentType"
 	mysqlServerVersionStruct        = "Version"
-
-	mysqlServerMySQLClusterStruct = "MySQLCluster"
+	mysqlServerMySQLClusterStruct   = "MySQLCluster"
 
 	isMasterResponse = `{"is_master": "%t"}`
 )

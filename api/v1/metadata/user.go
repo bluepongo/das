@@ -17,7 +17,6 @@ import (
 
 const (
 	userIDJSON      = "id"
-	userAppIDJSON   = "app_id"
 	userNameJSON    = "user_name"
 	employeeIDJSON  = "employee_id"
 	accountNameJSON = "account_name"

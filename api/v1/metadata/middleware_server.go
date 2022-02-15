@@ -2,19 +2,18 @@ package metadata
 
 import (
 	"fmt"
-	"github.com/pingcap/errors"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	utilmeta "github.com/romberli/das/pkg/util/metadata"
-	"github.com/romberli/go-util/common"
-	"github.com/romberli/go-util/constant"
-	"github.com/romberli/log"
-
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/pkg/message"
 	msgmeta "github.com/romberli/das/pkg/message/metadata"
 	"github.com/romberli/das/pkg/resp"
+	utilmeta "github.com/romberli/das/pkg/util/metadata"
+	"github.com/romberli/go-util/common"
+	"github.com/romberli/go-util/constant"
+	"github.com/romberli/log"
 )
 
 const (

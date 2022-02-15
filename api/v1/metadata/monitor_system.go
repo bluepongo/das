@@ -2,26 +2,24 @@ package metadata
 
 import (
 	"fmt"
-	"github.com/pingcap/errors"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
-	"github.com/romberli/go-util/common"
-	"github.com/romberli/go-util/constant"
-	"github.com/romberli/log"
+	"github.com/pingcap/errors"
 
+	"github.com/gin-gonic/gin"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/pkg/message"
 	msgmeta "github.com/romberli/das/pkg/message/metadata"
 	"github.com/romberli/das/pkg/resp"
 	utilmeta "github.com/romberli/das/pkg/util/metadata"
+	"github.com/romberli/go-util/common"
+	"github.com/romberli/go-util/constant"
+	"github.com/romberli/log"
 )
 
 const (
-	monitorSystemIDJSON      = "id"
-	monitorSystemEnvIDJSON   = "env_id"
-	monitorSystemHostIPJSON  = "host_ip"
-	monitorSystemPortNumJSON = "port_num"
+	monitorSystemIDJSON    = "id"
+	monitorSystemEnvIDJSON = "env_id"
 
 	monitorSystemNameStruct        = "MonitorSystemName"
 	monitorSystemTypeStruct        = "MonitorSystemType"
