@@ -633,8 +633,8 @@
                 "summary": "add a new environment",
                 "parameters": [
                     {
-                        "description": "environment name",
-                        "name": "env_name",
+                        "description": "env name",
+                        "name": "EnvName",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -667,7 +667,7 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "environment id",
+                        "description": "env id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -686,15 +686,24 @@
         "/api/v1/metadata/env/delete/:id": {
             "post": {
                 "produces": [
-                    "environment/json"
+                    "application/json"
                 ],
                 "tags": [
                     "environment"
                 ],
                 "summary": "delete environment by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "env id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": []}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"env_name\": \"online\", \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -711,6 +720,15 @@
                     "environment"
                 ],
                 "summary": "get environment by Name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "env name",
+                        "name": "env_name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"env_name\": \"online\", \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
@@ -736,10 +754,26 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "environment id",
+                        "description": "env id",
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "env name",
+                        "name": "EnvName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "delete flag",
+                        "name": "DelFlag",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {

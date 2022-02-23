@@ -444,9 +444,9 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: environment name
+      - description: env name
         in: body
-        name: env_name
+        name: EnvName
         required: true
         schema:
           type: string
@@ -467,7 +467,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: environment id
+      - description: env id
         in: path
         name: id
         required: true
@@ -486,11 +486,19 @@ paths:
       - environment
   /api/v1/metadata/env/delete/:id:
     post:
+      parameters:
+      - description: env id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-      - environment/json
+      - application/json
       responses:
         "200":
-          description: '{"code": 200, "data": []}'
+          description: '{"code": 200, "data": [{"id": 1, "env_name": "online", "del_flag":
+            0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time":
+            "2021-01-22T09:59:21.379851+08:00"}]}'
           schema:
             type: string
       summary: delete environment by id
@@ -498,6 +506,12 @@ paths:
       - environment
   /api/v1/metadata/env/env-name/:env_name:
     get:
+      parameters:
+      - description: env name
+        in: path
+        name: env_name
+        required: true
+        type: string
       produces:
       - environment/json
       responses:
@@ -515,11 +529,21 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: environment id
+      - description: env id
         in: path
         name: id
         required: true
         type: integer
+      - description: env name
+        in: body
+        name: EnvName
+        schema:
+          type: string
+      - description: delete flag
+        in: body
+        name: DelFlag
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
