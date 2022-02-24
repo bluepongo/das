@@ -71,7 +71,7 @@ func GetResultByOperationID(c *gin.Context) {
 // @Param	start_time	body string true "start time"
 // @Param	end_time	body string true "end time"
 // @Param	step		body string true "step"
-// @Produce  application/json
+// @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": "healthcheck started."}"
 // @Router /api/v1/healthcheck/check [post]
 func Check(c *gin.Context) {
@@ -118,7 +118,7 @@ func Check(c *gin.Context) {
 // @Param	start_time	body string true "start time"
 // @Param	end_time	body string true "end time"
 // @Param	step		body string true "step"
-// @Produce  application/json
+// @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": ""}"
 // @Router /api/v1/healthcheck/check/host-info [post]
 func CheckByHostInfo(c *gin.Context) {
@@ -162,7 +162,7 @@ func CheckByHostInfo(c *gin.Context) {
 // @Accept  application/json
 // @Param	operation_id	body int true "operation id"
 // @Param	review			body int true "review"
-// @Produce  application/json
+// @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": "{}"
 // @Router /api/v1/healthcheck/review [post]
 func ReviewAccuracy(c *gin.Context) {

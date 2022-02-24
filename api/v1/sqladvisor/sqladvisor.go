@@ -65,9 +65,9 @@ func GetFingerprint(c *gin.Context) {
 // @Summary get sql id
 // @Accept  application/json
 // @Param	sql_text body string true "sql text"
-// @Produce  application/json
+// @Produce application/json
 // @Success 200 {string} string "{"sql_id": "EE56B94E867DC9D5","sql_text": "select * from a;"}"
-// @Router /api/v1/sqladvisor/sql-id/ [get]
+// @Router	/api/v1/sqladvisor/sql-id/ [get]
 func GetSQLID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -109,7 +109,7 @@ func GetSQLID(c *gin.Context) {
 // @Param	sql_text	body string true "sql text"
 // @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"sql_text": "select * from t01", "advice": "xxx"}"
-// @Router /api/v1/sqladvisor/advise/:db_id [post]
+// @Router	/api/v1/sqladvisor/advise/:db_id [post]
 func Advise(c *gin.Context) {
 	// get data
 	dbIDStr := c.Param(dbIDJSON)

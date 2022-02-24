@@ -28,7 +28,7 @@ const (
 // @Param	start_time			body string true "start time"
 // @Param	end_time			body string true "end time"
 // @Param	limit				body int	true "limit"
-// @Param	limit				body int	true "offset"
+// @Param	offset				body int	true "offset"
 // @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
 // @Router	/api/v1/query/cluster/:mysql_cluster_id [get]
@@ -84,7 +84,7 @@ func GetByMySQLClusterID(c *gin.Context) {
 // @Param	start_time		body string true "start time"
 // @Param	end_time		body string true "end time"
 // @Param	limit			body int	true "limit"
-// @Param	limit			body int	true "offset"
+// @Param	offset			body int	true "offset"
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
 // @Router /api/v1/query/server/:mysql_server_id [get]
@@ -141,10 +141,10 @@ func GetByMySQLServerID(c *gin.Context) {
 // @Param	start_time		body string true "start time"
 // @Param	end_time		body string true "end time"
 // @Param	limit			body int	true "limit"
-// @Param	limit			body int	true "offset"
-// @Produce  application/json
+// @Param	offset			body int	true "offset"
+// @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/query/db/:db_id [get]
+// @Router	/api/v1/query/db/:db_id [get]
 func GetByDBID(c *gin.Context) {
 	// get data
 	dbIDStr := c.Param(dbIDJSON)
@@ -198,10 +198,10 @@ func GetByDBID(c *gin.Context) {
 // @Param	start_time		body string true "start time"
 // @Param	end_time		body string true "end time"
 // @Param	limit			body int	true "limit"
-// @Param	limit			body int	true "offset"
-// @Produce  application/json
+// @Param	offset			body int	true "offset"
+// @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/query/:sql_id [get]
+// @Router	/api/v1/query/:sql_id [get]
 func GetBySQLID(c *gin.Context) {
 	// get data
 	sqlIDStr := c.Param(sqlIDJSON)
