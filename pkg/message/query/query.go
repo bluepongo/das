@@ -56,7 +56,7 @@ func initQueryErrorMessage() {
 	message.Messages[ErrQueryConfigNotValid] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryConfigNotValid, "config is not valid. start_time: %s, end_time: %s, limit: %d")
 	message.Messages[ErrQueryMonitorSystemType] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryMonitorSystemType, "monitor system type version should be either 1 or 2, %d is not valid")
 	message.Messages[ErrQueryCloseMonitorRepo] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCloseMonitorRepo, "close monitor repo failed")
-	message.Messages[ErrQueryCreateMonitorMysqlConnection] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCreateMonitorMysqlConnection, "create monitor mysql connection failed. add: %s, user: %s")
-	message.Messages[ErrQueryCreateMonitorClickhouseConnection] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCreateMonitorClickhouseConnection, "create monitor clickhouse connection failed. add: %s, user: %s")
+	message.Messages[ErrQueryCreateMonitorMysqlConnection] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCreateMonitorMysqlConnection, "create monitor mysql connection failed. addr: %s, user: %s")
+	message.Messages[ErrQueryCreateMonitorClickhouseConnection] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCreateMonitorClickhouseConnection, "create monitor clickhouse connection failed. addr: %s, user: %s")
 
 }
