@@ -18,6 +18,9 @@
     "paths": {
         "/api/v1/alert/email": {
             "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -25,6 +28,43 @@
                     "alert"
                 ],
                 "summary": "send email",
+                "parameters": [
+                    {
+                        "description": "optional config",
+                        "name": "config",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "to addrs",
+                        "name": "toAddrs",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "cc addrs",
+                        "name": "ccAddrs",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "to content",
+                        "name": "content",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": {\"code\": 0, \"message\": \"send email completed successfully\"}}",
@@ -37,6 +77,9 @@
         },
         "/api/v1/healthcheck/check": {
             "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -44,6 +87,44 @@
                     "healthcheck"
                 ],
                 "summary": "check health of the database",
+                "parameters": [
+                    {
+                        "description": "mysql server id",
+                        "name": "server_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "step",
+                        "name": "step",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": \"healthcheck started.\"}",
@@ -56,6 +137,9 @@
         },
         "/api/v1/healthcheck/check/host-info": {
             "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -63,6 +147,53 @@
                     "healthcheck"
                 ],
                 "summary": "check health of the database by host ip and port number",
+                "parameters": [
+                    {
+                        "description": "mysql host ip",
+                        "name": "host_ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql port number",
+                        "name": "port_num",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "step",
+                        "name": "step",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": \"\"}",
@@ -75,6 +206,9 @@
         },
         "/api/v1/healthcheck/result/:id": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -82,6 +216,15 @@
                     "healthcheck"
                 ],
                 "summary": "get result by operation id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "operation id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": []}",
@@ -94,6 +237,9 @@
         },
         "/api/v1/healthcheck/review": {
             "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -101,6 +247,26 @@
                     "healthcheck"
                 ],
                 "summary": "update accuracy review",
+                "parameters": [
+                    {
+                        "description": "operation id",
+                        "name": "operation_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "review",
+                        "name": "review",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": \"{}",
@@ -286,10 +452,10 @@
                 "tags": [
                     "application"
                 ],
-                "summary": "delete app by id",
+                "summary": "delete middleware cluster by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8}]}",
+                        "description": "{\"code\": 200, \"data\": []}",
                         "schema": {
                             "type": "string"
                         }
@@ -685,6 +851,9 @@
         },
         "/api/v1/metadata/env/delete/:id": {
             "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -713,6 +882,9 @@
         },
         "/api/v1/metadata/env/env-name/:env_name": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "environment/json"
                 ],
@@ -1895,6 +2067,9 @@
         },
         "/api/v1/query/:sql_id": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1902,6 +2077,60 @@
                     "query"
                 ],
                 "summary": "get slow query by query id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "sql id",
+                        "name": "sql_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "mysql server id",
+                        "name": "mysql_server_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "offset",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": []}",
@@ -1914,6 +2143,9 @@
         },
         "/api/v1/query/cluster/:mysql_cluster_id": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1921,6 +2153,51 @@
                     "query"
                 ],
                 "summary": "get slow queries by mysql server id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "mysql cluster id",
+                        "name": "mysql_cluster_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "offset",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": []}",
@@ -1933,6 +2210,9 @@
         },
         "/api/v1/query/db/:db_id": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1940,6 +2220,60 @@
                     "query"
                 ],
                 "summary": "get slow queries by db id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "db id",
+                        "name": "db_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "mysql server id",
+                        "name": "mysql_server_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "offset",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": []}",
@@ -1952,6 +2286,9 @@
         },
         "/api/v1/query/server/:mysql_server_id": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1959,6 +2296,51 @@
                     "query"
                 ],
                 "summary": "get slow queries by mysql server id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "mysql server id",
+                        "name": "mysql_server_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "offset",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": []}",
@@ -1969,8 +2351,11 @@
                 }
             }
         },
-        "/api/v1/sqladvisor/advise": {
+        "/api/v1/sqladvisor/advise/:db_id": {
             "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1978,6 +2363,24 @@
                     "sqladvisor"
                 ],
                 "summary": "get advice",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "db id",
+                        "name": "db_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "sql text",
+                        "name": "sql_text",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"sql_text\": \"select * from t01\", \"advice\": \"xxx\"}",
@@ -1990,6 +2393,9 @@
         },
         "/api/v1/sqladvisor/fingerprint/": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1997,6 +2403,17 @@
                     "sqladvisor"
                 ],
                 "summary": "get sql fingerprint",
+                "parameters": [
+                    {
+                        "description": "sql text",
+                        "name": "sql_text",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"fingerprint\": \"select * from a\",\"sql_text\": \"select * from a;\"}",
@@ -2009,6 +2426,9 @@
         },
         "/api/v1/sqladvisor/sql-id/": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -2016,6 +2436,17 @@
                     "sqladvisor"
                 ],
                 "summary": "get sql id",
+                "parameters": [
+                    {
+                        "description": "sql text",
+                        "name": "sql_text",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"sql_id\": \"EE56B94E867DC9D5\",\"sql_text\": \"select * from a;\"}",

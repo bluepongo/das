@@ -14,6 +14,32 @@ info:
 paths:
   /api/v1/alert/email:
     post:
+      consumes:
+      - application/json
+      parameters:
+      - description: optional config
+        in: body
+        name: config
+        schema:
+          type: string
+      - description: to addrs
+        in: body
+        name: toAddrs
+        required: true
+        schema:
+          type: string
+      - description: cc addrs
+        in: body
+        name: ccAddrs
+        required: true
+        schema:
+          type: string
+      - description: to content
+        in: body
+        name: content
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -27,6 +53,33 @@ paths:
       - alert
   /api/v1/healthcheck/check:
     post:
+      consumes:
+      - application/json
+      parameters:
+      - description: mysql server id
+        in: body
+        name: server_id
+        required: true
+        schema:
+          type: integer
+      - description: start time
+        in: body
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - description: end time
+        in: body
+        name: end_time
+        required: true
+        schema:
+          type: string
+      - description: step
+        in: body
+        name: step
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -39,6 +92,39 @@ paths:
       - healthcheck
   /api/v1/healthcheck/check/host-info:
     post:
+      consumes:
+      - application/json
+      parameters:
+      - description: mysql host ip
+        in: body
+        name: host_ip
+        required: true
+        schema:
+          type: string
+      - description: mysql port number
+        in: body
+        name: port_num
+        required: true
+        schema:
+          type: integer
+      - description: start time
+        in: body
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - description: end time
+        in: body
+        name: end_time
+        required: true
+        schema:
+          type: string
+      - description: step
+        in: body
+        name: step
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -51,6 +137,14 @@ paths:
       - healthcheck
   /api/v1/healthcheck/result/:id:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: operation id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -63,6 +157,21 @@ paths:
       - healthcheck
   /api/v1/healthcheck/review:
     post:
+      consumes:
+      - application/json
+      parameters:
+      - description: operation id
+        in: body
+        name: operation_id
+        required: true
+        schema:
+          type: integer
+      - description: review
+        in: body
+        name: review
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -199,12 +308,10 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag":
-            0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00",
-            "level": 8,"owner_id": 8}]}'
+          description: '{"code": 200, "data": []}'
           schema:
             type: string
-      summary: delete app by id
+      summary: delete middleware cluster by id
       tags:
       - application
   /api/v1/metadata/db:
@@ -486,6 +593,8 @@ paths:
       - environment
   /api/v1/metadata/env/delete/:id:
     post:
+      consumes:
+      - application/json
       parameters:
       - description: env id
         in: path
@@ -506,6 +615,8 @@ paths:
       - environment
   /api/v1/metadata/env/env-name/:env_name:
     get:
+      consumes:
+      - application/json
       parameters:
       - description: env name
         in: path
@@ -1331,6 +1442,44 @@ paths:
       - user
   /api/v1/query/:sql_id:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: sql id
+        in: path
+        name: sql_id
+        required: true
+        type: integer
+      - description: mysql server id
+        in: body
+        name: mysql_server_id
+        required: true
+        schema:
+          type: integer
+      - description: start time
+        in: body
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - description: end time
+        in: body
+        name: end_time
+        required: true
+        schema:
+          type: string
+      - description: limit
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
+      - description: offset
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -1343,6 +1492,38 @@ paths:
       - query
   /api/v1/query/cluster/:mysql_cluster_id:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: mysql cluster id
+        in: path
+        name: mysql_cluster_id
+        required: true
+        type: integer
+      - description: start time
+        in: body
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - description: end time
+        in: body
+        name: end_time
+        required: true
+        schema:
+          type: string
+      - description: limit
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
+      - description: offset
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -1355,6 +1536,44 @@ paths:
       - query
   /api/v1/query/db/:db_id:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: db id
+        in: path
+        name: db_id
+        required: true
+        type: integer
+      - description: mysql server id
+        in: body
+        name: mysql_server_id
+        required: true
+        schema:
+          type: integer
+      - description: start time
+        in: body
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - description: end time
+        in: body
+        name: end_time
+        required: true
+        schema:
+          type: string
+      - description: limit
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
+      - description: offset
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -1367,6 +1586,38 @@ paths:
       - query
   /api/v1/query/server/:mysql_server_id:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: mysql server id
+        in: path
+        name: mysql_server_id
+        required: true
+        type: integer
+      - description: start time
+        in: body
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - description: end time
+        in: body
+        name: end_time
+        required: true
+        schema:
+          type: string
+      - description: limit
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
+      - description: offset
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -1377,8 +1628,22 @@ paths:
       summary: get slow queries by mysql server id
       tags:
       - query
-  /api/v1/sqladvisor/advise:
+  /api/v1/sqladvisor/advise/:db_id:
     post:
+      consumes:
+      - application/json
+      parameters:
+      - description: db id
+        in: path
+        name: db_id
+        required: true
+        type: integer
+      - description: sql text
+        in: body
+        name: sql_text
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1392,6 +1657,15 @@ paths:
       - sqladvisor
   /api/v1/sqladvisor/fingerprint/:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: sql text
+        in: body
+        name: sql_text
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1405,6 +1679,15 @@ paths:
       - sqladvisor
   /api/v1/sqladvisor/sql-id/:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: sql text
+        in: body
+        name: sql_text
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:

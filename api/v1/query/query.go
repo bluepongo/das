@@ -23,9 +23,15 @@ const (
 
 // @Tags query
 // @Summary get slow queries by mysql server id
-// @Produce  application/json
+// @Accept  application/json
+// @Param	mysql_cluster_id 	path int	true "mysql cluster id"
+// @Param	start_time			body string true "start time"
+// @Param	end_time			body string true "end time"
+// @Param	limit				body int	true "limit"
+// @Param	limit				body int	true "offset"
+// @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/query/cluster/:mysql_cluster_id [get]
+// @Router	/api/v1/query/cluster/:mysql_cluster_id [get]
 func GetByMySQLClusterID(c *gin.Context) {
 	// get data
 	mysqlClusterIDStr := c.Param(mysqlClusterIDJSON)
@@ -73,6 +79,12 @@ func GetByMySQLClusterID(c *gin.Context) {
 
 // @Tags query
 // @Summary get slow queries by mysql server id
+// @Accept  application/json
+// @Param	mysql_server_id	path int	true "mysql server id"
+// @Param	start_time		body string true "start time"
+// @Param	end_time		body string true "end time"
+// @Param	limit			body int	true "limit"
+// @Param	limit			body int	true "offset"
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
 // @Router /api/v1/query/server/:mysql_server_id [get]
@@ -123,6 +135,13 @@ func GetByMySQLServerID(c *gin.Context) {
 
 // @Tags query
 // @Summary get slow queries by db id
+// @Accept  application/json
+// @Param	db_id			path int	true "db id"
+// @Param	mysql_server_id	body int	true "mysql server id"
+// @Param	start_time		body string true "start time"
+// @Param	end_time		body string true "end time"
+// @Param	limit			body int	true "limit"
+// @Param	limit			body int	true "offset"
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
 // @Router /api/v1/query/db/:db_id [get]
@@ -173,6 +192,13 @@ func GetByDBID(c *gin.Context) {
 
 // @Tags query
 // @Summary get slow query by query id
+// @Accept  application/json
+// @Param	sql_id			path int	true "sql id"
+// @Param	mysql_server_id	body int	true "mysql server id"
+// @Param	start_time		body string true "start time"
+// @Param	end_time		body string true "end time"
+// @Param	limit			body int	true "limit"
+// @Param	limit			body int	true "offset"
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
 // @Router /api/v1/query/:sql_id [get]

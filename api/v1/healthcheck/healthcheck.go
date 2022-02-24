@@ -25,11 +25,13 @@ const (
 	reviewAccuracyRespMessage  = `{"code": 0, "message": "reviewed accuracy"}`
 )
 
-// @Tags healthcheck
+// @Tags	healthcheck
 // @Summary get result by operation id
-// @Produce  application/json
+// @Accept	application/json
+// @Param	id path int true "operation id"
+// @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/healthcheck/result/:id [get]
+// @Router	/api/v1/healthcheck/result/:id [get]
 func GetResultByOperationID(c *gin.Context) {
 	// get data
 	operationIDStr := c.Param(operationIDJSON)
@@ -64,6 +66,11 @@ func GetResultByOperationID(c *gin.Context) {
 
 // @Tags healthcheck
 // @Summary check health of the database
+// @Accept	application/json
+// @Param	server_id	body int	true "mysql server id"
+// @Param	start_time	body string true "start time"
+// @Param	end_time	body string true "end time"
+// @Param	step		body string true "step"
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": "healthcheck started."}"
 // @Router /api/v1/healthcheck/check [post]
@@ -105,6 +112,12 @@ func Check(c *gin.Context) {
 
 // @Tags healthcheck
 // @Summary check health of the database by host ip and port number
+// @Accept	application/json
+// @Param	host_ip		body string	true "mysql host ip"
+// @Param	port_num	body int	true "mysql port number"
+// @Param	start_time	body string true "start time"
+// @Param	end_time	body string true "end time"
+// @Param	step		body string true "step"
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": ""}"
 // @Router /api/v1/healthcheck/check/host-info [post]
@@ -146,6 +159,9 @@ func CheckByHostInfo(c *gin.Context) {
 
 // @Tags healthcheck
 // @Summary update accuracy review
+// @Accept  application/json
+// @Param	operation_id	body int true "operation id"
+// @Param	review			body int true "review"
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": "{}"
 // @Router /api/v1/healthcheck/review [post]
