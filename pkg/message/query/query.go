@@ -58,5 +58,4 @@ func initQueryErrorMessage() {
 	message.Messages[ErrQueryCloseMonitorRepo] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCloseMonitorRepo, "close monitor repo failed")
 	message.Messages[ErrQueryCreateMonitorMysqlConnection] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCreateMonitorMysqlConnection, "create monitor mysql connection failed. addr: %s, user: %s")
 	message.Messages[ErrQueryCreateMonitorClickhouseConnection] = config.NewErrMessage(message.DefaultMessageHeader, ErrQueryCreateMonitorClickhouseConnection, "create monitor clickhouse connection failed. addr: %s, user: %s")
-
 }
