@@ -40,6 +40,7 @@ const (
 
 // @Tags user
 // @Summary get all users
+// @Accept	application/json
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user [get]
@@ -296,6 +297,16 @@ func GetUserByMobile(c *gin.Context) {
 
 // @Tags user
 // @Summary add a new user
+// @Accept	application/json
+// @Param	user_name body string true "user name"
+// @Param	department_name body string true "department name"
+// @Param	employee_id body string true "employee id"
+// @Param	telephone body string true "user telephone"
+// @Param	role body int true "user role"
+// @Param	account_name body string true "account name"
+// @Param	email body string true "email"
+// @Param	mobile body string true "mobile"
+// @Param 	del_flag body int	false	"delete flag"
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user [post]
@@ -366,6 +377,17 @@ func AddUser(c *gin.Context) {
 
 // @Tags user
 // @Summary update user by id
+// @Accept	application/json
+// @Param	id		path int	true	"user id"
+// @Param	user_name body string true "user name"
+// @Param	department_name body string true "department name"
+// @Param	employee_id body string true "employee id"
+// @Param	telephone body string true "user telephone"
+// @Param	role body int true "user role"
+// @Param	account_name body string true "account name"
+// @Param	email body string true "email"
+// @Param	mobile body string true "mobile"
+// @Param 	del_flag body int	false	"delete flag"
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user/update/:id [post]
@@ -428,6 +450,8 @@ func UpdateUserByID(c *gin.Context) {
 
 // @Tags user
 // @Summary delete user by id
+// @Accept	application/json
+// @Param	id path int true "user id"
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
 // @Router /api/v1/metadata/user/delete/:id [get]
@@ -467,6 +491,8 @@ func DeleteUserByID(c *gin.Context) {
 
 // @Tags user
 // @Summary get apps by id
+// @Accept	application/json
+// @Param	id path int true "user id"
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
 // @Router /api/v1/metadata/user/app/:id [get]
@@ -505,6 +531,8 @@ func GetAppsByUserID(c *gin.Context) {
 
 // @Tags user
 // @Summary get dbs by id
+// @Accept	application/json
+// @Param	id path int true "user id"
 // @Produce  db/json
 // @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
 // @Router /api/v1/metadata/user/db/:id [get]
@@ -543,6 +571,8 @@ func GetDBsByUserID(c *gin.Context) {
 
 // @Tags user
 // @Summary get middlewareclusters by id
+// @Accept	application/json
+// @Param	id path int true "user id"
 // @Produce  middlewarecluster/json
 // @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
 // @Router /api/v1/metadata/user/middlewarecluster/:id [get]
@@ -581,6 +611,8 @@ func GetMiddlewareClustersByUserID(c *gin.Context) {
 
 // @Tags user
 // @Summary get mysqlclusterclusters by id
+// @Accept	application/json
+// @Param	id path int true "user id"
 // @Produce  mysqlclustercluster/json
 // @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
 // @Router /api/v1/metadata/user/mysqlclustercluster/:id [get]
