@@ -1,11 +1,11 @@
 package sqladvisor
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
 
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/internal/dependency/sqladvisor"
@@ -145,7 +145,7 @@ func (da *DefaultAdvisor) getOnlineDSN(dbID int, user, pass string) (string, err
 
 	mysqlServers := mysqlServerService.GetMySQLServers()
 	if len(mysqlServers) == constant.ZeroInt {
-		return constant.EmptyString, errors.New(fmt.Sprintf("could not find mysql server of the database. db id: %d", dbID))
+		return constant.EmptyString, errors.Errorf("could not find mysql server of the database. db id: %d", dbID)
 	}
 	// get mysql server
 	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
@@ -200,7 +200,7 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 	}
 
 	if errMsg != constant.EmptyString {
-		return advice, message, errors.New(fmt.Sprintf("parse result failed. error:\n%s", errMsg))
+		return advice, message, errors.Errorf("parse result failed. error:\n%s", errMsg)
 	}
 
 	return advice, message, nil

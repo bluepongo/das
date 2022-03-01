@@ -1,16 +1,12 @@
 package metadata
 
 import (
-	"errors"
-	"fmt"
-
-	"github.com/romberli/go-util/constant"
-	"github.com/romberli/go-util/middleware"
-
-	"github.com/romberli/log"
-
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/dependency/metadata"
+	"github.com/romberli/go-util/constant"
+	"github.com/romberli/go-util/middleware"
+	"github.com/romberli/log"
 )
 
 var _ metadata.AppRepo = (*AppRepo)(nil)
@@ -38,7 +34,7 @@ func (ar *AppRepo) Execute(command string, args ...interface{}) (middleware.Resu
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("metadata AppRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata AppRepo.Execute(): close database connection failed.\n%+v", err)
 		}
 	}()
 
@@ -95,7 +91,7 @@ func (ar *AppRepo) GetByID(id int) (metadata.App, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.New(fmt.Sprintf("metadata AppInfo.GetByID(): data does not exists, id: %d", id))
+		return nil, errors.Errorf("metadata AppInfo.GetByID(): data does not exists, id: %d", id)
 	case 1:
 		appInfo := NewEmptyAppInfoWithGlobal()
 		// map to struct
@@ -106,7 +102,7 @@ func (ar *AppRepo) GetByID(id int) (metadata.App, error) {
 
 		return appInfo, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("metadata AppInfo.GetByID(): duplicate key exists, id: %d", id))
+		return nil, errors.Errorf("metadata AppInfo.GetByID(): duplicate key exists, id: %d", id)
 	}
 }
 
@@ -261,7 +257,7 @@ func (ar *AppRepo) Delete(id int) error {
 	defer func() {
 		err = tx.Close()
 		if err != nil {
-			log.Errorf("metadata AppRepo.Delete(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata AppRepo.Delete(): close database connection failed.\n%+v", err)
 		}
 	}()
 

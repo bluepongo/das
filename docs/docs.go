@@ -34,6 +34,9 @@ var doc = `{
     "paths": {
         "/api/v1/alert/email": {
             "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -41,6 +44,43 @@ var doc = `{
                     "alert"
                 ],
                 "summary": "send email",
+                "parameters": [
+                    {
+                        "description": "optional config",
+                        "name": "config",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "to addrs",
+                        "name": "toAddrs",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "cc addrs",
+                        "name": "ccAddrs",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "to content",
+                        "name": "content",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": {\"code\": 0, \"message\": \"send email completed successfully\"}}",
@@ -53,6 +93,9 @@ var doc = `{
         },
         "/api/v1/healthcheck/check": {
             "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -60,6 +103,44 @@ var doc = `{
                     "healthcheck"
                 ],
                 "summary": "check health of the database",
+                "parameters": [
+                    {
+                        "description": "mysql server id",
+                        "name": "server_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "step",
+                        "name": "step",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": \"healthcheck started.\"}",
@@ -72,6 +153,9 @@ var doc = `{
         },
         "/api/v1/healthcheck/check/host-info": {
             "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -79,6 +163,53 @@ var doc = `{
                     "healthcheck"
                 ],
                 "summary": "check health of the database by host ip and port number",
+                "parameters": [
+                    {
+                        "description": "mysql host ip",
+                        "name": "host_ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql port number",
+                        "name": "port_num",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "step",
+                        "name": "step",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": \"\"}",
@@ -91,6 +222,9 @@ var doc = `{
         },
         "/api/v1/healthcheck/result/:id": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -98,6 +232,15 @@ var doc = `{
                     "healthcheck"
                 ],
                 "summary": "get result by operation id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "operation id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": []}",
@@ -110,6 +253,9 @@ var doc = `{
         },
         "/api/v1/healthcheck/review": {
             "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -117,6 +263,26 @@ var doc = `{
                     "healthcheck"
                 ],
                 "summary": "update accuracy review",
+                "parameters": [
+                    {
+                        "description": "operation id",
+                        "name": "operation_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "review",
+                        "name": "review",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": \"{}",
@@ -218,6 +384,25 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/metadata/app/add-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "add user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/metadata/app/app-name/:name": {
             "get": {
                 "produces": [
@@ -246,6 +431,25 @@ var doc = `{
                     "application"
                 ],
                 "summary": "delete database map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [1]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/app/delete-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "delete user map",
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [1]}",
@@ -286,7 +490,7 @@ var doc = `{
                 "summary": "get all databases",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -303,7 +507,7 @@ var doc = `{
                 "summary": "add a new database",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -320,6 +524,25 @@ var doc = `{
                     "database"
                 ],
                 "summary": "add application map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [1, 2]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/db/add-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "database"
+                ],
+                "summary": "add user map",
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [1, 2]}",
@@ -379,7 +602,7 @@ var doc = `{
                 "summary": "get apps by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8,\"owner_group\": \"k\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8, \"owner_group\": \"k\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -425,6 +648,25 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/metadata/db/delete-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "database"
+                ],
+                "summary": "delete user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [1]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/metadata/db/delete/:id": {
             "post": {
                 "produces": [
@@ -436,7 +678,7 @@ var doc = `{
                 "summary": "delete database by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -455,7 +697,7 @@ var doc = `{
                 "summary": "get database by env_id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -474,7 +716,7 @@ var doc = `{
                 "summary": "get database by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -493,7 +735,7 @@ var doc = `{
                 "summary": "get mysql cluster by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"middleware_cluster_id\":1,\"monitor_system_id\":1,\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-02-23T20:57:24.603009+08:00\",\"last_update_time\":\"2021-02-23T20:57:24.603009+08:00\",\"id\":1,\"cluster_name\":\"cluster_name_init\",\"owner_id\":1},{\"monitor_system_id\":1,\"owner_id\":1,\"env_id\":1,\"create_time\":\"2021-02-23T04:14:23.707238+08:00\",\"last_update_time\":\"2021-02-23T04:14:23.707238+08:00\",\"id\":2,\"cluster_name\":\"newTest\",\"middleware_cluster_id\":1,\"del_flag\":0}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"middleware_cluster_id\":1,\"monitor_system_id\":1,\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-02-23T20:57:24.603009+08:00\",\"last_update_time\":\"2021-02-23T20:57:24.603009+08:00\",\"id\":1,\"cluster_name\":\"cluster_name_init\"},{\"monitor_system_id\":1, \"env_id\":1,\"create_time\":\"2021-02-23T04:14:23.707238+08:00\",\"last_update_time\":\"2021-02-23T04:14:23.707238+08:00\",\"id\":2,\"cluster_name\":\"newTest\",\"middleware_cluster_id\":1,\"del_flag\":0}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -512,7 +754,7 @@ var doc = `{
                 "summary": "get database by db name and cluster info",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -531,7 +773,7 @@ var doc = `{
                 "summary": "update database by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"owner_id\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -573,8 +815,8 @@ var doc = `{
                 "summary": "add a new environment",
                 "parameters": [
                     {
-                        "description": "environment name",
-                        "name": "env_name",
+                        "description": "env name",
+                        "name": "EnvName",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -607,7 +849,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "environment id",
+                        "description": "env id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -625,16 +867,28 @@ var doc = `{
         },
         "/api/v1/metadata/env/delete/:id": {
             "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
-                    "environment/json"
+                    "application/json"
                 ],
                 "tags": [
                     "environment"
                 ],
                 "summary": "delete environment by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "env id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": []}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"env_name\": \"online\", \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -644,6 +898,9 @@ var doc = `{
         },
         "/api/v1/metadata/env/env-name/:env_name": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "environment/json"
                 ],
@@ -651,6 +908,15 @@ var doc = `{
                     "environment"
                 ],
                 "summary": "get environment by Name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "env name",
+                        "name": "env_name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"id\": 1, \"env_name\": \"online\", \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
@@ -676,10 +942,26 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "environment id",
+                        "description": "env id",
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "env name",
+                        "name": "EnvName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "delete flag",
+                        "name": "DelFlag",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -703,7 +985,7 @@ var doc = `{
                 "summary": "get all middleware clusters",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"test001\",\"owner_id\":1,\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"test001\",\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -720,7 +1002,26 @@ var doc = `{
                 "summary": "add a new middleware cluster",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"del_flag\":0,\"create_time\":\"2021-04-09T16:02:25.541701+08:00\",\"last_update_time\":\"2021-04-09T16:02:25.541701+08:00\",\"id\":14,\"cluster_name\":\"rest_test\",\"owner_id\":1,\"env_id\":1}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"del_flag\":0,\"create_time\":\"2021-04-09T16:02:25.541701+08:00\",\"last_update_time\":\"2021-04-09T16:02:25.541701+08:00\",\"id\":14,\"cluster_name\":\"rest_test\",\"env_id\":1}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/middleware-cluster/add-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "add user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"users\":[{\"del_flag\":0,\"id\":1,\"user_name\":\"zhangsan\",\"department_name\":\"arch\",\"account_name\":\"zs001\",\"email\":\"allinemailtest@163.com\",\"mobile\":\"13012345678\",\"role\":3,\"create_time\":\"2021-10-25T09:21:50.364327+08:00\",\"employee_id\":\"100001\",\"telephone\":\"01012345678\",\"last_update_time\":\"2021-11-22T13:46:20.430926+08:00\"}]}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -739,7 +1040,26 @@ var doc = `{
                 "summary": "get middleware cluster by name",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"test001\",\"owner_id\":1,\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"test001\", \"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/middleware-cluster/delete-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "delete user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": {\"users\":[]}}",
                         "schema": {
                             "type": "string"
                         }
@@ -758,7 +1078,7 @@ var doc = `{
                 "summary": "get middleware cluster by env",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\",\"id\":13,\"cluster_name\":\"test001\",\"owner_id\":1,\"env_id\":1}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\",\"id\":13,\"cluster_name\":\"test001\",\"env_id\":1}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -777,7 +1097,7 @@ var doc = `{
                 "summary": "get middleware cluster by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"test001\",\"owner_id\":1,\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"test001\",\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -796,7 +1116,7 @@ var doc = `{
                 "summary": "update middleware cluster by id",
                 "responses": {
                     "200": {
-                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"new_test\",\"owner_id\":1,\"env_id\":1,\"del_flag\":1,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
+                        "description": "{\"code\": 200, \"data\": [{\"id\":13,\"cluster_name\":\"new_test\",\"env_id\":1,\"del_flag\":1,\"create_time\":\"2021-04-09T10:55:43.920406+08:00\",\"last_update_time\":\"2021-04-09T10:55:43.920406+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -1138,7 +1458,26 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/all-owner/:id": {
+        "/api/v1/metadata/mysql-cluster/add-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mysql cluster"
+                ],
+                "summary": "add user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"user_id\": 1}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/mysql-cluster/all-user/:id": {
             "get": {
                 "produces": [
                     "application/json"
@@ -1146,7 +1485,7 @@ var doc = `{
                 "tags": [
                     "mysql cluster"
                 ],
-                "summary": "get all owners",
+                "summary": "get all users",
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"department_name\": \"dn\",\"accountNameStruct = \"AccountName\"\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
@@ -1157,7 +1496,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/app-owner/:id": {
+        "/api/v1/metadata/mysql-cluster/app-user/:id": {
             "get": {
                 "produces": [
                     "application/json"
@@ -1165,7 +1504,7 @@ var doc = `{
                 "tags": [
                     "mysql cluster"
                 ],
-                "summary": "get app owners",
+                "summary": "get app users",
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"department_name\": \"dn\",\"accountNameStruct = \"AccountName\"\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
@@ -1195,7 +1534,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/db-owner/:id": {
+        "/api/v1/metadata/mysql-cluster/db-user/:id": {
             "get": {
                 "produces": [
                     "application/json"
@@ -1203,7 +1542,7 @@ var doc = `{
                 "tags": [
                     "mysql cluster"
                 ],
-                "summary": "get db owners",
+                "summary": "get db users",
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"department_name\": \"dn\",\"accountNameStruct = \"AccountName\"\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
@@ -1226,6 +1565,25 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"department_name\": \"dn\",\"accountNameStruct = \"AccountName\"\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/mysql-cluster/delete-user/:id": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mysql cluster"
+                ],
+                "summary": "delete user map",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"user_id\": 1}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -1264,6 +1622,25 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"owner_id\":1,\"del_flag\":0,\"create_time\":\"2021-02-23T20:57:24.603009+08:00\",\"id\":1,\"monitor_system_id\":1,\"env_id\":1,\"last_update_time\":\"2021-02-23T20:57:24.603009+08:00\",\"cluster_name\":\"cluster_name_init\",\"middleware_cluster_id\":1}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/mysql-cluster/user/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mysql cluster"
+                ],
+                "summary": "get mysql cluster users",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"department_name\": \"dn\",\"accountNameStruct = \"AccountName\"\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -1476,6 +1853,44 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/metadata/user/app/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "get apps by id",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8,\"owner_group\": \"k\"}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/user/db/:id": {
+            "get": {
+                "produces": [
+                    "db/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "get dbs by id",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8,\"owner_group\": \"k\"}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/metadata/user/delete/:id": {
             "get": {
                 "produces": [
@@ -1552,6 +1967,25 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/metadata/user/middlewarecluster/:id": {
+            "get": {
+                "produces": [
+                    "middlewarecluster/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "get middlewareclusters by id",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8,\"owner_group\": \"k\"}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/metadata/user/mobile/:mobile": {
             "get": {
                 "produces": [
@@ -1564,6 +1998,25 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"department_name\": \"dn\",\"accountNameStruct = \"AccountName\"\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/user/mysqlclustercluster/:id": {
+            "get": {
+                "produces": [
+                    "mysqlclustercluster/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "get mysqlclusterclusters by id",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"id\": 66, \"system_name\": \"kkk\", \"del_flag\": 0, \"create_time\": \"2021-01-21T10:00:00+08:00\", \"last_update_time\": \"2021-01-21T10:00:00+08:00\", \"level\": 8,\"owner_id\": 8,\"owner_group\": \"k\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -1630,6 +2083,9 @@ var doc = `{
         },
         "/api/v1/query/:sql_id": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1637,6 +2093,60 @@ var doc = `{
                     "query"
                 ],
                 "summary": "get slow query by query id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "sql id",
+                        "name": "sql_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "mysql server id",
+                        "name": "mysql_server_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "offset",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": []}",
@@ -1649,6 +2159,9 @@ var doc = `{
         },
         "/api/v1/query/cluster/:mysql_cluster_id": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1656,6 +2169,51 @@ var doc = `{
                     "query"
                 ],
                 "summary": "get slow queries by mysql server id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "mysql cluster id",
+                        "name": "mysql_cluster_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "offset",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": []}",
@@ -1668,6 +2226,9 @@ var doc = `{
         },
         "/api/v1/query/db/:db_id": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1675,6 +2236,60 @@ var doc = `{
                     "query"
                 ],
                 "summary": "get slow queries by db id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "db id",
+                        "name": "db_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "mysql server id",
+                        "name": "mysql_server_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "offset",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": []}",
@@ -1687,6 +2302,9 @@ var doc = `{
         },
         "/api/v1/query/server/:mysql_server_id": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1694,6 +2312,51 @@ var doc = `{
                     "query"
                 ],
                 "summary": "get slow queries by mysql server id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "mysql server id",
+                        "name": "mysql_server_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "offset",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": []}",
@@ -1704,8 +2367,11 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/sqladvisor/advise": {
+        "/api/v1/sqladvisor/advise/:db_id": {
             "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1713,6 +2379,24 @@ var doc = `{
                     "sqladvisor"
                 ],
                 "summary": "get advice",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "db id",
+                        "name": "db_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "sql text",
+                        "name": "sql_text",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [{\"sql_text\": \"select * from t01\", \"advice\": \"xxx\"}",
@@ -1725,6 +2409,9 @@ var doc = `{
         },
         "/api/v1/sqladvisor/fingerprint/": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1732,6 +2419,17 @@ var doc = `{
                     "sqladvisor"
                 ],
                 "summary": "get sql fingerprint",
+                "parameters": [
+                    {
+                        "description": "sql text",
+                        "name": "sql_text",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"fingerprint\": \"select * from a\",\"sql_text\": \"select * from a;\"}",
@@ -1744,6 +2442,9 @@ var doc = `{
         },
         "/api/v1/sqladvisor/sql-id/": {
             "get": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1751,6 +2452,17 @@ var doc = `{
                     "sqladvisor"
                 ],
                 "summary": "get sql id",
+                "parameters": [
+                    {
+                        "description": "sql text",
+                        "name": "sql_text",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"sql_id\": \"EE56B94E867DC9D5\",\"sql_text\": \"select * from a;\"}",
@@ -1761,7 +2473,7 @@ var doc = `{
                 }
             }
         },
-        "/api/vi/metadata/app/dbs/:id": {
+        "/api/vi/metadata/app/db/:id": {
             "get": {
                 "produces": [
                     "application/json"
@@ -1773,6 +2485,44 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"data\": [1, 2]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/vi/metadata/app/user/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "get users",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [1, 2]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/vi/metadata/middleware-cluster/users/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "get middleware servers by cluster id",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [{\"users\":[{\"id\":1,\"department_name\":\"arch\",\"email\":\"allinemailtest@163.com\",\"mobile\":\"13012345678\",\"last_update_time\":\"2021-11-22T13:46:20.430926+08:00\",\"create_time\":\"2021-10-25T09:21:50.364327+08:00\",\"user_name\":\"zhangsan\",\"employee_id\":\"100001\",\"account_name\":\"zs001\",\"telephone\":\"01012345678\",\"role\":3,\"del_flag\":0}]}]}",
                         "schema": {
                             "type": "string"
                         }

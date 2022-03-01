@@ -1,15 +1,14 @@
 package metadata
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/pingcap/errors"
+	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/log"
-
-	"github.com/romberli/das/global"
 )
 
 var _ metadata.MiddlewareClusterRepo = (*MiddlewareClusterRepo)(nil)
@@ -23,7 +22,7 @@ func NewMiddlewareClusterRepo(db middleware.Pool) *MiddlewareClusterRepo {
 	return &MiddlewareClusterRepo{db}
 }
 
-// NewMiddlewareClusterRepo returns *MiddlewareClusterRepo with global mysql pool
+// NewMiddlewareClusterRepoWithGlobal returns *MiddlewareClusterRepo with global mysql pool
 func NewMiddlewareClusterRepoWithGlobal() *MiddlewareClusterRepo {
 	return NewMiddlewareClusterRepo(global.DASMySQLPool)
 }
@@ -37,7 +36,7 @@ func (mcr *MiddlewareClusterRepo) Execute(command string, args ...interface{}) (
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("metadata MiddlewareClusterRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata MiddlewareClusterRepo.Execute(): close database connection failed.\n%+v", err)
 		}
 	}()
 
@@ -263,7 +262,7 @@ func (mcr *MiddlewareClusterRepo) Delete(id int) error {
 	defer func() {
 		err = tx.Close()
 		if err != nil {
-			log.Errorf("metadata MiddlewareClusterRepo.Delete(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata MiddlewareClusterRepo.Delete(): close database connection failed.\n%+v", err)
 		}
 	}()
 
@@ -286,11 +285,11 @@ func (mcr *MiddlewareClusterRepo) AddUser(middlewareClusterID, userID int) error
 	userRepo := NewUserRepoWithGlobal()
 	_, err := userRepo.GetByID(userID)
 	if err != nil {
-		return nil
+		return err
 	}
 	_, err = mcr.GetByID(middlewareClusterID)
 	if err != nil {
-		return nil
+		return err
 	}
 	sql := `insert into t_meta_middleware_cluster_user_map(middleware_cluster_id, user_id) values(?, ?);`
 	log.Debugf("metadata MiddlewareClusterRepo.MiddlewareClusterAddUser() insert sql: %s", sql)

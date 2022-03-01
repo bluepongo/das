@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/romberli/das/internal/dependency/metadata"
-
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 )
@@ -40,7 +39,7 @@ func NewMiddlewareClusterInfo(repo metadata.MiddlewareClusterRepo, id int, middl
 	}
 }
 
-// NewMiddlewareClusterInfo returns a new MiddlewareClusterInfo with default MiddlewareClusterRepo
+// NewMiddlewareClusterInfoWithGlobal returns a new MiddlewareClusterInfo with default MiddlewareClusterRepo
 func NewMiddlewareClusterInfoWithGlobal(id int, middlewareClusterName string, envID int, delFlag int, createTime time.Time, lastUpdateTime time.Time) *MiddlewareClusterInfo {
 	return &MiddlewareClusterInfo{
 		NewMiddlewareClusterRepoWithGlobal(),

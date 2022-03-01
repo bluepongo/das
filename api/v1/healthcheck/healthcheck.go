@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/healthcheck"
 	"github.com/romberli/das/pkg/message"
 	msghealth "github.com/romberli/das/pkg/message/healthcheck"
@@ -24,11 +25,13 @@ const (
 	reviewAccuracyRespMessage  = `{"code": 0, "message": "reviewed accuracy"}`
 )
 
-// @Tags healthcheck
+// @Tags	healthcheck
 // @Summary get result by operation id
-// @Produce  application/json
+// @Accept	application/json
+// @Param	id path int true "operation id"
+// @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/healthcheck/result/:id [get]
+// @Router	/api/v1/healthcheck/result/:id [get]
 func GetResultByOperationID(c *gin.Context) {
 	// get data
 	operationIDStr := c.Param(operationIDJSON)
@@ -38,7 +41,7 @@ func GetResultByOperationID(c *gin.Context) {
 	}
 	operationID, err := strconv.Atoi(operationIDStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -46,13 +49,13 @@ func GetResultByOperationID(c *gin.Context) {
 	// get entities
 	err = s.GetResultByOperationID(operationID)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckGetResultByOperationID, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckGetResultByOperationID, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -63,7 +66,12 @@ func GetResultByOperationID(c *gin.Context) {
 
 // @Tags healthcheck
 // @Summary check health of the database
-// @Produce  application/json
+// @Accept	application/json
+// @Param	server_id	body int	true "mysql server id"
+// @Param	start_time	body string true "start time"
+// @Param	end_time	body string true "end time"
+// @Param	step		body string true "step"
+// @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": "healthcheck started."}"
 // @Router /api/v1/healthcheck/check [post]
 func Check(c *gin.Context) {
@@ -71,22 +79,22 @@ func Check(c *gin.Context) {
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetStartTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetStartTime())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, errors.Trace(err), rd.GetStartTime())
 		return
 	}
 	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetEndTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetEndTime())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, errors.Trace(err), rd.GetEndTime())
 		return
 	}
 	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, rd.GetStep())
+		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, errors.Trace(err), rd.GetStep())
 		return
 	}
 	// init service
@@ -94,7 +102,7 @@ func Check(c *gin.Context) {
 	// check health
 	operationID, err := s.Check(rd.GetServerID(), startTime, endTime, step)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, operationID, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err, operationID)
 		return
 	}
 
@@ -104,7 +112,13 @@ func Check(c *gin.Context) {
 
 // @Tags healthcheck
 // @Summary check health of the database by host ip and port number
-// @Produce  application/json
+// @Accept	application/json
+// @Param	host_ip		body string	true "mysql host ip"
+// @Param	port_num	body int	true "mysql port number"
+// @Param	start_time	body string true "start time"
+// @Param	end_time	body string true "end time"
+// @Param	step		body string true "step"
+// @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": ""}"
 // @Router /api/v1/healthcheck/check/host-info [post]
 func CheckByHostInfo(c *gin.Context) {
@@ -112,22 +126,22 @@ func CheckByHostInfo(c *gin.Context) {
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 	startTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetStartTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetStartTime())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, errors.Trace(err), rd.GetStartTime())
 		return
 	}
 	endTime, err := time.ParseInLocation(constant.TimeLayoutSecond, rd.GetEndTime(), time.Local)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, rd.GetEndTime())
+		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, errors.Trace(err), rd.GetEndTime())
 		return
 	}
 	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, rd.GetStep())
+		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, errors.Trace(err), rd.GetStep())
 		return
 	}
 	// init service
@@ -135,7 +149,7 @@ func CheckByHostInfo(c *gin.Context) {
 	// get entities
 	operationID, err := s.CheckByHostInfo(rd.GetHostIP(), rd.GetPortNum(), startTime, endTime, step)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, operationID, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, err, operationID)
 		return
 	}
 
@@ -145,20 +159,23 @@ func CheckByHostInfo(c *gin.Context) {
 
 // @Tags healthcheck
 // @Summary update accuracy review
-// @Produce  application/json
+// @Accept  application/json
+// @Param	operation_id	body int true "operation id"
+// @Param	review			body int true "review"
+// @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": "{}"
 // @Router /api/v1/healthcheck/review [post]
 func ReviewAccuracy(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	dataMap := make(map[string]int)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, errors.Trace(err))
 		return
 	}
 	operationID, operationIDExists := dataMap[operationIDJSON]
@@ -176,7 +193,7 @@ func ReviewAccuracy(c *gin.Context) {
 	// review accuracy
 	err = s.ReviewAccuracy(operationID, review)
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckReviewAccuracy, operationID, err.Error())
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckReviewAccuracy, err, operationID)
 		return
 	}
 

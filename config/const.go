@@ -61,9 +61,6 @@ const (
 	DefaultDBMonitorMySQLPass        = "root"
 	DefaultDBApplicationMySQLUser    = "root"
 	DefaultDBApplicationMySQLPass    = "root"
-	DefaultDBSoarMySQLName           = "soar"
-	DefaultDBSoarMySQLUser           = "root"
-	DefaultDBSoarMySQLPass           = "root"
 	DefaultAlertSMTPEnabled          = true
 	AlertSMTPTextFormat              = "text"
 	AlertSMTPHTMLFormat              = "html"

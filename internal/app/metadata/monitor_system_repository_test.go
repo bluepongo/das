@@ -3,11 +3,10 @@ package metadata
 import (
 	"testing"
 
+	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/romberli/das/internal/dependency/metadata"
 )
 
 const (

@@ -3,17 +3,16 @@ package metadata
 import (
 	"testing"
 
+	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/romberli/das/internal/dependency/metadata"
 )
 
 const (
 	testDBNewDBName    = "test_new_db_name"
 	testDBUpdateDBName = "test_update_db_name"
-	testDBAllDBNum     = 5
+	testDBAllDBNum     = 6
 )
 
 var testDBRepo *DBRepo

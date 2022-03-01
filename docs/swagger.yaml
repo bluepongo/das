@@ -14,6 +14,32 @@ info:
 paths:
   /api/v1/alert/email:
     post:
+      consumes:
+      - application/json
+      parameters:
+      - description: optional config
+        in: body
+        name: config
+        schema:
+          type: string
+      - description: to addrs
+        in: body
+        name: toAddrs
+        required: true
+        schema:
+          type: string
+      - description: cc addrs
+        in: body
+        name: ccAddrs
+        required: true
+        schema:
+          type: string
+      - description: to content
+        in: body
+        name: content
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -27,6 +53,33 @@ paths:
       - alert
   /api/v1/healthcheck/check:
     post:
+      consumes:
+      - application/json
+      parameters:
+      - description: mysql server id
+        in: body
+        name: server_id
+        required: true
+        schema:
+          type: integer
+      - description: start time
+        in: body
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - description: end time
+        in: body
+        name: end_time
+        required: true
+        schema:
+          type: string
+      - description: step
+        in: body
+        name: step
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -39,6 +92,39 @@ paths:
       - healthcheck
   /api/v1/healthcheck/check/host-info:
     post:
+      consumes:
+      - application/json
+      parameters:
+      - description: mysql host ip
+        in: body
+        name: host_ip
+        required: true
+        schema:
+          type: string
+      - description: mysql port number
+        in: body
+        name: port_num
+        required: true
+        schema:
+          type: integer
+      - description: start time
+        in: body
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - description: end time
+        in: body
+        name: end_time
+        required: true
+        schema:
+          type: string
+      - description: step
+        in: body
+        name: step
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -51,6 +137,14 @@ paths:
       - healthcheck
   /api/v1/healthcheck/result/:id:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: operation id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -63,6 +157,21 @@ paths:
       - healthcheck
   /api/v1/healthcheck/review:
     post:
+      consumes:
+      - application/json
+      parameters:
+      - description: operation id
+        in: body
+        name: operation_id
+        required: true
+        schema:
+          type: integer
+      - description: review
+        in: body
+        name: review
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -141,6 +250,20 @@ paths:
       summary: add database map
       tags:
       - application
+  /api/v1/metadata/app/add-user/:id:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag":
+            0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00",
+            "level": 8,"owner_id": 8}]}'
+          schema:
+            type: string
+      summary: add user map
+      tags:
+      - application
   /api/v1/metadata/app/app-name/:name:
     get:
       produces:
@@ -167,6 +290,18 @@ paths:
       summary: delete database map
       tags:
       - application
+  /api/v1/metadata/app/delete-user/:id:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [1]}'
+          schema:
+            type: string
+      summary: delete user map
+      tags:
+      - application
   /api/v1/metadata/app/delete/:id:
     post:
       produces:
@@ -186,8 +321,8 @@ paths:
       responses:
         "200":
           description: '{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id":
-            1, "cluster_type": 1, "owner_id": 1, "env_id": 1, "del_flag": 0, "create_time":
-            "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
+            1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00",
+            "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
           schema:
             type: string
       summary: get all databases
@@ -199,8 +334,8 @@ paths:
       responses:
         "200":
           description: '{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id":
-            1, "cluster_type": 1, "owner_id": 1, "env_id": 1, "del_flag": 0, "create_time":
-            "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
+            1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00",
+            "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
           schema:
             type: string
       summary: add a new database
@@ -216,6 +351,18 @@ paths:
           schema:
             type: string
       summary: add application map
+      tags:
+      - database
+  /api/v1/metadata/db/add-user/:id:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [1, 2]}'
+          schema:
+            type: string
+      summary: add user map
       tags:
       - database
   /api/v1/metadata/db/all-owner/:id:
@@ -256,7 +403,7 @@ paths:
         "200":
           description: '{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag":
             0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00",
-            "level": 8,"owner_id": 8,"owner_group": "k"}]}'
+            "level": 8, "owner_group": "k"}]}'
           schema:
             type: string
       summary: get apps by id
@@ -289,6 +436,18 @@ paths:
       summary: delete application map
       tags:
       - database
+  /api/v1/metadata/db/delete-user/:id:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [1]}'
+          schema:
+            type: string
+      summary: delete user map
+      tags:
+      - database
   /api/v1/metadata/db/delete/:id:
     post:
       produces:
@@ -296,8 +455,8 @@ paths:
       responses:
         "200":
           description: '{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id":
-            1, "cluster_type": 1, "owner_id": 1, "env_id": 1, "del_flag": 0, "create_time":
-            "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
+            1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00",
+            "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
           schema:
             type: string
       summary: delete database by id
@@ -310,8 +469,8 @@ paths:
       responses:
         "200":
           description: '{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id":
-            1, "cluster_type": 1, "owner_id": 1, "env_id": 1, "del_flag": 0, "create_time":
-            "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
+            1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00",
+            "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
           schema:
             type: string
       summary: get database by env_id
@@ -324,8 +483,8 @@ paths:
       responses:
         "200":
           description: '{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id":
-            1, "cluster_type": 1, "owner_id": 1, "env_id": 1, "del_flag": 0, "create_time":
-            "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
+            1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00",
+            "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
           schema:
             type: string
       summary: get database by id
@@ -337,7 +496,8 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"code": 200, "data": [{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init","owner_id":1},{"monitor_system_id":1,"owner_id":1,"env_id":1,"create_time":"2021-02-23T04:14:23.707238+08:00","last_update_time":"2021-02-23T04:14:23.707238+08:00","id":2,"cluster_name":"newTest","middleware_cluster_id":1,"del_flag":0}]}'
+          description: '{"code": 200, "data": [{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"},{"monitor_system_id":1,
+            "env_id":1,"create_time":"2021-02-23T04:14:23.707238+08:00","last_update_time":"2021-02-23T04:14:23.707238+08:00","id":2,"cluster_name":"newTest","middleware_cluster_id":1,"del_flag":0}]}'
           schema:
             type: string
       summary: get mysql cluster by id
@@ -350,8 +510,8 @@ paths:
       responses:
         "200":
           description: '{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id":
-            1, "cluster_type": 1, "owner_id": 1, "env_id": 1, "del_flag": 0, "create_time":
-            "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
+            1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00",
+            "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
           schema:
             type: string
       summary: get database by db name and cluster info
@@ -364,8 +524,8 @@ paths:
       responses:
         "200":
           description: '{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id":
-            1, "cluster_type": 1, "owner_id": 1, "env_id": 1, "del_flag": 0, "create_time":
-            "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
+            1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00",
+            "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
           schema:
             type: string
       summary: update database by id
@@ -391,9 +551,9 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: environment name
+      - description: env name
         in: body
-        name: env_name
+        name: EnvName
         required: true
         schema:
           type: string
@@ -414,7 +574,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: environment id
+      - description: env id
         in: path
         name: id
         required: true
@@ -433,11 +593,21 @@ paths:
       - environment
   /api/v1/metadata/env/delete/:id:
     post:
+      consumes:
+      - application/json
+      parameters:
+      - description: env id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-      - environment/json
+      - application/json
       responses:
         "200":
-          description: '{"code": 200, "data": []}'
+          description: '{"code": 200, "data": [{"id": 1, "env_name": "online", "del_flag":
+            0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time":
+            "2021-01-22T09:59:21.379851+08:00"}]}'
           schema:
             type: string
       summary: delete environment by id
@@ -445,6 +615,14 @@ paths:
       - environment
   /api/v1/metadata/env/env-name/:env_name:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: env name
+        in: path
+        name: env_name
+        required: true
+        type: string
       produces:
       - environment/json
       responses:
@@ -462,11 +640,21 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: environment id
+      - description: env id
         in: path
         name: id
         required: true
         type: integer
+      - description: env name
+        in: body
+        name: EnvName
+        schema:
+          type: string
+      - description: delete flag
+        in: body
+        name: DelFlag
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -485,7 +673,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"code": 200, "data": [{"id":13,"cluster_name":"test001","owner_id":1,"env_id":1,"del_flag":0,"create_time":"2021-04-09T10:55:43.920406+08:00","last_update_time":"2021-04-09T10:55:43.920406+08:00"}]}'
+          description: '{"code": 200, "data": [{"id":13,"cluster_name":"test001","env_id":1,"del_flag":0,"create_time":"2021-04-09T10:55:43.920406+08:00","last_update_time":"2021-04-09T10:55:43.920406+08:00"}]}'
           schema:
             type: string
       summary: get all middleware clusters
@@ -496,31 +684,56 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"code": 200, "data": [{"del_flag":0,"create_time":"2021-04-09T16:02:25.541701+08:00","last_update_time":"2021-04-09T16:02:25.541701+08:00","id":14,"cluster_name":"rest_test","owner_id":1,"env_id":1}]}'
+          description: '{"code": 200, "data": [{"del_flag":0,"create_time":"2021-04-09T16:02:25.541701+08:00","last_update_time":"2021-04-09T16:02:25.541701+08:00","id":14,"cluster_name":"rest_test","env_id":1}]}'
           schema:
             type: string
       summary: add a new middleware cluster
       tags:
       - middleware cluster
+  /api/v1/metadata/middleware-cluster/add-user/:id:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [{"users":[{"del_flag":0,"id":1,"user_name":"zhangsan","department_name":"arch","account_name":"zs001","email":"allinemailtest@163.com","mobile":"13012345678","role":3,"create_time":"2021-10-25T09:21:50.364327+08:00","employee_id":"100001","telephone":"01012345678","last_update_time":"2021-11-22T13:46:20.430926+08:00"}]}]}'
+          schema:
+            type: string
+      summary: add user map
+      tags:
+      - application
   /api/v1/metadata/middleware-cluster/cluster-name/:cluster_name:
     get:
       produces:
       - application/json
       responses:
         "200":
-          description: '{"code": 200, "data": [{"id":13,"cluster_name":"test001","owner_id":1,"env_id":1,"del_flag":0,"create_time":"2021-04-09T10:55:43.920406+08:00","last_update_time":"2021-04-09T10:55:43.920406+08:00"}]}'
+          description: '{"code": 200, "data": [{"id":13,"cluster_name":"test001",
+            "env_id":1,"del_flag":0,"create_time":"2021-04-09T10:55:43.920406+08:00","last_update_time":"2021-04-09T10:55:43.920406+08:00"}]}'
           schema:
             type: string
       summary: get middleware cluster by name
       tags:
       - middleware cluster
+  /api/v1/metadata/middleware-cluster/delete-user/:id:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": {"users":[]}}'
+          schema:
+            type: string
+      summary: delete user map
+      tags:
+      - application
   /api/v1/metadata/middleware-cluster/env/:env_id:
     get:
       produces:
       - application/json
       responses:
         "200":
-          description: '{"code": 200, "data": [{"del_flag":0,"create_time":"2021-04-09T10:55:43.920406+08:00","last_update_time":"2021-04-09T10:55:43.920406+08:00","id":13,"cluster_name":"test001","owner_id":1,"env_id":1}]}'
+          description: '{"code": 200, "data": [{"del_flag":0,"create_time":"2021-04-09T10:55:43.920406+08:00","last_update_time":"2021-04-09T10:55:43.920406+08:00","id":13,"cluster_name":"test001","env_id":1}]}'
           schema:
             type: string
       summary: get middleware cluster by env
@@ -532,7 +745,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"code": 200, "data": [{"id":13,"cluster_name":"test001","owner_id":1,"env_id":1,"del_flag":0,"create_time":"2021-04-09T10:55:43.920406+08:00","last_update_time":"2021-04-09T10:55:43.920406+08:00"}]}'
+          description: '{"code": 200, "data": [{"id":13,"cluster_name":"test001","env_id":1,"del_flag":0,"create_time":"2021-04-09T10:55:43.920406+08:00","last_update_time":"2021-04-09T10:55:43.920406+08:00"}]}'
           schema:
             type: string
       summary: get middleware cluster by id
@@ -544,7 +757,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"code": 200, "data": [{"id":13,"cluster_name":"new_test","owner_id":1,"env_id":1,"del_flag":1,"create_time":"2021-04-09T10:55:43.920406+08:00","last_update_time":"2021-04-09T10:55:43.920406+08:00"}]}'
+          description: '{"code": 200, "data": [{"id":13,"cluster_name":"new_test","env_id":1,"del_flag":1,"create_time":"2021-04-09T10:55:43.920406+08:00","last_update_time":"2021-04-09T10:55:43.920406+08:00"}]}'
           schema:
             type: string
       summary: update middleware cluster by id
@@ -783,22 +996,19 @@ paths:
       summary: update mysql cluster by id
       tags:
       - mysql cluster
-  /api/v1/metadata/mysql-cluster/all-owner/:id:
-    get:
+  /api/v1/metadata/mysql-cluster/add-user/:id:
+    post:
       produces:
       - application/json
       responses:
         "200":
-          description: '{"code": 200, "data": [{"department_name": "dn","accountNameStruct
-            = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time":
-            "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id":
-            1,"email": "e","telephone": "t","role": 1, "id": 1}]}'
+          description: '{"code": 200, "data": [{"user_id": 1}]}'
           schema:
             type: string
-      summary: get all owners
+      summary: add user map
       tags:
       - mysql cluster
-  /api/v1/metadata/mysql-cluster/app-owner/:id:
+  /api/v1/metadata/mysql-cluster/all-user/:id:
     get:
       produces:
       - application/json
@@ -810,7 +1020,22 @@ paths:
             1,"email": "e","telephone": "t","role": 1, "id": 1}]}'
           schema:
             type: string
-      summary: get app owners
+      summary: get all users
+      tags:
+      - mysql cluster
+  /api/v1/metadata/mysql-cluster/app-user/:id:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [{"department_name": "dn","accountNameStruct
+            = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time":
+            "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id":
+            1,"email": "e","telephone": "t","role": 1, "id": 1}]}'
+          schema:
+            type: string
+      summary: get app users
       tags:
       - mysql cluster
   /api/v1/metadata/mysql-cluster/cluster-name/:name:
@@ -825,7 +1050,7 @@ paths:
       summary: get mysql cluster by name
       tags:
       - mysql cluster
-  /api/v1/metadata/mysql-cluster/db-owner/:id:
+  /api/v1/metadata/mysql-cluster/db-user/:id:
     get:
       produces:
       - application/json
@@ -837,7 +1062,7 @@ paths:
             1,"email": "e","telephone": "t","role": 1, "id": 1}]}'
           schema:
             type: string
-      summary: get db owners
+      summary: get db users
       tags:
       - mysql cluster
   /api/v1/metadata/mysql-cluster/db/:id:
@@ -853,6 +1078,18 @@ paths:
           schema:
             type: string
       summary: get dbs by id
+      tags:
+      - mysql cluster
+  /api/v1/metadata/mysql-cluster/delete-user/:id:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [{"user_id": 1}]}'
+          schema:
+            type: string
+      summary: delete user map
       tags:
       - mysql cluster
   /api/v1/metadata/mysql-cluster/master-server/:id:
@@ -877,6 +1114,21 @@ paths:
           schema:
             type: string
       summary: get mysql servers by id
+      tags:
+      - mysql cluster
+  /api/v1/metadata/mysql-cluster/user/:id:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [{"department_name": "dn","accountNameStruct
+            = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time":
+            "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id":
+            1,"email": "e","telephone": "t","role": 1, "id": 1}]}'
+          schema:
+            type: string
+      summary: get mysql cluster users
       tags:
       - mysql cluster
   /api/v1/metadata/mysql-server:
@@ -1015,6 +1267,34 @@ paths:
       summary: get user by AccountName
       tags:
       - user
+  /api/v1/metadata/user/app/:id:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag":
+            0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00",
+            "level": 8,"owner_id": 8,"owner_group": "k"}]}'
+          schema:
+            type: string
+      summary: get apps by id
+      tags:
+      - user
+  /api/v1/metadata/user/db/:id:
+    get:
+      produces:
+      - db/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag":
+            0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00",
+            "level": 8,"owner_id": 8,"owner_group": "k"}]}'
+          schema:
+            type: string
+      summary: get dbs by id
+      tags:
+      - user
   /api/v1/metadata/user/delete/:id:
     get:
       produces:
@@ -1072,6 +1352,20 @@ paths:
       summary: get user by id
       tags:
       - user
+  /api/v1/metadata/user/middlewarecluster/:id:
+    get:
+      produces:
+      - middlewarecluster/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag":
+            0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00",
+            "level": 8,"owner_id": 8,"owner_group": "k"}]}'
+          schema:
+            type: string
+      summary: get middlewareclusters by id
+      tags:
+      - user
   /api/v1/metadata/user/mobile/:mobile:
     get:
       produces:
@@ -1085,6 +1379,20 @@ paths:
           schema:
             type: string
       summary: get user by Mobile
+      tags:
+      - user
+  /api/v1/metadata/user/mysqlclustercluster/:id:
+    get:
+      produces:
+      - mysqlclustercluster/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag":
+            0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00",
+            "level": 8,"owner_id": 8,"owner_group": "k"}]}'
+          schema:
+            type: string
+      summary: get mysqlclusterclusters by id
       tags:
       - user
   /api/v1/metadata/user/telephone/:telephone:
@@ -1134,6 +1442,44 @@ paths:
       - user
   /api/v1/query/:sql_id:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: sql id
+        in: path
+        name: sql_id
+        required: true
+        type: integer
+      - description: mysql server id
+        in: body
+        name: mysql_server_id
+        required: true
+        schema:
+          type: integer
+      - description: start time
+        in: body
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - description: end time
+        in: body
+        name: end_time
+        required: true
+        schema:
+          type: string
+      - description: limit
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
+      - description: offset
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -1146,6 +1492,38 @@ paths:
       - query
   /api/v1/query/cluster/:mysql_cluster_id:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: mysql cluster id
+        in: path
+        name: mysql_cluster_id
+        required: true
+        type: integer
+      - description: start time
+        in: body
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - description: end time
+        in: body
+        name: end_time
+        required: true
+        schema:
+          type: string
+      - description: limit
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
+      - description: offset
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -1158,6 +1536,44 @@ paths:
       - query
   /api/v1/query/db/:db_id:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: db id
+        in: path
+        name: db_id
+        required: true
+        type: integer
+      - description: mysql server id
+        in: body
+        name: mysql_server_id
+        required: true
+        schema:
+          type: integer
+      - description: start time
+        in: body
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - description: end time
+        in: body
+        name: end_time
+        required: true
+        schema:
+          type: string
+      - description: limit
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
+      - description: offset
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -1170,6 +1586,38 @@ paths:
       - query
   /api/v1/query/server/:mysql_server_id:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: mysql server id
+        in: path
+        name: mysql_server_id
+        required: true
+        type: integer
+      - description: start time
+        in: body
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - description: end time
+        in: body
+        name: end_time
+        required: true
+        schema:
+          type: string
+      - description: limit
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
+      - description: offset
+        in: body
+        name: limit
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -1180,8 +1628,22 @@ paths:
       summary: get slow queries by mysql server id
       tags:
       - query
-  /api/v1/sqladvisor/advise:
+  /api/v1/sqladvisor/advise/:db_id:
     post:
+      consumes:
+      - application/json
+      parameters:
+      - description: db id
+        in: path
+        name: db_id
+        required: true
+        type: integer
+      - description: sql text
+        in: body
+        name: sql_text
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1195,6 +1657,15 @@ paths:
       - sqladvisor
   /api/v1/sqladvisor/fingerprint/:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: sql text
+        in: body
+        name: sql_text
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1208,6 +1679,15 @@ paths:
       - sqladvisor
   /api/v1/sqladvisor/sql-id/:
     get:
+      consumes:
+      - application/json
+      parameters:
+      - description: sql text
+        in: body
+        name: sql_text
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1218,7 +1698,7 @@ paths:
       summary: get sql id
       tags:
       - sqladvisor
-  /api/vi/metadata/app/dbs/:id:
+  /api/vi/metadata/app/db/:id:
     get:
       produces:
       - application/json
@@ -1228,6 +1708,30 @@ paths:
           schema:
             type: string
       summary: get dbs
+      tags:
+      - application
+  /api/vi/metadata/app/user/:id:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [1, 2]}'
+          schema:
+            type: string
+      summary: get users
+      tags:
+      - application
+  /api/vi/metadata/middleware-cluster/users/:id:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [{"users":[{"id":1,"department_name":"arch","email":"allinemailtest@163.com","mobile":"13012345678","last_update_time":"2021-11-22T13:46:20.430926+08:00","create_time":"2021-10-25T09:21:50.364327+08:00","user_name":"zhangsan","employee_id":"100001","account_name":"zs001","telephone":"01012345678","role":3,"del_flag":0}]}]}'
+          schema:
+            type: string
+      summary: get middleware servers by cluster id
       tags:
       - application
   /api/vi/metadata/middleware-server/:id:

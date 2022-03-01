@@ -13,10 +13,10 @@ import (
 // if code is between 400000 and 500000, it will log error and resp 500 to client
 // otherwise, it will log info and resp 200 to client
 func ResponseNOK(c *gin.Context, code int, values ...interface{}) {
-	msg := message.NewMessage(code, values...).Error()
-	log.Error(msg)
+	err := message.NewMessage(code, values...)
+	log.Errorf("%+v", err)
 
-	c.String(http.StatusInternalServerError, msg)
+	c.String(http.StatusInternalServerError, err.Error())
 }
 
 func ResponseOK(c *gin.Context, respMessage string, code int, values ...interface{}) {

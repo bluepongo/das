@@ -6,14 +6,14 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/romberli/go-util/common"
-	"github.com/romberli/go-util/constant"
-	"github.com/romberli/log"
-
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/pkg/message"
 	msgmeta "github.com/romberli/das/pkg/message/metadata"
 	"github.com/romberli/das/pkg/resp"
+	"github.com/romberli/go-util/common"
+	"github.com/romberli/go-util/constant"
+	"github.com/romberli/log"
 )
 
 const (
@@ -26,8 +26,6 @@ const (
 	middlewareClusterEnvIDStruct             = "EnvID"
 	middlewareClusterMiddlewareServersStruct = "MiddlewareServers"
 	middlewareClusterUsersStruct             = "Users"
-	middlewareClusterClusterIDStruct         = "ClusterID"
-	middlewareClusterUserIDStruct            = "UserID"
 )
 
 // @Tags middleware cluster
@@ -41,13 +39,13 @@ func GetMiddlewareCluster(c *gin.Context) {
 	// get entities
 	err := s.GetAll()
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareClusterAll, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareClusterAll, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -70,7 +68,7 @@ func GetMiddlewareClusterByEnv(c *gin.Context) {
 	}
 	envID, err := strconv.Atoi(envIDStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -78,13 +76,13 @@ func GetMiddlewareClusterByEnv(c *gin.Context) {
 	// get entity
 	err = s.GetByEnv(envID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareClusterByEnv, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareClusterByEnv, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -107,7 +105,7 @@ func GetMiddlewareClusterByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -115,13 +113,13 @@ func GetMiddlewareClusterByID(c *gin.Context) {
 	// get entity
 	err = s.GetByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareClusterByID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareClusterByID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -147,13 +145,13 @@ func GetMiddlewareClusterByName(c *gin.Context) {
 	// get entity
 	err := s.GetByName(middlewareClusterName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareClusterByName, middlewareClusterName, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareClusterByName, err, middlewareClusterName)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -175,7 +173,7 @@ func GetMiddlewareServers(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -183,13 +181,13 @@ func GetMiddlewareServers(c *gin.Context) {
 	// get entity
 	err = s.GetMiddlewareServersByID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareServers, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareServers, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(middlewareClusterMiddlewareServersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -212,7 +210,7 @@ func GetUsersByMiddlewareClusterID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -221,13 +219,13 @@ func GetUsersByMiddlewareClusterID(c *gin.Context) {
 	// get entity
 	err = s.GetUsersByMiddlewareClusterID(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUsersByMiddlewareClusterID, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUsersByMiddlewareClusterID, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(middlewareClusterUsersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -247,13 +245,13 @@ func AddMiddlewareCluster(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, err)
 		return
 	}
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.MiddlewareClusterInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, ok := fields[middlewareClusterClusterNameStruct]
@@ -271,13 +269,13 @@ func AddMiddlewareCluster(c *gin.Context) {
 	// insert into middleware
 	err = s.Create(fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddMiddlewareCluster, fields[middlewareClusterClusterNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddMiddlewareCluster, err, fields[middlewareClusterClusterNameStruct])
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -302,18 +300,18 @@ func UpdateMiddlewareClusterByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.MiddlewareClusterInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
 	_, middlewareClusterNameExists := fields[middlewareClusterClusterNameStruct]
@@ -328,13 +326,13 @@ func UpdateMiddlewareClusterByID(c *gin.Context) {
 	// update entity
 	err = s.Update(id, fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateMiddlewareCluster, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateMiddlewareCluster, err)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, id, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err, id)
 		return
 	}
 	// resp
@@ -359,7 +357,7 @@ func DeleteMiddlewareClusterByID(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	// init service
@@ -367,13 +365,13 @@ func DeleteMiddlewareClusterByID(c *gin.Context) {
 	// update entities
 	err = s.Delete(id)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMiddlewareCluster, fields[middlewareClusterClusterNameStruct], err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMiddlewareCluster, err, fields[middlewareClusterClusterNameStruct])
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -396,19 +394,19 @@ func MiddlewareClusterAddUser(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 
 	dataMap := make(map[string]int)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataMiddlewareClusterAddUser, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataMiddlewareClusterAddUser, errors.Trace(err), id)
 		return
 	}
 	userID, userIDExists := dataMap[middlewareClusterUserIDJSON]
@@ -421,13 +419,13 @@ func MiddlewareClusterAddUser(c *gin.Context) {
 	// update entities
 	err = s.AddUser(id, userID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataMiddlewareClusterAddUser, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataMiddlewareClusterAddUser, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(middlewareClusterUsersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -450,18 +448,18 @@ func MiddlewareClusterDeleteUser(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, err.Error())
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
 		return
 	}
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	dataMap := make(map[string]int)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataMiddlewareClusterDeleteUser, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataMiddlewareClusterDeleteUser, errors.Trace(err), id)
 		return
 	}
 	userID, userIDExists := dataMap[middlewareClusterUserIDJSON]
@@ -474,13 +472,13 @@ func MiddlewareClusterDeleteUser(c *gin.Context) {
 	// update entities
 	err = s.DeleteUser(id, userID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataMiddlewareClusterDeleteUser, id, err.Error())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataMiddlewareClusterDeleteUser, err, id)
 		return
 	}
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(middlewareClusterUsersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err.Error())
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response

@@ -2,11 +2,11 @@ package metadata
 
 import (
 	"encoding/json"
-	"fmt"
 	"reflect"
 	"testing"
 
 	"github.com/jinzhu/now"
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
@@ -16,7 +16,7 @@ import (
 const (
 	testDBDBID                 = 1
 	testDBDBName               = "db_name"
-	testDBDBName2              = "test_db_name"
+	testDBDBName2              = "pmm_test"
 	testDBClusterID            = 2
 	testDBClusterType          = 1
 	testDBEnvID                = 1
@@ -146,7 +146,6 @@ func TestDBInfo_GetAppOwners(t *testing.T) {
 
 	appOwners, err := testDBInfo.GetAppOwners()
 	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
-	fmt.Println(appOwners[constant.ZeroInt].Identity())
 	asst.Equal(testAppOwnerID, appOwners[constant.ZeroInt].Identity(), "test GetAppOwners() failed")
 }
 
@@ -252,7 +251,7 @@ func TestDBInfo_MarshalJSON(t *testing.T) {
 	data, err := testDBInfo.MarshalJSON()
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
 	err = json.Unmarshal(data, &dbInfoUnmarshal)
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSON() failed", err))
+	asst.Nil(errors.Trace(err), common.CombineMessageWithError("test MarshalJSON() failed", errors.Trace(err)))
 	asst.True(dbEqual(testDBInfo, dbInfoUnmarshal), "test MarshalJSON() failed")
 }
 
@@ -262,6 +261,6 @@ func TestDBInfo_MarshalJSONWithFields(t *testing.T) {
 	data, err := testDBInfo.MarshalJSONWithFields(dbDBNameStruct)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 	expect, err := json.Marshal(map[string]interface{}{testDBDBNameJSON: testDBDBName})
-	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
+	asst.Nil(errors.Trace(err), common.CombineMessageWithError("test MarshalJSONWithFields() failed", errors.Trace(err)))
 	asst.Equal(string(expect), string(data), "test MarshalJSONWithFields() failed")
 }

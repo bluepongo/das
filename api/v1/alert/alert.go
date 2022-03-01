@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/alert"
 	"github.com/romberli/das/pkg/message"
 	msgalert "github.com/romberli/das/pkg/message/alert"
@@ -21,22 +22,27 @@ const (
 	sendEmailRespMessage = `{"code": 0, "message": "send email completed successfully"}`
 )
 
-// @Tags alert
+// @Tags 	alert
 // @Summary send email
-// @Produce  application/json
+// @Accept	application/json
+// @Param	config 	body string false	"optional config"
+// @Param	toAddrs body string true	"to addrs"
+// @Param	ccAddrs body string true 	"cc addrs"
+// @Param	content body string true	"to content"
+// @Produce application/json
 // @Success 200 {string} string "{"code": 200, "data": {"code": 0, "message": "send email completed successfully"}}"
-// @Router /api/v1/alert/email [post]
+// @Router	/api/v1/alert/email [post]
 func SendEmail(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrGetRawData, err)
 		return
 	}
 	dataMap := make(map[string]string)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 
@@ -45,7 +51,7 @@ func SendEmail(c *gin.Context) {
 	if configExists {
 		err = json.Unmarshal([]byte(configStr), &config)
 		if err != nil {
-			resp.ResponseNOK(c, message.ErrUnmarshalRawData, err.Error())
+			resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 			return
 		}
 	}
@@ -70,7 +76,7 @@ func SendEmail(c *gin.Context) {
 	s := alert.NewServiceWithDefault(config)
 	err = s.SendEmail(toAddrs, ccAddrs, subject, content)
 	if err != nil {
-		resp.ResponseNOK(c, msgalert.ErrServiceSendEmail, toAddrs, ccAddrs, subject, content, err.Error())
+		resp.ResponseNOK(c, msgalert.ErrServiceSendEmail, err, toAddrs, ccAddrs, subject, content)
 		return
 	}
 

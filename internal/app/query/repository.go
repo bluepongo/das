@@ -217,9 +217,11 @@ const (
     `
 )
 
-var _ query.DASRepo = (*DASRepo)(nil)
-var _ query.MonitorRepo = (*MySQLRepo)(nil)
-var _ query.MonitorRepo = (*ClickhouseRepo)(nil)
+var (
+	_ query.DASRepo     = (*DASRepo)(nil)
+	_ query.MonitorRepo = (*MySQLRepo)(nil)
+	_ query.MonitorRepo = (*ClickhouseRepo)(nil)
+)
 
 type DASRepo struct {
 	Database middleware.Pool
@@ -249,7 +251,7 @@ func (dr *DASRepo) Execute(command string, args ...interface{}) (middleware.Resu
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("query DASRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("query DASRepo.Execute(): close database connection failed. err: \n%+v", err)
 		}
 	}()
 

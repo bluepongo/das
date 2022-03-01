@@ -19,14 +19,13 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/romberli/das/config"
+	"github.com/romberli/das/pkg/message"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/linux"
 	"github.com/romberli/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/romberli/das/config"
-	"github.com/romberli/das/pkg/message"
 )
 
 // stopCmd represents the stop command
@@ -42,7 +41,7 @@ var stopCmd = &cobra.Command{
 		// init config
 		err = initConfig()
 		if err != nil {
-			fmt.Println(message.NewMessage(message.ErrInitConfig, err.Error()).Error())
+			fmt.Println(fmt.Sprintf("%+v", message.NewMessage(message.ErrInitConfig, err)))
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 
@@ -50,8 +49,7 @@ var stopCmd = &cobra.Command{
 		if serverPid != constant.DefaultRandomInt {
 			err = linux.ShutdownServer(serverPid)
 			if err != nil {
-				log.CloneStdoutLogger().Error(
-					message.NewMessage(message.ErrKillServerWithPid, serverPid, err.Error()).Error())
+				log.CloneStdoutLogger().Errorf("%+v", message.NewMessage(message.ErrKillServerWithPid, err, serverPid))
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 
@@ -63,16 +61,14 @@ var stopCmd = &cobra.Command{
 		serverPidFile = viper.GetString(config.ServerPidFileKey)
 		serverPid, err = linux.GetPidFromPidFile(serverPidFile)
 		if err != nil {
-			log.CloneStdoutLogger().Errorf(
-				message.NewMessage(message.ErrGetPidFromPidFile, serverPidFile, err.Error()).Error())
+			log.CloneStdoutLogger().Errorf("%+v", message.NewMessage(message.ErrGetPidFromPidFile, err, serverPidFile))
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 
 		// kill server with pid and pid file
 		err = linux.KillServer(serverPid, serverPidFile)
 		if err != nil {
-			log.CloneStdoutLogger().Error(
-				message.NewMessage(message.ErrKillServerWithPidFile, serverPid, serverPidFile, err.Error()).Error())
+			log.CloneStdoutLogger().Errorf("%+v", message.NewMessage(message.ErrKillServerWithPidFile, err, serverPid, serverPidFile))
 			os.Exit(constant.DefaultAbnormalExitCode)
 		}
 

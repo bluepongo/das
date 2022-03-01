@@ -3,11 +3,10 @@ package metadata
 import (
 	"fmt"
 
-	"github.com/romberli/go-util/common"
-	"github.com/romberli/go-util/constant"
-
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/pkg/message"
+	"github.com/romberli/go-util/common"
+	"github.com/romberli/go-util/constant"
 )
 
 const (

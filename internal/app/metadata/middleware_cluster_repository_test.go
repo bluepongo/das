@@ -4,9 +4,8 @@ import (
 	"testing"
 
 	"github.com/romberli/das/internal/dependency/metadata"
-	"github.com/romberli/go-util/constant"
-
 	"github.com/romberli/go-util/common"
+	"github.com/romberli/go-util/constant"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -47,8 +46,8 @@ func TestMiddlewareClusterRepoAll(t *testing.T) {
 	TestMiddlewareClusterRepo_Create(t)
 	TestMiddlewareClusterRepo_Update(t)
 	TestMiddlewareClusterRepo_Delete(t)
-	TestMiddlewareClusterRepo_MiddlewareClusterAddUser(t)
-	TestMiddlewareClusterRepo_MiddlewareClusterDeleteUser(t)
+	TestMiddlewareClusterRepo_AddUser(t)
+	TestMiddlewareClusterRepo_DeleteUser(t)
 
 }
 func TestMiddlewareClusterRepo_Execute(t *testing.T) {
@@ -180,12 +179,12 @@ func TestMiddlewareClusterRepo_Delete(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test Delete() failed", err))
 }
 
-func TestMiddlewareClusterRepo_MiddlewareClusterAddUser(t *testing.T) {
+func TestMiddlewareClusterRepo_AddUser(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testCreateMiddlewareCluster()
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
-	err = testMiddlewareClusterRepo.MiddlewareClusterAddUser(entity.Identity(), testMiddlewareClusterNewUserID)
+	err = testMiddlewareClusterRepo.AddUser(entity.Identity(), testMiddlewareClusterNewUserID)
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
 	users, err := entity.GetUsersByMiddlewareClusterID()
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
@@ -195,12 +194,12 @@ func TestMiddlewareClusterRepo_MiddlewareClusterAddUser(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterAddUser() failed", err))
 }
 
-func TestMiddlewareClusterRepo_MiddlewareClusterDeleteUser(t *testing.T) {
+func TestMiddlewareClusterRepo_DeleteUser(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testCreateMiddlewareCluster()
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterDeleteUser() failed", err))
-	err = testMiddlewareClusterRepo.MiddlewareClusterDeleteUser(entity.Identity(), testUserID)
+	err = testMiddlewareClusterRepo.DeleteUser(entity.Identity(), testUserID)
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterDeleteUser() failed", err))
 	users, err := entity.GetUsersByMiddlewareClusterID()
 	asst.Nil(err, common.CombineMessageWithError("test MiddlewareClusterDeleteUser() failed", err))

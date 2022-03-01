@@ -11,6 +11,7 @@ func init() {
 	initServiceErrorMessage()
 }
 
+// Message code
 const (
 	// debug
 
@@ -42,5 +43,5 @@ func initServiceInfoMessage() {
 func initServiceErrorMessage() {
 	message.Messages[ErrSQLAdvisorAdvice] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrSQLAdvisorAdvice,
-		"sqladvisor: advice failed. db id: %d, sql text: %s.\n%s")
+		"sqladvisor: advice failed. db id: %d, sql text: %s")
 }

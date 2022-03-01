@@ -32,7 +32,7 @@ func (r *Repository) Execute(command string, args ...interface{}) (middleware.Re
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("alert DASRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("alert DASRepo.Execute(): close database connection failed.\n%s", err)
 		}
 	}()
 

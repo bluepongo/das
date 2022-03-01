@@ -1,16 +1,12 @@
 package metadata
 
 import (
-	"errors"
-	"fmt"
-
-	"github.com/romberli/go-util/constant"
-	"github.com/romberli/go-util/middleware"
-
-	"github.com/romberli/log"
-
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/dependency/metadata"
+	"github.com/romberli/go-util/constant"
+	"github.com/romberli/go-util/middleware"
+	"github.com/romberli/log"
 )
 
 var _ metadata.UserRepo = (*UserRepo)(nil)
@@ -41,7 +37,7 @@ func (ur *UserRepo) Execute(command string, args ...interface{}) (middleware.Res
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("metadata UserRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata UserRepo.Execute(): close database connection failed.\n%+v", err)
 		}
 	}()
 
@@ -136,7 +132,7 @@ func (ur *UserRepo) GetByMobile(mobile string) (metadata.User, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.New(fmt.Sprintf("metadata UserInfo.GetByMobile(): data does not exists, id: %s", mobile))
+		return nil, errors.Errorf("metadata UserInfo.GetByMobile(): data does not exists, id: %s", mobile)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -147,7 +143,7 @@ func (ur *UserRepo) GetByMobile(mobile string) (metadata.User, error) {
 
 		return userInfo, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("metadata UserInfo.GetByMobile(): duplicate key exists, id: %s", mobile))
+		return nil, errors.Errorf("metadata UserInfo.GetByMobile(): duplicate key exists, id: %s", mobile)
 	}
 }
 
@@ -167,7 +163,7 @@ func (ur *UserRepo) GetByTelephone(telephone string) (metadata.User, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.New(fmt.Sprintf("metadata UserInfo.GetByTelephone(): data does not exists, id: %s", telephone))
+		return nil, errors.Errorf("metadata UserInfo.GetByTelephone(): data does not exists, id: %s", telephone)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -178,7 +174,7 @@ func (ur *UserRepo) GetByTelephone(telephone string) (metadata.User, error) {
 
 		return userInfo, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("metadata UserInfo.GetByTelephone(): duplicate key exists, id: %s", telephone))
+		return nil, errors.Errorf("metadata UserInfo.GetByTelephone(): duplicate key exists, id: %s", telephone)
 	}
 }
 
@@ -198,7 +194,7 @@ func (ur *UserRepo) GetByID(id int) (metadata.User, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.New(fmt.Sprintf("metadata UserInfo.GetByID(): data does not exists, id: %d", id))
+		return nil, errors.Errorf("metadata UserInfo.GetByID(): data does not exists, id: %d", id)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -209,7 +205,7 @@ func (ur *UserRepo) GetByID(id int) (metadata.User, error) {
 
 		return userInfo, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("metadata UserInfo.GetByID(): duplicate key exists, id: %d", id))
+		return nil, errors.Errorf("metadata UserInfo.GetByID(): duplicate key exists, id: %d", id)
 	}
 }
 
@@ -229,7 +225,7 @@ func (ur *UserRepo) GetByAccountName(accountName string) (metadata.User, error) 
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.New(fmt.Sprintf("metadata UserInfo.GetByAccountName(): data does not exists, id: %s", accountName))
+		return nil, errors.Errorf("metadata UserInfo.GetByAccountName(): data does not exists, id: %s", accountName)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -240,7 +236,7 @@ func (ur *UserRepo) GetByAccountName(accountName string) (metadata.User, error) 
 
 		return userInfo, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("metadata UserInfo.GetByAccountName(): duplicate key exists, id: %s", accountName))
+		return nil, errors.Errorf("metadata UserInfo.GetByAccountName(): duplicate key exists, id: %s", accountName)
 	}
 }
 
@@ -260,7 +256,7 @@ func (ur *UserRepo) GetByEmail(email string) (metadata.User, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.New(fmt.Sprintf("metadata UserInfo.GetByEmail(): data does not exists, id: %s", email))
+		return nil, errors.Errorf("metadata UserInfo.GetByEmail(): data does not exists, id: %s", email)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -271,7 +267,7 @@ func (ur *UserRepo) GetByEmail(email string) (metadata.User, error) {
 
 		return userInfo, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("metadata UserInfo.GetByEmail(): duplicate key exists, id: %s", email))
+		return nil, errors.Errorf("metadata UserInfo.GetByEmail(): duplicate key exists, id: %s", email)
 	}
 }
 
@@ -303,7 +299,7 @@ func (ur *UserRepo) GetByEmployeeID(employeeID string) (metadata.User, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.New(fmt.Sprintf("metadata UserInfo.GetByEmployeeID(): data does not exists, id: %s", employeeID))
+		return nil, errors.Errorf("metadata UserInfo.GetByEmployeeID(): data does not exists, id: %s", employeeID)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -314,7 +310,7 @@ func (ur *UserRepo) GetByEmployeeID(employeeID string) (metadata.User, error) {
 
 		return userInfo, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("metadata UserInfo.GetByEmployeeID(): duplicate key exists, id: %s", employeeID))
+		return nil, errors.Errorf("metadata UserInfo.GetByEmployeeID(): duplicate key exists, id: %s", employeeID)
 	}
 }
 

@@ -3,16 +3,15 @@ package metadata
 import (
 	"fmt"
 
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/config"
+	"github.com/romberli/das/global"
+	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/go-util/middleware/mysql"
-	"github.com/spf13/viper"
-
 	"github.com/romberli/log"
-
-	"github.com/romberli/das/global"
-	"github.com/romberli/das/internal/dependency/metadata"
+	"github.com/spf13/viper"
 )
 
 var _ metadata.MySQLServerRepo = (*MySQLServerRepo)(nil)
@@ -42,7 +41,7 @@ func (msr *MySQLServerRepo) Execute(command string, args ...interface{}) (middle
 	defer func() {
 		err = conn.Close()
 		if err != nil {
-			log.Errorf("metadata MySQLServerRepo.Execute(): close database connection failed.\n%s", err.Error())
+			log.Errorf("metadata MySQLServerRepo.Execute(): close database connection failed.\n%+v", err)
 		}
 	}()
 
@@ -141,7 +140,7 @@ func (msr *MySQLServerRepo) GetByID(id int) (metadata.MySQLServer, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, fmt.Errorf("metadata MySQLServerRepo.GetByID(): data does not exists, id: %d", id)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLServerRepo.GetByID(): data does not exists, id: %d", id))
 	case 1:
 		mysqlServerInfo := NewEmptyMySQLServerInfoWithGlobal()
 		// map to struct
@@ -152,7 +151,7 @@ func (msr *MySQLServerRepo) GetByID(id int) (metadata.MySQLServer, error) {
 
 		return mysqlServerInfo, nil
 	default:
-		return nil, fmt.Errorf("metadata MySQLServerRepo.GetByID(): duplicate key exists, id: %d", id)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLServerRepo.GetByID(): duplicate key exists, id: %d", id))
 	}
 }
 
@@ -173,7 +172,7 @@ func (msr *MySQLServerRepo) GetByHostInfo(hostIP string, portNum int) (metadata.
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, fmt.Errorf("metadata MySQLServerInfo.GetByHostInfo(): data does not exists, hostIP: %s, portNum: %d", hostIP, portNum)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLServerInfo.GetByHostInfo(): data does not exists, hostIP: %s, portNum: %d", hostIP, portNum))
 	case 1:
 		mysqlServerInfo := NewEmptyMySQLServerInfoWithGlobal()
 		// map to struct
@@ -184,7 +183,7 @@ func (msr *MySQLServerRepo) GetByHostInfo(hostIP string, portNum int) (metadata.
 
 		return mysqlServerInfo, nil
 	default:
-		return nil, fmt.Errorf("metadata MySQLServerInfo.GetByHostInfo(): duplicate key exists, hostIP: %s, portNum: %d", hostIP, portNum)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLServerInfo.GetByHostInfo(): duplicate key exists, hostIP: %s, portNum: %d", hostIP, portNum))
 	}
 }
 
@@ -244,7 +243,7 @@ func (msr *MySQLServerRepo) GetMySQLClusterByID(id int) (metadata.MySQLCluster, 
 
 	switch result.RowNumber() {
 	case 0:
-		return nil, fmt.Errorf("metadata MySQLServerRepo.GetMySQLClusterByID(): data does not exists, id: %d", id)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLServerRepo.GetMySQLClusterByID(): data does not exists, id: %d", id))
 	case 1:
 		mysqlClusterInfo := NewEmptyMySQLClusterInfoWithGlobal()
 		// map to struct
@@ -255,7 +254,7 @@ func (msr *MySQLServerRepo) GetMySQLClusterByID(id int) (metadata.MySQLCluster, 
 
 		return mysqlClusterInfo, nil
 	default:
-		return nil, fmt.Errorf("metadata MySQLServerRepo.GetMySQLClusterByID(): duplicate key exists, id: %d", id)
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLServerRepo.GetMySQLClusterByID(): duplicate key exists, id: %d", id))
 	}
 }
 

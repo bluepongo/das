@@ -42,7 +42,7 @@ func TestDBService_GetDBs(t *testing.T) {
 
 	err := testDBService.GetAll()
 	asst.Nil(err, "test GetDBs() failed")
-	asst.Equal(5, len(testDBService.GetDBs()), "test GetDBs() failed")
+	asst.Equal(testDBAllDBNum, len(testDBService.GetDBs()), "test GetDBs() failed")
 }
 
 func TestDBService_GetAll(t *testing.T) {
@@ -50,7 +50,7 @@ func TestDBService_GetAll(t *testing.T) {
 
 	err := testDBService.GetAll()
 	asst.Nil(err, "test GetAll() failed")
-	asst.Equal(5, len(testDBService.GetDBs()), "test GetAll() failed")
+	asst.Equal(testDBAllDBNum, len(testDBService.GetDBs()), "test GetAll() failed")
 }
 
 func TestDBService_GetByEnv(t *testing.T) {
