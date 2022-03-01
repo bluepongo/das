@@ -19,6 +19,9 @@ Accept: application/json
 GET http://{{baseURL}}/api/v1/metadata/mysql-server/host-info?host_ip=192.168.1.2&port_num=3306
 Accept: application/json
 
+### judge if serve is master
+GET http://{{baseURL}}/127.0.0.1:6090/api/v1/metadata/mysql-server/is-master/host-info?host_ip=192.168.1.2&port_num=3306
+Accept: application/json
 
 ### add new mysql server
 POST http://{{baseURL}}/api/v1/metadata/mysql-server
