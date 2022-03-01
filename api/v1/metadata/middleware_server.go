@@ -27,11 +27,12 @@ const (
 	middlewareServerPortNumStruct        = "PortNum"
 )
 
-// @Tags middleware server
-// @Summary get all middleware servers
+// @Tags     middleware server
+// @Summary  get all middleware servers
+// @Accept	 application/json
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"port_num":1,"last_update_time":"2021-04-11T23:16:10.281222+08:00","server_name":"test001","middleware_role":1,"host_ip":"3","del_flag":0,"create_time":"2021-04-07T17:51:00.270268+08:00","id":1,"cluster_id":13},{"last_update_time":"2021-04-09T16:20:03.063295+08:00","id":2,"cluster_id":13,"server_name":"test002","del_flag":0,"create_time":"2021-04-09T16:20:03.063295+08:00","middleware_role":2,"host_ip":"2","port_num":2}]}"
-// @Router /api/v1/metadata/middleware-server [get]
+// @Success  200 {string} string "{"code": 200, "data": [{"port_num":1,"last_update_time":"2021-04-11T23:16:10.281222+08:00","server_name":"test001","middleware_role":1,"host_ip":"3","del_flag":0,"create_time":"2021-04-07T17:51:00.270268+08:00","id":1,"cluster_id":13},{"last_update_time":"2021-04-09T16:20:03.063295+08:00","id":2,"cluster_id":13,"server_name":"test002","del_flag":0,"create_time":"2021-04-09T16:20:03.063295+08:00","middleware_role":2,"host_ip":"2","port_num":2}]}"
+// @Router   /api/v1/metadata/middleware-server [get]
 func GetMiddlewareServer(c *gin.Context) {
 	// init service
 	s := metadata.NewMiddlewareServerServiceWithDefault()
@@ -53,11 +54,13 @@ func GetMiddlewareServer(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMiddlewareServerAll)
 }
 
-// @Tags middleware server
-// @Summary get middleware servers by cluster id
+// @Tags     middleware server
+// @Summary  get middleware servers by cluster id
+// @Accept	 application/json
+// @Param	 cluster_id path int true "middleware cluster id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"server_name":"test001","middleware_role":1,"host_ip":"3","del_flag":0,"create_time":"2021-04-07T17:51:00.270268+08:00","last_update_time":"2021-04-11T23:16:10.281222+08:00","id":1,"cluster_id":13,"port_num":1},{"host_ip":"2","port_num":2,"del_flag":0,"last_update_time":"2021-04-09T16:20:03.063295+08:00","id":2,"cluster_id":13,"server_name":"test002","middleware_role":2,"create_time":"2021-04-09T16:20:03.063295+08:00"}]}"
-// @Router /api/v1/metadata/middleware-server/cluster-id/:cluster_id [get]
+// @Success  200 {string} string "{"code": 200, "data": [{"server_name":"test001","middleware_role":1,"host_ip":"3","del_flag":0,"create_time":"2021-04-07T17:51:00.270268+08:00","last_update_time":"2021-04-11T23:16:10.281222+08:00","id":1,"cluster_id":13,"port_num":1},{"host_ip":"2","port_num":2,"del_flag":0,"last_update_time":"2021-04-09T16:20:03.063295+08:00","id":2,"cluster_id":13,"server_name":"test002","middleware_role":2,"create_time":"2021-04-09T16:20:03.063295+08:00"}]}"
+// @Router   /api/v1/metadata/middleware-server/cluster-id/:cluster_id [get]
 func GetMiddlewareServerByClusterID(c *gin.Context) {
 	// get param
 	clusterIDStr := c.Param(middlewareServerClusterIDJSON)
@@ -90,11 +93,13 @@ func GetMiddlewareServerByClusterID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMiddlewareSeverByClusterID)
 }
 
-// @Tags middleware server
-// @Summary get middleware server by id
+// @Tags     middleware server
+// @Summary  get middleware server by id
+// @Accept	 application/json
+// @Param	 id path int true "middleware server id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id":1,"middleware_role":1,"del_flag":0,"last_update_time":"2021-04-11T23:16:10.281222+08:00","cluster_id":13,"server_name":"test001","host_ip":"3","port_num":1,"create_time":"2021-04-07T17:51:00.270268+08:00"}]}"
-// @Router /api/v1/metadata/middleware-server/get/:id [get]
+// @Success  200 {string} string "{"code": 200, "data": [{"id":1,"middleware_role":1,"del_flag":0,"last_update_time":"2021-04-11T23:16:10.281222+08:00","cluster_id":13,"server_name":"test001","host_ip":"3","port_num":1,"create_time":"2021-04-07T17:51:00.270268+08:00"}]}"
+// @Router   /api/v1/metadata/middleware-server/get/:id [get]
 func GetMiddlewareServerByID(c *gin.Context) {
 	// get param
 	idStr := c.Param(middlewareServerIDJSON)
@@ -127,11 +132,14 @@ func GetMiddlewareServerByID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMiddlewareServerByID, id)
 }
 
-// @Tags middleware server
-// @Summary get middleware server by host info
+// @Tags     middleware server
+// @Summary  get middleware server by host info
+// @Accept	 application/json
+// @Param	 host_ip  body string true "host ip"
+// @Param	 port_num body int    true "port number"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"cluster_id":13,"server_name":"test001","port_num":1,"last_update_time":"2021-04-11T23:16:10.281222+08:00","id":1,"middleware_role":1,"host_ip":"3","del_flag":0,"create_time":"2021-04-07T17:51:00.270268+08:00"}]}"
-// @Router /api/v1/metadata/middleware-server/host-info [get]
+// @Success  200 {string} string "{"code": 200, "data": [{"cluster_id":13,"server_name":"test001","port_num":1,"last_update_time":"2021-04-11T23:16:10.281222+08:00","id":1,"middleware_role":1,"host_ip":"3","del_flag":0,"create_time":"2021-04-07T17:51:00.270268+08:00"}]}"
+// @Router   /api/v1/metadata/middleware-server/host-info [get]
 func GetMiddlewareServerByHostInfo(c *gin.Context) {
 	var rd *utilmeta.HostInfo
 	// bind json
@@ -160,11 +168,17 @@ func GetMiddlewareServerByHostInfo(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMiddlewareServerByHostInfo, rd.GetHostIP(), rd.GetPortNum())
 }
 
-// @Tags middleware server
-// @Summary add a new middleware server
+// @Tags     middleware server
+// @Summary  add a new middleware server
+// @Accept	 application/json
+// @Param	 cluster_id      body int    true "middleware cluster id"
+// @Param	 server_name     body string true "middleware server name"
+// @Param	 middleware_role body int    true "middleware role"
+// @Param	 host_ip         body string true "host ip"
+// @Param	 port_num        body int    true "port number"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id":31,"middleware_role":1,"port_num":12,"create_time":"2021-04-12T10:59:11.559227+08:00","last_update_time":"2021-04-12T10:59:11.559227+08:00","cluster_id":13,"server_name":"test003","host_ip":"123.123.123.1","del_flag":0}]}"
-// @Router /api/v1/metadata/middleware-server [post]
+// @Success  200 {string} string "{"code": 200, "data": [{"id":31,"middleware_role":1,"port_num":12,"create_time":"2021-04-12T10:59:11.559227+08:00","last_update_time":"2021-04-12T10:59:11.559227+08:00","cluster_id":13,"server_name":"test003","host_ip":"123.123.123.1","del_flag":0}]}"
+// @Router   /api/v1/metadata/middleware-server [post]
 func AddMiddlewareServer(c *gin.Context) {
 	var fields map[string]interface{}
 
@@ -227,6 +241,13 @@ func AddMiddlewareServer(c *gin.Context) {
 
 // @Tags middleware server
 // @Summary update middleware server by id
+// @Accept	application/json
+// @Param	 cluster_id      body int    true  "middleware cluster id"
+// @Param	 server_name     body string false "middleware server name"
+// @Param	 middleware_role body int    false "middleware role"
+// @Param	 host_ip         body string false "host ip"
+// @Param	 port_num        body int    false "port number"
+// @Param	 del_flag        body int    false "delete flag"
 // @Produce  application/json
 // @Success 200 {string} string "{"code": 200, "data": [{"server_name":"newTest","host_ip":"123.123.123.1","last_update_time":"2021-04-12T10:59:11.559227+08:00","id":31,"cluster_id":13,"port_num":12,"del_flag":1,"create_time":"2021-04-12T10:59:11.559227+08:00","middleware_role":1}]}"
 // @Router /api/v1/metadata/middleware-server/update/:id [post]
@@ -284,11 +305,13 @@ func UpdateMiddlewareServerByID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataUpdateMiddlewareServer, id)
 }
 
-// @Tags middleware server
-// @Summary delete middleware server by id
+// @Tags     middleware server
+// @Summary  delete middleware server by id
+// @Accept	 application/json
+// @Param	 id path int	true "middleware server id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": []}"
-// @Router /api/v1/metadata/middleware-server/delete/:id [post]
+// @Success  200 {string} string "{"code": 200, "data": []}"
+// @Router   /api/v1/metadata/middleware-server/delete/:id [post]
 func DeleteMiddlewareServerByID(c *gin.Context) {
 	var fields map[string]interface{}
 

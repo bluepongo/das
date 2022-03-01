@@ -248,8 +248,8 @@ func GetUsersByMiddlewareClusterID(c *gin.Context) {
 // @Tags     middleware cluster
 // @Summary  add a new middleware cluster
 // @Accept	 application/json
-// @Param	 ClusterName body string true "middleware cluster name"
-// @Param	 EnvID       body int    true "env id"
+// @Param	 cluster_name body string true "middleware cluster name"
+// @Param	 env_id       body int    true "env id"
 // @Produce  application/json
 // @Success  200 {string} string "{"code": 200, "data": [{"del_flag":0,"create_time":"2021-04-09T16:02:25.541701+08:00","last_update_time":"2021-04-09T16:02:25.541701+08:00","id":14,"cluster_name":"rest_test","env_id":1}]}"
 // @Router   /api/v1/metadata/middleware-cluster [post]
@@ -301,9 +301,10 @@ func AddMiddlewareCluster(c *gin.Context) {
 // @Tags     middleware cluster
 // @Summary  update middleware cluster by id
 // @Accept	 application/json
-// @Param	 id		     path int	 true	"middleware cluster id"
-// @Param 	 CLusterName body string false	"middleware cluster name"
-// @Param 	 EnvID       body int	 false	"env id"
+// @Param	 id		      path int	  true	"middleware cluster id"
+// @Param 	 cluster_name body string false	"middleware cluster name"
+// @Param 	 env_id       body int	  false	"env id"
+// @Param 	 del_flag     body int	  false	"delete flag"
 // @Produce  application/json
 // @Success  200 {string} string "{"code": 200, "data": [{"id":13,"cluster_name":"new_test","env_id":1,"del_flag":1,"create_time":"2021-04-09T10:55:43.920406+08:00","last_update_time":"2021-04-09T10:55:43.920406+08:00"}]}"
 // @Router   /api/v1/metadata/middleware-cluster/update/:id [post]
@@ -403,8 +404,8 @@ func DeleteMiddlewareClusterByID(c *gin.Context) {
 // @Tags     middleware cluster
 // @Summary  add user map
 // @Accept	 application/json
-// @Param	 id     path int true "middleware cluster id"
-// @Param	 UserID body int true "user id"
+// @Param	 id      path int true "middleware cluster id"
+// @Param	 user_id body int true "user id"
 // @Produce  application/json
 // @Success  200 {string} string "{"code": 200, "data": [{"users":[{"del_flag":0,"id":1,"user_name":"zhangsan","department_name":"arch","account_name":"zs001","email":"allinemailtest@163.com","mobile":"13012345678","role":3,"create_time":"2021-10-25T09:21:50.364327+08:00","employee_id":"100001","telephone":"01012345678","last_update_time":"2021-11-22T13:46:20.430926+08:00"}]}]}"
 // @Router   /api/v1/metadata/middleware-cluster/add-user/:id [post]
@@ -460,8 +461,8 @@ func MiddlewareClusterAddUser(c *gin.Context) {
 // @Tags     middleware cluster
 // @Summary  delete user map
 // @Accept	 application/json
-// @Param	 id     path int true "middleware cluster id"
-// @Param	 UserID body int true "user id"
+// @Param	 id      path int true "middleware cluster id"
+// @Param	 user_id body int true "user id"
 // @Produce  application/json
 // @Success  200 {string} string "{"code": 200, "data": {"users":[]}}"
 // @Router   /api/v1/metadata/middleware-cluster/delete-user/:id [post]
