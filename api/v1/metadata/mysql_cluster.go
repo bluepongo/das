@@ -447,8 +447,8 @@ func GetAllUsersByMySQLCLusterID(c *gin.Context) {
 // @Tags	mysql cluster
 // @Summary	add user map
 // @Accept	application/json
-// @Param	id path int true "mysql cluster id"
-// @Param	user_id body int true "user id"
+// @Param	id		path int true "mysql cluster id"
+// @Param	user_id	body int true "user id"
 // @Produce	application/json
 // @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","email":"allinemailtest@163.com","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","account_name":"zs001","telephone":"01012345678","mobile":"13012345678","create_time":"2021-10-25T09:21:50.364327+08:00","last_update_time":"2021-11-22T13:46:20.430926+08:00"}}"
 // @Router	/api/v1/metadata/mysql-cluster/add-user/:id [post]
@@ -504,8 +504,8 @@ func MySQLClusterAddUser(c *gin.Context) {
 // @Tags	mysql cluster
 // @Summary	delete user map
 // @Accept	application/json
-// @Param	id path int true "mysql cluster id"
-// @Param	user_id body int true "user id"
+// @Param	id		path int true "mysql cluster id"
+// @Param	user_id	body int true "user id"
 // @Produce	application/json
 // @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","email":"allinemailtest@163.com","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","account_name":"zs001","telephone":"01012345678","mobile":"13012345678","create_time":"2021-10-25T09:21:50.364327+08:00","last_update_time":"2021-11-22T13:46:20.430926+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/delete-user/:id [post]
@@ -623,8 +623,8 @@ func AddMySQLCluster(c *gin.Context) {
 // @Param	id						path int	true  "mysql cluster id"
 // @Param	cluster_name			body string	false "mysql cluster name"
 // @Param	middleware_cluster_id	body int	false "middleware cluster id"
-// @Param	monitor_system_id 		body int	false "monitor system id"
-// @Param	env_id 					body string	false "env id"
+// @Param	monitor_system_id		body int	false "monitor system id"
+// @Param	env_id					body string	false "env id"
 // @Param	del_flag				body int	false "delete flag"
 // @Produce	application/json
 // @Success	200 {string} string "{"mysql_clusters":[{"middleware_cluster_id":0,"monitor_system_id":0,"last_update_time":"2022-03-01T08:30:43.428343+08:00","id":3,"cluster_name":"test","env_id":1,"del_flag":0,"create_time":"2022-03-01T08:30:43.428343+08:00"}]}"
