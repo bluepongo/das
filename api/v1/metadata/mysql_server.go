@@ -7,7 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
-	utilmeta "github.com/romberli/das/pkg/util/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/log"
@@ -35,11 +34,12 @@ const (
 	isMasterResponse = `{"is_master": "%t"}`
 )
 
-// @Tags mysql server
-// @Summary get all mysql servers
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"cluster_id":1,"deployment_type":1,"host_ip":"host_ip_init","port_num":3306,"version":"1.1.1","del_flag":0,"create_time":"2021-02-23T23:43:37.236228+08:00","last_update_time":"2021-02-23T23:43:37.236228+08:00","id":1}]}"
-// @Router /api/v1/metadata/mysql-server [get]
+// @Tags	mysql server
+// @Summary	get all mysql servers
+// @Accept	application/json
+// @Produce	application/json
+// @Success	200 {string} string "{"mysql_servers":[{"port_num":3306,"create_time":"2021-09-02T11:16:06.561525+08:00","last_update_time":"2022-03-01T08:19:09.779365+08:00","cluster_id":1,"server_name":"192-168-10-219","service_name":"192-168-10-219:3306","host_ip":"192.168.10.219","id":1,"deployment_type":1,"version":"5.7","del_flag":0}]}"
+// @Router	/api/v1/metadata/mysql-server [get]
 func GetMySQLServer(c *gin.Context) {
 	// init service
 	s := metadata.NewMySQLServerServiceWithDefault()
@@ -61,11 +61,13 @@ func GetMySQLServer(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerAll)
 }
 
-// @Tags mysql server
+// @Tags	mysql server
 // @Summary get mysql servers by cluster id
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"cluster_id":1,"deployment_type":1,"host_ip":"host_ip_init","port_num":3306,"version":"1.1.1","del_flag":0,"create_time":"2021-02-23T23:43:37.236228+08:00","last_update_time":"2021-02-23T23:43:37.236228+08:00","id":1}]}"
-// @Router /api/v1/metadata/mysql-server/cluster-id/:cluster_id [get]
+// @Accept	application/json
+// @Param	cluster_id path int true "mysql cluster id"
+// @Produce	application/json
+// @Success	200 {string} string "{"mysql_servers":[{"port_num":3306,"create_time":"2021-09-02T11:16:06.561525+08:00","last_update_time":"2022-03-01T08:19:09.779365+08:00","cluster_id":1,"server_name":"192-168-10-219","service_name":"192-168-10-219:3306","host_ip":"192.168.10.219","id":1,"deployment_type":1,"version":"5.7","del_flag":0}]}"
+// @Router	/api/v1/metadata/mysql-server/cluster-id/:cluster_id [get]
 func GetMySQLServerByClusterID(c *gin.Context) {
 	// get param
 	clusterIDStr := c.Param(mysqlServerClusterIDJSON)
@@ -99,11 +101,13 @@ func GetMySQLServerByClusterID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerByClusterID, clusterID)
 }
 
-// @Tags mysql server
-// @Summary get mysql server by id
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"port_num":3306,"del_flag":0,"version":"1.1.1","create_time":"2021-02-23T23:43:37.236228+08:00","last_update_time":"2021-02-23T23:43:37.236228+08:00","id":1,"cluster_id":1,"host_ip":"host_ip_init","deployment_type":1}]}"
-// @Router /api/v1/metadata/mysql-server/get/:id [get]
+// @Tags	mysql server
+// @Summary	get mysql server by id
+// @Accept	application/json
+// @Param	id path int true "mysql server id"
+// @Produce	application/json
+// @Success	200 {string} string "{"mysql_servers":[{"port_num":3306,"create_time":"2021-09-02T11:16:06.561525+08:00","last_update_time":"2022-03-01T08:19:09.779365+08:00","cluster_id":1,"server_name":"192-168-10-219","service_name":"192-168-10-219:3306","host_ip":"192.168.10.219","id":1,"deployment_type":1,"version":"5.7","del_flag":0}]}"
+// @Router	/api/v1/metadata/mysql-server/get/:id [get]
 func GetMySQLServerByID(c *gin.Context) {
 	// get param
 	idStr := c.Param(mysqlServerIDJSON)
@@ -137,26 +141,49 @@ func GetMySQLServerByID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerByID, id)
 }
 
-// @Tags mysql server
-// @Summary get mysql servers by host info
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"cluster_id":1,"deployment_type":1,"host_ip":"host_ip_init","port_num":3306,"version":"1.1.1","del_flag":0,"create_time":"2021-02-23T23:43:37.236228+08:00","last_update_time":"2021-02-23T23:43:37.236228+08:00","id":1}]}"
-// @Router /api/v1/metadata/mysql-server/host-info [get]
+// @Tags	mysql server
+// @Summary	get mysql servers by host info
+// @Accept	application/json
+// @Param	host_ip path string true "host ip"
+// @Param	port_num path int true "host port number"
+// @Produce	application/json
+// @Success	200 {string} string "{"mysql_servers":[{"port_num":3306,"create_time":"2021-09-02T11:16:06.561525+08:00","last_update_time":"2022-03-01T08:19:09.779365+08:00","cluster_id":1,"server_name":"192-168-10-219","service_name":"192-168-10-219:3306","host_ip":"192.168.10.219","id":1,"deployment_type":1,"version":"5.7","del_flag":0}]}"
+// @Router	/api/v1/metadata/mysql-server/host-info [get]
 func GetMySQLServerByHostInfo(c *gin.Context) {
-	var rd *utilmeta.HostInfo
-	// bind json
-	err := c.ShouldBindJSON(&rd)
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		return
+	}
+	dataMap := make(map[string]string)
+	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 
+	hostIP, hostIPExists := dataMap[mysqlServerHostIPJSON]
+	if !hostIPExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerHostIPJSON)
+		return
+	}
+	portNumStr, portNumExists := dataMap[mysqlServerPortNumJSON]
+	if !portNumExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerPortNumJSON)
+		return
+	}
+	portNum, err := strconv.Atoi(portNumStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+	}
+
 	// init service
 	s := metadata.NewMySQLServerServiceWithDefault()
 	// get entity
-	err = s.GetByHostInfo(rd.GetHostIP(), rd.GetPortNum())
+	err = s.GetByHostInfo(hostIP, portNum)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLServerByHostInfo, err, rd.GetHostIP(), rd.GetPortNum())
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLServerByHostInfo, err, hostIP, portNum)
 		return
 	}
 	// marshal service
@@ -168,14 +195,17 @@ func GetMySQLServerByHostInfo(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLServerByHostInfo, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerByHostInfo, rd.GetHostIP(), rd.GetPortNum())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServerByHostInfo, hostIP, portNum)
 }
 
-// @Tags mysql server
-// @Summary check if mysql server is a master node
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": {"is_master": "true"}}"
-// @Router /api/v1/metadata/mysql-server/is-master/host-info [get]
+// @Tags	mysql server
+// @Summary	check if mysql server is a master node
+// @Accept	application/json
+// @Param	host_ip path string true "host ip"
+// @Param	port_num path int true "host port number"
+// @Produce	application/json
+// @Success	200 {string} string "{"host_ip":"192.168.1.2","port_num":"3306"}"
+// @Router	/api/v1/metadata/mysql-server/is-master/host-info [get]
 func IsMaster(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -218,11 +248,13 @@ func IsMaster(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataIsMaster, hostIP, portNum)
 }
 
-// @Tags mysql server
-// @Summary get mysql cluster by id
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"owner_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
-// @Router /api/v1/metadata/mysql-server/mysql-cluster/:id [get]
+// @Tags	mysql server
+// @Summary	get mysql cluster by id
+// @Accept	application/json
+// @Param	id path int true "mysql server id"
+// @Produce	application/json
+// @Success	200 {string} string "{"mysql_servers":[{"server_name":"test","service_name":"test","host_ip":"192.168.1.1","port_num":3306,"del_flag":0,"create_time":"2022-03-02T01:26:32.107625+08:00","last_update_time":"2022-03-02T01:26:32.107625+08:00","id":26,"cluster_id":1,"deployment_type":1,"version":""}]}"
+// @Router	/api/v1/metadata/mysql-server/mysql-cluster/:id [get]
 func GetMySQLClusterByMySQLServerID(c *gin.Context) {
 	// get param
 	idStr := c.Param(mysqlServerIDJSON)
@@ -258,11 +290,18 @@ func GetMySQLClusterByMySQLServerID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClusterByServerID, id)
 }
 
-// @Tags mysql server
-// @Summary add a new mysql server
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"create_time":"2021-02-24T02:47:19.589172+08:00","del_flag":0,"last_update_time":"2021-02-24T02:47:19.589172+08:00","id":93,"cluster_id":0,"host_ip":"192.168.1.1","port_num":3306,"deployment_type":0,"version":"5.7.35"}]}"
-// @Router /api/v1/metadata/mysql-server [post]
+// @Tags	mysql server
+// @Summary	add a new mysql server
+// @Accept	application/json
+// @Param	cluster_id		body int	true  "mysql cluster id"
+// @Param	server_name		body string	true  "mysql server name"
+// @Param	service_name	body string	false "mysql server service name"
+// @Param	host_ip			body string	true  "mysql server host ip"
+// @Param	port_num		body int	true  "mysql server port num"
+// @Param	deployment_type	body int	true  "mysql deployment type"
+// @Produce	application/json
+// @Success	200 {string} string "{"mysql_servers":[{"deployment_type":1,"version":"","id":26,"server_name":"test","service_name":"test","port_num":3306,"del_flag":0,"create_time":"2022-03-02T01:26:32.107625+08:00","last_update_time":"2022-03-02T01:26:32.107625+08:00","cluster_id":97,"host_ip":"192.168.1.1"}]}"
+// @Router	/api/v1/metadata/mysql-server [post]
 func AddMySQLServer(c *gin.Context) {
 	var fields map[string]interface{}
 
@@ -327,11 +366,19 @@ func AddMySQLServer(c *gin.Context) {
 	)
 }
 
-// @Tags mysql server
-// @Summary update mysql server by id
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"last_update_time":"2021-02-24T02:47:19.589172+08:00","id":93,"cluster_id":0,"host_ip":"192.168.1.1","version":"5.7.35","del_flag":1,"create_time":"2021-02-24T02:47:19.589172+08:00","port_num":3306,"deployment_type":0}]}"
-// @Router /api/v1/metadata/mysql-server/:id [post]
+// @Tags	mysql server
+// @Summary	update mysql server by id
+// @Accept	application/json
+// @Param	id				path int true  "mysql server id"
+// @Param	cluster_id		body int	false "mysql cluster id"
+// @Param	server_name		body string	false "mysql server name"
+// @Param	service_name	body string	false "mysql server service name"
+// @Param	host_ip			body string	false "mysql server host ip"
+// @Param	port_num		body int	false "mysql server port num"
+// @Param	deployment_type	body int	false "mysql deployment type"
+// @Produce	application/json
+// @Success	200 {string} string "{"mysql_servers":[{"deployment_type":1,"version":"","id":26,"server_name":"test","service_name":"test","port_num":3306,"del_flag":0,"create_time":"2022-03-02T01:26:32.107625+08:00","last_update_time":"2022-03-02T01:26:32.107625+08:00","cluster_id":97,"host_ip":"192.168.1.1"}]}"
+// @Router	/api/v1/metadata/mysql-server/:id [post]
 func UpdateMySQLServerByID(c *gin.Context) {
 	var fields map[string]interface{}
 	// get param
@@ -405,8 +452,10 @@ func UpdateMySQLServerByID(c *gin.Context) {
 
 // @Tags mysql server
 // @Summary get mysql servers by host info
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"last_update_time":"2021-02-24T02:47:19.589172+08:00","id":93,"cluster_id":0,"host_ip":"192.168.1.1","version":"5.7.35","del_flag":1,"create_time":"2021-02-24T02:47:19.589172+08:00","port_num":3306,"deployment_type":0}]}"
+// @Accept	application/json
+// @Param	id path int true "mysql server id"
+// @Produce	application/json
+// @Success	200 {string} string "{"mysql_servers":[{"id":1,"port_num":3306,"create_time":"2021-09-02T11:16:06.561525+08:00","last_update_time":"2022-03-02T01:14:14.13647+08:00","deployment_type":1,"version":"5.7","del_flag":0,"cluster_id":1,"server_name":"192-168-10-219","service_name":"192-168-10-219:3306","host_ip":"192.168.10.219"}]}"
 // @Router /api/v1/metadata/mysql-server/:id [get]
 func DeleteMySQLServerByID(c *gin.Context) {
 	var fields map[string]interface{}

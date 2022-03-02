@@ -12,13 +12,24 @@ Accept: application/json
 
 
 ### get mysql server by id
-GET http://{{baseURL}}/api/v1/metadata/mysql-server/get/86
+GET http://{{baseURL}}/api/v1/metadata/mysql-server/get/1
 Accept: application/json
 
 ### get mysql server by id
-GET http://{{baseURL}}/api/v1/metadata/mysql-server/host-info?host_ip=192.168.1.2&port_num=3306
+GET http://{{baseURL}}/api/v1/metadata/mysql-server/host-info
 Accept: application/json
 
+{ "host_ip":"192.168.10.220", "port_num":"3306" }
+
+### judge if serve is master
+GET http://{{baseURL}}/api/v1/metadata/mysql-server/is-master/host-info
+Accept: application/json
+
+{ "host_ip":"192.168.1.2", "port_num":"3306" }
+
+### get mysql cluster by mysql server id
+GET http://{{baseURL}}/api/v1/metadata/mysql-server/mysql-cluster/1
+Accept: application/json
 
 ### add new mysql server
 POST http://{{baseURL}}/api/v1/metadata/mysql-server
@@ -27,7 +38,7 @@ Content-Type: application/json
 {"cluster_id": 1, "server_name": "test", "service_name": "test", "host_ip": "192.168.1.1", "port_num": 3306, "deployment_type": 1}
 
 ### update mysql server by id
-POST http://{{baseURL}}/api/v1/metadata/mysql-server/update/86
+POST http://{{baseURL}}/api/v1/metadata/mysql-server/update/26
 Content-Type: application/json
 
 {"cluster_id": 97, "del_flag": 0}
