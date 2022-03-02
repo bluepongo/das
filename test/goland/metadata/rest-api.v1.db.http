@@ -10,15 +10,37 @@ Content-Type: application/json
 GET http://{{baseURL}}/api/v1/metadata/db/get/1
 Content-Type: application/json
 
+### get database by db name and cluster info
+GET http://{{baseURL}}/api/v1/metadata/db/name-and-cluster-info
+Content-Type: application/json
+
+{"db_name": "new_db", "cluster_id": 1, "cluster_type": 1}
+
 ### get all apps by id
 GET http://{{baseURL}}/api/v1/metadata/db/app/1
+Content-Type: application/json
+
+### get mysql cluster by id
+GET http://{{baseURL}}/api/v1/metadata/db/mysql-cluster/1
+Content-Type: application/json
+
+### get app owner by id
+GET http://{{baseURL}}/api/v1/metadata/db/app-owner/1
+Content-Type: application/json
+
+### get db owner by id
+GET http://{{baseURL}}/api/v1/metadata/db/db-owner/1
+Content-Type: application/json
+
+### get all owner by id
+GET http://{{baseURL}}/api/v1/metadata/db/all-owner/1
 Content-Type: application/json
 
 ### add new database
 POST http://{{baseURL}}/api/v1/metadata/db
 Content-Type: application/json
 
-{"db_name": "new_db", "cluster_id": 1, "cluster_type": 1, "env_id": 1}
+{"db_name": "new_db_4", "cluster_id": 1, "cluster_type": 1, "env_id": 1}
 
 ### update database by id
 POST http://{{baseURL}}/api/v1/metadata/db/update/1
@@ -26,36 +48,30 @@ Content-Type: application/json
 
 {"db_name": "update_db"}
 
-### update database by id
-POST http://{{baseURL}}/api/v1/metadata/db/update/1
-Content-Type: application/json
-
-{"db_name": "pmm_test"}
-
 ### delete database by id
-POST http://{{baseURL}}/api/v1/metadata/db/delete/13
+POST http://{{baseURL}}/api/v1/metadata/db/delete/191
 Content-Type: application/json
 
 ### add new app by id
 POST http://{{baseURL}}/api/v1/metadata/db/add-app/1
 Content-Type: application/json
 
-{"app_id": 2}
+{"app_id": 3}
 
 ### delete app by id
 POST http://{{baseURL}}/api/v1/metadata/db/delete-app/1
 Content-Type: application/json
 
-{"app_id": 2}
+{"app_id": 3}
 
 ### add new user by id
 POST http://{{baseURL}}/api/v1/metadata/db/add-user/1
 Content-Type: application/json
 
-{"user_id": 4}
+{"user_id": 3}
 
 ### delete user by id
 POST http://{{baseURL}}/api/v1/metadata/db/delete-user/1
 Content-Type: application/json
 
-{"user_id": 4}
+{"user_id": 3}
