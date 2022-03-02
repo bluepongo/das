@@ -562,8 +562,8 @@ func MySQLClusterDeleteUser(c *gin.Context) {
 // @Accept	application/json
 // @Param	cluster_name			body string	true  "mysql cluster name"
 // @Param	middleware_cluster_id	body int	false "middleware cluster id"
-// @Param	monitor_system_id 		body int	false "monitor system id"
-// @Param	env_id 					body string	true  "env id"
+// @Param	monitor_system_id		body int	false "monitor system id"
+// @Param	env_id					body string	true  "env id"
 // @Produce	application/json
 // @Success	200 {string} string "{"mysql_clusters":[{"id":3,"cluster_name":"api_test","monitor_system_id":0,"env_id":1,"create_time":"2022-03-01T08:30:43.428343+08:00","middleware_cluster_id":0,"del_flag":0,"last_update_time":"2022-03-01T08:30:43.428343+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster [post]
