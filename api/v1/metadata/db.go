@@ -162,7 +162,7 @@ func GetDBByNameAndClusterInfo(c *gin.Context) {
 	// init service
 	s := metadata.NewDBServiceWithDefault()
 	// get entity
-	err = s.GetByNameAndClusterInfo(rd.GetDBName(), rd.GetClusterID(), rd.GetClusterType())
+	err = s.GetDBByNameAndClusterInfo(rd.GetDBName(), rd.GetClusterID(), rd.GetClusterType())
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByNameAndClusterInfo, err, rd.GetDBName(), rd.GetClusterID(), rd.GetClusterType())
 		return

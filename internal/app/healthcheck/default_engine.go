@@ -791,7 +791,7 @@ func (de *DefaultEngine) checkSlowQuery() error {
 
 		// get db info
 		if sql.GetDBName() != constant.EmptyString {
-			err = dbService.GetByNameAndClusterInfo(sql.GetDBName(), clusterID, defaultClusterType)
+			err = dbService.GetDBByNameAndClusterInfo(sql.GetDBName(), clusterID, defaultClusterType)
 			if err != nil {
 				return err
 			}
