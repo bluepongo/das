@@ -42,7 +42,7 @@ const (
 // @Summary get all users
 // @Accept	application/json
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Success 200 {string} string "{"users": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user [get]
 
 func GetUser(c *gin.Context) {
@@ -69,7 +69,7 @@ func GetUser(c *gin.Context) {
 // @Tags user
 // @Summary get user by Name
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Success 200 {string} string "{"users": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user/user-name/:user_name [get]
 func GetUserByName(c *gin.Context) {
 	// get param
@@ -101,7 +101,7 @@ func GetUserByName(c *gin.Context) {
 // @Tags user
 // @Summary get user by id
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Success 200 {string} string "{"users": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user/get/:id [get]
 func GetUserByID(c *gin.Context) {
 	// get param
@@ -138,7 +138,7 @@ func GetUserByID(c *gin.Context) {
 // @Tags user
 // @Summary get user by EmployeeID
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Success 200 {string} string "{"users": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user/employee-id/:employee_id [get]
 func GetUserByEmployeeID(c *gin.Context) {
 	// get param
@@ -170,7 +170,7 @@ func GetUserByEmployeeID(c *gin.Context) {
 // @Tags user
 // @Summary get user by AccountName
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Success 200 {string} string "{"users": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user/account-name/:account_name [get]
 func GetUserByAccountName(c *gin.Context) {
 	// get param
@@ -202,7 +202,7 @@ func GetUserByAccountName(c *gin.Context) {
 // @Tags user
 // @Summary get user by Email
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Success 200 {string} string "{"users": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user/email/:email [get]
 func GetUserByEmail(c *gin.Context) {
 	// get param
@@ -234,7 +234,7 @@ func GetUserByEmail(c *gin.Context) {
 // @Tags user
 // @Summary get user by Telephone
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Success 200 {string} string "{"users": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user/telephone/:telephone [get]
 func GetUserByTelephone(c *gin.Context) {
 	// get param
@@ -266,7 +266,7 @@ func GetUserByTelephone(c *gin.Context) {
 // @Tags user
 // @Summary get user by Mobile
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Success 200 {string} string "{"users": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user/mobile/:mobile [get]
 func GetUserByMobile(c *gin.Context) {
 	// get param
@@ -308,7 +308,7 @@ func GetUserByMobile(c *gin.Context) {
 // @Param	mobile body string true "mobile"
 // @Param 	del_flag body int	false	"delete flag"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Success 200 {string} string "{"users": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user [post]
 func AddUser(c *gin.Context) {
 	var fields map[string]interface{}
@@ -389,7 +389,7 @@ func AddUser(c *gin.Context) {
 // @Param	mobile body string true "mobile"
 // @Param 	del_flag body int	false	"delete flag"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Success 200 {string} string "{"users": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/v1/metadata/user/update/:id [post]
 func UpdateUserByID(c *gin.Context) {
 	var fields map[string]interface{}
@@ -453,7 +453,7 @@ func UpdateUserByID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "user id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": []}"
+// @Success 200 {string} string "{"users": []}"
 // @Router /api/v1/metadata/user/delete/:id [get]
 func DeleteUserByID(c *gin.Context) {
 	var fields map[string]interface{}
@@ -494,7 +494,7 @@ func DeleteUserByID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "user id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Success 200 {string} string "{"users": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
 // @Router /api/v1/metadata/user/app/:id [get]
 func GetAppsByUserID(c *gin.Context) {
 	// get param
@@ -534,7 +534,7 @@ func GetAppsByUserID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "user id"
 // @Produce  db/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Success 200 {string} string "{"users": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
 // @Router /api/v1/metadata/user/db/:id [get]
 func GetDBsByUserID(c *gin.Context) {
 	// get param
@@ -574,7 +574,7 @@ func GetDBsByUserID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "user id"
 // @Produce  middlewarecluster/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Success 200 {string} string "{"users": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
 // @Router /api/v1/metadata/user/middlewarecluster/:id [get]
 func GetMiddlewareClustersByUserID(c *gin.Context) {
 	// get param
@@ -614,7 +614,7 @@ func GetMiddlewareClustersByUserID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "user id"
 // @Produce  mysqlclustercluster/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
+// @Success 200 {string} string "{"users": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8,"owner_group": "k"}]}"
 // @Router /api/v1/metadata/user/mysqlclustercluster/:id [get]
 func GetMySQLClustersByUserID(c *gin.Context) {
 	// get param
