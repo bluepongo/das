@@ -34,14 +34,8 @@ Content-Type: application/json
 
 {"cluster_name": "update_middleware_cluster"}
 
-### update middleware cluster by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/update/1
-Content-Type: application/json
-
-{"cluster_name": "middleware-cluster-1"}
-
 ### delete middleware cluster by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/delete/27
+POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/delete/65
 Content-Type: application/json
 
 ### add a new map of middleware cluster and user in the middleware
