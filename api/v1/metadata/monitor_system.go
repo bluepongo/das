@@ -34,7 +34,7 @@ const (
 // @Summary get all monitor systems
 // @Accept	application/json
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success 200 {string} string "{"monitor_systems": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router  /api/v1/metadata/monitor-system [get]
 func GetMonitorSystem(c *gin.Context) {
 	// init service
@@ -62,7 +62,7 @@ func GetMonitorSystem(c *gin.Context) {
 // @Accept	application/json
 // @Param	env_id path int true "env id"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success 200 {string} string "{"monitor_systems": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router  /api/v1/metadata/monitor-system/env/:env_id [get]
 func GetMonitorSystemByEnv(c *gin.Context) {
 	// get param
@@ -103,7 +103,7 @@ func GetMonitorSystemByEnv(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "monitor system id"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success 200 {string} string "{"monitor_systems": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router  /api/v1/metadata/monitor-system/get/:id [get]
 func GetMonitorSystemByID(c *gin.Context) {
 	// get param
@@ -143,7 +143,7 @@ func GetMonitorSystemByID(c *gin.Context) {
 // @Param	host_ip  body string true "host ip"
 // @Param 	port_num body int    true "port num"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success 200 {string} string "{"monitor_systems": [{"port_num_slow":9000,"base_url":"/prometheus","create_time":"2021-09-02T09:06:30.736111+08:00","last_update_time":"2021-11-18T16:16:18.702104+08:00","host_ip":"192.168.10.219","port_num":80,"env_id":1,"del_flag":0,"id":1,"system_name":"pmm2","system_type":2},{"base_url":"/prometheus","env_id":1,"del_flag":0,"create_time":"2021-09-02T15:11:19.558733+08:00","id":2,"port_num":80,"port_num_slow":33061,"last_update_time":"2021-11-10T10:01:52.717786+08:00","system_name":"pmm1","system_type":1,"host_ip":"192.168.10.220"}]}"
 // @Router  /api/v1/metadata/monitor-system/host-info [get]
 func GetMonitorSystemByHostInfo(c *gin.Context) {
 	var rd *utilmeta.HostInfo
@@ -185,7 +185,7 @@ func GetMonitorSystemByHostInfo(c *gin.Context) {
 // @Param 	base_url      body string true	"base url"
 // @Param 	env_id        body int    true	"env id"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success 200 {string} string "{"monitor_systems": [{"id":40,"system_name":"new_monitor_system","system_type":2,"host_ip":"192.168.10.219","port_num":8080,"port_num_slow":9000,"create_time":"2022-03-02T12:06:38.622752+08:00","env_id":1,"del_flag":0,"last_update_time":"2022-03-02T12:06:38.622752+08:00","base_url":"/prometheus"}]}"
 // @Router  /api/v1/metadata/monitor-system [post]
 func AddMonitorSystem(c *gin.Context) {
 	var fields map[string]interface{}
@@ -253,7 +253,7 @@ func AddMonitorSystem(c *gin.Context) {
 // @Param 	env_id        body int    false	"env id"
 // @Param 	del_flag      body int    false	"delete flag"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success 200 {string} string "{"monitor_systems": [{"system_name":"update_monitor_system","host_ip":"192.168.10.219","port_num_slow":9000,"env_id":1,"id":1,"system_type":2,"port_num":3300,"base_url":"/prometheus","del_flag":0,"create_time":"2021-09-02T09:06:30.736111+08:00","last_update_time":"2021-11-18T16:16:18.702104+08:00"}]}"
 // @Router  /api/v1/metadata/monitor-system/update/:id [post]
 func UpdateMonitorSystemByID(c *gin.Context) {
 	var fields map[string]interface{}
@@ -319,7 +319,7 @@ func UpdateMonitorSystemByID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int	true "monitor system id"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success 200 {string} string "{"monitor_systems": [{"id":40,"system_type":2,"port_num_slow":9000,"env_id":1,"create_time":"2022-03-02T12:06:38.622752+08:00","system_name":"new_monitor_system","host_ip":"192.168.10.219","port_num":8080,"base_url":"/prometheus","del_flag":0,"last_update_time":"2022-03-02T12:06:38.622752+08:00"}]}"
 // @Router  /api/v1/metadata/monitor-system/delete/:id [post]
 func DeleteMonitorSystemByID(c *gin.Context) {
 	// get params
