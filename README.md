@@ -28,9 +28,15 @@ Build
 ```
 go build -o das main.go
 ```
+
 Start
 ```
 ./das start --daemon=true --config=./config/das.yaml
+```
+
+Swagger
+```
+http://127.0.0.1:6090/swagger/index.html
 ```
 
 ## Contributing
