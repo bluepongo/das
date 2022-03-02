@@ -82,9 +82,9 @@ func (ds *DBService) GetByID(id int) error {
 	return nil
 }
 
-// GetByNameAndClusterInfo gets the database of the given db name and cluster info from the middleware
-func (ds *DBService) GetByNameAndClusterInfo(name string, clusterID, clusterType int) error {
-	db, err := ds.DBRepo.GetByNameAndClusterInfo(name, clusterID, clusterType)
+// GetDBByNameAndClusterInfo gets the database of the given db name and cluster info from the middleware
+func (ds *DBService) GetDBByNameAndClusterInfo(name string, clusterID, clusterType int) error {
+	db, err := ds.DBRepo.GetDBByNameAndClusterInfo(name, clusterID, clusterType)
 	if err != nil {
 		return err
 	}
