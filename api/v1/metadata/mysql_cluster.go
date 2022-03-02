@@ -38,7 +38,7 @@ const (
 // @Summary	get all mysql clusters
 // @Accept	application/json
 // @Produce	application/json
-// @Success	200 {string} string "{"mysql_clusters": [{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"}]}"
+// @Success	200 {string} string "{"mysql_clusters":[{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"}]}"
 // @Router	/api/v1/metadata/mysql-cluster [get]
 func GetMySQLCluster(c *gin.Context) {
 	// init service
@@ -67,7 +67,7 @@ func GetMySQLCluster(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "env id"
 // @Produce	application/json
-// @Success	200 {string} string "{"mysql_clusters": [{"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
+// @Success	200 {string} string "{"mysql_clusters":[{"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
 // @Router	/api/v1/metadata/mysql-cluster/:id [get]
 func GetMySQLClusterByEnv(c *gin.Context) {
 	// get param
@@ -107,7 +107,7 @@ func GetMySQLClusterByEnv(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "mysql cluster id"
 // @Produce	application/json
-// @Success	200 {string} string "{"mysql_clusters": [{"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
+// @Success	200 {string} string "{"mysql_clusters":[{"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
 // @Router	/api/v1/metadata/mysql-cluster/:id [get]
 func GetMySQLClusterByID(c *gin.Context) {
 	// get param
@@ -147,7 +147,7 @@ func GetMySQLClusterByID(c *gin.Context) {
 // @Accept	application/json
 // @Param	name path string true "mysql cluster name"
 // @Produce  application/json
-// @Success 200 {string} string "{"mysql_clusters": [{"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
+// @Success 200 {string} string "{"mysql_clusters":[{"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
 // @Router /api/v1/metadata/mysql-cluster/cluster-name/:name [get]
 func GetMySQLClusterByName(c *gin.Context) {
 	// get param
@@ -181,7 +181,7 @@ func GetMySQLClusterByName(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "mysql cluster id"
 // @Produce	application/json
-// @Success	200 {string} string "{"mysql_servers": [{ "id": 1, "server_name": "192-168-10-219", "service_name": "192-168-10-219:3306", "deployment_type": 1, "last_update_time": "2021-12-21T09:16:20.184065+08:00", "cluster_id": 1, "host_ip": "192.168.10.219", "port_num": 3306, "version": "5.7", "del_flag": 0, "create_time": "2021-09-02T11:16:06.561525+08:00" }]}"
+// @Success	200 {string} string "{"mysql_servers":[{"id":1,"server_name":"192-168-10-219","service_name":"192-168-10-219:3306","deployment_type":1,"last_update_time":"2021-12-21T09:16:20.184065+08:00","cluster_id":1,"host_ip":"192.168.10.219","port_num":3306,"version":"5.7","del_flag":0,"create_time":"2021-09-02T11:16:06.561525+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/mysql-server/:id [get]
 func GetMySQLServersByID(c *gin.Context) {
 	// get params
@@ -220,7 +220,7 @@ func GetMySQLServersByID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "mysql cluster id"
 // @Produce	application/json
-// @Success	200 {string} string "{"mysql_server": { "id": 1, "server_name": "192-168-10-219", "service_name": "192-168-10-219:3306", "deployment_type": 1, "last_update_time": "2021-12-21T09:16:20.184065+08:00", "cluster_id": 1, "host_ip": "192.168.10.219", "port_num": 3306, "version": "5.7", "del_flag": 0, "create_time": "2021-09-02T11:16:06.561525+08:00" }}"
+// @Success	200 {string} string "{"mysql_server":{"id":1,"server_name":"192-168-10-219","service_name":"192-168-10-219:3306","deployment_type":1,"last_update_time":"2021-12-21T09:16:20.184065+08:00","cluster_id":1,"host_ip":"192.168.10.219","port_num":3306,"version":"5.7","del_flag":0,"create_time":"2021-09-02T11:16:06.561525+08:00"}}"
 // @Router	/api/v1/metadata/mysql-cluster/master-server/:id [get]
 func GetMasterServersByID(c *gin.Context) {
 	// get params
@@ -258,7 +258,7 @@ func GetMasterServersByID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "mysql cluster id"
 // @Produce	application/json
-// @Success	200 {string} string "{ "dbs": [ { "cluster_type": 1, "del_flag": 0, "last_update_time": "2021-12-29T14:11:06.500863+08:00", "id": 2, "db_name": "das", "cluster_id": 1, "env_id": 1, "create_time": "2021-09-02T15:14:40.782387+08:00" } ] }"
+// @Success	200 {string} string "{"dbs":[{"cluster_type":1,"del_flag":0,"last_update_time":"2021-12-29T14:11:06.500863+08:00","id":2,"db_name":"das","cluster_id":1,"env_id":1,"create_time":"2021-09-02T15:14:40.782387+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/db/:id [get]
 func GetDBsByMySQLCLusterID(c *gin.Context) {
 	// get params
@@ -297,7 +297,7 @@ func GetDBsByMySQLCLusterID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "mysql cluster id"
 // @Produce	application/json
-// @Success	200 {string} string "{ "users": [ { "id": 1, "employee_id": "100001", "account_name": "zs001", "last_update_time": "2021-11-22T13:46:20.430926+08:00", "mobile": "13012345678", "role": 3, "del_flag": 0, "user_name": "zhangsan", "department_name": "arch", "email": "allinemailtest@163.com", "telephone": "01012345678", "create_time": "2021-10-25T09:21:50.364327+08:00" } ] }"
+// @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","account_name":"zs001","last_update_time":"2021-11-22T13:46:20.430926+08:00","mobile":"13012345678","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","email":"allinemailtest@163.com","telephone":"01012345678","create_time":"2021-10-25T09:21:50.364327+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/user/:id [get]
 func GetUsersByMySQLClusterID(c *gin.Context) {
 	// get params
@@ -335,7 +335,7 @@ func GetUsersByMySQLClusterID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "mysql cluster id"
 // @Produce	application/json
-// @Success	200 {string} string "{ "users": [ { "id": 1, "employee_id": "100001", "account_name": "zs001", "last_update_time": "2021-11-22T13:46:20.430926+08:00", "mobile": "13012345678", "role": 3, "del_flag": 0, "user_name": "zhangsan", "department_name": "arch", "email": "allinemailtest@163.com", "telephone": "01012345678", "create_time": "2021-10-25T09:21:50.364327+08:00" } ] }"
+// @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","account_name":"zs001","last_update_time":"2021-11-22T13:46:20.430926+08:00","mobile":"13012345678","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","email":"allinemailtest@163.com","telephone":"01012345678","create_time":"2021-10-25T09:21:50.364327+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/app-user/:id [get]
 func GetAppUsersByMySQLCLusterID(c *gin.Context) {
 	// get params
@@ -373,7 +373,7 @@ func GetAppUsersByMySQLCLusterID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "mysql cluster id"
 // @Produce	application/json
-// @Success	200 {string} string "{ "users": [ { "id": 1, "employee_id": "100001", "account_name": "zs001", "last_update_time": "2021-11-22T13:46:20.430926+08:00", "mobile": "13012345678", "role": 3, "del_flag": 0, "user_name": "zhangsan", "department_name": "arch", "email": "allinemailtest@163.com", "telephone": "01012345678", "create_time": "2021-10-25T09:21:50.364327+08:00" } ] }"
+// @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","account_name":"zs001","last_update_time":"2021-11-22T13:46:20.430926+08:00","mobile":"13012345678","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","email":"allinemailtest@163.com","telephone":"01012345678","create_time":"2021-10-25T09:21:50.364327+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/db-user/:id [get]
 func GetDBUsersByMySQLCLusterID(c *gin.Context) {
 	// get params
@@ -411,7 +411,7 @@ func GetDBUsersByMySQLCLusterID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "mysql cluster id"
 // @Produce	application/json
-// @Success	200 {string} string "{ "users": [ { "id": 1, "employee_id": "100001", "account_name": "zs001", "last_update_time": "2021-11-22T13:46:20.430926+08:00", "mobile": "13012345678", "role": 3, "del_flag": 0, "user_name": "zhangsan", "department_name": "arch", "email": "allinemailtest@163.com", "telephone": "01012345678", "create_time": "2021-10-25T09:21:50.364327+08:00" } ] }"
+// @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","account_name":"zs001","last_update_time":"2021-11-22T13:46:20.430926+08:00","mobile":"13012345678","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","email":"allinemailtest@163.com","telephone":"01012345678","create_time":"2021-10-25T09:21:50.364327+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/all-user/:id [get]
 func GetAllUsersByMySQLCLusterID(c *gin.Context) {
 	// get params
@@ -450,7 +450,7 @@ func GetAllUsersByMySQLCLusterID(c *gin.Context) {
 // @Param	id path int true "mysql cluster id"
 // @Param	user_id body int true "user id"
 // @Produce	application/json
-// @Success	200 {string} string "{ "users": [ { "id": 1, "employee_id": "100001", "email": "allinemailtest@163.com", "role": 3, "del_flag": 0, "user_name": "zhangsan", "department_name": "arch", "account_name": "zs001", "telephone": "01012345678", "mobile": "13012345678", "create_time": "2021-10-25T09:21:50.364327+08:00", "last_update_time": "2021-11-22T13:46:20.430926+08:00" }}"
+// @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","email":"allinemailtest@163.com","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","account_name":"zs001","telephone":"01012345678","mobile":"13012345678","create_time":"2021-10-25T09:21:50.364327+08:00","last_update_time":"2021-11-22T13:46:20.430926+08:00"}}"
 // @Router	/api/v1/metadata/mysql-cluster/add-user/:id [post]
 func MySQLClusterAddUser(c *gin.Context) {
 	// get params
@@ -507,7 +507,7 @@ func MySQLClusterAddUser(c *gin.Context) {
 // @Param	id path int true "mysql cluster id"
 // @Param	user_id body int true "user id"
 // @Produce	application/json
-// @Success	200 {string} string "{ "users": [ { "id": 1, "employee_id": "100001", "email": "allinemailtest@163.com", "role": 3, "del_flag": 0, "user_name": "zhangsan", "department_name": "arch", "account_name": "zs001", "telephone": "01012345678", "mobile": "13012345678", "create_time": "2021-10-25T09:21:50.364327+08:00", "last_update_time": "2021-11-22T13:46:20.430926+08:00" }}"
+// @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","email":"allinemailtest@163.com","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","account_name":"zs001","telephone":"01012345678","mobile":"13012345678","create_time":"2021-10-25T09:21:50.364327+08:00","last_update_time":"2021-11-22T13:46:20.430926+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/delete-user/:id [post]
 func MySQLClusterDeleteUser(c *gin.Context) {
 	// get params
@@ -565,7 +565,7 @@ func MySQLClusterDeleteUser(c *gin.Context) {
 // @Param	monitor_system_id 		body int	false "monitor system id"
 // @Param	env_id 					body string	true  "env id"
 // @Produce	application/json
-// @Success	200 {string} string " { "mysql_clusters": [ { "id": 3, "cluster_name": "api_test", "monitor_system_id": 0, "env_id": 1, "create_time": "2022-03-01T08:30:43.428343+08:00", "middleware_cluster_id": 0, "del_flag": 0, "last_update_time": "2022-03-01T08:30:43.428343+08:00" } ] }"
+// @Success	200 {string} string "{"mysql_clusters":[{"id":3,"cluster_name":"api_test","monitor_system_id":0,"env_id":1,"create_time":"2022-03-01T08:30:43.428343+08:00","middleware_cluster_id":0,"del_flag":0,"last_update_time":"2022-03-01T08:30:43.428343+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster [post]
 func AddMySQLCluster(c *gin.Context) {
 	var fields map[string]interface{}
@@ -627,7 +627,7 @@ func AddMySQLCluster(c *gin.Context) {
 // @Param	env_id 					body string	false "env id"
 // @Param	del_flag				body int	false "delete flag"
 // @Produce	application/json
-// @Success	200 {string} string "{ "mysql_clusters": [ { "middleware_cluster_id": 0, "monitor_system_id": 0, "last_update_time": "2022-03-01T08:30:43.428343+08:00", "id": 3, "cluster_name": "test", "env_id": 1, "del_flag": 0, "create_time": "2022-03-01T08:30:43.428343+08:00" } ] }"
+// @Success	200 {string} string "{"mysql_clusters":[{"middleware_cluster_id":0,"monitor_system_id":0,"last_update_time":"2022-03-01T08:30:43.428343+08:00","id":3,"cluster_name":"test","env_id":1,"del_flag":0,"create_time":"2022-03-01T08:30:43.428343+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/update/:id [post]
 func UpdateMySQLClusterByID(c *gin.Context) {
 	var fields map[string]interface{}
@@ -703,7 +703,7 @@ func UpdateMySQLClusterByID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "mysql cluster id"
 // @Produce	application/json
-// @Success	200 {string} string "{ "mysql_clusters": [ { "cluster_name": "test", "env_id": 1, "del_flag": 0, "create_time": "2022-03-01T08:30:43.428343+08:00", "last_update_time": "2022-03-01T08:32:25.715563+08:00", "id": 3, "middleware_cluster_id": 0, "monitor_system_id": 0 } ] }"
+// @Success	200 {string} string "{"mysql_clusters":[{"cluster_name":"test","env_id":1,"del_flag":0,"create_time":"2022-03-01T08:30:43.428343+08:00","last_update_time":"2022-03-01T08:32:25.715563+08:00","id":3,"middleware_cluster_id":0,"monitor_system_id":0}]}"
 // @Router	/api/v1/metadata/mysql-cluster/delete/:id [post]
 func DeleteMySQLClusterByID(c *gin.Context) {
 	var fields map[string]interface{}
