@@ -13,7 +13,7 @@ var _ metadata.EnvService = (*EnvService)(nil)
 
 type EnvService struct {
 	metadata.EnvRepo
-	Envs []metadata.Env `json:"Envs"`
+	Envs []metadata.Env `json:"envs"`
 }
 
 // NewEnvService returns a new *EnvService

@@ -27,7 +27,7 @@ const (
 // @Summary	get all environments
 // @Accept	application/json
 // @Produce application/json
-// @Success	200 {string} string "{"Envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success	200 {string} string "{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router	/api/v1/metadata/env [get]
 func GetEnv(c *gin.Context) {
 	// init service
@@ -55,7 +55,7 @@ func GetEnv(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "env id"
 // @Produce application/json
-// @Success	200 {string} string "{"Envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success	200 {string} string "{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router	/api/v1/metadata/env/:id [get]
 func GetEnvByID(c *gin.Context) {
 	// get param
@@ -94,7 +94,7 @@ func GetEnvByID(c *gin.Context) {
 // @Accept	application/json
 // @Param	env_name path string true "env name"
 // @Produce application/json
-// @Success 200 {string} string "{"Envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success 200 {string} string "{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router	/api/v1/metadata/env/env-name/:env_name [get]
 func GetEnvByName(c *gin.Context) {
 	// get params
@@ -128,7 +128,7 @@ func GetEnvByName(c *gin.Context) {
 // @Accept	application/json
 // @Param	env_name body string true "env name"
 // @Produce application/json
-// @Success 200 {string} string "{"Envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success 200 {string} string "{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router	/api/v1/metadata/env [post]
 func AddEnv(c *gin.Context) {
 	var fields map[string]interface{}
@@ -177,7 +177,7 @@ func AddEnv(c *gin.Context) {
 // @Param 	env_name body string false	"env name"
 // @Param 	del_flag body int	false	"delete flag"
 // @Produce application/json
-// @Success	200 {string} string "{"Envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success	200 {string} string "{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router	/api/v1/metadata/env/update/:id [post]
 func UpdateEnvByID(c *gin.Context) {
 	var fields map[string]interface{}
@@ -235,7 +235,7 @@ func UpdateEnvByID(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "env id"
 // @Produce application/json
-// @Success	200 {string} string "{"Envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success	200 {string} string "{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router	/api/v1/metadata/env/delete/:id [post]
 func DeleteEnvByID(c *gin.Context) {
 	var fields map[string]interface{}
