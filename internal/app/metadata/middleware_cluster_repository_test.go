@@ -64,7 +64,7 @@ func TestMiddlewareClusterRepo_Execute(t *testing.T) {
 func TestMiddlewareClusterRepo_Transaction(t *testing.T) {
 	asst := assert.New(t)
 
-	sql := `insert into t_meta_middleware_cluster_info(cluster_name, owner_id, env_id) values(?, ?, ?);`
+	sql := `insert into t_meta_middleware_cluster_info(cluster_name, env_id) values(?, ?);`
 	tx, err := testMiddlewareClusterRepo.Transaction()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	err = tx.Begin()
