@@ -57,10 +57,10 @@ GET http://{{baseURL}}/api/v1/metadata/user/db/1
 Accept: application/json
 
 ### get all middlewareclusters by id
-GET http://{{baseURL}}/api/v1/metadata/user/middlewarecluster/1
+GET http://{{baseURL}}/api/v1/metadata/user/middlewarecluster/14
 Accept: application/json
 
 ### get all mysqlclusters by id
-GET http://{{baseURL}}/api/v1/metadata/user/mysqlcluster/1
+GET http://{{baseURL}}/api/v1/metadata/user/mysqlcluster/14
 Accept: application/json
 
