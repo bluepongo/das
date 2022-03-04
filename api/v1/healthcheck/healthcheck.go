@@ -20,9 +20,9 @@ import (
 const (
 	operationIDJSON            = "operation_id"
 	reviewJSON                 = "review"
-	checkRespMessage           = `{"code": 0, "operation_id: %d", message": "healthcheck started"}`
-	checkByHostInfoRespMessage = `{"code": 0, "operation_id: %d", "message": "healthcheck by host info started"}`
-	reviewAccuracyRespMessage  = `{"code": 0, "message": "reviewed accuracy"}`
+	checkRespMessage           = `{"operation_id: %d", "message": "healthcheck started"}`
+	checkByHostInfoRespMessage = `{"operation_id: %d", "message": "healthcheck by host info started"}`
+	reviewAccuracyRespMessage  = `{"operation_id: %d", "message": "reviewed accuracy completed"}`
 )
 
 // @Tags	healthcheck

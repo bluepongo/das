@@ -3,11 +3,11 @@ package healthcheck
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/pingcap/errors"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/alert"
 	"github.com/romberli/das/internal/app/metadata"
@@ -156,7 +156,6 @@ func (de *DefaultEngine) Run() {
 		updateErr := de.getDASRepo().UpdateOperationStatus(de.GetOperationInfo().GetOperationID(), defaultFailedStatus, err.Error())
 		if updateErr != nil {
 			log.Errorf("%+v", message.NewMessage(msghc.ErrHealthcheckUpdateOperationStatus, updateErr))
-			return
 		}
 		return
 	}
@@ -925,11 +924,11 @@ func (de *DefaultEngine) parsePrometheusDatas(item string, datas []healthcheck.P
 
 func (de *DefaultEngine) sendEmail() error {
 	toAddrs, err := de.getToAddrs()
-	if len(toAddrs) == 0 {
-		return fmt.Errorf("send email toAddrs can't be null")
-	}
 	if err != nil {
 		return err
+	}
+	if len(toAddrs) == constant.ZeroInt {
+		return fmt.Errorf("send email toAddrs can't be null")
 	}
 
 	result, err := de.getDASRepo().GetResultByOperationID(de.GetOperationInfo().GetOperationID())

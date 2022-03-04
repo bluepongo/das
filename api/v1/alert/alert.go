@@ -19,7 +19,7 @@ const (
 	subjectJSON = "subject"
 	contentJSON = "content"
 
-	sendEmailRespMessage = `{"code": 0, "message": "send email completed successfully"}`
+	sendEmailRespMessage = `{"message": "sending email completed successfully"}`
 )
 
 // @Tags 	alert
@@ -30,7 +30,7 @@ const (
 // @Param	ccAddrs body string true 	"cc addrs"
 // @Param	content body string true	"to content"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": {"code": 0, "message": "send email completed successfully"}}"
+// @Success 200 {string} string {"message": "sending email completed successfully"}
 // @Router	/api/v1/alert/email [post]
 func SendEmail(c *gin.Context) {
 	// get data
