@@ -134,7 +134,7 @@ func GetAppByName(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "app id"
 // @Produce  application/json
-// @Success 200 {string} string "{"dbs": [1, 2]}"
+// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router /api/vi/metadata/app/db/:id [get]
 func GetDBsByAppID(c *gin.Context) {
 	// get param
@@ -441,7 +441,7 @@ func AppDeleteDB(c *gin.Context) {
 // @Accept	application/json
 // @Param	id path int true "app id"
 // @Produce  application/json
-// @Success 200 {string} string "{"users": [1, 2]}"
+// @Success 200 {string} string "{"users": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router /api/vi/metadata/app/user/:id [get]
 func GetUsersByAppID(c *gin.Context) {
 	// get param
