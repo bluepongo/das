@@ -15,7 +15,7 @@ const userUsersStruct = "Users"
 type UserService struct {
 	metadata.UserRepo
 	Users              []metadata.User              `json:"users"`
-	Apps               []metadata.App               `jaon:"apps"`
+	Apps               []metadata.App               `json:"apps"`
 	DBs                []metadata.DB                `json:"dbs"`
 	MiddlewareClusters []metadata.MiddlewareCluster `json:"middlewareclusters"`
 	MySQLClusters      []metadata.MySQLCluster      `json:"mysqlclusters"`

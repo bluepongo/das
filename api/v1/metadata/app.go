@@ -31,8 +31,9 @@ const (
 
 // @Tags application
 // @Summary get all applications
+// @Accept	application/json
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
+// @Success 200 {string} string "{"apps": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8}]}"
 // @Router /api/v1/metadata/app [get]
 func GetApp(c *gin.Context) {
 	// init service
@@ -57,8 +58,10 @@ func GetApp(c *gin.Context) {
 
 // @Tags application
 // @Summary get application by id
+// @Accept	application/json
+// @Param	id path int true "app id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
+// @Success 200 {string} string "{"apps": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8}]}"
 // @Router /api/v1/metadata/app/:id [get]
 func GetAppByID(c *gin.Context) {
 	// get param
@@ -94,8 +97,10 @@ func GetAppByID(c *gin.Context) {
 
 // @Tags application
 // @Summary get application by system name
+// @Accept	application/json
+// @Param	name path string true "app name"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "app_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
+// @Success 200 {string} string "{"apps": [{"id": 66, "app_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8}]}"
 // @Router /api/v1/metadata/app/app-name/:name [get]
 func GetAppByName(c *gin.Context) {
 	// get params
@@ -126,8 +131,10 @@ func GetAppByName(c *gin.Context) {
 
 // @Tags application
 // @Summary get dbs
+// @Accept	application/json
+// @Param	id path int true "app id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [1, 2]}"
+// @Success 200 {string} string "{"dbs": [1, 2]}"
 // @Router /api/vi/metadata/app/db/:id [get]
 func GetDBsByAppID(c *gin.Context) {
 	// get param
@@ -163,8 +170,11 @@ func GetDBsByAppID(c *gin.Context) {
 
 // @Tags application
 // @Summary add a new application
+// @Accept	application/json
+// @Param	app_name body string true "app name"
+// @Param	level body int true "app level"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
+// @Success 200 {string} string "{"apps": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8}]}"
 // @Router /api/v1/metadata/app [post]
 func AddApp(c *gin.Context) {
 	var fields map[string]interface{}
@@ -213,8 +223,12 @@ func AddApp(c *gin.Context) {
 
 // @Tags application
 // @Summary update application by id
+// @Accept	application/json
+// @Param	id path int true "app id"
+// @Param	app_name body string false "app name"
+// @Param	level body int false "app level"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
+// @Success 200 {string} string "{"apps": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8}]}"
 // @Router /api/v1/metadata/app/:id [post]
 func UpdateAppByID(c *gin.Context) {
 	var fields map[string]interface{}
@@ -270,8 +284,10 @@ func UpdateAppByID(c *gin.Context) {
 
 // @Tags application
 // @Summary delete app by id
+// @Accept	application/json
+// @Param	id path int true "app id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
+// @Success 200 {string} string "{"apps": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8}]}"
 // @Router /api/v1/metadata/app/delete/:id [post]
 func DeleteAppByID(c *gin.Context) {
 	var fields map[string]interface{}
@@ -309,8 +325,11 @@ func DeleteAppByID(c *gin.Context) {
 
 // @Tags application
 // @Summary add database map
+// @Accept	application/json
+// @Param	id path int true "app id"
+// @Param	db_id body int false "db id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
+// @Success 200 {string} string "{"dbs": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8}]}"
 // @Router /api/v1/metadata/app/add-db/:id [post]
 func AppAddDB(c *gin.Context) {
 	// get params
@@ -363,8 +382,11 @@ func AppAddDB(c *gin.Context) {
 
 // @Tags application
 // @Summary delete database map
+// @Accept	application/json
+// @Param	id path int true "app id"
+// @Param	db_id body int false "db id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [1]}"
+// @Success 200 {string} string "{"dbs": [1]}"
 // @Router /api/v1/metadata/app/delete-db/:id [post]
 func AppDeleteDB(c *gin.Context) {
 	// get params
@@ -416,8 +438,10 @@ func AppDeleteDB(c *gin.Context) {
 
 // @Tags application
 // @Summary get users
+// @Accept	application/json
+// @Param	id path int true "app id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [1, 2]}"
+// @Success 200 {string} string "{"users": [1, 2]}"
 // @Router /api/vi/metadata/app/user/:id [get]
 func GetUsersByAppID(c *gin.Context) {
 	// get param
@@ -453,8 +477,11 @@ func GetUsersByAppID(c *gin.Context) {
 
 // @Tags application
 // @Summary add user map
+// @Accept	application/json
+// @Param	id path int true "app id"
+// @Param	user_id body int false "user id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8,"owner_id": 8}]}"
+// @Success 200 {string} string "{"users": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8}]}"
 // @Router /api/v1/metadata/app/add-user/:id [post]
 func AppAddUser(c *gin.Context) {
 	// get params
@@ -507,8 +534,11 @@ func AppAddUser(c *gin.Context) {
 
 // @Tags application
 // @Summary delete user map
+// @Accept	application/json
+// @Param	id path int true "app id"
+// @Param	user_id body int false "user id"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [1]}"
+// @Success 200 {string} string "{"users":: [1]}"
 // @Router /api/v1/metadata/app/delete-user/:id [post]
 func AppDeleteUser(c *gin.Context) {
 	// get params
