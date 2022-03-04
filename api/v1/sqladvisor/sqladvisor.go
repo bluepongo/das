@@ -25,7 +25,7 @@ const (
 // @Accept  application/json
 // @Param	sql_text body string true "sql text"
 // @Produce application/json
-// @Success 200 {string} string "{"fingerprint": "select * from a","sql_text": "select * from a;"}"
+// @Success 200 {string} string "{"fingerprint":"select * from a","sql_text":"select * from a;"}"
 // @Router	/api/v1/sqladvisor/fingerprint/ [get]
 func GetFingerprint(c *gin.Context) {
 	// get data
@@ -66,7 +66,7 @@ func GetFingerprint(c *gin.Context) {
 // @Accept  application/json
 // @Param	sql_text body string true "sql text"
 // @Produce application/json
-// @Success 200 {string} string "{"sql_id": "EE56B94E867DC9D5","sql_text": "select * from a;"}"
+// @Success 200 {string} string "{"sql_id":"EE56B94E867DC9D5","sql_text":"select * from a;"}"
 // @Router	/api/v1/sqladvisor/sql-id/ [get]
 func GetSQLID(c *gin.Context) {
 	// get data
@@ -108,7 +108,7 @@ func GetSQLID(c *gin.Context) {
 // @Param	db_id		path int	true "db id"
 // @Param	sql_text	body string true "sql text"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"sql_text": "select * from t01", "advice": "xxx"}"
+// @Success 200 {string} string "[ {  "ID": "B95017DB61875675",  "Fingerprint": "select * from t_meta_db_info where create_time<?",  "Score": 85,  "Sample": "select * from t_meta_db_info where create_time<'2021-01-01'",  "Explain": null,  "HeuristicRules": [    {      "Item": "COL.001",      "Severity": "L1",      "Summary": "不建议使用 SELECT * 类型查询",      "Content": "当表结构变更时，使用 * 通配符选择所有列将导致查询的含义和行为会发生更改，可能导致查询返回更多的数据。",      "Case": "select * from tbl where id=1",      "Position": 0    }  ],  "IndexRules": [    {      "Item": "IDX.001",      "Severity": "L2",      "Summary": "为das库的t_meta_db_info表添加索引",      "Content": "为列create_time添加索引; 由于未开启数据采样，各列在索引中的顺序需要自行调整。",      "Case": "ALTER TABLE `das`.`t_meta_db_info` add index `idx_create_time` (`create_time`) ; ",      "Position": 0    }  ],  "Tables": [    "`soar`.`t_meta_db_info`"  ]} ]"
 // @Router	/api/v1/sqladvisor/advise/:db_id [post]
 func Advise(c *gin.Context) {
 	// get data

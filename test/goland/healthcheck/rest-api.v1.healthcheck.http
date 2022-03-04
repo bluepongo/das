@@ -8,9 +8,9 @@ Content-Type: application/json
 
 {
     "server_id": 1,
-    "start_time":"2021-11-10 12:00:00",
-    "end_time":"2021-11-18 15:00:00",
-    "step": "30s"
+    "start_time": "{{startTime}}",
+    "end_time": "{{endTime}}",
+    "step": "{{step}}"
 }
 
 ### healthcheck.CheckByHostInfo
@@ -20,9 +20,9 @@ Content-Type: application/json
 {
     "host_ip": "192.168.137.11",
     "port_num": 3306,
-    "start_time":"2021-11-10 00:00:00.000000",
-    "end_time":"2021-11-16 00:00:00.000000",
-    "step": "30s"
+    "start_time": "{{startTime}}",
+    "end_time": "{{endTime}}",
+    "step": "{{step}}"
 }
 
 ### healthcheck.ReviewAccuracy

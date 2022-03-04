@@ -30,7 +30,7 @@ const (
 // @Param	limit				body int	true "limit"
 // @Param	offset				body int	true "offset"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": []}"
+// @Success 200 {string} string "{"queries":[{"sql_id":"F9A57DD5A41825CA","fingerprint":"select sleep(?)","example":"select sleep(3)","db_name":"","exec_count":1,"total_exec_time":3,"avg_exec_time":3,"rows_examined_max":0}]}"
 // @Router	/api/v1/query/cluster/:mysql_cluster_id [get]
 func GetByMySQLClusterID(c *gin.Context) {
 	// get data
@@ -86,7 +86,7 @@ func GetByMySQLClusterID(c *gin.Context) {
 // @Param	limit			body int	true "limit"
 // @Param	offset			body int	true "offset"
 // @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": []}"
+// @Success 200 {string} string "{"queries":[{"sql_id":"F9A57DD5A41825CA","fingerprint":"select sleep(?)","example":"select sleep(3)","db_name":"","exec_count":1,"total_exec_time":3,"avg_exec_time":3,"rows_examined_max":0}]}"
 // @Router /api/v1/query/server/:mysql_server_id [get]
 func GetByMySQLServerID(c *gin.Context) {
 	// get data
@@ -143,7 +143,7 @@ func GetByMySQLServerID(c *gin.Context) {
 // @Param	limit			body int	true "limit"
 // @Param	offset			body int	true "offset"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": []}"
+// @Success 200 {string} string "{"queries":[{"sql_id":"F9A57DD5A41825CA","fingerprint":"select sleep(?)","example":"select sleep(3)","db_name":"","exec_count":1,"total_exec_time":3,"avg_exec_time":3,"rows_examined_max":0}]}"
 // @Router	/api/v1/query/db/:db_id [get]
 func GetByDBID(c *gin.Context) {
 	// get data
@@ -200,7 +200,7 @@ func GetByDBID(c *gin.Context) {
 // @Param	limit			body int	true "limit"
 // @Param	offset			body int	true "offset"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": []}"
+// @Success 200 {string} string "{"queries":[{"sql_id":"F9A57DD5A41825CA","fingerprint":"select sleep(?)","example":"select sleep(3)","db_name":"","exec_count":1,"total_exec_time":3,"avg_exec_time":3,"rows_examined_max":0}]}"
 // @Router	/api/v1/query/:sql_id [get]
 func GetBySQLID(c *gin.Context) {
 	// get data
