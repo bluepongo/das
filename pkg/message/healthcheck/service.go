@@ -62,7 +62,7 @@ func initServiceInfoMessage() {
 		"healthcheck: check by host info started. operation id: %d")
 	message.Messages[InfoHealthcheckReviewAccuracy] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckReviewAccuracy,
-		"healthcheck: review accuracy completed. %s")
+		"healthcheck: review accuracy completed. operation id: %d")
 }
 
 func initServiceErrorMessage() {

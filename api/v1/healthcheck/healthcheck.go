@@ -30,7 +30,7 @@ const (
 // @Accept	application/json
 // @Param	id path int true "operation id"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": []}"
+// @Success 200 {string} string "{"result":{"id":7,"operation_id":16,"host_ip":"192.168.137.11","port_num":3306,"weighted_average_score":99,"db_config_score":90,"db_config_data":"[{"variable_name":"binlog_format","variable_value":"ROW"},{"variable_name":"binlog_row_image","variable_value":"FULL"},{"variable_name":"enforce_gtid_consistency","variable_value":"ON"},{"variable_name":"gtid_mode","variable_value":"ON"},{"variable_name":"innodb_flush_log_at_trx_commit","variable_value":"2"},{"variable_name":"innodb_flush_method","variable_value":"O_DIRECT"},{"variable_name":"innodb_print_all_deadlocks","variable_value":"ON"},{"variable_name":"log_bin","variable_value":"ON"},{"variable_name":"master_info_repository","variable_value":"TABLE"},{"variable_name":"performance_schema","variable_value":"ON"},{"variable_name":"relay_log_info_repository","variable_value":"TABLE"},{"variable_name":"report_host","variable_value":"192.168.137.11"},{"variable_name":"report_port","variable_value":"3306"},{"variable_name":"slave_parallel_type","variable_value":"DATABASE"},{"variable_name":"slow_query_log","variable_value":"ON"},{"variable_name":"sync_binlog","variable_value":"0"}]","db_config_advice":[{"name":"innodb_flush_log_at_trx_commit","value":"2","advice":"1"},{"name":"slave_parallel_type","value":"DATABASE","advice":"LOGICAL_CLOCK"},{"name":"sync_binlog","value":"0","advice":"1"}],"avg_backup_failed_ratio_score":100,"avg_backup_failed_ratio_data":"null","avg_backup_failed_ratio_high":"null","statistics_failed_ratio_score":100,"statistics_failed_ratio_data":"null","statistics_failed_ratio_high":"null","cpu_usage_score":100,"cpu_usage_data":"null","cpu_usage_high":"null","io_util_score":100,"io_util_data":"null","io_util_high":"null","disk_capacity_usage_score":100,"disk_capacity_usage_data":"null","disk_capacity_usage_high":"null","connection_usage_score":100,"connection_usage_data":"null","connection_usage_high":"null","average_active_session_percents_score":100,"average_active_session_percents_data":"null","average_active_session_percents_high":"null","cache_miss_ratio_score":100,"cache_miss_ratio_data":"null","cache_miss_ratio_high":"null","table_rows_score":100,"table_rows_data":"[]","table_rows_high":"null","table_size_score":100,"table_size_data":"[]","table_size_high":"null","slow_query_score":100,"slow_query_data":"[]","slow_query_advice":"","accuracy_review":0,"del_flag":0,"create_time":"2022-03-04 16:32:40.331139 +0800 CST","last_update_time":"2022-03-04 16:32:40.331139 +0800 CST"}"
 // @Router	/api/v1/healthcheck/result/:id [get]
 func GetResultByOperationID(c *gin.Context) {
 	// get data
@@ -72,7 +72,7 @@ func GetResultByOperationID(c *gin.Context) {
 // @Param	end_time	body string true "end time"
 // @Param	step		body string true "step"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": "healthcheck started."}"
+// @Success 200 {string} string "{"operation_id: 16", "message": "healthcheck started"}"
 // @Router /api/v1/healthcheck/check [post]
 func Check(c *gin.Context) {
 	var rd *utilhealth.Check
@@ -119,7 +119,7 @@ func Check(c *gin.Context) {
 // @Param	end_time	body string true "end time"
 // @Param	step		body string true "step"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": ""}"
+// @Success 200 {string} string "{"operation_id: 18", "message": "healthcheck by host info started"}"
 // @Router /api/v1/healthcheck/check/host-info [post]
 func CheckByHostInfo(c *gin.Context) {
 	var rd *utilhealth.CheckByHostInfo
@@ -163,7 +163,7 @@ func CheckByHostInfo(c *gin.Context) {
 // @Param	operation_id	body int true "operation id"
 // @Param	review			body int true "review"
 // @Produce application/json
-// @Success 200 {string} string "{"code": 200, "data": "{}"
+// @Success 200 {string} string "{"operation_id: 1", "message": "reviewed accuracy completed"}"
 // @Router /api/v1/healthcheck/review [post]
 func ReviewAccuracy(c *gin.Context) {
 	// get data
@@ -198,5 +198,5 @@ func ReviewAccuracy(c *gin.Context) {
 	}
 
 	log.Debug(message.NewMessage(msghealth.DebugHealthcheckReviewAccuracy, reviewAccuracyRespMessage).Error())
-	resp.ResponseOK(c, reviewAccuracyRespMessage, msghealth.InfoHealthcheckReviewAccuracy)
+	resp.ResponseOK(c, fmt.Sprintf(reviewAccuracyRespMessage, operationID), msghealth.InfoHealthcheckReviewAccuracy, operationID)
 }

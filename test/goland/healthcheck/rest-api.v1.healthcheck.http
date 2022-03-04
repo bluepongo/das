@@ -1,5 +1,5 @@
 ### healthcheck.GetResultByOperationID
-GET http://{{baseURL}}/api/v1/healthcheck/result/1
+GET http://{{baseURL}}/api/v1/healthcheck/result/16
 Accept: application/json
 
 ### healthcheck.Check
@@ -18,7 +18,7 @@ POST http://{{baseURL}}/api/v1/healthcheck/check/host-info
 Content-Type: application/json
 
 {
-    "host_ip": "192.168.10.219",
+    "host_ip": "192.168.137.11",
     "port_num": 3306,
     "start_time":"2021-11-10 00:00:00.000000",
     "end_time":"2021-11-16 00:00:00.000000",

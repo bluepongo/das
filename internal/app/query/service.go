@@ -1,19 +1,19 @@
 package query
 
 import (
-	"encoding/json"
-
-	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/dependency/query"
+	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 )
+
+const QueriesStruct = "Queries"
 
 var _ query.Service = (*Service)(nil)
 
 type Service struct {
 	config  *Config
 	dasRepo *DASRepo
-	queries []query.Query
+	Queries []query.Query `json:"queries"`
 }
 
 // NewService returns a new *Service
@@ -41,7 +41,7 @@ func (s *Service) GetConfig() *Config {
 
 // GetQueries returns the query slice
 func (s *Service) GetQueries() []query.Query {
-	return s.queries
+	return s.Queries
 }
 
 // GetByMySQLClusterID gets the query slice by the mysql cluster identity
@@ -49,7 +49,7 @@ func (s *Service) GetByMySQLClusterID(mysqlClusterID int) error {
 	var err error
 
 	querier := NewQuerierWithGlobal(s.GetConfig())
-	s.queries, err = querier.GetByMySQLClusterID(mysqlClusterID)
+	s.Queries, err = querier.GetByMySQLClusterID(mysqlClusterID)
 	if err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func (s *Service) GetByMySQLServerID(mysqlServerID int) error {
 	var err error
 
 	querier := NewQuerierWithGlobal(s.GetConfig())
-	s.queries, err = querier.GetByMySQLServerID(mysqlServerID)
+	s.Queries, err = querier.GetByMySQLServerID(mysqlServerID)
 	if err != nil {
 		return err
 	}
@@ -75,7 +75,7 @@ func (s *Service) GetByDBID(mysqlServerID int, dbID int) error {
 	var err error
 
 	querier := NewQuerierWithGlobal(s.GetConfig())
-	s.queries, err = querier.GetByDBID(mysqlServerID, dbID)
+	s.Queries, err = querier.GetByDBID(mysqlServerID, dbID)
 	if err != nil {
 		return err
 	}
@@ -88,7 +88,7 @@ func (s *Service) GetBySQLID(mysqlServerID int, sqlID string) error {
 	var err error
 
 	querier := NewQuerierWithGlobal(s.GetConfig())
-	s.queries, err = querier.GetBySQLID(mysqlServerID, sqlID)
+	s.Queries, err = querier.GetBySQLID(mysqlServerID, sqlID)
 	if err != nil {
 		return err
 	}
@@ -112,10 +112,5 @@ func (s *Service) Save(mysqlClusterID, mysqlServerID, dbID int, sqlID string) er
 
 // Marshal marshals Service.Queries to json bytes
 func (s *Service) Marshal() ([]byte, error) {
-	bytes, err := json.Marshal(s.GetQueries())
-	if err != nil {
-		return nil, errors.Trace(err)
-	}
-
-	return bytes, nil
+	return common.MarshalStructWithFields(s, QueriesStruct)
 }

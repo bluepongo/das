@@ -3,8 +3,8 @@ GET http://{{baseURL}}/api/v1/query/cluster/1
 Content-Type: application/json
 
 {
-    "start_time": "2021-11-11 10:00:00",
-    "end_time": "2021-11-21 10:00:00",
+    "start_time": "2022-03-03 10:00:00",
+    "end_time": "2022-03-04 10:00:00",
     "limit": 5,
     "offset": 0
 }
