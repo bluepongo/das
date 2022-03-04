@@ -12,7 +12,7 @@ import (
 const (
 	testDBNewDBName    = "test_new_db_name"
 	testDBUpdateDBName = "test_update_db_name"
-	testDBAllDBNum     = 6
+	testDBAllDBNum     = 7
 )
 
 var testDBRepo *DBRepo
@@ -37,7 +37,7 @@ func TestDBRepoAll(t *testing.T) {
 	TestDBRepo_GetAll(t)
 	TestDBRepo_GetByEnv(t)
 	TestDBRepo_GetByID(t)
-	TestDBRepo_GetByNameAndClusterInfo(t)
+	TestDBRepo_GetDBByNameAndClusterInfo(t)
 	TestDBRepo_GetAppsByDBID(t)
 	TestDBRepo_GetMySQLCLusterByID(t)
 	TestDBRepo_GetAppUsersByDBID(t)
@@ -117,12 +117,12 @@ func TestDBRepo_GetByID(t *testing.T) {
 	asst.Equal(testDBDBName2, db.GetDBName(), "test GetByID() failed")
 }
 
-func TestDBRepo_GetByNameAndClusterInfo(t *testing.T) {
+func TestDBRepo_GetDBByNameAndClusterInfo(t *testing.T) {
 	asst := assert.New(t)
 
-	db, err := testDBRepo.GetByNameAndClusterInfo(testDBDBName2, testDBClusterID, testDBClusterType)
-	asst.Nil(err, common.CombineMessageWithError("test GetByNameAndClusterInfo() failed", err))
-	asst.Equal(testDBDBID, db.Identity(), "test GetByNameAndClusterInfo() failed")
+	db, err := testDBRepo.GetDBByNameAndClusterInfo(testDBDBName2, testDBClusterID, testDBClusterType)
+	asst.Nil(err, common.CombineMessageWithError("test GetDBByNameAndClusterInfo() failed", err))
+	asst.Equal(testDBDBID, db.Identity(), "test GetDBByNameAndClusterInfo() failed")
 }
 
 func TestDBRepo_GetAppsByDBID(t *testing.T) {

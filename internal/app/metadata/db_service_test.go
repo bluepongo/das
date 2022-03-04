@@ -20,7 +20,7 @@ func TestDBServiceAll(t *testing.T) {
 	TestDBService_GetAll(t)
 	TestDBService_GetByEnv(t)
 	TestDBService_GetByID(t)
-	TestDBService_GetByNameAndClusterInfo(t)
+	TestDBService_GetDBByNameAndClusterInfo(t)
 	TestDBService_GetAppsByDBID(t)
 	TestDBService_GetMySQLClusterByID(t)
 	TestDBService_GetAppUsersByDBID(t)
@@ -69,10 +69,10 @@ func TestDBService_GetByID(t *testing.T) {
 	asst.Equal(testDBDBName2, testDBService.GetDBs()[constant.ZeroInt].GetDBName(), "test GetByID() failed")
 }
 
-func TestDBService_GetByNameAndClusterInfo(t *testing.T) {
+func TestDBService_GetDBByNameAndClusterInfo(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testDBService.GetByNameAndClusterInfo(testDBDBName2, testDBClusterID, testDBClusterType)
+	err := testDBService.GetDBByNameAndClusterInfo(testDBDBName2, testDBClusterID, testDBClusterType)
 	asst.Nil(err, "test GetByID() failed")
 	asst.Equal(testDBDBID, testDBService.GetDBs()[constant.ZeroInt].Identity(), "test GetByID() failed")
 }

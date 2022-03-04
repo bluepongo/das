@@ -3,6 +3,7 @@ package metadata
 import (
 	"encoding/json"
 	"fmt"
+	utilmeta "github.com/romberli/das/pkg/util/metadata"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -29,17 +30,18 @@ const (
 
 	dbMySQLClusterStruct = "MySQLCluster"
 	dbAppsStruct         = "Apps"
-	dbUsersStruct        = "Users"
-	dbAppOwnersStruct    = "AppOwners"
-	dbDBOwnersStruct     = "DBOwners"
-	dbAllOwnersStruct    = "AllOwners"
+	dbUsersStruct        = "Owners"
+	dbAppOwnersStruct    = "Owners"
+	dbDBOwnersStruct     = "Owners"
+	dbAllOwnersStruct    = "Owners"
 )
 
-// @Tags database
+// @Tags    database
 // @Summary get all databases
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router /api/v1/metadata/db [get]
+// @Accept	application/json
+// @Produce application/json
+// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Router  /api/v1/metadata/db [get]
 func GetDB(c *gin.Context) {
 	// init service
 	s := metadata.NewDBServiceWithDefault()
@@ -61,11 +63,13 @@ func GetDB(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBAll)
 }
 
-// @Tags database
+// @Tags    database
 // @Summary get database by env_id
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router /api/v1/metadata/db/env/:env_id [get]
+// @Accept	application/json
+// @Param	env_id path int true "env id"
+// @Produce application/json
+// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Router  /api/v1/metadata/db/env/:env_id [get]
 func GetDBByEnv(c *gin.Context) {
 	// get param
 	envIDStr := c.Param(dbEnvIDJSON)
@@ -99,11 +103,13 @@ func GetDBByEnv(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBByEnv, envID)
 }
 
-// @Tags database
+// @Tags    database
 // @Summary get database by id
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router /api/v1/metadata/db/get/:id [get]
+// @Accept	application/json
+// @Param	id path int true "db id"
+// @Produce application/json
+// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Router  /api/v1/metadata/db/get/:id [get]
 func GetDBByID(c *gin.Context) {
 	// get param
 	idStr := c.Param(dbIDJSON)
@@ -136,21 +142,19 @@ func GetDBByID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBByID, id)
 }
 
-// @Tags database
+// @Tags    database
 // @Summary get database by db name and cluster info
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router /api/v1/metadata/db/name-and-cluster-info [get]
+// @Accept	application/json
+// @Param	db_name	     body string true "db name"
+// @Param 	cluster_id   body int    true "cluster id"
+// @Param 	cluster_type body int	 true "cluster type"
+// @Produce application/json
+// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Router  /api/v1/metadata/db/name-and-cluster-info [get]
 func GetDBByNameAndClusterInfo(c *gin.Context) {
-	var dbInfo *metadata.DBInfo
-	// get data
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
-		return
-	}
-	// unmarshal data
-	err = json.Unmarshal(data, dbInfo)
+	var rd *utilmeta.NameAndClusterInfo
+	// bind json
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
@@ -158,9 +162,9 @@ func GetDBByNameAndClusterInfo(c *gin.Context) {
 	// init service
 	s := metadata.NewDBServiceWithDefault()
 	// get entity
-	err = s.GetByNameAndClusterInfo(dbInfo.DBName, dbInfo.ClusterID, dbInfo.ClusterType)
+	err = s.GetDBByNameAndClusterInfo(rd.GetDBName(), rd.GetClusterID(), rd.GetClusterType())
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByNameAndClusterInfo, err, dbInfo.DBName, dbInfo.ClusterID, dbInfo.ClusterType)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByNameAndClusterInfo, err, rd.GetDBName(), rd.GetClusterID(), rd.GetClusterType())
 		return
 	}
 	// marshal service
@@ -172,14 +176,16 @@ func GetDBByNameAndClusterInfo(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBByNameAndClusterInfo, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBByNameAndClusterInfo, dbInfo.DBName, dbInfo.ClusterID, dbInfo.ClusterType)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBByNameAndClusterInfo, rd.GetDBName(), rd.GetClusterID(), rd.GetClusterType())
 }
 
-// @Tags db
+// @Tags    database
 // @Summary get apps by id
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8, "owner_group": "k"}]}"
-// @Router /api/v1/metadata/db/app/:id [get]
+// @Accept	application/json
+// @Param	id path int true "db id"
+// @Produce application/json
+// @Success 200 {string} string "{"apps": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8, "owner_group": "k"}]}"
+// @Router  /api/v1/metadata/db/app/:id [get]
 func GetAppsByDBID(c *gin.Context) {
 	// get param
 	idStr := c.Param(dbIDJSON)
@@ -210,14 +216,15 @@ func GetAppsByDBID(c *gin.Context) {
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppsByDBID, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppsByDBID, id)
-
 }
 
-// @Tags db
+// @Tags    database
 // @Summary get mysql cluster by id
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"},{"monitor_system_id":1, "env_id":1,"create_time":"2021-02-23T04:14:23.707238+08:00","last_update_time":"2021-02-23T04:14:23.707238+08:00","id":2,"cluster_name":"newTest","middleware_cluster_id":1,"del_flag":0}]}"
-// @Router /api/v1/metadata/db/mysql-cluster/:id [get]
+// @Accept	application/json
+// @Param	id path int true "db id"
+// @Produce application/json
+// @Success 200 {string} string "{"mysql_cluster": [{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"},{"monitor_system_id":1, "env_id":1,"create_time":"2021-02-23T04:14:23.707238+08:00","last_update_time":"2021-02-23T04:14:23.707238+08:00","id":2,"cluster_name":"newTest","middleware_cluster_id":1,"del_flag":0}]}"
+// @Router  /api/v1/metadata/db/mysql-cluster/:id [get]
 func GetMySQLClusterByDBID(c *gin.Context) {
 	// get param
 	idStr := c.Param(dbIDJSON)
@@ -250,11 +257,13 @@ func GetMySQLClusterByDBID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClusterByDBID, id)
 }
 
-// @Tags db
+// @Tags    database
 // @Summary get app owners
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
-// @Router /api/v1/metadata/db/app-owner/:id [get]
+// @Accept	application/json
+// @Param	id path int true "db id"
+// @Produce application/json
+// @Success 200 {string} string "{"owners": [{"department_name": "dn","account_name": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router  /api/v1/metadata/db/app-owner/:id [get]
 func GetAppUsersByDBID(c *gin.Context) {
 	// get param
 	idStr := c.Param(dbIDJSON)
@@ -287,11 +296,13 @@ func GetAppUsersByDBID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsersByDBID, id)
 }
 
-// @Tags db
+// @Tags    database
 // @Summary get db owners
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
-// @Router /api/v1/metadata/db/db-owner/:id [get]
+// @Accept	application/json
+// @Param	id path int true "db id"
+// @Produce application/json
+// @Success 200 {string} string "{"owners": [{"department_name": "dn","account_name": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router  /api/v1/metadata/db/db-owner/:id [get]
 func GetUsersByDBID(c *gin.Context) {
 	// get param
 	idStr := c.Param(dbIDJSON)
@@ -324,11 +335,13 @@ func GetUsersByDBID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetUsersByDBID, id)
 }
 
-// @Tags db
+// @Tags    database
 // @Summary get all owners
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"department_name": "dn","accountNameStruct = "AccountName"": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
-// @Router /api/v1/metadata/db/all-owner/:id [get]
+// @Accept	application/json
+// @Param	id path int true "db id"
+// @Produce application/json
+// @Success 200 {string} string "{"owners": [{"department_name": "dn","account_name": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router  /api/v1/metadata/db/all-owner/:id [get]
 func GetAllUsersByDBID(c *gin.Context) {
 	// get param
 	idStr := c.Param(dbIDJSON)
@@ -361,11 +374,16 @@ func GetAllUsersByDBID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllUsersByDBID, id)
 }
 
-// @Tags database
+// @Tags    database
 // @Summary add a new database
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router /api/v1/metadata/db [post]
+// @Accept	application/json
+// @Param	db_name	     body string true	"db name"
+// @Param 	cluster_id   body int    true	"cluster id"
+// @Param 	cluster_type body int	 false	"cluster type"
+// @Param 	env_id       body int    true	"env id"
+// @Produce application/json
+// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Router  /api/v1/metadata/db [post]
 func AddDB(c *gin.Context) {
 	var fields map[string]interface{}
 
@@ -411,11 +429,18 @@ func AddDB(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddDB, fields[dbDBNameStruct], fields[dbClusterIDStruct], fields[dbClusterTypeStruct], fields[dbEnvIDStruct])
 }
 
-// @Tags database
+// @Tags    database
 // @Summary update database by id
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router /api/v1/metadata/db/update/:id [post]
+// @Accept	application/json
+// @Param	id		     path int	 true	"db id"
+// @Param	db_name	     body string false	"db name"
+// @Param 	cluster_id   body int    false	"cluster id"
+// @Param 	cluster_type body int	 false	"cluster type"
+// @Param 	env_id       body int    false	"env id"
+// @Param 	del_flag     body int    false	"delete flag"
+// @Produce application/json
+// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Router  /api/v1/metadata/db/update/:id [post]
 func UpdateDBByID(c *gin.Context) {
 	var fields map[string]interface{}
 
@@ -472,11 +497,13 @@ func UpdateDBByID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataUpdateDB, id)
 }
 
-// @Tags database
+// @Tags    database
 // @Summary delete database by id
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router /api/v1/metadata/db/delete/:id [post]
+// @Accept	application/json
+// @Param	id path int	true "db id"
+// @Produce application/json
+// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Router  /api/v1/metadata/db/delete/:id [post]
 func DeleteDBByID(c *gin.Context) {
 	// get params
 	idStr := c.Param(dbIDJSON)
@@ -509,11 +536,13 @@ func DeleteDBByID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteDB, id)
 }
 
-// @Tags database
+// @Tags    database
 // @Summary add application map
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [1, 2]}"
-// @Router /api/v1/metadata/db/add-app/:id [post]
+// @Param	id     path int	true "db id"
+// @Param	app_id body int	true "app id"
+// @Produce application/json
+// @Success 200 {string} string "{"apps": [{"create_time":"2021-11-10T18:39:12.395612+08:00","last_update_time":"2021-12-21T09:15:47.688546+08:00","id":1,"app_name":"app1","level":1,"del_flag":0},{"last_update_time":"2021-12-21T09:15:47.688546+08:00","id":3,"app_name":"app3","level":3,"del_flag":0,"create_time":"2021-11-02T18:02:34.153234+08:00"}]}"
+// @Router  /api/v1/metadata/db/add-app/:id [post]
 func DBAddApp(c *gin.Context) {
 	// get params
 	idStr := c.Param(dbIDJSON)
@@ -562,11 +591,13 @@ func DBAddApp(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDBAddApp, id, appID)
 }
 
-// @Tags database
+// @Tags    database
 // @Summary delete application map
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [1]}"
-// @Router /api/v1/metadata/db/delete-app/:id [post]
+// @Param	id     path int	true "db id"
+// @Param	app_id body int	true "app id"
+// @Produce application/json
+// @Success 200 {string} string "{"apps": [{"last_update_time":"2021-12-21T09:15:47.688546+08:00","id":1,"app_name":"app1","level":1,"del_flag":0,"create_time":"2021-11-10T18:39:12.395612+08:00"}]}"
+// @Router  /api/v1/metadata/db/delete-app/:id [post]
 func DBDeleteApp(c *gin.Context) {
 	// get params
 	idStr := c.Param(dbIDJSON)
@@ -615,11 +646,13 @@ func DBDeleteApp(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDBDeleteApp, id, appID)
 }
 
-// @Tags database
+// @Tags    database
 // @Summary add user map
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [1, 2]}"
-// @Router /api/v1/metadata/db/add-user/:id [post]
+// @Param	id      path int true "db id"
+// @Param	user_id body int true "user id"
+// @Produce application/json
+// @Success 200 {string} string "{"owners": [{"employee_id":"","telephone":"","create_time":"2022-03-01T17:53:21.046511+08:00","last_update_time":"2022-03-01T17:53:21.046511+08:00","mobile":"","role":3,"id":2,"user_name":"test","department_name":"","account_name":"aaaa","email":"qqqq","del_flag":0},{"role":3,"create_time":"2022-01-25T12:21:05.19953+08:00","user_name":"test1","employee_id":"","account_name":"aaa","email":"aaa","telephone":"","mobile":"","last_update_time":"2022-01-25T12:21:05.19953+08:00","id":3,"department_name":"","del_flag":0}]}"
+// @Router  /api/v1/metadata/db/add-user/:id [post]
 func DBAddUser(c *gin.Context) {
 	// get params
 	idStr := c.Param(dbIDJSON)
@@ -669,11 +702,13 @@ func DBAddUser(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDBAddUser, id, userID)
 }
 
-// @Tags database
+// @Tags    database
 // @Summary delete user map
-// @Produce  application/json
-// @Success 200 {string} string "{"code": 200, "data": [1]}"
-// @Router /api/v1/metadata/db/delete-user/:id [post]
+// @Param	id      path int true "db id"
+// @Param	user_id body int true "user id"
+// @Produce application/json
+// @Success 200 {string} string "{"owners": [{"id":2,"employee_id":"","role":3,"del_flag":0,"create_time":"2022-03-01T17:53:21.046511+08:00","last_update_time":"2022-03-01T17:53:21.046511+08:00","user_name":"test","department_name":"","account_name":"aaaa","email":"qqqq","telephone":"","mobile":""}]}"
+// @Router  /api/v1/metadata/db/delete-user/:id [post]
 func DBDeleteUser(c *gin.Context) {
 	// get params
 	idStr := c.Param(dbIDJSON)

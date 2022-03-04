@@ -146,8 +146,8 @@ func (dr *DBRepo) GetByID(id int) (metadata.DB, error) {
 	}
 }
 
-// GetByNameAndClusterInfo gets a database by the db name and cluster info from the middleware
-func (dr *DBRepo) GetByNameAndClusterInfo(name string, clusterID, clusterType int) (metadata.DB, error) {
+// GetDBByNameAndClusterInfo gets a database by the db name and cluster info from the middleware
+func (dr *DBRepo) GetDBByNameAndClusterInfo(name string, clusterID, clusterType int) (metadata.DB, error) {
 	sql := `
 		select id, db_name, cluster_id, cluster_type, env_id, del_flag, create_time, last_update_time
 		from t_meta_db_info
@@ -156,14 +156,14 @@ func (dr *DBRepo) GetByNameAndClusterInfo(name string, clusterID, clusterType in
 		and cluster_id = ?
 		and cluster_type = ?;
 	`
-	log.Debugf("metadata DBRepo.GetByNameAndClusterInfo() sql: \n%s\nplaceholders: %s, %d, %d", sql, name, clusterID, clusterType)
+	log.Debugf("metadata DBRepo.GetDBByNameAndClusterInfo() sql: \n%s\nplaceholders: %s, %d, %d", sql, name, clusterID, clusterType)
 	result, err := dr.Execute(sql, name, clusterID, clusterType)
 	if err != nil {
 		return nil, err
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.New(fmt.Sprintf("metadata DBInfo.GetByNameAndClusterInfo(): data does not exists, db name: %s, cluster id: %d, cluster type: %d", name, clusterID, clusterType))
+		return nil, errors.New(fmt.Sprintf("metadata DBInfo.GetDBByNameAndClusterInfo(): data does not exists, db name: %s, cluster id: %d, cluster type: %d", name, clusterID, clusterType))
 	case 1:
 		dbInfo := NewEmptyDBInfoWithRepo(dr)
 		// map to struct
@@ -174,7 +174,7 @@ func (dr *DBRepo) GetByNameAndClusterInfo(name string, clusterID, clusterType in
 
 		return dbInfo, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("metadata DBInfo.GetByNameAndClusterInfo(): duplicate entry exists, db name: %s, cluster id: %d, cluster type: %d", name, clusterID, clusterType))
+		return nil, errors.New(fmt.Sprintf("metadata DBInfo.GetDBByNameAndClusterInfo(): duplicate entry exists, db name: %s, cluster id: %d, cluster type: %d", name, clusterID, clusterType))
 	}
 }
 
