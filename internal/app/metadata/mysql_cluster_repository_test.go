@@ -70,8 +70,8 @@ func TestMySQLClusterRepo_Transaction(t *testing.T) {
 
 	sql := `
 	insert into t_meta_mysql_cluster_info(
-		cluster_name, middleware_cluster_id, monitor_system_id, owner_id, env_id)
-	values(?,?,?,?,?);`
+		cluster_name, middleware_cluster_id, monitor_system_id, env_id)
+	values(?,?,?,?);`
 
 	tx, err := testMySQLClusterRepo.Transaction()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
