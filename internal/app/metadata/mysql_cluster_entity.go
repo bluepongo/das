@@ -22,15 +22,14 @@ var _ metadata.MySQLCluster = (*MySQLClusterInfo)(nil)
 // MySQLClusterInfo is a struct map to table in the database
 type MySQLClusterInfo struct {
 	MySQLClusterRepo    metadata.MySQLClusterRepo
-	ID                  int    `middleware:"id" json:"id"`
-	ClusterName         string `middleware:"cluster_name" json:"cluster_name"`
-	MiddlewareClusterID int    `middleware:"middleware_cluster_id" json:"middleware_cluster_id"`
-	MonitorSystemID     int    `middleware:"monitor_system_id" json:"monitor_system_id"`
-	// OwnerID             int       `middleware:"owner_id" json:"owner_id"`
-	EnvID          int       `middleware:"env_id" json:"env_id"`
-	DelFlag        int       `middleware:"del_flag" json:"del_flag"`
-	CreateTime     time.Time `middleware:"create_time" json:"create_time"`
-	LastUpdateTime time.Time `middleware:"last_update_time" json:"last_update_time"`
+	ID                  int       `middleware:"id" json:"id"`
+	ClusterName         string    `middleware:"cluster_name" json:"cluster_name"`
+	MiddlewareClusterID int       `middleware:"middleware_cluster_id" json:"middleware_cluster_id"`
+	MonitorSystemID     int       `middleware:"monitor_system_id" json:"monitor_system_id"`
+	EnvID               int       `middleware:"env_id" json:"env_id"`
+	DelFlag             int       `middleware:"del_flag" json:"del_flag"`
+	CreateTime          time.Time `middleware:"create_time" json:"create_time"`
+	LastUpdateTime      time.Time `middleware:"last_update_time" json:"last_update_time"`
 }
 
 // NewMySQLClusterInfo returns a new MySQLClusterInfo
@@ -95,8 +94,7 @@ func NewMySQLClusterInfoWithDefault(
 		ClusterName:         clusterName,
 		MiddlewareClusterID: constant.DefaultRandomInt,
 		MonitorSystemID:     constant.DefaultRandomInt,
-		// OwnerID:             constant.DefaultRandomInt,
-		EnvID: envID,
+		EnvID:               envID,
 	}
 }
 
@@ -129,11 +127,6 @@ func (mci *MySQLClusterInfo) GetMiddlewareClusterID() int {
 func (mci *MySQLClusterInfo) GetMonitorSystemID() int {
 	return mci.MonitorSystemID
 }
-
-// // GetOwnerID returns the owner id
-// func (mci *MySQLClusterInfo) GetOwnerID() int {
-// 	return mci.OwnerID
-// }
 
 // GetEnvID returns the env id
 func (mci *MySQLClusterInfo) GetEnvID() int {

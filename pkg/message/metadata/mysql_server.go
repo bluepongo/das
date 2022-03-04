@@ -145,7 +145,7 @@ func initErrorMySQLServerMessage() {
 		message.DefaultMessageHeader,
 		ErrMetadataIsMaster,
 		"metadata: check if server is master failed. host_ip: %s, port_num: %d")
-	message.Messages[ErrMetadataGetMySQLServerByClusterID] = config.NewErrMessage(
+	message.Messages[ErrMetadataGetMySQLClusterByServerID] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterByServerID,
 		"metadata: get mysql cluster by server id failed. server_id: %d")

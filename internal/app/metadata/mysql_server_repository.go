@@ -227,7 +227,7 @@ func (msr *MySQLServerRepo) IsMaster(hostIP string, portNum int) (bool, error) {
 func (msr *MySQLServerRepo) GetMySQLClusterByID(id int) (metadata.MySQLCluster, error) {
 	sql := `
 		select c.id, c.cluster_name, c.middleware_cluster_id, c.monitor_system_id,
-			c.owner_id, c.env_id, c.del_flag, c.create_time, c.last_update_time
+			c.env_id, c.del_flag, c.create_time, c.last_update_time
 		from t_meta_mysql_cluster_info as c inner join t_meta_mysql_server_info as s
 		on c.id = s.cluster_id
 		where c.del_flag = 0
