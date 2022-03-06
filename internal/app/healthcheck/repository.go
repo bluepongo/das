@@ -2,10 +2,10 @@ package healthcheck
 
 import (
 	"fmt"
-	"github.com/pingcap/errors"
 	"time"
 
 	"github.com/hashicorp/go-version"
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/app/query"
 	"github.com/romberli/das/internal/dependency/healthcheck"

@@ -3,10 +3,10 @@ GET http://{{baseURL}}/api/v1/query/cluster/1
 Content-Type: application/json
 
 {
-    "start_time": "2021-11-11 10:00:00",
-    "end_time": "2021-11-21 10:00:00",
-    "limit": 5,
-    "offset": 0
+    "start_time": "{{startTime}}",
+    "end_time": "{{endTime}}",
+    "limit": {{limit}},
+    "offset": {{offset}}
 }
 
 ### query.GetByMySQLServerID
@@ -14,10 +14,10 @@ GET http://{{baseURL}}/api/v1/query/server/1
 Content-Type: application/json
 
 {
-    "start_time": "2022-02-21 10:00:00",
-    "end_time": "2022-02-25 10:00:00",
-    "limit": 5,
-    "offset": 0
+    "start_time": "{{startTime}}",
+    "end_time": "{{endTime}}",
+    "limit": {{limit}},
+    "offset": {{offset}}
 }
 
 ### query.GetByDBID
@@ -25,22 +25,22 @@ GET http://{{baseURL}}/api/v1/query/db/1
 Content-Type: application/json
 
 {
-  "mysql_server_id": 1,
-  "start_time": "2021-11-11 10:00:00",
-  "end_time": "2021-11-21 10:00:00",
-  "limit": 5,
-  "offset": 0
+    "mysql_server_id": 1,
+    "start_time": "{{startTime}}",
+    "end_time": "{{endTime}}",
+    "limit": {{limit}},
+    "offset": {{offset}}
 }
 
 ### query.GetByMySQLSQLID
-GET http://{{baseURL}}/api/v1/query/880A8A3142C8BC24
+GET http://{{baseURL}}/api/v1/query/F9A57DD5A41825CA
 Content-Type: application/json
 
 {
     "mysql_server_id": 1,
-    "start_time": "2021-11-11 10:00:00",
-    "end_time": "2021-11-21 10:00:00",
-    "limit": 5,
-    "offset": 0
+    "start_time": "{{startTime}}",
+    "end_time": "{{endTime}}",
+    "limit": {{limit}},
+    "offset": {{offset}}
 }
 

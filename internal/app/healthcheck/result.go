@@ -551,5 +551,5 @@ func (r *Result) getString(ignoreList []string) string {
 		}
 	}
 
-	return s
+	return strings.Trim(s, constant.CommaString)
 }
