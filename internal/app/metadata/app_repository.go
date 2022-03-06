@@ -283,9 +283,14 @@ func (ar *AppRepo) Delete(id int) error {
 
 // AddDB adds a new map of app and database in the middleware
 func (ar *AppRepo) AddDB(appID, dbID int) error {
+	dbRepo := NewDBRepoWithGlobal()
+	_, err := dbRepo.GetByID(dbID)
+	if err != nil {
+		return err
+	}
 	sql := `insert into t_meta_app_db_map(app_id, db_id) values(?, ?);`
 	log.Debugf("metadata AppRepo.AddDB() insert sql: %s", sql)
-	_, err := ar.Execute(sql, appID, dbID)
+	_, err = ar.Execute(sql, appID, dbID)
 
 	return err
 }
