@@ -173,9 +173,9 @@ func AddEnv(c *gin.Context) {
 // @Tags	environment
 // @Summary	update environment by id
 // @Accept	application/json
-// @Param	id		path int	true	"env id"
-// @Param 	env_name body string false	"env name"
-// @Param 	del_flag body int	false	"delete flag"
+// @Param	id		 path 	int		true	"env id"
+// @Param 	env_name body 	string 	false	"env name"
+// @Param 	del_flag body 	int		false	"delete flag"
 // @Produce application/json
 // @Success	200 {string} string "{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router	/api/v1/metadata/env/update/:id [post]
