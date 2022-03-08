@@ -144,18 +144,18 @@ func (di *DBInfo) GetMySQLCluster() (metadata.MySQLCluster, error) {
 	return di.DBRepo.GetMySQLCLusterByID(di.ID)
 }
 
-// GetAllOwners gets the application owners of this db
-func (di *DBInfo) GetAppOwners() ([]metadata.User, error) {
+// GetAllUsers gets the application users of this db
+func (di *DBInfo) GetAppUsers() ([]metadata.User, error) {
 	return di.DBRepo.GetAppUsersByDBID(di.ID)
 }
 
-// GetAllOwners gets the db owners of this db
-func (di *DBInfo) GetDBOwners() ([]metadata.User, error) {
+// GetAllUsers gets the db users of this db
+func (di *DBInfo) GetDBUsers() ([]metadata.User, error) {
 	return di.DBRepo.GetUsersByDBID(di.ID)
 }
 
-// GetAllOwners gets both application and db owners of this db
-func (di *DBInfo) GetAllOwners() ([]metadata.User, error) {
+// GetAllUsers gets both application and db users of this db
+func (di *DBInfo) GetAllUsers() ([]metadata.User, error) {
 	return di.DBRepo.GetAllUsersByDBID(di.ID)
 }
 

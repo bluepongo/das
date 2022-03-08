@@ -24,16 +24,16 @@ Content-Type: application/json
 GET http://{{baseURL}}/api/v1/metadata/db/mysql-cluster/1
 Content-Type: application/json
 
-### get app owner by id
-GET http://{{baseURL}}/api/v1/metadata/db/app-owner/1
+### get app user by id
+GET http://{{baseURL}}/api/v1/metadata/db/app-user/1
 Content-Type: application/json
 
-### get db owner by id
-GET http://{{baseURL}}/api/v1/metadata/db/db-owner/1
+### get db user by id
+GET http://{{baseURL}}/api/v1/metadata/db/db-user/1
 Content-Type: application/json
 
-### get all owner by id
-GET http://{{baseURL}}/api/v1/metadata/db/all-owner/1
+### get all user by id
+GET http://{{baseURL}}/api/v1/metadata/db/all-user/1
 Content-Type: application/json
 
 ### add new database
@@ -43,13 +43,13 @@ Content-Type: application/json
 {"db_name": "new_db_4", "cluster_id": 1, "cluster_type": 1, "env_id": 1}
 
 ### update database by id
-POST http://{{baseURL}}/api/v1/metadata/db/update/1
+POST http://{{baseURL}}/api/v1/metadata/db/update/229
 Content-Type: application/json
 
 {"db_name": "update_db"}
 
 ### delete database by id
-POST http://{{baseURL}}/api/v1/metadata/db/delete/191
+POST http://{{baseURL}}/api/v1/metadata/db/delete/229
 Content-Type: application/json
 
 ### add new app by id

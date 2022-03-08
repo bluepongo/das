@@ -98,7 +98,7 @@ func TestDBService_GetAppUsersByDBID(t *testing.T) {
 
 	err := testDBService.GetAppUsersByDBID(testDBDBID)
 	asst.Nil(err, "test GetAppUsersByDBID() failed")
-	asst.Equal(1, testDBService.GetOwners()[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
+	asst.Equal(1, testDBService.GetUsers()[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
 }
 
 func TestDBService_GetUsersByDBID(t *testing.T) {
@@ -106,7 +106,7 @@ func TestDBService_GetUsersByDBID(t *testing.T) {
 
 	err := testDBService.GetUsersByDBID(testDBDBID)
 	asst.Nil(err, "test GetUsersByDBID() failed")
-	asst.Equal(2, testDBService.GetOwners()[constant.ZeroInt].Identity(), "test GetUsersByDBID() failed")
+	asst.Equal(2, testDBService.GetUsers()[constant.ZeroInt].Identity(), "test GetUsersByDBID() failed")
 }
 
 func TestDBService_GetAllUsersByDBID(t *testing.T) {
@@ -114,7 +114,7 @@ func TestDBService_GetAllUsersByDBID(t *testing.T) {
 
 	err := testDBService.GetAllUsersByDBID(testDBDBID)
 	asst.Nil(err, "test GetAllUsersByDBID() failed")
-	asst.Equal(1, testDBService.GetOwners()[constant.ZeroInt].Identity(), "test GetAllUsersByDBID() failed")
+	asst.Equal(1, testDBService.GetUsers()[constant.ZeroInt].Identity(), "test GetAllUsersByDBID() failed")
 }
 
 func TestDBService_Create(t *testing.T) {
@@ -201,7 +201,7 @@ func TestDBService_DBAddUser(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test DBAddUser() failed", err))
 	err = testDBService.GetUsersByDBID(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test DBAddUser() failed", err))
-	asst.Equal(testDBNewUserID, testDBService.GetOwners()[constant.ZeroInt].Identity(), "test DBAddUser() failed")
+	asst.Equal(testDBNewUserID, testDBService.GetUsers()[constant.ZeroInt].Identity(), "test DBAddUser() failed")
 	err = testDBService.DBDeleteUser(entity.Identity(), testDBNewUserID)
 	asst.Nil(err, common.CombineMessageWithError("test DBAddUser() failed", err))
 	// delete
@@ -220,7 +220,7 @@ func TestDBService_DBDeleteUser(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test DBDeleteUser() failed", err))
 	err = testDBService.GetUsersByDBID(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test DBDeleteUser() failed", err))
-	asst.Equal(0, len(testDBService.GetOwners()), "test DBDeleteUser() failed")
+	asst.Equal(0, len(testDBService.GetUsers()), "test DBDeleteUser() failed")
 	// delete
 	err = testDBRepo.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test DBDeleteUser() failed", err))

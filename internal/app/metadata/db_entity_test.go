@@ -72,9 +72,9 @@ func TestDBEntityAll(t *testing.T) {
 	TestDBInfo_GetLastUpdateTime(t)
 	TestDBInfo_GetApps(t)
 	TestDBInfo_GetMySQLClusterByID(t)
-	TestDBInfo_GetAppOwners(t)
-	TestDBInfo_GetDBOwners(t)
-	TestDBInfo_GetAllOwners(t)
+	TestDBInfo_GetAppUsers(t)
+	TestDBInfo_GetDBUsers(t)
+	TestDBInfo_GetAllUsers(t)
 	TestDBInfo_Set(t)
 	TestDBInfo_Delete(t)
 	TestDBInfo_AddApp(t)
@@ -141,28 +141,28 @@ func TestDBInfo_GetMySQLClusterByID(t *testing.T) {
 	asst.Equal(testDBClusterID, mysqlCluster.Identity(), "test GetMySQLClusterByID() failed")
 }
 
-func TestDBInfo_GetAppOwners(t *testing.T) {
+func TestDBInfo_GetAppUsers(t *testing.T) {
 	asst := assert.New(t)
 
-	appOwners, err := testDBInfo.GetAppOwners()
-	asst.Nil(err, common.CombineMessageWithError("test GetAppOwners() failed", err))
-	asst.Equal(testAppOwnerID, appOwners[constant.ZeroInt].Identity(), "test GetAppOwners() failed")
+	appUsers, err := testDBInfo.GetAppUsers()
+	asst.Nil(err, common.CombineMessageWithError("test GetAppUsers() failed", err))
+	asst.Equal(testAppOwnerID, appUsers[constant.ZeroInt].Identity(), "test GetAppUsers() failed")
 }
 
-func TestDBInfo_GetDBOwners(t *testing.T) {
+func TestDBInfo_GetDBUsers(t *testing.T) {
 	asst := assert.New(t)
 
-	dbOwners, err := testDBInfo.GetDBOwners()
-	asst.Nil(err, common.CombineMessageWithError("test GetDBOwners() failed", err))
-	asst.Equal(2, dbOwners[constant.ZeroInt].Identity(), "test GetDBOwners() failed")
+	dbUsers, err := testDBInfo.GetDBUsers()
+	asst.Nil(err, common.CombineMessageWithError("test GetDBUsers() failed", err))
+	asst.Equal(2, dbUsers[constant.ZeroInt].Identity(), "test GetDBUsers() failed")
 }
 
-func TestDBInfo_GetAllOwners(t *testing.T) {
+func TestDBInfo_GetAllUsers(t *testing.T) {
 	asst := assert.New(t)
 
-	allOwners, err := testDBInfo.GetAllOwners()
-	asst.Nil(err, common.CombineMessageWithError("test GetAllOwners() failed", err))
-	asst.Equal(testAppOwnerID, allOwners[constant.ZeroInt].Identity(), "test GetAllOwners() failed")
+	allUsers, err := testDBInfo.GetAllUsers()
+	asst.Nil(err, common.CombineMessageWithError("test GetAllUsers() failed", err))
+	asst.Equal(testAppOwnerID, allUsers[constant.ZeroInt].Identity(), "test GetAllUsers() failed")
 }
 
 func TestDBInfo_GetApps(t *testing.T) {
@@ -224,7 +224,7 @@ func TestDBInfo_DBAddUser(t *testing.T) {
 	asst := assert.New(t)
 
 	err := testDBInfo.DBAddUser(testDBNewUserID)
-	users, err := testDBInfo.GetDBOwners()
+	users, err := testDBInfo.GetDBUsers()
 	asst.Nil(err, common.CombineMessageWithError("test DBAddUser() failed", err))
 	asst.Equal(2, len(users), "test DBAddUser() failed")
 	// delete
@@ -235,7 +235,7 @@ func TestDBInfo_DBDeleteUser(t *testing.T) {
 	asst := assert.New(t)
 
 	err := testDBInfo.DBAddUser(testDBNewUserID)
-	users, err := testDBInfo.GetDBOwners()
+	users, err := testDBInfo.GetDBUsers()
 	asst.Nil(err, common.CombineMessageWithError("test DBDeleteUser() failed", err))
 	asst.Equal(2, len(users), "test DBDeleteUser() failed")
 	// delete

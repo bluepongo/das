@@ -27,12 +27,12 @@ type DB interface {
 	GetApps() ([]App, error)
 	// GetMySQLCluster gets the mysql cluster of this db
 	GetMySQLCluster() (MySQLCluster, error)
-	// GetAppOwners gets the application owners of this db
-	GetAppOwners() ([]User, error)
-	// GetDBOwners gets the db owners of this db
-	GetDBOwners() ([]User, error)
-	// GetAllOwners gets both application and db owners of this db
-	GetAllOwners() ([]User, error)
+	// GetAppUsers gets the application users of this db
+	GetAppUsers() ([]User, error)
+	// GetDBUsers gets the db users of this db
+	GetDBUsers() ([]User, error)
+	// GetAllUsers gets both application and db users of this db
+	GetAllUsers() ([]User, error)
 	// Set sets DB with given fields, key is the field name and value is the relevant value of the key
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
@@ -70,11 +70,11 @@ type DBRepo interface {
 	GetMySQLCLusterByID(id int) (MySQLCluster, error)
 	// GetAppsByDBID gets an apps that uses this db
 	GetAppsByDBID(id int) ([]App, error)
-	// GetAppUsersByDBID gets the application owners of the given id from the middleware
+	// GetAppUsersByDBID gets the application users of the given id from the middleware
 	GetAppUsersByDBID(id int) ([]User, error)
-	// GetUsersByDBID gets the db owners of the given id from the middleware
+	// GetUsersByDBID gets the db users of the given id from the middleware
 	GetUsersByDBID(id int) ([]User, error)
-	// GetAllUsersByDBID gets both application and db owners of the given id from the middleware
+	// GetAllUsersByDBID gets both application and db users of the given id from the middleware
 	GetAllUsersByDBID(id int) ([]User, error)
 	// Create creates a database in the middleware
 	Create(db DB) (DB, error)
@@ -99,8 +99,8 @@ type DBService interface {
 	GetMySQLCluster() MySQLCluster
 	// GetApps returns the apps of the service
 	GetApps() []App
-	// GetOwners returns the owners of the service
-	GetOwners() []User
+	// GetUsers returns the users of the service
+	GetUsers() []User
 	// GetAll gets all databases from the middleware
 	GetAll() error
 	// GetByEnv gets databases of given env id
@@ -113,11 +113,11 @@ type DBService interface {
 	GetMySQLClusterByID(id int) error
 	// GetAppsByID gets apps that uses this db
 	GetAppsByDBID(id int) error
-	// GetAppOwnersByID gets the application owners of the given id
+	// GetAppUsersByDBID gets the application users of the given id
 	GetAppUsersByDBID(id int) error
-	// GetDBOwnersByID gets the db owners of the given id
+	// GetUsersByDBID gets the db users of the given id
 	GetUsersByDBID(id int) error
-	// GetAllOwnersByID gets both application and db owners of the given id
+	// GetAllUsersByDBID gets both application and db users of the given id
 	GetAllUsersByDBID(id int) error
 	// Create creates a database in the middleware
 	Create(fields map[string]interface{}) error
