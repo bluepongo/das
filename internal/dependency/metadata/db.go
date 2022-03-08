@@ -23,7 +23,7 @@ type DB interface {
 	GetCreateTime() time.Time
 	// GetLastUpdateTime returns the last update time
 	GetLastUpdateTime() time.Time
-	// Gets gets apps that uses this db
+	// GetApps gets apps that uses this db
 	GetApps() ([]App, error)
 	// GetMySQLCluster gets the mysql cluster of this db
 	GetMySQLCluster() (MySQLCluster, error)
@@ -68,7 +68,7 @@ type DBRepo interface {
 	GetID(dbName string, clusterID int, clusterType int) (int, error)
 	// GetMySQLCLusterByID gets the mysql cluster of the given id from the middleware
 	GetMySQLCLusterByID(id int) (MySQLCluster, error)
-	// GetAppsByDBID gets an apps that uses this db
+	// GetAppsByDBID gets apps that uses this db
 	GetAppsByDBID(id int) ([]App, error)
 	// GetAppUsersByDBID gets the application users of the given id from the middleware
 	GetAppUsersByDBID(id int) ([]User, error)
@@ -111,7 +111,7 @@ type DBService interface {
 	GetDBByNameAndClusterInfo(name string, clusterID, clusterType int) error
 	// GetMySQLClusterByID gets the cluster of the db
 	GetMySQLClusterByID(id int) error
-	// GetAppsByID gets apps that uses this db
+	// GetAppsByDBID gets apps that uses this db
 	GetAppsByDBID(id int) error
 	// GetAppUsersByDBID gets the application users of the given id
 	GetAppUsersByDBID(id int) error
