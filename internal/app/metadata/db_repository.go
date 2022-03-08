@@ -260,7 +260,7 @@ func (dr *DBRepo) GetAppsByDBID(dbID int) ([]metadata.App, error) {
 	return appList, nil
 }
 
-// GetAppUsersByDBID gets the application owners of the given id from the middleware
+// GetAppUsersByDBID gets the application users of the given id from the middleware
 func (dr *DBRepo) GetAppUsersByDBID(id int) ([]metadata.User, error) {
 	sql := `
 		select user.id,
@@ -307,7 +307,7 @@ func (dr *DBRepo) GetAppUsersByDBID(id int) ([]metadata.User, error) {
 	return userList, nil
 }
 
-// GetUsersByDBID gets the db owners of the given id from the middleware
+// GetUsersByDBID gets the db users of the given id from the middleware
 func (dr *DBRepo) GetUsersByDBID(id int) ([]metadata.User, error) {
 	sql := `
 		select distinct user.id,
@@ -350,7 +350,7 @@ func (dr *DBRepo) GetUsersByDBID(id int) ([]metadata.User, error) {
 	return userList, nil
 }
 
-// GetAllUsersByDBID gets both application and db owners of the given id from the middleware
+// GetAllUsersByDBID gets both application and db users of the given id from the middleware
 func (dr *DBRepo) GetAllUsersByDBID(id int) ([]metadata.User, error) {
 	sql := `
 		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name

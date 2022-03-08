@@ -18,7 +18,7 @@ type DBService struct {
 	DBs          []metadata.DB         `json:"dbs"`
 	MySQLCluster metadata.MySQLCluster `json:"mysql_cluster"`
 	Apps         []metadata.App        `json:"apps"`
-	Owners       []metadata.User       `json:"owners"`
+	Users        []metadata.User       `json:"users"`
 }
 
 // NewDBService returns a new *DBService
@@ -46,9 +46,9 @@ func (ds *DBService) GetApps() []metadata.App {
 	return ds.Apps
 }
 
-// GetOwners returns the owners of the service
-func (ds *DBService) GetOwners() []metadata.User {
-	return ds.Owners
+// GetUsers returns the users of the service
+func (ds *DBService) GetUsers() []metadata.User {
+	return ds.Users
 }
 
 // GetAll gets all databases from the middleware
@@ -113,29 +113,29 @@ func (ds *DBService) GetAppsByDBID(dbID int) error {
 	return err
 }
 
-// GetAppOwnersByID gets the application owners of the given id
+// GetAppUsersByID gets the application users of the given id
 func (ds *DBService) GetAppUsersByDBID(id int) error {
 	var err error
 
-	ds.Owners, err = ds.DBRepo.GetAppUsersByDBID(id)
+	ds.Users, err = ds.DBRepo.GetAppUsersByDBID(id)
 
 	return err
 }
 
-// GetDBOwnersByID gets the db owners of the given id
+// GetDBUsersByID gets the db users of the given id
 func (ds *DBService) GetUsersByDBID(id int) error {
 	var err error
 
-	ds.Owners, err = ds.DBRepo.GetUsersByDBID(id)
+	ds.Users, err = ds.DBRepo.GetUsersByDBID(id)
 
 	return err
 }
 
-// GetAllOwnersByID gets both application and db owners of the given id
+// GetAllUsersByID gets both application and db users of the given id
 func (ds *DBService) GetAllUsersByDBID(id int) error {
 	var err error
 
-	ds.Owners, err = ds.DBRepo.GetAllUsersByDBID(id)
+	ds.Users, err = ds.DBRepo.GetAllUsersByDBID(id)
 
 	return err
 }

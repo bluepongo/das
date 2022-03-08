@@ -144,25 +144,25 @@ func TestDBRepo_GetMySQLCLusterByID(t *testing.T) {
 func TestDBRepo_GetAppUsersByDBID(t *testing.T) {
 	asst := assert.New(t)
 
-	appOwners, err := testDBRepo.GetAppUsersByDBID(testDBDBID)
+	appUsers, err := testDBRepo.GetAppUsersByDBID(testDBDBID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAppUsersByDBID() failed", err))
-	asst.Equal(1, appOwners[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
+	asst.Equal(1, appUsers[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
 }
 
 func TestDBRepo_GetUsersByDBID(t *testing.T) {
 	asst := assert.New(t)
 
-	dbOwners, err := testDBRepo.GetUsersByDBID(testDBDBID)
+	dbUsers, err := testDBRepo.GetUsersByDBID(testDBDBID)
 	asst.Nil(err, common.CombineMessageWithError("test GetUsersByDBID() failed", err))
-	asst.Equal(testDBUserID, dbOwners[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
+	asst.Equal(testDBUserID, dbUsers[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
 }
 
 func TestDBRepo_GetAllUsersByDBID(t *testing.T) {
 	asst := assert.New(t)
 
-	allOwners, err := testDBRepo.GetAllUsersByDBID(testDBDBID)
+	allUsers, err := testDBRepo.GetAllUsersByDBID(testDBDBID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAllUsersByDBID() failed", err))
-	asst.Equal(1, allOwners[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
+	asst.Equal(1, allUsers[constant.ZeroInt].Identity(), "test GetAppUsersByDBID() failed")
 }
 
 func TestDBRepo_Create(t *testing.T) {

@@ -30,10 +30,10 @@ const (
 
 	dbMySQLClusterStruct = "MySQLCluster"
 	dbAppsStruct         = "Apps"
-	dbUsersStruct        = "Owners"
-	dbAppOwnersStruct    = "Owners"
-	dbDBOwnersStruct     = "Owners"
-	dbAllOwnersStruct    = "Owners"
+	dbUsersStruct        = "Users"
+	dbAppUsersStruct     = "Users"
+	dbDBUsersStruct      = "Users"
+	dbAllUsersStruct     = "Users"
 )
 
 // @Tags    database
@@ -258,12 +258,12 @@ func GetMySQLClusterByDBID(c *gin.Context) {
 }
 
 // @Tags    database
-// @Summary get app owners
+// @Summary get app users
 // @Accept	application/json
 // @Param	id path int true "db id"
 // @Produce application/json
-// @Success 200 {string} string "{"owners": [{"department_name": "dn","account_name": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
-// @Router  /api/v1/metadata/db/app-owner/:id [get]
+// @Success 200 {string} string "{"users": [{"department_name": "dn","account_name": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router  /api/v1/metadata/db/app-user/:id [get]
 func GetAppUsersByDBID(c *gin.Context) {
 	// get param
 	idStr := c.Param(dbIDJSON)
@@ -285,7 +285,7 @@ func GetAppUsersByDBID(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(dbAppOwnersStruct)
+	jsonBytes, err := s.MarshalWithFields(dbAppUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
@@ -297,12 +297,12 @@ func GetAppUsersByDBID(c *gin.Context) {
 }
 
 // @Tags    database
-// @Summary get db owners
+// @Summary get db users
 // @Accept	application/json
 // @Param	id path int true "db id"
 // @Produce application/json
-// @Success 200 {string} string "{"owners": [{"department_name": "dn","account_name": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
-// @Router  /api/v1/metadata/db/db-owner/:id [get]
+// @Success 200 {string} string "{"users": [{"department_name": "dn","account_name": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router  /api/v1/metadata/db/db-user/:id [get]
 func GetUsersByDBID(c *gin.Context) {
 	// get param
 	idStr := c.Param(dbIDJSON)
@@ -324,7 +324,7 @@ func GetUsersByDBID(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(dbDBOwnersStruct)
+	jsonBytes, err := s.MarshalWithFields(dbDBUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
@@ -336,12 +336,12 @@ func GetUsersByDBID(c *gin.Context) {
 }
 
 // @Tags    database
-// @Summary get all owners
+// @Summary get all users
 // @Accept	application/json
 // @Param	id path int true "db id"
 // @Produce application/json
-// @Success 200 {string} string "{"owners": [{"department_name": "dn","account_name": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
-// @Router  /api/v1/metadata/db/all-owner/:id [get]
+// @Success 200 {string} string "{"users": [{"department_name": "dn","account_name": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
+// @Router  /api/v1/metadata/db/all-user/:id [get]
 func GetAllUsersByDBID(c *gin.Context) {
 	// get param
 	idStr := c.Param(dbIDJSON)
@@ -363,7 +363,7 @@ func GetAllUsersByDBID(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(dbAllOwnersStruct)
+	jsonBytes, err := s.MarshalWithFields(dbAllUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
@@ -651,7 +651,7 @@ func DBDeleteApp(c *gin.Context) {
 // @Param	id      path int true "db id"
 // @Param	user_id body int true "user id"
 // @Produce application/json
-// @Success 200 {string} string "{"owners": [{"employee_id":"","telephone":"","create_time":"2022-03-01T17:53:21.046511+08:00","last_update_time":"2022-03-01T17:53:21.046511+08:00","mobile":"","role":3,"id":2,"user_name":"test","department_name":"","account_name":"aaaa","email":"qqqq","del_flag":0},{"role":3,"create_time":"2022-01-25T12:21:05.19953+08:00","user_name":"test1","employee_id":"","account_name":"aaa","email":"aaa","telephone":"","mobile":"","last_update_time":"2022-01-25T12:21:05.19953+08:00","id":3,"department_name":"","del_flag":0}]}"
+// @Success 200 {string} string "{"users": [{"employee_id":"","telephone":"","create_time":"2022-03-01T17:53:21.046511+08:00","last_update_time":"2022-03-01T17:53:21.046511+08:00","mobile":"","role":3,"id":2,"user_name":"test","department_name":"","account_name":"aaaa","email":"qqqq","del_flag":0},{"role":3,"create_time":"2022-01-25T12:21:05.19953+08:00","user_name":"test1","employee_id":"","account_name":"aaa","email":"aaa","telephone":"","mobile":"","last_update_time":"2022-01-25T12:21:05.19953+08:00","id":3,"department_name":"","del_flag":0}]}"
 // @Router  /api/v1/metadata/db/add-user/:id [post]
 func DBAddUser(c *gin.Context) {
 	// get params
@@ -707,7 +707,7 @@ func DBAddUser(c *gin.Context) {
 // @Param	id      path int true "db id"
 // @Param	user_id body int true "user id"
 // @Produce application/json
-// @Success 200 {string} string "{"owners": [{"id":2,"employee_id":"","role":3,"del_flag":0,"create_time":"2022-03-01T17:53:21.046511+08:00","last_update_time":"2022-03-01T17:53:21.046511+08:00","user_name":"test","department_name":"","account_name":"aaaa","email":"qqqq","telephone":"","mobile":""}]}"
+// @Success 200 {string} string "{"users": [{"id":2,"employee_id":"","role":3,"del_flag":0,"create_time":"2022-03-01T17:53:21.046511+08:00","last_update_time":"2022-03-01T17:53:21.046511+08:00","user_name":"test","department_name":"","account_name":"aaaa","email":"qqqq","telephone":"","mobile":""}]}"
 // @Router  /api/v1/metadata/db/delete-user/:id [post]
 func DBDeleteUser(c *gin.Context) {
 	// get params
