@@ -494,7 +494,7 @@ func (dr *DBRepo) DeleteApp(dbID, appID int) error {
 	return err
 }
 
-// AddUser adds a new map of app and user in the middleware
+// DBAddUser adds a new map of db and user in the middleware
 func (dr *DBRepo) DBAddUser(dbID, userID int) error {
 	userRepo := NewUserRepoWithGlobal()
 	_, err := userRepo.GetByID(userID)
@@ -512,7 +512,7 @@ func (dr *DBRepo) DBAddUser(dbID, userID int) error {
 	return err
 }
 
-// DeleteUser delete the map of app and user in the middleware
+// DBDeleteUser delete the map of db and user in the middleware
 func (dr *DBRepo) DBDeleteUser(dbID, userID int) error {
 	userRepo := NewUserRepoWithGlobal()
 	_, err := userRepo.GetByID(userID)
