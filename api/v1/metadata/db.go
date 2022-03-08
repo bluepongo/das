@@ -31,9 +31,6 @@ const (
 	dbMySQLClusterStruct = "MySQLCluster"
 	dbAppsStruct         = "Apps"
 	dbUsersStruct        = "Users"
-	dbAppUsersStruct     = "Users"
-	dbDBUsersStruct      = "Users"
-	dbAllUsersStruct     = "Users"
 )
 
 // @Tags    database
@@ -285,7 +282,7 @@ func GetAppUsersByDBID(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(dbAppUsersStruct)
+	jsonBytes, err := s.MarshalWithFields(dbUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
@@ -324,7 +321,7 @@ func GetUsersByDBID(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(dbDBUsersStruct)
+	jsonBytes, err := s.MarshalWithFields(dbUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
@@ -363,7 +360,7 @@ func GetAllUsersByDBID(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(dbAllUsersStruct)
+	jsonBytes, err := s.MarshalWithFields(dbUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
