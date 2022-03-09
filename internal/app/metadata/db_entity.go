@@ -144,12 +144,12 @@ func (di *DBInfo) GetMySQLCluster() (metadata.MySQLCluster, error) {
 	return di.DBRepo.GetMySQLCLusterByID(di.ID)
 }
 
-// GetAllUsers gets the application users of this db
+// GetAppUsers gets the application users of this db
 func (di *DBInfo) GetAppUsers() ([]metadata.User, error) {
 	return di.DBRepo.GetAppUsersByDBID(di.ID)
 }
 
-// GetAllUsers gets the db users of this db
+// GetDBUsers gets the db users of this db
 func (di *DBInfo) GetDBUsers() ([]metadata.User, error) {
 	return di.DBRepo.GetUsersByDBID(di.ID)
 }

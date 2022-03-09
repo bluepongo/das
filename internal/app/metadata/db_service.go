@@ -104,7 +104,7 @@ func (ds *DBService) GetMySQLClusterByID(id int) error {
 	return err
 }
 
-// GetAppsByDBID gets an apps that uses this db
+// GetAppsByDBID gets apps that uses this db
 func (ds *DBService) GetAppsByDBID(dbID int) error {
 	var err error
 
@@ -113,7 +113,7 @@ func (ds *DBService) GetAppsByDBID(dbID int) error {
 	return err
 }
 
-// GetAppUsersByID gets the application users of the given id
+// GetAppUsersByDBID gets the application users of the given id
 func (ds *DBService) GetAppUsersByDBID(id int) error {
 	var err error
 
@@ -122,7 +122,7 @@ func (ds *DBService) GetAppUsersByDBID(id int) error {
 	return err
 }
 
-// GetDBUsersByID gets the db users of the given id
+// GetUsersByDBID gets the db users of the given id
 func (ds *DBService) GetUsersByDBID(id int) error {
 	var err error
 
@@ -131,7 +131,7 @@ func (ds *DBService) GetUsersByDBID(id int) error {
 	return err
 }
 
-// GetAllUsersByID gets both application and db users of the given id
+// GetAllUsersByDBID gets both application and db users of the given id
 func (ds *DBService) GetAllUsersByDBID(id int) error {
 	var err error
 
