@@ -21,65 +21,79 @@ import (
 
 // global constant
 const (
-	DefaultCommandName               = "das"
-	DefaultDaemon                    = false
-	DefaultBaseDir                   = constant.CurrentDir
-	DefaultLogDir                    = "./log"
-	MinLogMaxSize                    = 1
-	MaxLogMaxSize                    = constant.MaxInt
-	MinLogMaxDays                    = 1
-	MaxLogMaxDays                    = constant.MaxInt
-	MinLogMaxBackups                 = 1
-	MaxLogMaxBackups                 = constant.MaxInt
-	DefaultServerAddr                = "0.0.0.0:6090"
-	DefaultServerReadTimeout         = 5
-	DefaultServerWriteTimeout        = 10
-	MinServerReadTimeout             = 0
-	MaxServerReadTimeout             = 60
-	MinServerWriteTimeout            = 1
-	MaxServerWriteTimeout            = 60
-	DaemonArgTrue                    = "--daemon=true"
-	DaemonArgFalse                   = "--daemon=false"
-	DefaultDBName                    = "das"
-	DefaultDBUser                    = "root"
-	DefaultDBPass                    = "root"
-	MinDBPoolMaxConnections          = 1
-	MaxDBPoolMaxConnections          = constant.MaxInt
-	MinDBPoolInitConnections         = 1
-	MaxDBPoolInitConnections         = constant.MaxInt
-	MinDBPoolMaxIdleConnections      = 1
-	MaxDBPoolMaxIdleConnections      = constant.MaxInt
-	MinDBPoolMaxIdleTime             = 1
-	MaxDBPoolMaxIdleTime             = constant.MaxInt
-	MinDBPoolKeepAliveInterval       = 1
-	MaxDBPoolKeepAliveInterval       = constant.MaxInt
-	DefaultDBMonitorPrometheusUser   = "admin"
-	DefaultDBMonitorPrometheusPass   = "admin"
-	DefaultDBMonitorClickhouseUser   = ""
-	DefaultDBMonitorClickhousePass   = ""
-	DefaultDBMonitorMySQLUser        = "root"
-	DefaultDBMonitorMySQLPass        = "root"
-	DefaultDBApplicationMySQLUser    = "root"
-	DefaultDBApplicationMySQLPass    = "root"
-	DefaultAlertSMTPEnabled          = true
-	AlertSMTPTextFormat              = "text"
-	AlertSMTPHTMLFormat              = "html"
-	DefaultAlterSMTPFormat           = AlertSMTPTextFormat
-	DefaultAlertSMTPURL              = "127.0.0.1:25"
-	DefaultAlertSMTPUser             = "root"
-	DefaultAlertSMTPPass             = "root"
-	DefaultAlertSMTPFrom             = "mail@example.com"
-	DefaultAlertHTTPEnabled          = false
-	DefaultAlertHTTPURL              = "http://127.0.0.1:8080"
-	DefaultAlertHTTPConfig           = "{}"
+	DefaultCommandName = "das"
+	DefaultDaemon      = false
+	DefaultBaseDir     = constant.CurrentDir
+	// log
+	DefaultLogDir    = "./log"
+	MinLogMaxSize    = 1
+	MaxLogMaxSize    = constant.MaxInt
+	MinLogMaxDays    = 1
+	MaxLogMaxDays    = constant.MaxInt
+	MinLogMaxBackups = 1
+	MaxLogMaxBackups = constant.MaxInt
+	// server
+	DefaultServerAddr         = "0.0.0.0:6090"
+	DefaultServerReadTimeout  = 5
+	DefaultServerWriteTimeout = 10
+	MinServerReadTimeout      = 0
+	MaxServerReadTimeout      = 60
+	MinServerWriteTimeout     = 1
+	MaxServerWriteTimeout     = 60
+	DaemonArgTrue             = "--daemon=true"
+	DaemonArgFalse            = "--daemon=false"
+	// db
+	DefaultDBName                  = "das"
+	DefaultDBUser                  = "root"
+	DefaultDBPass                  = "root"
+	MinDBPoolMaxConnections        = 1
+	MaxDBPoolMaxConnections        = constant.MaxInt
+	MinDBPoolInitConnections       = 1
+	MaxDBPoolInitConnections       = constant.MaxInt
+	MinDBPoolMaxIdleConnections    = 1
+	MaxDBPoolMaxIdleConnections    = constant.MaxInt
+	MinDBPoolMaxIdleTime           = 1
+	MaxDBPoolMaxIdleTime           = constant.MaxInt
+	MinDBPoolKeepAliveInterval     = 1
+	MaxDBPoolKeepAliveInterval     = constant.MaxInt
+	DefaultDBMonitorPrometheusUser = "admin"
+	DefaultDBMonitorPrometheusPass = "admin"
+	DefaultDBMonitorClickhouseUser = ""
+	DefaultDBMonitorClickhousePass = ""
+	DefaultDBMonitorMySQLUser      = "root"
+	DefaultDBMonitorMySQLPass      = "root"
+	DefaultDBApplicationMySQLUser  = "root"
+	DefaultDBApplicationMySQLPass  = "root"
+	// metadata
+	MetadataUserDeveloperRole          = 1
+	MetadataUserDBARole                = 2
+	MetadataUserAdminRole              = 3
+	MinMetadataTableAnalyzeMinRole     = MetadataUserDeveloperRole
+	MaxMetadataTableAnalyzeMinRole     = MetadataUserAdminRole
+	DefaultMetadataTableAnalyzeMinRole = MetadataUserDBARole
+	// alert
+	DefaultAlertSMTPEnabled = true
+	AlertSMTPTextFormat     = "text"
+	AlertSMTPHTMLFormat     = "html"
+	DefaultAlterSMTPFormat  = AlertSMTPTextFormat
+	DefaultAlertSMTPURL     = "127.0.0.1:25"
+	DefaultAlertSMTPUser    = "root"
+	DefaultAlertSMTPPass    = "root"
+	DefaultAlertSMTPFrom    = "mail@example.com"
+	DefaultAlertHTTPEnabled = false
+	DefaultAlertHTTPURL     = "http://127.0.0.1:8080"
+	DefaultAlertHTTPConfig  = "{}"
+	// healthcheck
 	HealthcheckAlertOwnerTypeApp     = "app"
 	HealthcheckAlertOwnerTypeDB      = "db"
 	HealthcheckAlertOwnerTypeAll     = "all"
 	DefaultHealthcheckAlertOwnerType = HealthcheckAlertOwnerTypeAll
-	DefaultQueryMinRowsExamined      = 100000
-	DefaultSQLAdvisorSoarBin         = "./soar"
-	DefaultSQLAdvisorSoarConfig      = "./soar.yaml"
-	DefaultSQLAdvisorSoarBlacklist   = "./soar.blacklist"
+	// query
+	DefaultQueryMinRowsExamined = 100000
+	// sqladvisor
+	DefaultSQLAdvisorSoarBin       = "./soar"
+	DefaultSQLAdvisorSoarConfig    = "./soar.yaml"
+	DefaultSQLAdvisorSoarBlacklist = "./soar.blacklist"
 )
 
 // configuration constant
@@ -118,6 +132,8 @@ const (
 	DBMonitorClickhousePassKey  = "db.monitor.clickhouse.pass"
 	DBMonitorMySQLUserKey       = "db.monitor.mysql.user"
 	DBMonitorMySQLPassKey       = "db.monitor.mysql.pass"
+	// metadata
+	MetadataTableAnalyzeMinRoleKey = "metadata.table.analyze.minRole"
 	// alert
 	AlertSMTPEnabledKey = "alert.smtp.enabled"
 	AlertSMTPFormatKey  = "alert.smtp.format"

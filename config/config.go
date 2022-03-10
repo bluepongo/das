@@ -75,6 +75,8 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(DBMonitorMySQLPassKey, DefaultDBMonitorMySQLPass)
 	viper.SetDefault(DBApplicationMySQLUserKey, DefaultDBApplicationMySQLUser)
 	viper.SetDefault(DBApplicationMySQLPassKey, DefaultDBApplicationMySQLPass)
+	// metadata
+	viper.SetDefault(MetadataTableAnalyzeMinRoleKey, DefaultMetadataTableAnalyzeMinRole)
 	// alert
 	viper.SetDefault(AlertSMTPEnabledKey, DefaultAlertSMTPEnabled)
 	viper.SetDefault(AlertSMTPFormatKey, DefaultAlterSMTPFormat)
@@ -122,6 +124,12 @@ func ValidateConfig() (err error) {
 
 	// validate database section
 	err = ValidateDatabase()
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	// validate metadata section
+	err = ValidateMetadata()
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
@@ -433,6 +441,22 @@ func ValidateDatabase() error {
 		if !govalidator.IsPort(soarAddr[1]) {
 			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbSoarAddr))
 		}
+	}
+
+	return errors.Trace(merr.ErrorOrNil())
+}
+
+// ValidateMetadata validates if metadata section is valid
+func ValidateMetadata() error {
+	merr := &multierror.Error{}
+
+	// validate metadata.table.analyze.minRole
+	minRole, err := cast.ToIntE(viper.Get(MetadataTableAnalyzeMinRoleKey))
+	if err != nil {
+		merr = multierror.Append(merr, errors.Trace(err))
+	}
+	if minRole < MaxMetadataTableAnalyzeMinRole || minRole > MaxMetadataTableAnalyzeMinRole {
+		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidMetadataTableAnalyzeMinRole, MinMetadataTableAnalyzeMinRole, MaxMetadataTableAnalyzeMinRole, minRole))
 	}
 
 	return errors.Trace(merr.ErrorOrNil())

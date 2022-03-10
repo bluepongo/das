@@ -71,6 +71,8 @@ var (
 	dbMonitorMySQLPass       string
 	dbApplicationMySQLUser   string
 	dbApplicationMySQLPass   string
+	// metadata
+	metadataTableAnalyzeMinRole int
 	// alert
 	alertSMTPEnabledStr string
 	alertSMTPFormat     string
@@ -170,6 +172,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&dbMonitorClickhousePass, "db-monitor-clickhouse-pass", constant.DefaultRandomString, fmt.Sprintf("specify clickhouse user password of monitor system(default: %s)", config.DefaultDBPass))
 	rootCmd.PersistentFlags().StringVar(&dbMonitorMySQLUser, "db-monitor-mysql-user", constant.DefaultRandomString, fmt.Sprintf("specify mysql user name of monitor system(default: %s)", config.DefaultDBUser))
 	rootCmd.PersistentFlags().StringVar(&dbMonitorMySQLPass, "db-monitor-mysql-pass", constant.DefaultRandomString, fmt.Sprintf("specify mysql user password of monitor system(default: %s)", config.DefaultDBPass))
+	// metadata
+	rootCmd.PersistentFlags().IntVar(&metadataTableAnalyzeMinRole, "metadata-table-analyze-min-role", constant.DefaultRandomInt, fmt.Sprintf("specify the minimum role which has analyzing table privilege(default: %d)", config.DefaultMetadataTableAnalyzeMinRole))
 	// alert
 	rootCmd.PersistentFlags().StringVar(&alertSMTPEnabledStr, "alert-smtp-enabled", constant.DefaultRandomString, fmt.Sprintf("specify if enables smtp method(default: %s)", constant.TrueString))
 	rootCmd.PersistentFlags().StringVar(&alertSMTPFormat, "alert-smtp-format", constant.DefaultRandomString, fmt.Sprintf("specify the email content format(default: %s)", config.DefaultAlterSMTPFormat))
@@ -385,6 +389,11 @@ func OverrideConfig() (err error) {
 	}
 	if dbApplicationMySQLPass != constant.DefaultRandomString {
 		viper.Set(config.DBApplicationMySQLPassKey, dbApplicationMySQLPass)
+	}
+
+	// override metadata
+	if metadataTableAnalyzeMinRole != constant.DefaultRandomInt {
+		viper.Set(config.MetadataTableAnalyzeMinRoleKey, metadataTableAnalyzeMinRole)
 	}
 
 	// override alert

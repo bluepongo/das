@@ -202,6 +202,24 @@ db:
       # default: root
       pass: root
 
+# metadata configuration
+metadata:
+  # table configuration
+  table:
+    # analyze configuration
+    analyze:
+      # description: specify the minimum role which has analyzing table privilege,
+      #   note that this is the DAS privilege, not the mysql privilege,
+      #   it related to the role column of t_meta_user_info table
+      #     1 - developer
+      #     2 - dba
+      #     3 - admin
+      # command-line-argument: --metadata-table-analyze-min-role
+      # type: int
+      # available: [1, 2, 3]
+      # default: 2
+      minRole: 2
+
 # alert configuration
 alert:
   # send alert message via smtp server
