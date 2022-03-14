@@ -27,6 +27,8 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.GET("/db/env/:env_id", metadata.GetDBByEnv)
 		metadataGroup.GET("/db/get/:id", metadata.GetDBByID)
 		metadataGroup.GET("/db/name-and-cluster-info", metadata.GetDBByNameAndClusterInfo)
+		metadataGroup.GET("/db/name-and-host-info", metadata.GetDBByNameAndHostInfo)
+		metadataGroup.GET("/db/host-info", metadata.GetDBsByHostInfo)
 		metadataGroup.GET("/db/app/:id", metadata.GetAppsByDBID)
 		metadataGroup.GET("/db/mysql-cluster/:id", metadata.GetMySQLClusterByDBID)
 		metadataGroup.GET("/db/app-user/:id", metadata.GetAppUsersByDBID)

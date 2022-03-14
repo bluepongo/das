@@ -177,6 +177,79 @@ func GetDBByNameAndClusterInfo(c *gin.Context) {
 }
 
 // @Tags    database
+// @Summary get database by db name and host info
+// @Accept	application/json
+// @Param	db_name	 body string true "db name"
+// @Param 	host_ip  body string true "host_ip"
+// @Param 	port_num body int	 true "port_num"
+// @Produce application/json
+// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Router  /api/v1/metadata/db/name-and-host-info [get]
+func GetDBByNameAndHostInfo(c *gin.Context) {
+	var rd *utilmeta.NameAndHostInfo
+	// bind json
+	err := c.ShouldBindJSON(&rd)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
+		return
+	}
+	// init service
+	s := metadata.NewDBServiceWithDefault()
+	// get entity
+	err = s.GetDBByNameAndHostInfo(rd.GetDBName(), rd.GetHostIP(), rd.GetPortNum())
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByNameAndHostInfo, err, rd.GetDBName(), rd.GetHostIP(), rd.GetPortNum())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.Marshal()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBByNameAndHostInfo, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBByNameAndHostInfo, rd.GetDBName(), rd.GetHostIP(), rd.GetPortNum())
+}
+
+// @Tags    database
+// @Summary get databases by host info
+// @Accept	application/json
+// @Param 	host_ip  body string true "host_ip"
+// @Param 	port_num body int	 true "port_num"
+// @Produce application/json
+// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Router  /api/v1/metadata/db/host-info [get]
+func GetDBsByHostInfo(c *gin.Context) {
+	var rd *utilmeta.HostInfo
+	// bind json
+	err := c.ShouldBindJSON(&rd)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
+		return
+	}
+	// init service
+	s := metadata.NewDBServiceWithDefault()
+	// get entity
+	err = s.GetDBsByHostInfo(rd.GetHostIP(), rd.GetPortNum())
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBsByHostInfo, err, rd.GetHostIP(), rd.GetPortNum())
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.Marshal()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBsByHostInfo, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBsByHostInfo, rd.GetHostIP(), rd.GetPortNum())
+}
+
+// @Tags    database
 // @Summary get apps by id
 // @Accept	application/json
 // @Param	id path int true "db id"

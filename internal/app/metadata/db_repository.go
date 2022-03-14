@@ -22,7 +22,7 @@ func NewDBRepo(db middleware.Pool) *DBRepo {
 	return &DBRepo{db}
 }
 
-// NewDBRepo returns *DBRepo with global mysql pool
+// NewDBRepoWithGlobal returns *DBRepo with global mysql pool
 func NewDBRepoWithGlobal() *DBRepo {
 	return NewDBRepo(global.DASMySQLPool)
 }
@@ -176,6 +176,75 @@ func (dr *DBRepo) GetDBByNameAndClusterInfo(name string, clusterID, clusterType 
 	default:
 		return nil, errors.New(fmt.Sprintf("metadata DBInfo.GetDBByNameAndClusterInfo(): duplicate entry exists, db name: %s, cluster id: %d, cluster type: %d", name, clusterID, clusterType))
 	}
+}
+
+// GetDBByNameAndHostInfo gets a database by the db name and host info from the middleware
+func (dr *DBRepo) GetDBByNameAndHostInfo(name, hostIP string, portNum int) (metadata.DB, error) {
+	sql := `
+		select id, db_name, cluster_id, cluster_type, env_id, del_flag, create_time, last_update_time
+		from t_meta_db_info as db
+		inner join t_meta_mysql_server_info as ms
+		on db.cluster_id = ms.cluster_id 
+		where db.del_flag = 0
+		and db.db_name = ?
+		and ms.host_ip = ?
+		and ms.port_num = ?;
+	`
+	log.Debugf("metadata DBRepo.GetDBByNameAndHostInfo() sql: \n%s\nplaceholders: %s, %s, %d", sql, name, hostIP, portNum)
+	result, err := dr.Execute(sql, name, hostIP, portNum)
+	if err != nil {
+		return nil, err
+	}
+	switch result.RowNumber() {
+	case 0:
+		return nil, errors.New(fmt.Sprintf("metadata DBInfo.GetDBByNameAndHostInfo(): data does not exists, db name: %s, host ip: %s, port num: %d", name, hostIP, portNum))
+	case 1:
+		dbInfo := NewEmptyDBInfoWithRepo(dr)
+		// map to struct
+		err = result.MapToStructByRowIndex(dbInfo, constant.ZeroInt, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return nil, err
+		}
+
+		return dbInfo, nil
+	default:
+		return nil, errors.New(fmt.Sprintf("metadata DBInfo.GetDBByNameAndHostInfo(): duplicate entry exists, db name: %s, host ip: %s, port num: %d", name, hostIP, portNum))
+	}
+}
+
+// GetDBsByHostInfo gets databases by the host info from the middleware
+func (dr *DBRepo) GetDBsByHostInfo(hostIP string, portNum int) ([]metadata.DB, error) {
+	sql := `
+		select id, db_name, cluster_id, cluster_type, env_id, del_flag, create_time, last_update_time
+		from t_meta_db_info as db
+		inner join t_meta_mysql_server_info as ms
+		on db.cluster_id = ms.cluster_id 
+		where db.del_flag = 0
+		and ms.host_ip = ?
+		and ms.port_num = ?;
+	`
+	log.Debugf("metadata DBRepo.GetDBsByHostInfo() sql: \n%s\nplaceholders: %s, %d", sql, hostIP, portNum)
+	result, err := dr.Execute(sql, hostIP, portNum)
+	if err != nil {
+		return nil, err
+	}
+	// init []*DBInfo
+	dbInfoList := make([]*DBInfo, result.RowNumber())
+	for i := range dbInfoList {
+		dbInfoList[i] = NewEmptyDBInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(dbInfoList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+	// init []metadata.DB
+	dbList := make([]metadata.DB, result.RowNumber())
+	for i := range dbList {
+		dbList[i] = dbInfoList[i]
+	}
+
+	return dbList, nil
 }
 
 // GetID gets the identity with given database name, cluster id and cluster type from the middleware
