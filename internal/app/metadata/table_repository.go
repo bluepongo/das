@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"fmt"
+
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
@@ -104,17 +105,26 @@ func (tr *TableRepo) GetIndexStatistics(tableSchema, tableName string) ([]metada
 }
 
 func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, error) {
-	sql := `
-		SHOW CREATE TABLE ?.?;
-	`
+	sql := fmt.Sprintf(`
+		SHOW CREATE TABLE %s.%s;
+	`, tableSchema, tableName)
 	log.Debugf("metadata TableRepo.GetCreateStatement() sql: \n%s", sql, tableSchema, tableName)
-	result, err := tr.Execute(sql, tableSchema, tableName)
+	result, err := tr.Execute(sql)
 	if err != nil {
 		return "", err
 	}
 	fmt.Println(result)
+	// XXX: RowNumber must be 1
+	createStatement, err := result.GetValue(0, 1)
+	if err != nil {
+		return "", err
+	}
+	createStatementBytes := []byte{}
+	for _, b := range createStatement.([]uint8) {
+		createStatementBytes = append(createStatementBytes, b)
+	}
 
-	return "", nil
+	return string(createStatementBytes), nil
 }
 
 func (tr *TableRepo) AnalyzeTableByDBIDAndTableName(dbID int, tableName, userName string) error {

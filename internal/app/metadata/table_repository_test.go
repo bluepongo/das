@@ -1,18 +1,19 @@
 package metadata
 
 import (
+	"os"
+	"testing"
+
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
 	"github.com/stretchr/testify/assert"
-	"os"
-	"testing"
 )
 
 const (
-	testTableSchema    = "mysql"
-	testTableName = "db"
+	testTableSchema = "mysql"
+	testTableName   = "db"
 )
 
 var testTableRepo *TableRepo
@@ -50,5 +51,5 @@ func TestTableRepo_GetCreateStatement(t *testing.T) {
 
 	result, err := testTableRepo.GetCreateStatement(testTableSchema, testTableName)
 	asst.Nil(err, common.CombineMessageWithError("test GetAll() failed", err))
-	asst.Equal(1, len(result), "test GetAll() failed")
+	asst.NotEqual("", result, "test GetAll() failed")
 }
