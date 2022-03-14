@@ -181,7 +181,7 @@ func (dr *DBRepo) GetDBByNameAndClusterInfo(name string, clusterID, clusterType 
 // GetDBByNameAndHostInfo gets a database by the db name and host info from the middleware
 func (dr *DBRepo) GetDBByNameAndHostInfo(name, hostIP string, portNum int) (metadata.DB, error) {
 	sql := `
-		select id, db_name, cluster_id, cluster_type, env_id, del_flag, create_time, last_update_time
+		select db.id, db.db_name, db.cluster_id, db.cluster_type, db.env_id, db.del_flag, db.create_time, db.last_update_time
 		from t_meta_db_info as db
 		inner join t_meta_mysql_server_info as ms
 		on db.cluster_id = ms.cluster_id 
@@ -215,7 +215,7 @@ func (dr *DBRepo) GetDBByNameAndHostInfo(name, hostIP string, portNum int) (meta
 // GetDBsByHostInfo gets databases by the host info from the middleware
 func (dr *DBRepo) GetDBsByHostInfo(hostIP string, portNum int) ([]metadata.DB, error) {
 	sql := `
-		select id, db_name, cluster_id, cluster_type, env_id, del_flag, create_time, last_update_time
+		select db.id, db.db_name, db.cluster_id, db.cluster_type, db.env_id, db.del_flag, db.create_time, db.last_update_time
 		from t_meta_db_info as db
 		inner join t_meta_mysql_server_info as ms
 		on db.cluster_id = ms.cluster_id 

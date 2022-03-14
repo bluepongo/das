@@ -16,6 +16,18 @@ Content-Type: application/json
 
 {"db_name": "new_db", "cluster_id": 1, "cluster_type": 1}
 
+### get database by db name and host info
+GET http://{{baseURL}}/api/v1/metadata/db/name-and-host-info
+Content-Type: application/json
+
+{"db_name": "pmm_test", "host_ip": "192.168.10.219", "port_num": 3306}
+
+### get databases by host info
+GET http://{{baseURL}}/api/v1/metadata/db/host-info
+Content-Type: application/json
+
+{"host_ip": "192.168.10.219", "port_num": 3306}
+
 ### get all apps by id
 GET http://{{baseURL}}/api/v1/metadata/db/app/1
 Content-Type: application/json

@@ -183,7 +183,7 @@ func GetDBByNameAndClusterInfo(c *gin.Context) {
 // @Param 	host_ip  body string true "host_ip"
 // @Param 	port_num body int	 true "port_num"
 // @Produce application/json
-// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "pmm_test", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2022-03-14T09:59:21.379851+08:00", "last_update_time": "2022-03-14T09:59:21.379851+08:00"}]}"
 // @Router  /api/v1/metadata/db/name-and-host-info [get]
 func GetDBByNameAndHostInfo(c *gin.Context) {
 	var rd *utilmeta.NameAndHostInfo
@@ -219,7 +219,7 @@ func GetDBByNameAndHostInfo(c *gin.Context) {
 // @Param 	host_ip  body string true "host_ip"
 // @Param 	port_num body int	 true "port_num"
 // @Produce application/json
-// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
+// @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "pmm_test", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2022-03-14T09:59:21.379851+08:00", "last_update_time": "2022-03-14T09:59:21.379851+08:00"}]}"
 // @Router  /api/v1/metadata/db/host-info [get]
 func GetDBsByHostInfo(c *gin.Context) {
 	var rd *utilmeta.HostInfo

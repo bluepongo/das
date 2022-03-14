@@ -133,7 +133,7 @@ func TestDBRepo_GetDBByNameAndHostInfo(t *testing.T) {
 
 	db, err := testDBRepo.GetDBByNameAndHostInfo(testDBDBName2, testDBHostIP, testDBPortNum)
 	asst.Nil(err, common.CombineMessageWithError("test GetDBByNameAndHostInfo() failed", err))
-	asst.Equal(testDBDBID, db.Identity(), "test GetDBByNameAndHostInfo() failed")
+	asst.Equal(testDBDBName2, db.GetDBName(), "test GetDBByNameAndHostInfo() failed")
 }
 
 func TestDBRepo_GetDBsByHostInfo(t *testing.T) {

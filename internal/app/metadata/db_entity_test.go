@@ -30,7 +30,7 @@ const (
 	testDBMySQLClusterID       = 2
 	testDBUserID               = 2
 	testDBHostIP               = "192.168.10.219"
-	testDBPortNum              = 33061
+	testDBPortNum              = 3306
 )
 
 var testDBInfo *DBInfo
