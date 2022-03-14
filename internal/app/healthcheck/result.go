@@ -37,8 +37,8 @@ const (
 	resultTableRowsHighStruct                    = "TableRowsHigh"
 	resultTableSizeDataStruct                    = "TableSizeData"
 	resultTableSizeHighStruct                    = "TableSizeHigh"
-	resultSlowQueryData                          = "SlowQueryData"
-	resultSlowQueryAdvice                        = "SlowQueryAdvice"
+	resultSlowQueryDataStruct                    = "SlowQueryData"
+	resultSlowQueryAdviceStruct                  = "SlowQueryAdvice"
 	resultAccuracyReviewStruct                   = "AccuracyReview"
 	resultDelFlagStruct                          = "DelFlag"
 	resultCreateTimeStruct                       = "CreateTime"
@@ -67,7 +67,7 @@ var defaultIgnoreList = []string{
 	resultTableRowsHighStruct,
 	resultTableSizeDataStruct,
 	resultTableSizeHighStruct,
-	resultSlowQueryData,
+	resultSlowQueryDataStruct,
 	resultAccuracyReviewStruct,
 	resultDelFlagStruct,
 	resultLastUpdateTimeStruct,
@@ -542,7 +542,7 @@ func (r *Result) getString(ignoreList []string) string {
 				fieldStrTemplate = `"%s":%d,`
 			case reflect.String:
 				if fieldVal.String() != constant.EmptyString &&
-					(fieldType.Name == resultDBConfigAdviceStruct || fieldType.Name == resultSlowQueryAdvice) {
+					(fieldType.Name == resultDBConfigDataStruct || fieldType.Name == resultDBConfigAdviceStruct || fieldType.Name == resultSlowQueryDataStruct || fieldType.Name == resultSlowQueryAdviceStruct) {
 					fieldStrTemplate = `"%s":%s,`
 				}
 			}
@@ -551,5 +551,5 @@ func (r *Result) getString(ignoreList []string) string {
 		}
 	}
 
-	return strings.Trim(s, constant.CommaString)
+	return strings.Trim(s, constant.CommaString) + constant.RightBraceString
 }
