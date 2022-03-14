@@ -455,7 +455,7 @@ func ValidateMetadata() error {
 	if err != nil {
 		merr = multierror.Append(merr, errors.Trace(err))
 	}
-	if minRole < MaxMetadataTableAnalyzeMinRole || minRole > MaxMetadataTableAnalyzeMinRole {
+	if minRole < MinMetadataTableAnalyzeMinRole || minRole > MaxMetadataTableAnalyzeMinRole {
 		merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidMetadataTableAnalyzeMinRole, MinMetadataTableAnalyzeMinRole, MaxMetadataTableAnalyzeMinRole, minRole))
 	}
 
