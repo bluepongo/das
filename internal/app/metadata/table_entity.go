@@ -145,15 +145,19 @@ var _ metadata.Table = (*TableInfo)(nil)
 
 type TableInfo struct {
 	metadata.TableRepo
+	TableSchema   string    `middleware:"table_schema" json:"table_schema"`
+	TableName     string    `middleware:"table_name" json:"table_name"`
 	TableStatistics []metadata.TableStatistic `middleware:"table_statistics" json:"table_statistics"`
 	IndexStatistics []metadata.IndexStatistic `middleware:"index_statistics" json:"index_statistics"`
 	CreateStatement string `middleware:"create_statement" json:"create_statement"`
 }
 
 // NewTableInfo returns a new TableInfo
-func NewTableInfo(repo metadata.TableRepo, tableStatistics []metadata.TableStatistic, indexStatistics []metadata.IndexStatistic, createStatement string) *TableInfo {
+func NewTableInfo(repo metadata.TableRepo, tableSchema string, tableName string, tableStatistics []metadata.TableStatistic, indexStatistics []metadata.IndexStatistic, createStatement string) *TableInfo {
 	return &TableInfo{
 		repo,
+		tableSchema,
+		tableName,
 		tableStatistics,
 		indexStatistics,
 		createStatement,
@@ -172,29 +176,29 @@ func NewTableInfoWithMapAndRandom(fields map[string]interface{}) (*TableInfo, er
 }
 
 func (ti *TableInfo) GetTableSchema() string {
-	panic("implement me")
+	return ti.TableSchema
 }
 
 func (ti *TableInfo) GetTableName() string {
-	panic("implement me")
+	return ti.TableName
 }
 
 func (ti *TableInfo) GetTableStatistics() []metadata.TableStatistic {
-	panic("implement me")
+	return ti.TableStatistics
 }
 
 func (ti *TableInfo) GetIndexStatistics() []metadata.IndexStatistic {
-	panic("implement me")
+	return ti.IndexStatistics
 }
 
 func (ti *TableInfo) GetCreateStatement() string {
-	panic("implement me")
+	return ti.CreateStatement
 }
 
 func (ti *TableInfo) MarshalJSON() ([]byte, error) {
-	panic("implement me")
+	return common.MarshalStructWithTag(ti, constant.DefaultMarshalTag)
 }
 
 func (ti *TableInfo) MarshalJSONWithFields(fields ...string) ([]byte, error) {
-	panic("implement me")
+	return common.MarshalStructWithFields(ti, fields...)
 }
