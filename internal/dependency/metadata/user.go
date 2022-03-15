@@ -80,6 +80,8 @@ type UserRepo interface {
 	GetMiddlewareClustersByUserID(id int) ([]MiddlewareCluster, error)
 	// GetMySQLClustersByUserID gets MySQLCluster list that this user owns
 	GetMySQLClustersByUserID(id int) ([]MySQLCluster, error)
+	// GetAllMySQLServersByUserID gets MySQLServers list that this user owns
+	GetAllMySQLServersByUserID(id int) ([]MySQLServer, error)
 }
 
 type UserService interface {
@@ -132,4 +134,6 @@ type UserService interface {
 	GetMiddlewareClustersByUserID(id int) error
 	// GetMySQLClustersByUserID gets MySQLClusters that this user owns
 	GetMySQLClustersByUserID(id int) error
+	// GetAllMySQLServersByUserID gets MySQLServers list that this user owns
+	GetAllMySQLServersByUserID(id int) error
 }

@@ -29,11 +29,11 @@ const (
 	userDBsStruct                = "DBs"
 	userMiddlewareClustersStruct = "MiddlewareClusters"
 	userMySQLClustersStruct      = "MySQLClusters"
+	userMySQLServersStruct       = "MySQLServers"
 	userNameStruct               = "UserName"
 	departmentNameStruct         = "DepartmentName"
 	employeeIDStruct             = "EmployeeID"
 	accountNameStruct            = "AccountName"
-	loginNameStruct              = "LoginName"
 	emailStruct                  = "Email"
 	telephoneStruct              = "Telephone"
 	roleStruct                   = "Role"
@@ -75,7 +75,7 @@ func GetUser(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
 // @Router 	/api/v1/metadata/user/user-name/:user_name [get]
-func GetUserByName(c *gin.Context) {
+func GetByUserName(c *gin.Context) {
 	// get param
 	userName := c.Param(userNameJSON)
 	if userName == constant.EmptyString {
@@ -87,7 +87,7 @@ func GetUserByName(c *gin.Context) {
 	// get UserRepo
 	err := s.GetByUserName(userName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByName, err, userName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetByUserName, err, userName)
 		return
 	}
 	// marshal service
@@ -98,8 +98,8 @@ func GetUserByName(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetUserByName, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetUserByName, userName)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetByUserName, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetByUserName, userName)
 }
 
 // @Tags 	user
@@ -220,7 +220,7 @@ func GetByAccountNameOrEmployeeID(c *gin.Context) {
 	// get param
 	loginName := c.Param(loginNameJSON)
 	if loginName == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, loginNameStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, loginNameJSON)
 		return
 	}
 	// init service
@@ -582,7 +582,7 @@ func GetAppsByUserID(c *gin.Context) {
 // @Summary get dbs by id
 // @Accept	application/json
 // @Param	id path int true "user id"
-// @Produce db/json
+// @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1,"db_name": "db2","cluster_id": 3,"cluster_type": 1,"env_id": 1,"del_flag": 0,"create_time": "2022-01-04T15:08:33.418288+08:00","last_update_time": "2022-01-25T16:17:26.284761+08:00"},}]}"
 // @Router 	/api/v1/metadata/user/db/:id [get]
 func GetDBsByUserID(c *gin.Context) {
@@ -622,7 +622,7 @@ func GetDBsByUserID(c *gin.Context) {
 // @Summary get middlewareclusters by id
 // @Accept	application/json
 // @Param	id path int true "user id"
-// @Produce middlewarecluster/json
+// @Produce application/json
 // @Success 200 {string} string "{"middleware_clusters": [{"id": 1,"cluster_name": "middleware-cluster-1","env_id": 1,"del_flag": 0,"create_time": "2021-11-09T18:06:57.917596+08:00","last_update_time": "2021-11-18T15:39:52.927116+08:00"}]}"
 // @Router 	/api/v1/metadata/user/middlewarecluster/:id [get]
 func GetMiddlewareClustersByUserID(c *gin.Context) {
@@ -659,12 +659,12 @@ func GetMiddlewareClustersByUserID(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary get mysqlclusterclusters by id
+// @Summary get mysqlclusters by id
 // @Accept	application/json
 // @Param	id path int true "user id"
-// @Produce mysqlclustercluster/json
+// @Produce application/json
 // @Success 200 {string} string "{"mysql_clusters": [{"id": 1,"cluster_name": "mysql-cluster-pmm2","middleware_cluster_id": 0,"env_id": 1"monitor_system_id": 1,"del_flag": 0,"last_update_time": "2021-12-21T09:16:10.750725+08:00","create_time": "2021-09-02T09:02:22.346672+08:00",},]}"
-// @Router 	/api/v1/metadata/user/mysqlclustercluster/:id [get]
+// @Router 	/api/v1/metadata/user/mysqlcluster/:id [get]
 func GetMySQLClustersByUserID(c *gin.Context) {
 	// get param
 	idStr := c.Param(userIDJSON)
@@ -695,5 +695,45 @@ func GetMySQLClustersByUserID(c *gin.Context) {
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLClustersByUserID, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLClustersByUserID, id)
+
+}
+
+// @Tags 	user
+// @Summary get MySQLClusters by id
+// @Accept	application/json
+// @Param	id path int true "user id"
+// @Produce application/json
+// @Success	200 {string} string "{"mysql_servers":[{"port_num":3306,"create_time":"2021-09-02T11:16:06.561525+08:00","last_update_time":"2022-03-01T08:19:09.779365+08:00","cluster_id":1,"server_name":"192-168-10-219","service_name":"192-168-10-219:3306","host_ip":"192.168.10.219","id":1,"deployment_type":1,"version":"5.7","del_flag":0}]}"
+// @Router 	/api/v1/metadata/user/all-mysql-server/:id [get]
+func GetAllMySQLServersByUserID(c *gin.Context) {
+	// get param
+	idStr := c.Param(userIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, userIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// get entity
+	err = s.GetAllMySQLServersByUserID(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAllMySQLServersByUserID, err, id)
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(userMySQLServersStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAllMySQLServersByUserID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllMySQLServersByUserID, id)
 
 }

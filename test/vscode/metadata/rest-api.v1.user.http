@@ -68,3 +68,7 @@ Accept: application/json
 GET http://{{baseURL}}/api/v1/metadata/user/mysqlcluster/14
 Accept: application/json
 
+### get all mysqlservers by id
+GET http://{{baseURL}}/api/v1/metadata/user/all-mysql-server/1
+Accept: application/json
+

@@ -34,6 +34,7 @@ func TestUserServiceAll(t *testing.T) {
 	TestUserService_GetDBsByUserID(t)
 	TestUserService_GetMiddlewareClustersByUserID(t)
 	TestUserService_GetMySQLClustersByUserID(t)
+	TestUserService_GetAllMySQLServersByUserID(t)
 
 }
 
@@ -206,4 +207,12 @@ func TestUserService_GetMySQLClustersByUserID(t *testing.T) {
 	err := testUserService.GetMySQLClustersByUserID(testUserID)
 	asst.Nil(err, "test GetMySQLClustersByUserID() failed")
 	asst.Equal(testUserMySQLClusterID, testUserService.GetMySQLClusters()[constant.ZeroInt].Identity(), "test GetMySQLClustersByUserID() failed")
+}
+
+func TestUserService_GetAllMySQLServersByUserID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testUserService.GetAllMySQLServersByUserID(testUserID)
+	asst.Nil(err, "test GetAllMySQLServersByUserID() failed")
+	asst.Equal(testUserMySQLServerID, testUserService.GetMySQLServers()[constant.ZeroInt].Identity(), "test GetAllMySQLServersByUserID() failed")
 }

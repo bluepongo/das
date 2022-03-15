@@ -22,6 +22,7 @@ const (
 	testUserDB2ID               = 2
 	testUserMiddlewareClusterID = 1
 	testUserMySQLClusterID      = 1
+	testUserMySQLServerID       = 1
 	testUser2ID                 = 15
 )
 
@@ -67,6 +68,8 @@ func TestUserRepoAll(t *testing.T) {
 	TestUserRepo_GetDBsByUserID(t)
 	TestUserRepo_GetMiddlewareClustersByUserID(t)
 	TestUserRepo_GetMySQLClustersByUserID(t)
+	TestUserRepo_GetAllMySQLServersByUserID(t)
+	TestUserRepo_GetByAccountNameOrEmployeeID(t)
 
 }
 
@@ -264,15 +267,23 @@ func TestUserRepo_GetDBsByUserID(t *testing.T) {
 func TestUserRepo_GetMiddlewareClustersByUserID(t *testing.T) {
 	asst := assert.New(t)
 
-	dbs, err := testUserRepo.GetMiddlewareClustersByUserID(testUserID)
+	mcs, err := testUserRepo.GetMiddlewareClustersByUserID(testUserID)
 	asst.Nil(err, common.CombineMessageWithError("test GetMiddlewareClustersByUserID() failed", err))
-	asst.Equal(testUserMiddlewareClusterID, dbs[constant.ZeroInt].Identity(), "test GetMiddlewareClustersByUserID() failed")
+	asst.Equal(testUserMiddlewareClusterID, mcs[constant.ZeroInt].Identity(), "test GetMiddlewareClustersByUserID() failed")
 }
 
 func TestUserRepo_GetMySQLClustersByUserID(t *testing.T) {
 	asst := assert.New(t)
 
-	dbs, err := testUserRepo.GetMySQLClustersByUserID(testUserID)
+	mcs, err := testUserRepo.GetMySQLClustersByUserID(testUserID)
 	asst.Nil(err, common.CombineMessageWithError("test GetMySQLClustersByUserID() failed", err))
-	asst.Equal(testUserMySQLClusterID, dbs[constant.ZeroInt].Identity(), "test GetMySQLClustersByUserID() failed")
+	asst.Equal(testUserMySQLClusterID, mcs[constant.ZeroInt].Identity(), "test GetMySQLClustersByUserID() failed")
+}
+
+func TestUserRepo_GetAllMySQLServersByUserID(t *testing.T) {
+	asst := assert.New(t)
+
+	mss, err := testUserRepo.GetAllMySQLServersByUserID(testUserID)
+	asst.Nil(err, common.CombineMessageWithError("test GetAllMySQLServersByUserID() failed", err))
+	asst.Equal(testUserMySQLServerID, mss[constant.ZeroInt].Identity(), "test GetAllMySQLServersByUserID() failed")
 }

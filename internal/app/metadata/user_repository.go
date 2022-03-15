@@ -256,7 +256,7 @@ func (ur *UserRepo) GetByAccountNameOrEmployeeID(loginName string) (metadata.Use
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.Errorf("metadata UserInfo.GetByAccountNameOrEmployeeID(): data does not exists, id: %s", loginName)
+		return nil, errors.Errorf("metadata UserInfo.GetByAccountNameOrEmployeeID(): data does not exists, login name: %s", loginName)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -267,7 +267,7 @@ func (ur *UserRepo) GetByAccountNameOrEmployeeID(loginName string) (metadata.Use
 
 		return userInfo, nil
 	default:
-		return nil, errors.Errorf("metadata UserInfo.GetByAccountNameOrEmployeeID(): duplicate key exists, id: %s", loginName)
+		return nil, errors.Errorf("metadata UserInfo.GetByAccountNameOrEmployeeID(): duplicate key exists, login name: %s", loginName)
 	}
 }
 
@@ -519,4 +519,92 @@ func (ur *UserRepo) GetMySQLClustersByUserID(userID int) ([]metadata.MySQLCluste
 	}
 
 	return mysqlclusterList, nil
+}
+
+// GetAllMySQLServersByUserID gets mysqlserver list that this user owns
+func (ur *UserRepo) GetAllMySQLServersByUserID(id int) ([]metadata.MySQLServer, error) {
+	sql := `
+		select msi.id,
+			msi.cluster_id,
+			msi.server_name,
+			msi.service_name,
+			msi.host_ip,
+			msi.port_num,
+			msi.deployment_type,
+			msi.version,
+			msi.del_flag,
+			msi.create_time,
+			msi.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_mysql_cluster_user_map mcum on ui.id = mcum.user_id
+			inner join t_meta_mysql_server_info msi on mcum.mysql_cluster_id = msi.cluster_id
+		where ui.del_flag = 0
+		and mcum.del_flag = 0
+		and msi.del_flag = 0
+		and ui.id = ?
+		union
+		select msi.id,
+			msi.cluster_id,
+			msi.server_name,
+			msi.service_name,
+			msi.host_ip,
+			msi.port_num,
+			msi.deployment_type,
+			msi.version,
+			msi.del_flag,
+			msi.create_time,
+			msi.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_db_user_map dum on ui.id = dum.user_id
+			inner join t_meta_db_info di on dum.db_id = di.id
+			inner join t_meta_mysql_server_info msi on di.cluster_id = msi.cluster_id and di.cluster_type = 1
+		where ui.del_flag = 0
+		and dum.del_flag = 0
+		and di.del_flag = 0
+		and msi.del_flag = 0
+		and ui.id = ?
+		union
+		select msi.id,
+			msi.cluster_id,
+			msi.server_name,
+			msi.service_name,
+			msi.host_ip,
+			msi.port_num,
+			msi.deployment_type,
+			msi.version,
+			msi.del_flag,
+			msi.create_time,
+			msi.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_app_user_map aum on ui.id = aum.user_id
+			inner join t_meta_app_db_map adm on aum.app_id = adm.app_id
+			inner join t_meta_db_info di on adm.db_id = di.id
+			inner join t_meta_mysql_server_info msi on di.cluster_id = msi.cluster_id and di.cluster_type = 1
+		where ui.del_flag = 0
+		and aum.del_flag = 0
+		and adm.del_flag = 0
+		and di.del_flag = 0
+		and msi.del_flag = 0
+		and ui.id = ?;
+	`
+	log.Debugf("metadata UserRepo.GetAllMySQLServersByUserID() sql: \n%s\nplaceholders: %d", sql, id)
+
+	result, err := ur.Execute(sql, id, id, id)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	mysqlserverList := make([]metadata.MySQLServer, resultNum)
+
+	for row := 0; row < resultNum; row++ {
+		mysqlserverList[row] = NewEmptyMySQLServerInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(mysqlserverList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return mysqlserverList, nil
 }

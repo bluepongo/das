@@ -103,7 +103,7 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.POST("/mysql-server/delete/:id", metadata.DeleteMySQLServerByID)
 		// user
 		metadataGroup.GET("/user", metadata.GetUser)
-		metadataGroup.GET("/user/user-name/:user_name", metadata.GetUserByName)
+		metadataGroup.GET("/user/user-name/:user_name", metadata.GetByUserName)
 		metadataGroup.GET("/user/get/:id", metadata.GetUserByID)
 		metadataGroup.GET("/user/employee-id/:employee_id", metadata.GetUserByEmployeeID)
 		metadataGroup.GET("/user/account-name/:account_name", metadata.GetUserByAccountName)
@@ -118,5 +118,6 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.GET("/user/db/:id", metadata.GetDBsByUserID)
 		metadataGroup.GET("/user/middlewarecluster/:id", metadata.GetMiddlewareClustersByUserID)
 		metadataGroup.GET("/user/mysqlcluster/:id", metadata.GetMySQLClustersByUserID)
+		metadataGroup.GET("/user/all-mysql-server/:id", metadata.GetAllMySQLServersByUserID)
 	}
 }

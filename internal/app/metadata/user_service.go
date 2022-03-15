@@ -19,6 +19,7 @@ type UserService struct {
 	DBs                []metadata.DB                `json:"dbs"`
 	MiddlewareClusters []metadata.MiddlewareCluster `json:"middleware_clusters"`
 	MySQLClusters      []metadata.MySQLCluster      `json:"mysql_clusters"`
+	MySQLServers       []metadata.MySQLServer       `json:"mysql_servers"`
 }
 
 // NewUserService returns a new *UserService
@@ -63,6 +64,11 @@ func (us *UserService) GetMiddlewareClusters() []metadata.MiddlewareCluster {
 // GetMySQLClusters returns the MySQLClusters of the service
 func (us *UserService) GetMySQLClusters() []metadata.MySQLCluster {
 	return us.MySQLClusters
+}
+
+// GetMySQLServers returns the MySQLServers of the service
+func (us *UserService) GetMySQLServers() []metadata.MySQLServer {
+	return us.MySQLServers
 }
 
 // GetByUserName gets users of given user name
@@ -269,5 +275,13 @@ func (us *UserService) GetMySQLClustersByUserID(userID int) error {
 
 	us.MySQLClusters, err = us.UserRepo.GetMySQLClustersByUserID(userID)
 
+	return err
+}
+
+// GetAllMySQLServersByUserID gets MySQLServers that this user owns
+func (us *UserService) GetAllMySQLServersByUserID(id int) error {
+	var err error
+
+	us.MySQLServers, err = us.UserRepo.GetAllMySQLServersByUserID(id)
 	return err
 }
