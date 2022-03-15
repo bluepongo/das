@@ -53,7 +53,7 @@ func TestUserRepoAll(t *testing.T) {
 	TestUserRepo_Transaction(t)
 	TestUserRepo_GetAll(t)
 	TestUserRepo_GetByID(t)
-	TestUserRepo_GetByName(t)
+	TestUserRepo_GetByUserName(t)
 	TestUserRepo_GetByEmployeeID(t)
 	TestUserRepo_GetByAccountName(t)
 	TestUserRepo_GetByEmail(t)
@@ -140,12 +140,12 @@ func TestUserRepo_GetByID(t *testing.T) {
 	asst.Equal(testUserID, entity.Identity(), "test GetByID() failed")
 }
 
-func TestUserRepo_GetByName(t *testing.T) {
+func TestUserRepo_GetByUserName(t *testing.T) {
 	asst := assert.New(t)
 
-	entities, err := testUserRepo.GetByName(testUserUserName)
-	asst.Nil(err, common.CombineMessageWithError("test GetByName() failed", err))
-	asst.Equal(1, len(entities), "test GetByName() failed")
+	entities, err := testUserRepo.GetByUserName(testUserUserName)
+	asst.Nil(err, common.CombineMessageWithError("test GetByUserName() failed", err))
+	asst.Equal(1, len(entities), "test GetByUserName() failed")
 }
 
 func TestUserRepo_GetByEmployeeID(t *testing.T) {
@@ -162,6 +162,18 @@ func TestUserRepo_GetByAccountName(t *testing.T) {
 	entity, err := testUserRepo.GetByAccountName(testUserAccountName)
 	asst.Nil(err, common.CombineMessageWithError("test GetByAccountName failed", err))
 	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountName failed")
+}
+
+func TestUserRepo_GetByAccountNameOrEmployeeID(t *testing.T) {
+	asst := assert.New(t)
+
+	entity, err := testUserRepo.GetByAccountNameOrEmployeeID(testUserAccountName)
+	asst.Nil(err, common.CombineMessageWithError("test GetByAccountNameOrEmployeeID failed", err))
+	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountNameOrEmployeeID failed")
+
+	entity, err = testUserRepo.GetByAccountNameOrEmployeeID(testUserEmployeeID)
+	asst.Nil(err, common.CombineMessageWithError("test GetByAccountNameOrEmployeeID failed", err))
+	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountNameOrEmployeeID failed")
 }
 
 func TestUserRepo_GetByEmail(t *testing.T) {

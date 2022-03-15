@@ -28,6 +28,7 @@ const (
 	DebugMetadataGetDBsByUserID                = 100913
 	DebugMetadataGetMiddlewareClustersByUserID = 100914
 	DebugMetadataGetMySQLClustersByUserID      = 100915
+	DebugMetadataGetByAccountNameOrEmployeeID  = 100916
 	// info
 	InfoMetadataGetUserAll                    = 200901
 	InfoMetadataGetUserByID                   = 200902
@@ -44,6 +45,7 @@ const (
 	InfoMetadataGetDBsByUserID                = 200913
 	InfoMetadataGetMiddlewareClustersByUserID = 200914
 	InfoMetadataGetMySQLClustersByUserID      = 200915
+	InfoMetadataGetByAccountNameOrEmployeeID  = 200916
 	// error
 	ErrMetadataGetUserAll                    = 400901
 	ErrMetadataGetUserByID                   = 400902
@@ -60,6 +62,7 @@ const (
 	ErrMetadataGetDBsByUserID                = 400913
 	ErrMetadataGetMiddlewareClustersByUserID = 400914
 	ErrMetadataGetMySQLClustersByUserID      = 400915
+	ErrMetadataGetByAccountNameOrEmployeeID  = 400916
 )
 
 func initDebugUserMessage() {
@@ -70,6 +73,7 @@ func initDebugUserMessage() {
 	message.Messages[DebugMetadataGetUserByName] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetUserByName, "metadata: get user by username message: %s")
 	message.Messages[DebugMetadataGetEmployeeID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetEmployeeID, "metadata: get user by employeeid message: %s")
 	message.Messages[DebugMetadataGetAccountName] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetAccountName, "metadata: get user by accountname message: %s")
+	message.Messages[DebugMetadataGetByAccountNameOrEmployeeID] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetByAccountNameOrEmployeeID, "metadata: get user by accountname or employee id message: %s")
 	message.Messages[DebugMetadataGetEmail] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetEmail, "metadata: get user by email message: %s")
 	message.Messages[DebugMetadataGetTelephone] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetTelephone, "metadata: get user by telephone message: %s")
 	message.Messages[DebugMetadataGetMobile] = config.NewErrMessage(message.DefaultMessageHeader, DebugMetadataGetMobile, "metadata: get user by mobile message: %s")
@@ -85,11 +89,12 @@ func initInfoUserMessage() {
 	message.Messages[InfoMetadataGetUserByID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetUserByID, "metadata: get user by id completed. id: %d")
 	message.Messages[InfoMetadataAddUser] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataAddUser, "metadata: add new user completed. user_name: %s")
 	message.Messages[InfoMetadataUpdateUser] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataUpdateUser, "metadata: update user completed. id: %d")
-	message.Messages[InfoMetadataGetUserByName] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetUserByName, "metadata: get user by username completed.Name: %s")
-	message.Messages[InfoMetadataGetEmployeeID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetEmployeeID, "metadata: get user by employeeid completed.employID: %d")
-	message.Messages[InfoMetadataGetAccountName] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetAccountName, "metadata: get user by accountname completed.accountName: %s")
-	message.Messages[InfoMetadataGetEmail] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetEmail, "metadata: get user by email completed.email: %s")
-	message.Messages[InfoMetadataGetTelephone] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetTelephone, "metadata: get user by telephone completed.telephone: %s")
+	message.Messages[InfoMetadataGetUserByName] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetUserByName, "metadata: get user by username completed. Name: %s")
+	message.Messages[InfoMetadataGetEmployeeID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetEmployeeID, "metadata: get user by employeeid completed. employID: %d")
+	message.Messages[InfoMetadataGetAccountName] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetAccountName, "metadata: get user by accountname completed. accountName: %s")
+	message.Messages[InfoMetadataGetByAccountNameOrEmployeeID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetByAccountNameOrEmployeeID, "metadata: get user by accountname or employee id completed. loginName: %s")
+	message.Messages[InfoMetadataGetEmail] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetEmail, "metadata: get user by email completed. email: %s")
+	message.Messages[InfoMetadataGetTelephone] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetTelephone, "metadata: get user by telephone completed. telephone: %s")
 	message.Messages[InfoMetadataGetMobile] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetMobile, "metadata: get user by mobile completed.mobile: %s")
 	message.Messages[InfoMetadataDeleteUserByID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataDeleteUserByID, "metadata: delete user by ID completed. id: %d")
 	message.Messages[InfoMetadataGetAppsByUserID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetAppsByUserID, "metadata: get app id list completed. id: %d")
@@ -104,11 +109,12 @@ func initErrorUserMessage() {
 	message.Messages[ErrMetadataAddUser] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAddUser, "metadata: add new user failed. user_name: %s")
 	message.Messages[ErrMetadataUpdateUser] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataUpdateUser, "metadata: update user failed. id: %d")
 	message.Messages[ErrMetadataGetUserByName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetUserByName, "metadata: get user by username failed.Name: %s")
-	message.Messages[ErrMetadataGetEmployeeID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEmployeeID, "metadata: get user by employeeid failed.employID: %d")
-	message.Messages[ErrMetadataGetAccountName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetAccountName, "metadata: get user by accountname failed.accountName: %s")
-	message.Messages[ErrMetadataGetEmail] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEmail, "metadata: get user by email failed.email: %s")
-	message.Messages[ErrMetadataGetTelephone] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetTelephone, "metadata: get user by telephone failed.telephone: %s")
-	message.Messages[ErrMetadataGetMobile] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMobile, "metadata: get user by mobile failed.mobile: %s")
+	message.Messages[ErrMetadataGetEmployeeID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEmployeeID, "metadata: get user by employeeid failed. employID: %d")
+	message.Messages[ErrMetadataGetAccountName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetAccountName, "metadata: get user by accountname failed. accountName: %s")
+	message.Messages[ErrMetadataGetByAccountNameOrEmployeeID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetByAccountNameOrEmployeeID, "metadata: get user by accountname or employee id failed. loginName: %s")
+	message.Messages[ErrMetadataGetEmail] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEmail, "metadata: get user by email failed. email: %s")
+	message.Messages[ErrMetadataGetTelephone] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetTelephone, "metadata: get user by telephone failed. telephone: %s")
+	message.Messages[ErrMetadataGetMobile] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetMobile, "metadata: get user by mobile failed. mobile: %s")
 	message.Messages[ErrMetadataDeleteUserByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDeleteUserByID, "metadata: delete user by ID failed. id: %d")
 	message.Messages[ErrMetadataGetAppsByUserID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetAppsByUserID, "metadata: get app id list failed. id: %d")
 	message.Messages[ErrMetadataGetDBsByUserID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetDBsByUserID, "metadata: get db id list failed. id: %d")

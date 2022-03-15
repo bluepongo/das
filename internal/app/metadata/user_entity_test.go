@@ -62,6 +62,7 @@ func TestUserEntityAll(t *testing.T) {
 	TestUserInfo_GetEmployeeID(t)
 	TestUserInfo_GetAccountName(t)
 	TestUserInfo_GetEmail(t)
+	TestUserInfo_GetRole(t)
 	TestUserInfo_GetTelephone(t)
 	TestUserInfo_GetMobile(t)
 	TestUserInfo_GetDelFlag(t)
@@ -107,6 +108,12 @@ func TestUserInfo_GetEmail(t *testing.T) {
 	asst := assert.New(t)
 
 	asst.Equal(testUserEmail, testUserInfo.GetEmail(), "test GetEmail() failed")
+}
+
+func TestUserInfo_GetRole(t *testing.T) {
+	asst := assert.New(t)
+
+	asst.Equal(testUserRole, testUserInfo.GetRole(), "test GetRole() failed")
 }
 
 func TestUserInfo_GetTelephone(t *testing.T) {

@@ -44,15 +44,15 @@ func (ur *UserRepo) Execute(command string, args ...interface{}) (middleware.Res
 	return conn.Execute(command, args...)
 }
 
-// GetByName gets users of given username from the middleware
-func (ur *UserRepo) GetByName(userName string) ([]metadata.User, error) {
+// GetByUserName gets users of given username from the middleware
+func (ur *UserRepo) GetByUserName(userName string) ([]metadata.User, error) {
 	sql := `
 	select id, user_name, department_name, employee_id, account_name, email, telephone, mobile, role, del_flag, create_time, last_update_time
 	from t_meta_user_info
 	where del_flag = 0
 	and user_name = ?;
 `
-	log.Debugf("metadata UserRepo.GetByID() sql: \n%s\nplaceholders: %s", sql, userName)
+	log.Debugf("metadata UserRepo.GetByUserName() sql: \n%s\nplaceholders: %s", sql, userName)
 
 	result, err := ur.Execute(sql, userName)
 	if err != nil {
@@ -124,7 +124,7 @@ func (ur *UserRepo) GetByMobile(mobile string) (metadata.User, error) {
 		where del_flag = 0
 		and mobile = ?;
 `
-	log.Debugf("metadata UserRepo.GetByID() sql: \n%s\nplaceholders: %s", sql, mobile)
+	log.Debugf("metadata UserRepo.GetByMobile() sql: \n%s\nplaceholders: %s", sql, mobile)
 
 	result, err := ur.Execute(sql, mobile)
 	if err != nil {
@@ -155,7 +155,7 @@ func (ur *UserRepo) GetByTelephone(telephone string) (metadata.User, error) {
 		where del_flag = 0
 		and telephone = ?;
 `
-	log.Debugf("metadata UserRepo.GetByID() sql: \n%s\nplaceholders: %s", sql, telephone)
+	log.Debugf("metadata UserRepo.GetByTelephone() sql: \n%s\nplaceholders: %s", sql, telephone)
 
 	result, err := ur.Execute(sql, telephone)
 	if err != nil {
@@ -217,7 +217,7 @@ func (ur *UserRepo) GetByAccountName(accountName string) (metadata.User, error) 
 	where del_flag = 0
 	and account_name = ?;
 `
-	log.Debugf("metadata UserRepo.GetByID() sql: \n%s\nplaceholders: %s", sql, accountName)
+	log.Debugf("metadata UserRepo.GetByAccountName() sql: \n%s\nplaceholders: %s", sql, accountName)
 
 	result, err := ur.Execute(sql, accountName)
 	if err != nil {
@@ -240,6 +240,37 @@ func (ur *UserRepo) GetByAccountName(accountName string) (metadata.User, error) 
 	}
 }
 
+// GetByAccountNameOrEmployeeID gets a user of given loginName from the middleware
+func (ur *UserRepo) GetByAccountNameOrEmployeeID(loginName string) (metadata.User, error) {
+	sql := `
+	select id, user_name, department_name, employee_id, account_name, email, telephone, mobile, role, del_flag, create_time, last_update_time
+	from t_meta_user_info
+	where del_flag = 0
+	and account_name = ? or employee_id = ?;
+`
+	log.Debugf("metadata UserRepo.GetByAccountNameOrEmployeeID() sql: \n%s\nplaceholders: %s", sql, loginName)
+
+	result, err := ur.Execute(sql, loginName, loginName)
+	if err != nil {
+		return nil, err
+	}
+	switch result.RowNumber() {
+	case 0:
+		return nil, errors.Errorf("metadata UserInfo.GetByAccountNameOrEmployeeID(): data does not exists, id: %s", loginName)
+	case 1:
+		userInfo := NewEmptyUserInfoWithGlobal()
+		// map to struct
+		err = result.MapToStructByRowIndex(userInfo, constant.ZeroInt, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return nil, err
+		}
+
+		return userInfo, nil
+	default:
+		return nil, errors.Errorf("metadata UserInfo.GetByAccountNameOrEmployeeID(): duplicate key exists, id: %s", loginName)
+	}
+}
+
 // GetByEmail gets a user of given email from the middleware
 func (ur *UserRepo) GetByEmail(email string) (metadata.User, error) {
 	sql := `
@@ -248,7 +279,7 @@ func (ur *UserRepo) GetByEmail(email string) (metadata.User, error) {
 	where del_flag = 0
 	and email = ?;
 `
-	log.Debugf("metadata UserRepo.GetByID() sql: \n%s\nplaceholders: %s", sql, email)
+	log.Debugf("metadata UserRepo.GetByEmail() sql: \n%s\nplaceholders: %s", sql, email)
 
 	result, err := ur.Execute(sql, email)
 	if err != nil {
@@ -291,7 +322,7 @@ func (ur *UserRepo) GetByEmployeeID(employeeID string) (metadata.User, error) {
 	where del_flag = 0
 	and employee_id = ?;
 `
-	log.Debugf("metadata UserRepo.GetByID() sql: \n%s\nplaceholders: %s", sql, employeeID)
+	log.Debugf("metadata UserRepo.GetByEmployeeID() sql: \n%s\nplaceholders: %s", sql, employeeID)
 
 	result, err := ur.Execute(sql, employeeID)
 	if err != nil {

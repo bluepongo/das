@@ -20,6 +20,7 @@ const (
 	userNameJSON    = "user_name"
 	employeeIDJSON  = "employee_id"
 	accountNameJSON = "account_name"
+	loginNameJSON   = "login_name"
 	emailJSON       = "email"
 	telephoneJSON   = "telephone"
 	mobileJSON      = "mobile"
@@ -32,6 +33,7 @@ const (
 	departmentNameStruct         = "DepartmentName"
 	employeeIDStruct             = "EmployeeID"
 	accountNameStruct            = "AccountName"
+	loginNameStruct              = "LoginName"
 	emailStruct                  = "Email"
 	telephoneStruct              = "Telephone"
 	roleStruct                   = "Role"
@@ -83,7 +85,7 @@ func GetUserByName(c *gin.Context) {
 	// init service
 	s := metadata.NewUserServiceWithDefault()
 	// get UserRepo
-	err := s.GetByName(userName)
+	err := s.GetByUserName(userName)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUserByName, err, userName)
 		return
@@ -205,6 +207,40 @@ func GetUserByAccountName(c *gin.Context) {
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAccountName, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAccountName, accountName)
+}
+
+// @Tags 	user
+// @Summary get user by loginName
+// @Accept	application/json
+// @Param	login_name path string true "login name"
+// @Produce application/json
+// @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
+// @Router  /api/v1/metadata/user/login-name/:login_name [get]
+func GetByAccountNameOrEmployeeID(c *gin.Context) {
+	// get param
+	loginName := c.Param(loginNameJSON)
+	if loginName == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, loginNameStruct)
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// get UserRepo
+	err := s.GetByAccountNameOrEmployeeID(loginName)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetByAccountNameOrEmployeeID, err, loginName)
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.Marshal()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetByAccountNameOrEmployeeID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetByAccountNameOrEmployeeID, loginName)
 }
 
 // @Tags 	user

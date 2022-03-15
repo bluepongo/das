@@ -21,6 +21,7 @@ func TestUserServiceAll(t *testing.T) {
 	TestUserService_GetByID(t)
 	TestUserService_GetByEmployeeID(t)
 	TestUserService_GetByAccountName(t)
+	TestUserService_GetByAccountNameOrEmployeeID(t)
 	TestUserService_GetByEmail(t)
 	TestUserService_GetByTelephone(t)
 	TestUserService_GetByMobile(t)
@@ -74,6 +75,18 @@ func TestUserService_GetByAccountName(t *testing.T) {
 	err := testUserService.GetByAccountName(testUserAccountName)
 	asst.Nil(err, common.CombineMessageWithError("test GetByAccountName() failed", err))
 	asst.Equal(testUserAccountName, testUserService.Users[constant.ZeroInt].GetAccountName(), "test GetByAccountName() failed")
+}
+
+func TestUserService_GetByAccountNameOrEmployeeID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testUserService.GetByAccountNameOrEmployeeID(testUserAccountName)
+	asst.Nil(err, common.CombineMessageWithError("test GetByAccountName() failed", err))
+	asst.Equal(testUserAccountName, testUserService.Users[constant.ZeroInt].GetAccountName(), "test GetByAccountNameOrEmployeeID() failed")
+
+	err = testUserService.GetByAccountNameOrEmployeeID(testUserEmployeeID)
+	asst.Nil(err, common.CombineMessageWithError("test GetByAccountName() failed", err))
+	asst.Equal(testUserAccountName, testUserService.Users[constant.ZeroInt].GetAccountName(), "test GetByAccountNameOrEmployeeID() failed")
 }
 
 func TestUserService_GetByEmail(t *testing.T) {

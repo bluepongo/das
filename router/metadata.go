@@ -107,6 +107,7 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.GET("/user/get/:id", metadata.GetUserByID)
 		metadataGroup.GET("/user/employee-id/:employee_id", metadata.GetUserByEmployeeID)
 		metadataGroup.GET("/user/account-name/:account_name", metadata.GetUserByAccountName)
+		metadataGroup.GET("/user/login-name/:login_name", metadata.GetByAccountNameOrEmployeeID)
 		metadataGroup.GET("/user/email/:email", metadata.GetUserByEmail)
 		metadataGroup.GET("/user/telephone/:telephone", metadata.GetUserByTelephone)
 		metadataGroup.GET("/user/mobile/:mobile", metadata.GetUserByMobile)

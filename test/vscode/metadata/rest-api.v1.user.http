@@ -20,6 +20,10 @@ Accept: application/json
 GET http://{{baseURL}}/api/v1/metadata/user/account-name/account_name
 Accept: application/json
 
+### GetUserByAccountNameOrEmployeeID
+GET http://{{baseURL}}/api/v1/metadata/user/login-name/login_name
+Accept: application/json
+
 ### GetUserByEmail
 GET http://{{baseURL}}/api/v1/metadata/user/email/email
 Accept: application/json

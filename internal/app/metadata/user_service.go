@@ -65,11 +65,11 @@ func (us *UserService) GetMySQLClusters() []metadata.MySQLCluster {
 	return us.MySQLClusters
 }
 
-// GetByName gets users of given user name
-func (us *UserService) GetByName(userName string) error {
+// GetByUserName gets users of given user name
+func (us *UserService) GetByUserName(userName string) error {
 	var err error
 
-	us.Users, err = us.UserRepo.GetByName(userName)
+	us.Users, err = us.UserRepo.GetByUserName(userName)
 
 	return err
 }
@@ -103,6 +103,19 @@ func (us *UserService) GetByEmployeeID(employeeID string) error {
 // GetByAccountName gets a user of given account name
 func (us *UserService) GetByAccountName(accountName string) error {
 	user, err := us.UserRepo.GetByAccountName(accountName)
+	if err != nil {
+		return err
+	}
+
+	us.Users = nil
+	us.Users = append(us.Users, user)
+
+	return err
+}
+
+// GetByAccountNameOrEmployeeID gets a user of given loginName
+func (us *UserService) GetByAccountNameOrEmployeeID(loginName string) error {
+	user, err := us.UserRepo.GetByAccountNameOrEmployeeID(loginName)
 	if err != nil {
 		return err
 	}
