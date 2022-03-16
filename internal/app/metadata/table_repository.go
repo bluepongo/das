@@ -104,6 +104,7 @@ func (tr *TableRepo) GetIndexStatistics(tableSchema, tableName string) ([]metada
 	return indexStatisticList, nil
 }
 
+// GetCreateStatement get create statement from the middleware
 func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, error) {
 	sql := fmt.Sprintf(`
 		SHOW CREATE TABLE %s.%s;
@@ -113,18 +114,13 @@ func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, 
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(result)
-	// XXX: RowNumber must be 1
-	createStatement, err := result.GetValue(0, 1)
+	// XXX: will RowNumber always be 1?
+	createStatement, err := result.GetStringByName(0, "Create Table")
 	if err != nil {
 		return "", err
 	}
-	createStatementBytes := []byte{}
-	for _, b := range createStatement.([]uint8) {
-		createStatementBytes = append(createStatementBytes, b)
-	}
 
-	return string(createStatementBytes), nil
+	return string(createStatement), nil
 }
 
 func (tr *TableRepo) AnalyzeTableByDBIDAndTableName(dbID int, tableName, userName string) error {
