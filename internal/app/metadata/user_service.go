@@ -19,6 +19,7 @@ type UserService struct {
 	DBs                []metadata.DB                `json:"dbs"`
 	MiddlewareClusters []metadata.MiddlewareCluster `json:"middleware_clusters"`
 	MySQLClusters      []metadata.MySQLCluster      `json:"mysql_clusters"`
+	MySQLServers       []metadata.MySQLServer       `json:"mysql_servers"`
 }
 
 // NewUserService returns a new *UserService
@@ -65,11 +66,16 @@ func (us *UserService) GetMySQLClusters() []metadata.MySQLCluster {
 	return us.MySQLClusters
 }
 
-// GetByName gets users of given user name
-func (us *UserService) GetByName(userName string) error {
+// GetMySQLServers returns the MySQLServers of the service
+func (us *UserService) GetMySQLServers() []metadata.MySQLServer {
+	return us.MySQLServers
+}
+
+// GetByUserName gets users of given user name
+func (us *UserService) GetByUserName(userName string) error {
 	var err error
 
-	us.Users, err = us.UserRepo.GetByName(userName)
+	us.Users, err = us.UserRepo.GetByUserName(userName)
 
 	return err
 }
@@ -103,6 +109,19 @@ func (us *UserService) GetByEmployeeID(employeeID string) error {
 // GetByAccountName gets a user of given account name
 func (us *UserService) GetByAccountName(accountName string) error {
 	user, err := us.UserRepo.GetByAccountName(accountName)
+	if err != nil {
+		return err
+	}
+
+	us.Users = nil
+	us.Users = append(us.Users, user)
+
+	return err
+}
+
+// GetByAccountNameOrEmployeeID gets a user of given loginName
+func (us *UserService) GetByAccountNameOrEmployeeID(loginName string) error {
+	user, err := us.UserRepo.GetByAccountNameOrEmployeeID(loginName)
 	if err != nil {
 		return err
 	}
@@ -256,5 +275,13 @@ func (us *UserService) GetMySQLClustersByUserID(userID int) error {
 
 	us.MySQLClusters, err = us.UserRepo.GetMySQLClustersByUserID(userID)
 
+	return err
+}
+
+// GetAllMySQLServersByUserID gets MySQLServers that this user owns
+func (us *UserService) GetAllMySQLServersByUserID(id int) error {
+	var err error
+
+	us.MySQLServers, err = us.UserRepo.GetAllMySQLServersByUserID(id)
 	return err
 }

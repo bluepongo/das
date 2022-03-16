@@ -23,6 +23,8 @@ type User interface {
 	GetTelephone() string
 	// GetMobile returns the mobile
 	GetMobile() string
+	// GetRole returns the role
+	GetRole() int
 	// GetDelFlag returns the delete flag
 	GetDelFlag() int
 	// GetCreateTime returns the create time
@@ -46,12 +48,14 @@ type UserRepo interface {
 	Transaction() (middleware.Transaction, error)
 	// GetAll gets all databases from the middleware
 	GetAll() ([]User, error)
-	// GetByName gets users of given user name from the middleware
-	GetByName(userName string) ([]User, error)
+	// GetByUserName gets users of given user name from the middleware
+	GetByUserName(userName string) ([]User, error)
 	// GetByID gets a user by the identity from the middleware
 	GetByID(id int) (User, error)
 	// GetByAccountName gets a user of given account name from the middleware
 	GetByAccountName(accountName string) (User, error)
+	// GetByAccountNameOrEmployeeID gets a user of given loginName from the middleware
+	GetByAccountNameOrEmployeeID(loginName string) (User, error)
 	// GetByEmail gets a user of given email from the middleware
 	GetByEmail(email string) (User, error)
 	// GetByTelephone gets a user of given telephone from the middleware
@@ -76,6 +80,8 @@ type UserRepo interface {
 	GetMiddlewareClustersByUserID(id int) ([]MiddlewareCluster, error)
 	// GetMySQLClustersByUserID gets MySQLCluster list that this user owns
 	GetMySQLClustersByUserID(id int) ([]MySQLCluster, error)
+	// GetAllMySQLServersByUserID gets MySQLServers list that this user owns
+	GetAllMySQLServersByUserID(id int) ([]MySQLServer, error)
 }
 
 type UserService interface {
@@ -91,14 +97,16 @@ type UserService interface {
 	GetMiddlewareClusters() []MiddlewareCluster
 	// GetMySQLClusters returns the MySQLClusters of the service
 	GetMySQLClusters() []MySQLCluster
-	// GetByName gets users of given user name
-	GetByName(userName string) error
+	// GetByUserName gets users of given user name
+	GetByUserName(userName string) error
 	// GetByID gets a user by the identity
 	GetByID(id int) error
 	// GetByEmployeeID gets a user of given employee id
 	GetByEmployeeID(employeeID string) error
 	// GetByAccountName gets a user of given account name
 	GetByAccountName(accountName string) error
+	// GetByAccountNameOrEmployeeID gets a user of given loginName from the middleware
+	GetByAccountNameOrEmployeeID(loginName string) error
 	// GetByEmail gets a user of given email
 	GetByEmail(email string) error
 	// GetByTelephone gets a user of given telephone
@@ -126,4 +134,6 @@ type UserService interface {
 	GetMiddlewareClustersByUserID(id int) error
 	// GetMySQLClustersByUserID gets MySQLClusters that this user owns
 	GetMySQLClustersByUserID(id int) error
+	// GetAllMySQLServersByUserID gets MySQLServers list that this user owns
+	GetAllMySQLServersByUserID(id int) error
 }

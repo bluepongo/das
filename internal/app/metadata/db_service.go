@@ -95,6 +95,28 @@ func (ds *DBService) GetDBByNameAndClusterInfo(name string, clusterID, clusterTy
 	return nil
 }
 
+// GetDBByNameAndHostInfo gets the database of the given db name and host info from the middleware
+func (ds *DBService) GetDBByNameAndHostInfo(name, hostIP string, portNum int) error {
+	db, err := ds.DBRepo.GetDBByNameAndHostInfo(name, hostIP, portNum)
+	if err != nil {
+		return err
+	}
+
+	ds.DBs = nil
+	ds.DBs = append(ds.DBs, db)
+
+	return nil
+}
+
+// GetDBsByHostInfo gets the databases of the given host info from the middleware
+func (ds *DBService) GetDBsByHostInfo(hostIP string, portNum int) error {
+	var err error
+
+	ds.DBs, err = ds.DBRepo.GetDBsByHostInfo(hostIP, portNum)
+
+	return err
+}
+
 // GetMySQLClusterByID gets the cluster of the db
 func (ds *DBService) GetMySQLClusterByID(id int) error {
 	var err error

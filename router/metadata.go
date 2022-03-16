@@ -27,6 +27,8 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.GET("/db/env/:env_id", metadata.GetDBByEnv)
 		metadataGroup.GET("/db/get/:id", metadata.GetDBByID)
 		metadataGroup.GET("/db/name-and-cluster-info", metadata.GetDBByNameAndClusterInfo)
+		metadataGroup.GET("/db/name-and-host-info", metadata.GetDBByNameAndHostInfo)
+		metadataGroup.GET("/db/host-info", metadata.GetDBsByHostInfo)
 		metadataGroup.GET("/db/app/:id", metadata.GetAppsByDBID)
 		metadataGroup.GET("/db/mysql-cluster/:id", metadata.GetMySQLClusterByDBID)
 		metadataGroup.GET("/db/app-user/:id", metadata.GetAppUsersByDBID)
@@ -103,10 +105,11 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.POST("/mysql-server/delete/:id", metadata.DeleteMySQLServerByID)
 		// user
 		metadataGroup.GET("/user", metadata.GetUser)
-		metadataGroup.GET("/user/user-name/:user_name", metadata.GetUserByName)
+		metadataGroup.GET("/user/user-name/:user_name", metadata.GetByUserName)
 		metadataGroup.GET("/user/get/:id", metadata.GetUserByID)
 		metadataGroup.GET("/user/employee-id/:employee_id", metadata.GetUserByEmployeeID)
 		metadataGroup.GET("/user/account-name/:account_name", metadata.GetUserByAccountName)
+		metadataGroup.GET("/user/login-name/:login_name", metadata.GetByAccountNameOrEmployeeID)
 		metadataGroup.GET("/user/email/:email", metadata.GetUserByEmail)
 		metadataGroup.GET("/user/telephone/:telephone", metadata.GetUserByTelephone)
 		metadataGroup.GET("/user/mobile/:mobile", metadata.GetUserByMobile)
@@ -115,7 +118,8 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.POST("/user/delete/:id", metadata.DeleteUserByID)
 		metadataGroup.GET("/user/app/:id", metadata.GetAppsByUserID)
 		metadataGroup.GET("/user/db/:id", metadata.GetDBsByUserID)
-		metadataGroup.GET("/user/middlewarecluster/:id", metadata.GetMiddlewareClustersByUserID)
-		metadataGroup.GET("/user/mysqlcluster/:id", metadata.GetMySQLClustersByUserID)
+		metadataGroup.GET("/user/middleware-cluster/:id", metadata.GetMiddlewareClustersByUserID)
+		metadataGroup.GET("/user/mysql-cluster/:id", metadata.GetMySQLClustersByUserID)
+		metadataGroup.GET("/user/all-mysql-server/:id", metadata.GetAllMySQLServersByUserID)
 	}
 }

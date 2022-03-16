@@ -44,15 +44,15 @@ func (ur *UserRepo) Execute(command string, args ...interface{}) (middleware.Res
 	return conn.Execute(command, args...)
 }
 
-// GetByName gets users of given username from the middleware
-func (ur *UserRepo) GetByName(userName string) ([]metadata.User, error) {
+// GetByUserName gets users of given username from the middleware
+func (ur *UserRepo) GetByUserName(userName string) ([]metadata.User, error) {
 	sql := `
 	select id, user_name, department_name, employee_id, account_name, email, telephone, mobile, role, del_flag, create_time, last_update_time
 	from t_meta_user_info
 	where del_flag = 0
 	and user_name = ?;
 `
-	log.Debugf("metadata UserRepo.GetByID() sql: \n%s\nplaceholders: %s", sql, userName)
+	log.Debugf("metadata UserRepo.GetByUserName() sql: \n%s\nplaceholders: %s", sql, userName)
 
 	result, err := ur.Execute(sql, userName)
 	if err != nil {
@@ -124,7 +124,7 @@ func (ur *UserRepo) GetByMobile(mobile string) (metadata.User, error) {
 		where del_flag = 0
 		and mobile = ?;
 `
-	log.Debugf("metadata UserRepo.GetByID() sql: \n%s\nplaceholders: %s", sql, mobile)
+	log.Debugf("metadata UserRepo.GetByMobile() sql: \n%s\nplaceholders: %s", sql, mobile)
 
 	result, err := ur.Execute(sql, mobile)
 	if err != nil {
@@ -155,7 +155,7 @@ func (ur *UserRepo) GetByTelephone(telephone string) (metadata.User, error) {
 		where del_flag = 0
 		and telephone = ?;
 `
-	log.Debugf("metadata UserRepo.GetByID() sql: \n%s\nplaceholders: %s", sql, telephone)
+	log.Debugf("metadata UserRepo.GetByTelephone() sql: \n%s\nplaceholders: %s", sql, telephone)
 
 	result, err := ur.Execute(sql, telephone)
 	if err != nil {
@@ -217,7 +217,7 @@ func (ur *UserRepo) GetByAccountName(accountName string) (metadata.User, error) 
 	where del_flag = 0
 	and account_name = ?;
 `
-	log.Debugf("metadata UserRepo.GetByID() sql: \n%s\nplaceholders: %s", sql, accountName)
+	log.Debugf("metadata UserRepo.GetByAccountName() sql: \n%s\nplaceholders: %s", sql, accountName)
 
 	result, err := ur.Execute(sql, accountName)
 	if err != nil {
@@ -240,6 +240,37 @@ func (ur *UserRepo) GetByAccountName(accountName string) (metadata.User, error) 
 	}
 }
 
+// GetByAccountNameOrEmployeeID gets a user of given loginName from the middleware
+func (ur *UserRepo) GetByAccountNameOrEmployeeID(loginName string) (metadata.User, error) {
+	sql := `
+	select id, user_name, department_name, employee_id, account_name, email, telephone, mobile, role, del_flag, create_time, last_update_time
+	from t_meta_user_info
+	where del_flag = 0
+	and account_name = ? or employee_id = ?;
+`
+	log.Debugf("metadata UserRepo.GetByAccountNameOrEmployeeID() sql: \n%s\nplaceholders: %s", sql, loginName)
+
+	result, err := ur.Execute(sql, loginName, loginName)
+	if err != nil {
+		return nil, err
+	}
+	switch result.RowNumber() {
+	case 0:
+		return nil, errors.Errorf("metadata UserInfo.GetByAccountNameOrEmployeeID(): data does not exists, login name: %s", loginName)
+	case 1:
+		userInfo := NewEmptyUserInfoWithGlobal()
+		// map to struct
+		err = result.MapToStructByRowIndex(userInfo, constant.ZeroInt, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return nil, err
+		}
+
+		return userInfo, nil
+	default:
+		return nil, errors.Errorf("metadata UserInfo.GetByAccountNameOrEmployeeID(): duplicate key exists, login name: %s", loginName)
+	}
+}
+
 // GetByEmail gets a user of given email from the middleware
 func (ur *UserRepo) GetByEmail(email string) (metadata.User, error) {
 	sql := `
@@ -248,7 +279,7 @@ func (ur *UserRepo) GetByEmail(email string) (metadata.User, error) {
 	where del_flag = 0
 	and email = ?;
 `
-	log.Debugf("metadata UserRepo.GetByID() sql: \n%s\nplaceholders: %s", sql, email)
+	log.Debugf("metadata UserRepo.GetByEmail() sql: \n%s\nplaceholders: %s", sql, email)
 
 	result, err := ur.Execute(sql, email)
 	if err != nil {
@@ -291,7 +322,7 @@ func (ur *UserRepo) GetByEmployeeID(employeeID string) (metadata.User, error) {
 	where del_flag = 0
 	and employee_id = ?;
 `
-	log.Debugf("metadata UserRepo.GetByID() sql: \n%s\nplaceholders: %s", sql, employeeID)
+	log.Debugf("metadata UserRepo.GetByEmployeeID() sql: \n%s\nplaceholders: %s", sql, employeeID)
 
 	result, err := ur.Execute(sql, employeeID)
 	if err != nil {
@@ -376,7 +407,7 @@ func (ur *UserRepo) GetAppsByUserID(userID int) ([]metadata.App, error) {
 	resultNum := result.RowNumber()
 	appList := make([]metadata.App, resultNum)
 
-	for row := 0; row < resultNum; row++ {
+	for row := constant.ZeroInt; row < resultNum; row++ {
 		appList[row] = NewEmptyAppInfoWithGlobal()
 	}
 	// map to struct
@@ -410,7 +441,7 @@ func (ur *UserRepo) GetDBsByUserID(userID int) ([]metadata.DB, error) {
 	resultNum := result.RowNumber()
 	dbList := make([]metadata.DB, resultNum)
 
-	for row := 0; row < resultNum; row++ {
+	for row := constant.ZeroInt; row < resultNum; row++ {
 		dbList[row] = NewEmptyDBInfoWithGlobal()
 	}
 	// map to struct
@@ -444,7 +475,7 @@ func (ur *UserRepo) GetMiddlewareClustersByUserID(userID int) ([]metadata.Middle
 	resultNum := result.RowNumber()
 	middlewareclusterList := make([]metadata.MiddlewareCluster, resultNum)
 
-	for row := 0; row < resultNum; row++ {
+	for row := constant.ZeroInt; row < resultNum; row++ {
 		middlewareclusterList[row] = NewEmptyMiddlewareClusterInfoWithGlobal()
 	}
 	// map to struct
@@ -478,7 +509,7 @@ func (ur *UserRepo) GetMySQLClustersByUserID(userID int) ([]metadata.MySQLCluste
 	resultNum := result.RowNumber()
 	mysqlclusterList := make([]metadata.MySQLCluster, resultNum)
 
-	for row := 0; row < resultNum; row++ {
+	for row := constant.ZeroInt; row < resultNum; row++ {
 		mysqlclusterList[row] = NewEmptyMySQLClusterInfoWithGlobal()
 	}
 	// map to struct
@@ -488,4 +519,92 @@ func (ur *UserRepo) GetMySQLClustersByUserID(userID int) ([]metadata.MySQLCluste
 	}
 
 	return mysqlclusterList, nil
+}
+
+// GetAllMySQLServersByUserID gets mysqlserver list that this user owns
+func (ur *UserRepo) GetAllMySQLServersByUserID(id int) ([]metadata.MySQLServer, error) {
+	sql := `
+		select msi.id,
+			msi.cluster_id,
+			msi.server_name,
+			msi.service_name,
+			msi.host_ip,
+			msi.port_num,
+			msi.deployment_type,
+			msi.version,
+			msi.del_flag,
+			msi.create_time,
+			msi.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_mysql_cluster_user_map mcum on ui.id = mcum.user_id
+			inner join t_meta_mysql_server_info msi on mcum.mysql_cluster_id = msi.cluster_id
+		where ui.del_flag = 0
+		and mcum.del_flag = 0
+		and msi.del_flag = 0
+		and ui.id = ?
+		union
+		select msi.id,
+			msi.cluster_id,
+			msi.server_name,
+			msi.service_name,
+			msi.host_ip,
+			msi.port_num,
+			msi.deployment_type,
+			msi.version,
+			msi.del_flag,
+			msi.create_time,
+			msi.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_db_user_map dum on ui.id = dum.user_id
+			inner join t_meta_db_info di on dum.db_id = di.id
+			inner join t_meta_mysql_server_info msi on di.cluster_id = msi.cluster_id and di.cluster_type = 1
+		where ui.del_flag = 0
+		and dum.del_flag = 0
+		and di.del_flag = 0
+		and msi.del_flag = 0
+		and ui.id = ?
+		union
+		select msi.id,
+			msi.cluster_id,
+			msi.server_name,
+			msi.service_name,
+			msi.host_ip,
+			msi.port_num,
+			msi.deployment_type,
+			msi.version,
+			msi.del_flag,
+			msi.create_time,
+			msi.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_app_user_map aum on ui.id = aum.user_id
+			inner join t_meta_app_db_map adm on aum.app_id = adm.app_id
+			inner join t_meta_db_info di on adm.db_id = di.id
+			inner join t_meta_mysql_server_info msi on di.cluster_id = msi.cluster_id and di.cluster_type = 1
+		where ui.del_flag = 0
+		and aum.del_flag = 0
+		and adm.del_flag = 0
+		and di.del_flag = 0
+		and msi.del_flag = 0
+		and ui.id = ?;
+	`
+	log.Debugf("metadata UserRepo.GetAllMySQLServersByUserID() sql: \n%s\nplaceholders: %d", sql, id)
+
+	result, err := ur.Execute(sql, id, id, id)
+	if err != nil {
+		return nil, err
+	}
+
+	resultNum := result.RowNumber()
+	mysqlserverList := make([]metadata.MySQLServer, resultNum)
+
+	for row := constant.ZeroInt; row < resultNum; row++ {
+		mysqlserverList[row] = NewEmptyMySQLServerInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(mysqlserverList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return mysqlserverList, nil
 }
