@@ -62,20 +62,16 @@ func (dr *DBRepo) GetAll() ([]metadata.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	// init []*DBInfo
-	dbInfoList := make([]*DBInfo, result.RowNumber())
-	for i := range dbInfoList {
-		dbInfoList[i] = NewEmptyDBInfoWithGlobal()
-	}
-	// map to struct
-	err = result.MapToStructSlice(dbInfoList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
+
 	// init []metadata.DB
 	dbList := make([]metadata.DB, result.RowNumber())
 	for i := range dbList {
-		dbList[i] = dbInfoList[i]
+		dbList[i] = NewEmptyDBInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(dbList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
 	}
 
 	return dbList, nil
@@ -96,20 +92,16 @@ func (dr *DBRepo) GetByEnv(envID int) ([]metadata.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	// init []*DBInfo
-	dbInfoList := make([]*DBInfo, result.RowNumber())
-	for i := range dbInfoList {
-		dbInfoList[i] = NewEmptyDBInfoWithGlobal()
-	}
-	// map to struct
-	err = result.MapToStructSlice(dbInfoList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
+
 	// init []metadata.DB
 	dbList := make([]metadata.DB, result.RowNumber())
 	for i := range dbList {
-		dbList[i] = dbInfoList[i]
+		dbList[i] = NewEmptyDBInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(dbList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
 	}
 
 	return dbList, nil
@@ -185,7 +177,9 @@ func (dr *DBRepo) GetDBByNameAndHostInfo(name, hostIP string, portNum int) (meta
 		from t_meta_db_info as db
 		inner join t_meta_mysql_server_info as ms
 		on db.cluster_id = ms.cluster_id 
-		where db.del_flag = 0
+		where db.cluster_type = 1
+		and db.del_flag = 0
+		and ms.del_flag = 0
 		and db.db_name = ?
 		and ms.host_ip = ?
 		and ms.port_num = ?;
@@ -219,7 +213,9 @@ func (dr *DBRepo) GetDBsByHostInfo(hostIP string, portNum int) ([]metadata.DB, e
 		from t_meta_db_info as db
 		inner join t_meta_mysql_server_info as ms
 		on db.cluster_id = ms.cluster_id 
-		where db.del_flag = 0
+		where db.cluster_type = 1
+		and db.del_flag = 0
+		and ms.del_flag = 0
 		and ms.host_ip = ?
 		and ms.port_num = ?;
 	`
@@ -228,20 +224,16 @@ func (dr *DBRepo) GetDBsByHostInfo(hostIP string, portNum int) ([]metadata.DB, e
 	if err != nil {
 		return nil, err
 	}
-	// init []*DBInfo
-	dbInfoList := make([]*DBInfo, result.RowNumber())
-	for i := range dbInfoList {
-		dbInfoList[i] = NewEmptyDBInfoWithGlobal()
-	}
-	// map to struct
-	err = result.MapToStructSlice(dbInfoList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
+
 	// init []metadata.DB
 	dbList := make([]metadata.DB, result.RowNumber())
 	for i := range dbList {
-		dbList[i] = dbInfoList[i]
+		dbList[i] = NewEmptyDBInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(dbList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
 	}
 
 	return dbList, nil
