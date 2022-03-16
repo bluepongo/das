@@ -116,8 +116,8 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.POST("/user/delete/:id", metadata.DeleteUserByID)
 		metadataGroup.GET("/user/app/:id", metadata.GetAppsByUserID)
 		metadataGroup.GET("/user/db/:id", metadata.GetDBsByUserID)
-		metadataGroup.GET("/user/middlewarecluster/:id", metadata.GetMiddlewareClustersByUserID)
-		metadataGroup.GET("/user/mysqlcluster/:id", metadata.GetMySQLClustersByUserID)
+		metadataGroup.GET("/user/middleware-cluster/:id", metadata.GetMiddlewareClustersByUserID)
+		metadataGroup.GET("/user/mysql-cluster/:id", metadata.GetMySQLClustersByUserID)
 		metadataGroup.GET("/user/all-mysql-server/:id", metadata.GetAllMySQLServersByUserID)
 	}
 }

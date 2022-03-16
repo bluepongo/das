@@ -155,36 +155,36 @@ func TestUserRepo_GetByEmployeeID(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testUserRepo.GetByEmployeeID(testUserEmployeeID)
-	asst.Nil(err, common.CombineMessageWithError("test GetByEmployeeID failed", err))
-	asst.Equal(testUserEmployeeID, entity.GetEmployeeID(), "test GetByEmployeeID failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByEmployeeID() failed", err))
+	asst.Equal(testUserEmployeeID, entity.GetEmployeeID(), "test GetByEmployeeID() failed")
 }
 
 func TestUserRepo_GetByAccountName(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testUserRepo.GetByAccountName(testUserAccountName)
-	asst.Nil(err, common.CombineMessageWithError("test GetByAccountName failed", err))
-	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountName failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByAccountName() failed", err))
+	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountName() failed")
 }
 
 func TestUserRepo_GetByAccountNameOrEmployeeID(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testUserRepo.GetByAccountNameOrEmployeeID(testUserAccountName)
-	asst.Nil(err, common.CombineMessageWithError("test GetByAccountNameOrEmployeeID failed", err))
-	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountNameOrEmployeeID failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByAccountNameOrEmployeeID() failed", err))
+	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountNameOrEmployeeID() failed")
 
 	entity, err = testUserRepo.GetByAccountNameOrEmployeeID(testUserEmployeeID)
-	asst.Nil(err, common.CombineMessageWithError("test GetByAccountNameOrEmployeeID failed", err))
-	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountNameOrEmployeeID failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByAccountNameOrEmployeeID() failed", err))
+	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountNameOrEmployeeID() failed")
 }
 
 func TestUserRepo_GetByEmail(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testUserRepo.GetByEmail(testUserEmail)
-	asst.Nil(err, common.CombineMessageWithError("test GetByEmail failed", err))
-	asst.Equal(testUserEmail, entity.GetEmail(), "test GetByEmail failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByEmail() failed", err))
+	asst.Equal(testUserEmail, entity.GetEmail(), "test GetByEmail() failed")
 
 }
 
@@ -192,24 +192,24 @@ func TestUserRepo_GetByTelephone(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testUserRepo.GetByTelephone(testUserTelephone)
-	asst.Nil(err, common.CombineMessageWithError("test GetByTelephone failed", err))
-	asst.Equal(testUserTelephone, entity.GetTelephone(), "test GetByTelephone failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByTelephone() failed", err))
+	asst.Equal(testUserTelephone, entity.GetTelephone(), "test GetByTelephone() failed")
 }
 
 func TestUserRepo_GetByMobile(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testUserRepo.GetByMobile(testUserMobile)
-	asst.Nil(err, common.CombineMessageWithError("test GetByMobile failed", err))
-	asst.Equal(testUserMobile, entity.GetMobile(), "test GetByMobile failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByMobile() failed", err))
+	asst.Equal(testUserMobile, entity.GetMobile(), "test GetByMobile() failed")
 }
 
 func TestUserRepo_GetID(t *testing.T) {
 	asst := assert.New(t)
 
 	userID, err := testUserRepo.GetID(testUserAccountName)
-	asst.Nil(err, common.CombineMessageWithError("test GetID failed", err))
-	asst.Equal(testUserID, userID, "test GetID failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetID() failed", err))
+	asst.Equal(testUserID, userID, "test GetID() failed")
 }
 
 func TestUserRepo_Create(t *testing.T) {

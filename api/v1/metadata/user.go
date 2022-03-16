@@ -619,12 +619,12 @@ func GetDBsByUserID(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary get middlewareclusters by id
+// @Summary get middleware clusters by id
 // @Accept	application/json
 // @Param	id path int true "user id"
 // @Produce application/json
 // @Success 200 {string} string "{"middleware_clusters": [{"id": 1,"cluster_name": "middleware-cluster-1","env_id": 1,"del_flag": 0,"create_time": "2021-11-09T18:06:57.917596+08:00","last_update_time": "2021-11-18T15:39:52.927116+08:00"}]}"
-// @Router 	/api/v1/metadata/user/middlewarecluster/:id [get]
+// @Router 	/api/v1/metadata/user/middleware-cluster/:id [get]
 func GetMiddlewareClustersByUserID(c *gin.Context) {
 	// get param
 	idStr := c.Param(userIDJSON)
@@ -659,12 +659,12 @@ func GetMiddlewareClustersByUserID(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary get mysqlclusters by id
+// @Summary get mysql clusters by id
 // @Accept	application/json
 // @Param	id path int true "user id"
 // @Produce application/json
 // @Success 200 {string} string "{"mysql_clusters": [{"id": 1,"cluster_name": "mysql-cluster-pmm2","middleware_cluster_id": 0,"env_id": 1"monitor_system_id": 1,"del_flag": 0,"last_update_time": "2021-12-21T09:16:10.750725+08:00","create_time": "2021-09-02T09:02:22.346672+08:00",},]}"
-// @Router 	/api/v1/metadata/user/mysqlcluster/:id [get]
+// @Router 	/api/v1/metadata/user/mysql-cluster/:id [get]
 func GetMySQLClustersByUserID(c *gin.Context) {
 	// get param
 	idStr := c.Param(userIDJSON)
@@ -699,7 +699,7 @@ func GetMySQLClustersByUserID(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary get MySQLClusters by id
+// @Summary get all Mysql servers by id
 // @Accept	application/json
 // @Param	id path int true "user id"
 // @Produce application/json

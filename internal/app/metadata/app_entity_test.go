@@ -99,7 +99,7 @@ func TestAppInfo_GetDelFlag(t *testing.T) {
 func TestAppInfo_GetCreateTime(t *testing.T) {
 	asst := assert.New(t)
 
-	asst.True(reflect.DeepEqual(testAppInfo.CreateTime, testAppInfo.GetCreateTime()), "test GetCreateTime failed")
+	asst.True(reflect.DeepEqual(testAppInfo.CreateTime, testAppInfo.GetCreateTime()), "test GetCreateTime() failed")
 }
 
 func TestAppInfo_GetLastUpdateTime(t *testing.T) {

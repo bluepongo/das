@@ -407,7 +407,7 @@ func (ur *UserRepo) GetAppsByUserID(userID int) ([]metadata.App, error) {
 	resultNum := result.RowNumber()
 	appList := make([]metadata.App, resultNum)
 
-	for row := 0; row < resultNum; row++ {
+	for row := constant.ZeroInt; row < resultNum; row++ {
 		appList[row] = NewEmptyAppInfoWithGlobal()
 	}
 	// map to struct
@@ -441,7 +441,7 @@ func (ur *UserRepo) GetDBsByUserID(userID int) ([]metadata.DB, error) {
 	resultNum := result.RowNumber()
 	dbList := make([]metadata.DB, resultNum)
 
-	for row := 0; row < resultNum; row++ {
+	for row := constant.ZeroInt; row < resultNum; row++ {
 		dbList[row] = NewEmptyDBInfoWithGlobal()
 	}
 	// map to struct
@@ -475,7 +475,7 @@ func (ur *UserRepo) GetMiddlewareClustersByUserID(userID int) ([]metadata.Middle
 	resultNum := result.RowNumber()
 	middlewareclusterList := make([]metadata.MiddlewareCluster, resultNum)
 
-	for row := 0; row < resultNum; row++ {
+	for row := constant.ZeroInt; row < resultNum; row++ {
 		middlewareclusterList[row] = NewEmptyMiddlewareClusterInfoWithGlobal()
 	}
 	// map to struct
@@ -509,7 +509,7 @@ func (ur *UserRepo) GetMySQLClustersByUserID(userID int) ([]metadata.MySQLCluste
 	resultNum := result.RowNumber()
 	mysqlclusterList := make([]metadata.MySQLCluster, resultNum)
 
-	for row := 0; row < resultNum; row++ {
+	for row := constant.ZeroInt; row < resultNum; row++ {
 		mysqlclusterList[row] = NewEmptyMySQLClusterInfoWithGlobal()
 	}
 	// map to struct
@@ -597,7 +597,7 @@ func (ur *UserRepo) GetAllMySQLServersByUserID(id int) ([]metadata.MySQLServer, 
 	resultNum := result.RowNumber()
 	mysqlserverList := make([]metadata.MySQLServer, resultNum)
 
-	for row := 0; row < resultNum; row++ {
+	for row := constant.ZeroInt; row < resultNum; row++ {
 		mysqlserverList[row] = NewEmptyMySQLServerInfoWithGlobal()
 	}
 	// map to struct
