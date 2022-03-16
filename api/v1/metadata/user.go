@@ -69,7 +69,7 @@ func GetUser(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary get user by Name
+// @Summary get user by name
 // @Accept	application/json
 // @Param	user_name path string true "user name"
 // @Produce application/json
@@ -142,7 +142,7 @@ func GetUserByID(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary get user by EmployeeID
+// @Summary get user by employee id
 // @Accept	application/json
 // @Param	employee_id path string true "employee id"
 // @Produce application/json
@@ -176,7 +176,7 @@ func GetUserByEmployeeID(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary get user by AccountName
+// @Summary get user by account name
 // @Accept	application/json
 // @Param	account_name path string true "account name"
 // @Produce application/json
@@ -244,7 +244,7 @@ func GetByAccountNameOrEmployeeID(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary get user by Email
+// @Summary get user by email
 // @Accept	application/json
 // @Param	email path string true "email"
 // @Produce application/json
@@ -278,7 +278,7 @@ func GetUserByEmail(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary get user by Telephone
+// @Summary get user by telephone
 // @Accept	application/json
 // @Param	telephone path string true "telephone"
 // @Produce application/json
@@ -312,7 +312,7 @@ func GetUserByTelephone(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary get user by Mobile
+// @Summary get user by mobile
 // @Accept	application/json
 // @Param	mobile path string true "mobile"
 // @Produce application/json
@@ -699,7 +699,7 @@ func GetMySQLClustersByUserID(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary get all Mysql servers by id
+// @Summary get all mysql servers by id
 // @Accept	application/json
 // @Param	id path int true "user id"
 // @Produce application/json
