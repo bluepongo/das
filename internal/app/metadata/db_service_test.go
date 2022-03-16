@@ -21,6 +21,8 @@ func TestDBServiceAll(t *testing.T) {
 	TestDBService_GetByEnv(t)
 	TestDBService_GetByID(t)
 	TestDBService_GetDBByNameAndClusterInfo(t)
+	TestDBService_GetDBByNameAndHostInfo(t)
+	TestDBService_GetDBsByHostInfo(t)
 	TestDBService_GetAppsByDBID(t)
 	TestDBService_GetMySQLClusterByID(t)
 	TestDBService_GetAppUsersByDBID(t)
@@ -73,8 +75,24 @@ func TestDBService_GetDBByNameAndClusterInfo(t *testing.T) {
 	asst := assert.New(t)
 
 	err := testDBService.GetDBByNameAndClusterInfo(testDBDBName2, testDBClusterID, testDBClusterType)
-	asst.Nil(err, "test GetByID() failed")
-	asst.Equal(testDBDBID, testDBService.GetDBs()[constant.ZeroInt].Identity(), "test GetByID() failed")
+	asst.Nil(err, "test GetDBByNameAndClusterInfo() failed")
+	asst.Equal(testDBDBID, testDBService.GetDBs()[constant.ZeroInt].Identity(), "test GetDBByNameAndClusterInfo() failed")
+}
+
+func TestDBService_GetDBByNameAndHostInfo(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testDBService.GetDBByNameAndHostInfo(testDBDBName2, testDBHostIP, testDBPortNum)
+	asst.Nil(err, "test GetDBByNameAndHostInfo() failed")
+	asst.Equal(testDBDBID, testDBService.GetDBs()[constant.ZeroInt].Identity(), "test GetDBByNameAndHostInfo() failed")
+}
+
+func TestDBService_GetDBsByHostInfo(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testDBService.GetDBsByHostInfo(testDBHostIP, testDBPortNum)
+	asst.Nil(err, "test GetDBsByHostInfo() failed")
+	asst.Equal(testDBDBID, len(testDBService.GetDBs()), "test GetDBsByHostInfo() failed")
 }
 
 func TestDBService_GetAppsByDBID(t *testing.T) {
