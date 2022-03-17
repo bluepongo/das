@@ -12,7 +12,7 @@ var _ metadata.TableStatistic = (*TableStatistic)(nil)
 type TableStatistic struct {
 	TableSchema   string    `middleware:"table_schema" json:"table_schema"`
 	TableName     string    `middleware:"table_name" json:"table_name"`
-	Rows          int       `middleware:"rows" json:"rows"`
+	Rows          int       `middleware:"rows" json:"table_rows"`
 	Size          int       `middleware:"size" json:"size"`
 	SizeMB        int       `middleware:"size_mb" json:"size_mb"`
 	AvgRowLength  int       `middleware:"avg_row_length" json:"avg_row_length"`
@@ -33,8 +33,8 @@ func (ts TableStatistic) GetTableName() string {
 	return ts.TableName
 }
 
-// GetRows returns the rows of the table
-func (ts TableStatistic) GetRows() int {
+// GetTableRows returns the rows of the table
+func (ts TableStatistic) GetTableRows() int {
 	return ts.Rows
 }
 
@@ -144,23 +144,17 @@ func (is IndexStatistic) MarshalJSON() ([]byte, error) {
 var _ metadata.Table = (*TableInfo)(nil)
 
 type TableInfo struct {
-	metadata.TableRepo
-	TableSchema   string    `middleware:"table_schema" json:"table_schema"`
-	TableName     string    `middleware:"table_name" json:"table_name"`
-	TableStatistics []metadata.TableStatistic `middleware:"table_statistics" json:"table_statistics"`
-	IndexStatistics []metadata.IndexStatistic `middleware:"index_statistics" json:"index_statistics"`
-	CreateStatement string `middleware:"create_statement" json:"create_statement"`
+	tableRepo   metadata.TableRepo
+	TableSchema string `middleware:"table_schema" json:"table_schema"`
+	TableName   string `middleware:"table_name" json:"table_name"`
 }
 
 // NewTableInfo returns a new TableInfo
-func NewTableInfo(repo metadata.TableRepo, tableSchema string, tableName string, tableStatistics []metadata.TableStatistic, indexStatistics []metadata.IndexStatistic, createStatement string) *TableInfo {
+func NewTableInfo(repo metadata.TableRepo, tableSchema string, tableName string) *TableInfo {
 	return &TableInfo{
 		repo,
 		tableSchema,
 		tableName,
-		tableStatistics,
-		indexStatistics,
-		createStatement,
 	}
 }
 
@@ -175,30 +169,32 @@ func NewTableInfoWithMapAndRandom(fields map[string]interface{}) (*TableInfo, er
 	return ti, nil
 }
 
+// GetTableSchema returns the table schema
 func (ti *TableInfo) GetTableSchema() string {
 	return ti.TableSchema
 }
 
+// GetTableName returns the table name
 func (ti *TableInfo) GetTableName() string {
 	return ti.TableName
 }
 
-func (ti *TableInfo) GetTableStatistics() []metadata.TableStatistic {
-	return ti.TableStatistics
+// GetTableStatistics returns the table statistic list
+func (ti *TableInfo) GetTableStatistics() ([]metadata.TableStatistic, error) {
+	return ti.tableRepo.GetTableStatistics(ti.TableSchema, ti.TableName)
 }
 
-func (ti *TableInfo) GetIndexStatistics() []metadata.IndexStatistic {
-	return ti.IndexStatistics
+// GetIndexStatistics returns the index statistic list
+func (ti *TableInfo) GetIndexStatistics() ([]metadata.IndexStatistic, error) {
+	return ti.tableRepo.GetIndexStatistics(ti.TableSchema, ti.TableName)
 }
 
-func (ti *TableInfo) GetCreateStatement() string {
-	return ti.CreateStatement
-}
-
+// MarshalJSON marshals Table to json string
 func (ti *TableInfo) MarshalJSON() ([]byte, error) {
 	return common.MarshalStructWithTag(ti, constant.DefaultMarshalTag)
 }
 
+// MarshalJSONWithFields marshals only specified field of the Table to json string
 func (ti *TableInfo) MarshalJSONWithFields(fields ...string) ([]byte, error) {
 	return common.MarshalStructWithFields(ti, fields...)
 }

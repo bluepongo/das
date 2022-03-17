@@ -30,7 +30,7 @@ func init() {
 func TestTableRepo_Execute(t *testing.T) {
 	asst := assert.New(t)
 
-	sql := `SHOW CREATE TABLE mysql.db;`
+	sql := `select 1;`
 	result, err := testTableRepo.Execute(sql)
 	asst.Nil(err, common.CombineMessageWithError("test Execute() failed", err))
 	r, err := result.GetInt(constant.ZeroInt, constant.ZeroInt)

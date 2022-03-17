@@ -37,7 +37,7 @@ func (tr *TableRepo) GetTableStatistics(tableSchema, tableName string) ([]metada
 	sql := `
 		SELECT t.table_schema                        AS table_schema,
 			t.table_name                             AS table_name,
-			t.table_rows                             AS rows,
+			t.table_rows                             AS table_rows,
 			t.data_length                            AS size,
 			TRUNCATE(t.data_length / 1024 / 1024, 3) AS size_mb,
 			t.avg_row_length                         AS avg_row_length,
