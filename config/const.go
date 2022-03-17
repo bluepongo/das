@@ -64,6 +64,8 @@ const (
 	DefaultDBMonitorMySQLPass      = "root"
 	DefaultDBApplicationMySQLUser  = "root"
 	DefaultDBApplicationMySQLPass  = "root"
+	// privilege
+	DefaultPrivilegeEnabled = true
 	// metadata
 	MetadataUserDeveloperRole          = 1
 	MetadataUserDBARole                = 2
@@ -132,6 +134,8 @@ const (
 	DBMonitorClickhousePassKey  = "db.monitor.clickhouse.pass"
 	DBMonitorMySQLUserKey       = "db.monitor.mysql.user"
 	DBMonitorMySQLPassKey       = "db.monitor.mysql.pass"
+	// privilege
+	PrivilegeEnabledKey = "privilege.enabled"
 	// metadata
 	MetadataTableAnalyzeMinRoleKey = "metadata.table.analyze.minRole"
 	// alert

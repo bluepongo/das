@@ -3,6 +3,7 @@ package metadata
 import (
 	"time"
 
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
@@ -174,6 +175,10 @@ func (mci *MySQLClusterInfo) GetMasterServers() ([]metadata.MySQLServer, error) 
 		if isMaster {
 			masterServers = append(masterServers, mysqlServer)
 		}
+	}
+
+	if len(masterServers) == constant.ZeroInt {
+		return nil, errors.Errorf("no master exists, something goes wrong. mysql cluster id: %d", mci.Identity())
 	}
 
 	return masterServers, nil

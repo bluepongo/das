@@ -71,6 +71,8 @@ var (
 	dbMonitorMySQLPass       string
 	dbApplicationMySQLUser   string
 	dbApplicationMySQLPass   string
+	// privilege
+	privilegeEnabledStr string
 	// metadata
 	metadataTableAnalyzeMinRole int
 	// alert
@@ -172,6 +174,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&dbMonitorClickhousePass, "db-monitor-clickhouse-pass", constant.DefaultRandomString, fmt.Sprintf("specify clickhouse user password of monitor system(default: %s)", config.DefaultDBPass))
 	rootCmd.PersistentFlags().StringVar(&dbMonitorMySQLUser, "db-monitor-mysql-user", constant.DefaultRandomString, fmt.Sprintf("specify mysql user name of monitor system(default: %s)", config.DefaultDBUser))
 	rootCmd.PersistentFlags().StringVar(&dbMonitorMySQLPass, "db-monitor-mysql-pass", constant.DefaultRandomString, fmt.Sprintf("specify mysql user password of monitor system(default: %s)", config.DefaultDBPass))
+	// privilege
+	rootCmd.PersistentFlags().StringVar(&privilegeEnabledStr, "privilege-enabled", constant.DefaultRandomString, fmt.Sprintf("specify if enables privilege module(default: %s)", constant.TrueString))
 	// metadata
 	rootCmd.PersistentFlags().IntVar(&metadataTableAnalyzeMinRole, "metadata-table-analyze-min-role", constant.DefaultRandomInt, fmt.Sprintf("specify the minimum role which has analyzing table privilege(default: %d)", config.DefaultMetadataTableAnalyzeMinRole))
 	// alert
@@ -389,6 +393,16 @@ func OverrideConfig() (err error) {
 	}
 	if dbApplicationMySQLPass != constant.DefaultRandomString {
 		viper.Set(config.DBApplicationMySQLPassKey, dbApplicationMySQLPass)
+	}
+
+	// override privilege
+	if privilegeEnabledStr != constant.DefaultRandomString {
+		privilegeEnabled, err := cast.ToBoolE(privilegeEnabledStr)
+		if err != nil {
+			return errors.Trace(err)
+		}
+
+		viper.Set(config.PrivilegeEnabledKey, privilegeEnabled)
 	}
 
 	// override metadata

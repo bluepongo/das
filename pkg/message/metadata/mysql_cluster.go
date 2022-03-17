@@ -7,9 +7,9 @@ import (
 )
 
 func init() {
-	initDebugMySQLCLusterMessage()
-	initInfoMySQLCLusterMessage()
-	initErrorMySQLCLusterMessage()
+	initDebugMySQLClusterMessage()
+	initInfoMySQLClusterMessage()
+	initErrorMySQLClusterMessage()
 }
 
 // Message code
@@ -67,7 +67,7 @@ const (
 	ErrMetadataDeleteMySQLCluster     = 400716
 )
 
-func initDebugMySQLCLusterMessage() {
+func initDebugMySQLClusterMessage() {
 	message.Messages[DebugMetadataGetMySQLClusterAll] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLClusterAll,
@@ -138,7 +138,7 @@ func initDebugMySQLCLusterMessage() {
 		"metadata: delete mysql cluster message: %s")
 }
 
-func initInfoMySQLCLusterMessage() {
+func initInfoMySQLClusterMessage() {
 	message.Messages[InfoMetadataGetMySQLClusterAll] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		InfoMetadataGetMySQLClusterAll,
@@ -205,7 +205,7 @@ func initInfoMySQLCLusterMessage() {
 		"metadata: delete mysql cluster completed. id: %s")
 }
 
-func initErrorMySQLCLusterMessage() {
+func initErrorMySQLClusterMessage() {
 	message.Messages[ErrMetadataGetMySQLClusterAll] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		ErrMetadataGetMySQLClusterAll,

@@ -173,6 +173,11 @@ func (ui *UserInfo) GetDelFlag() int {
 	return ui.DelFlag
 }
 
+// GetAllMySQLServers gets all mysql servers of this user from the middleware
+func (ui *UserInfo) GetAllMySQLServers() ([]metadata.MySQLServer, error) {
+	return ui.UserRepo.GetAllMySQLServersByUserID(ui.Identity())
+}
+
 // Set sets entity with given fields, key is the field name and value is the relevant value of the key
 func (ui *UserInfo) Set(fields map[string]interface{}) error {
 	for fieldName, fieldValue := range fields {

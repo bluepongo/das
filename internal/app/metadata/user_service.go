@@ -37,15 +37,6 @@ func (us *UserService) GetUsers() []metadata.User {
 	return us.Users
 }
 
-// GetAll gets all users
-func (us *UserService) GetAll() error {
-	var err error
-
-	us.Users, err = us.UserRepo.GetAll()
-
-	return err
-}
-
 // GetApps returns the apps of the service
 func (us *UserService) GetApps() []metadata.App {
 	return us.Apps
@@ -56,12 +47,12 @@ func (us *UserService) GetDBs() []metadata.DB {
 	return us.DBs
 }
 
-// GetMiddlewareClusters returns the MiddlewareClusterss of the service
+// GetMiddlewareClusters returns the middleware clusters of the service
 func (us *UserService) GetMiddlewareClusters() []metadata.MiddlewareCluster {
 	return us.MiddlewareClusters
 }
 
-// GetMySQLClusters returns the MySQLClusters of the service
+// GetMySQLClusters returns the mysql clusters of the service
 func (us *UserService) GetMySQLClusters() []metadata.MySQLCluster {
 	return us.MySQLClusters
 }
@@ -71,11 +62,11 @@ func (us *UserService) GetMySQLServers() []metadata.MySQLServer {
 	return us.MySQLServers
 }
 
-// GetByUserName gets users of given user name
-func (us *UserService) GetByUserName(userName string) error {
+// GetAll gets all users
+func (us *UserService) GetAll() error {
 	var err error
 
-	us.Users, err = us.UserRepo.GetByUserName(userName)
+	us.Users, err = us.UserRepo.GetAll()
 
 	return err
 }
@@ -89,6 +80,15 @@ func (us *UserService) GetByID(id int) error {
 
 	us.Users = nil
 	us.Users = append(us.Users, user)
+
+	return err
+}
+
+// GetByUserName gets users of given user name
+func (us *UserService) GetByUserName(userName string) error {
+	var err error
+
+	us.Users, err = us.UserRepo.GetByUserName(userName)
 
 	return err
 }
@@ -119,7 +119,7 @@ func (us *UserService) GetByAccountName(accountName string) error {
 	return err
 }
 
-// GetByAccountNameOrEmployeeID gets a user of given loginName
+// GetByAccountNameOrEmployeeID gets a user of given login name
 func (us *UserService) GetByAccountNameOrEmployeeID(loginName string) error {
 	user, err := us.UserRepo.GetByAccountNameOrEmployeeID(loginName)
 	if err != nil {
@@ -168,6 +168,50 @@ func (us *UserService) GetByMobile(mobile string) error {
 	us.Users = nil
 	us.Users = append(us.Users, user)
 
+	return err
+}
+
+// GetAppsByUserID gets apps that this user owns
+func (us *UserService) GetAppsByUserID(userID int) error {
+	var err error
+
+	us.Apps, err = us.UserRepo.GetAppsByUserID(userID)
+
+	return err
+}
+
+// GetDBsByUserID gets dbs that this user owns
+func (us *UserService) GetDBsByUserID(userID int) error {
+	var err error
+
+	us.DBs, err = us.UserRepo.GetDBsByUserID(userID)
+
+	return err
+}
+
+// GetMiddlewareClustersByUserID gets middleware clusters that this user owns
+func (us *UserService) GetMiddlewareClustersByUserID(userID int) error {
+	var err error
+
+	us.MiddlewareClusters, err = us.UserRepo.GetMiddlewareClustersByUserID(userID)
+
+	return err
+}
+
+// GetMySQLClustersByUserID gets mysql clusters that this user owns
+func (us *UserService) GetMySQLClustersByUserID(userID int) error {
+	var err error
+
+	us.MySQLClusters, err = us.UserRepo.GetMySQLClustersByUserID(userID)
+
+	return err
+}
+
+// GetAllMySQLServersByUserID gets mysql servers that this user owns
+func (us *UserService) GetAllMySQLServersByUserID(id int) error {
+	var err error
+
+	us.MySQLServers, err = us.UserRepo.GetAllMySQLServersByUserID(id)
 	return err
 }
 
@@ -240,48 +284,4 @@ func (us *UserService) Marshal() ([]byte, error) {
 // MarshalWithFields marshals only specified fields of the UserService to json bytes
 func (us *UserService) MarshalWithFields(fields ...string) ([]byte, error) {
 	return common.MarshalStructWithFields(us, fields...)
-}
-
-// GetAppsByUserID gets apps that this user owns
-func (us *UserService) GetAppsByUserID(userID int) error {
-	var err error
-
-	us.Apps, err = us.UserRepo.GetAppsByUserID(userID)
-
-	return err
-}
-
-// GetDBsByUserID gets dbs that this user owns
-func (us *UserService) GetDBsByUserID(userID int) error {
-	var err error
-
-	us.DBs, err = us.UserRepo.GetDBsByUserID(userID)
-
-	return err
-}
-
-// GetMiddlewareClustersByUserID gets MiddlewareClusters that this user owns
-func (us *UserService) GetMiddlewareClustersByUserID(userID int) error {
-	var err error
-
-	us.MiddlewareClusters, err = us.UserRepo.GetMiddlewareClustersByUserID(userID)
-
-	return err
-}
-
-// GetMySQLClustersByUserID gets MySQLClusters that this user owns
-func (us *UserService) GetMySQLClustersByUserID(userID int) error {
-	var err error
-
-	us.MySQLClusters, err = us.UserRepo.GetMySQLClustersByUserID(userID)
-
-	return err
-}
-
-// GetAllMySQLServersByUserID gets MySQLServers that this user owns
-func (us *UserService) GetAllMySQLServersByUserID(id int) error {
-	var err error
-
-	us.MySQLServers, err = us.UserRepo.GetAllMySQLServersByUserID(id)
-	return err
 }

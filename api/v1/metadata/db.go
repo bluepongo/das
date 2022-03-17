@@ -3,7 +3,6 @@ package metadata
 import (
 	"encoding/json"
 	"fmt"
-	utilmeta "github.com/romberli/das/pkg/util/metadata"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -12,6 +11,7 @@ import (
 	"github.com/romberli/das/pkg/message"
 	msgmeta "github.com/romberli/das/pkg/message/metadata"
 	"github.com/romberli/das/pkg/resp"
+	utilmeta "github.com/romberli/das/pkg/util/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/log"
