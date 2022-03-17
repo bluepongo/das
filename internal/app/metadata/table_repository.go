@@ -104,7 +104,7 @@ func (tr *TableRepo) GetIndexStatistics(tableSchema, tableName string) ([]metada
 	return indexStatisticList, nil
 }
 
-// GetCreateStatement get create statement from the middleware
+// GetCreateStatement returns the create statement of the table
 func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, error) {
 	sql := fmt.Sprintf(`
 		SHOW CREATE TABLE %s.%s;
@@ -123,10 +123,12 @@ func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, 
 	return string(createStatement), nil
 }
 
+// AnalyzeTableByDBIDAndTableName analyzes the table by DBID and TableName
 func (tr *TableRepo) AnalyzeTableByDBIDAndTableName(dbID int, tableName, userName string) error {
 	panic("implement me")
 }
 
+// AnalyzeTableByHostInfoAndDBNameAndTableName analyzes the table by host info、DB name and table name
 func (tr *TableRepo) AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName, userName string) error {
 	panic("implement me")
 }

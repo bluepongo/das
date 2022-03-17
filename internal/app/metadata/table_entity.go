@@ -1,10 +1,11 @@
 package metadata
 
 import (
+	"time"
+
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
-	"time"
 )
 
 var _ metadata.TableStatistic = (*TableStatistic)(nil)
@@ -144,17 +145,30 @@ func (is IndexStatistic) MarshalJSON() ([]byte, error) {
 var _ metadata.Table = (*TableInfo)(nil)
 
 type TableInfo struct {
-	tableRepo   metadata.TableRepo
+	TableRepo   metadata.TableRepo
 	TableSchema string `middleware:"table_schema" json:"table_schema"`
 	TableName   string `middleware:"table_name" json:"table_name"`
+	// TableStatistics []metadata.TableStatistic `middleware:"table_statistics" json:"table_statistics"`
+	// IndexStatistics []metadata.IndexStatistic `middleware:"index_statistics" json:"index_statistics"`
+	CreateStatement string `middleware:"create_statement" json:"create_statement"`
 }
 
 // NewTableInfo returns a new TableInfo
-func NewTableInfo(repo metadata.TableRepo, tableSchema string, tableName string) *TableInfo {
+func NewTableInfo(
+	repo metadata.TableRepo,
+	tableSchema string,
+	tableName string,
+	// tableStatistics []metadata.TableStatistic,
+	// indexStatistics []metadata.IndexStatistic,
+	createStatement string,
+) *TableInfo {
 	return &TableInfo{
 		repo,
 		tableSchema,
 		tableName,
+		// tableStatistics,
+		// indexStatistics,
+		createStatement,
 	}
 }
 
@@ -179,14 +193,19 @@ func (ti *TableInfo) GetTableName() string {
 	return ti.TableName
 }
 
-// GetTableStatistics returns the table statistic list
+// GetTableStatistics returns the table statistics
 func (ti *TableInfo) GetTableStatistics() ([]metadata.TableStatistic, error) {
-	return ti.tableRepo.GetTableStatistics(ti.TableSchema, ti.TableName)
+	return ti.TableRepo.GetTableStatistics(ti.TableSchema, ti.TableName)
 }
 
-// GetIndexStatistics returns the index statistic list
+// GetIndexStatistics returns the index statistics
 func (ti *TableInfo) GetIndexStatistics() ([]metadata.IndexStatistic, error) {
-	return ti.tableRepo.GetIndexStatistics(ti.TableSchema, ti.TableName)
+	return ti.TableRepo.GetIndexStatistics(ti.TableSchema, ti.TableName)
+}
+
+// GetCreateStatement returns the create statement
+func (ti *TableInfo) GetCreateStatement() string {
+	return ti.CreateStatement
 }
 
 // MarshalJSON marshals Table to json string
