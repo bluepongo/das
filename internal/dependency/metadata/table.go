@@ -59,19 +59,12 @@ type Table interface {
 	GetTableSchema() string
 	// GetTableName returns the table name
 	GetTableName() string
-<<<<<<< Updated upstream
-	// GetTableStatistics returns the table statistic list
-	GetTableStatistics() ([]TableStatistic, error)
-	// GetIndexStatistics returns the index statistic list
-	GetIndexStatistics() ([]IndexStatistic, error)
-=======
 	// GetTableStatistics returns the table statistics
 	GetTableStatistics() ([]TableStatistic, error)
 	// GetIndexStatistics returns the index statistics
 	GetIndexStatistics() ([]IndexStatistic, error)
 	// GetCreateStatement returns the create statement
 	GetCreateStatement() string
->>>>>>> Stashed changes
 	// MarshalJSON marshals Table to json string
 	MarshalJSON() ([]byte, error)
 	// MarshalJSONWithFields marshals only specified field of the Table to json string
