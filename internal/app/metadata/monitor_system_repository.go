@@ -62,20 +62,16 @@ func (msr *MonitorSystemRepo) GetAll() ([]metadata.MonitorSystem, error) {
 	if err != nil {
 		return nil, err
 	}
-	// init []*MonitorSystemInfo
-	monitorSystemInfoList := make([]*MonitorSystemInfo, result.RowNumber())
-	for i := range monitorSystemInfoList {
-		monitorSystemInfoList[i] = NewEmptyMonitorSystemInfoWithGlobal()
-	}
-	// map to struct
-	err = result.MapToStructSlice(monitorSystemInfoList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
+
 	// init []metadata.monitorSystem
 	monitorSystemList := make([]metadata.MonitorSystem, result.RowNumber())
 	for i := range monitorSystemList {
-		monitorSystemList[i] = monitorSystemInfoList[i]
+		monitorSystemList[i] = NewEmptyMonitorSystemInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(monitorSystemList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
 	}
 
 	return monitorSystemList, nil
@@ -96,20 +92,16 @@ func (msr *MonitorSystemRepo) GetByEnv(envID int) ([]metadata.MonitorSystem, err
 	if err != nil {
 		return nil, err
 	}
-	// init []*MonitorSystemInfo
-	monitorSystemInfoList := make([]*MonitorSystemInfo, result.RowNumber())
-	for i := range monitorSystemInfoList {
-		monitorSystemInfoList[i] = NewEmptyMonitorSystemInfoWithGlobal()
-	}
-	// map to struct
-	err = result.MapToStructSlice(monitorSystemInfoList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
+
 	// init []metadata.monitorSystem
 	monitorSystemList := make([]metadata.MonitorSystem, result.RowNumber())
 	for i := range monitorSystemList {
-		monitorSystemList[i] = monitorSystemInfoList[i]
+		monitorSystemList[i] = NewEmptyMonitorSystemInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(monitorSystemList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
 	}
 
 	return monitorSystemList, nil

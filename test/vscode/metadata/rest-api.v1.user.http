@@ -20,6 +20,10 @@ Accept: application/json
 GET http://{{baseURL}}/api/v1/metadata/user/account-name/account_name
 Accept: application/json
 
+### GetUserByAccountNameOrEmployeeID
+GET http://{{baseURL}}/api/v1/metadata/user/login-name/login_name
+Accept: application/json
+
 ### GetUserByEmail
 GET http://{{baseURL}}/api/v1/metadata/user/email/email
 Accept: application/json
@@ -57,10 +61,14 @@ GET http://{{baseURL}}/api/v1/metadata/user/db/1
 Accept: application/json
 
 ### get all middlewareclusters by id
-GET http://{{baseURL}}/api/v1/metadata/user/middlewarecluster/14
+GET http://{{baseURL}}/api/v1/metadata/user/middleware-cluster/14
 Accept: application/json
 
 ### get all mysqlclusters by id
-GET http://{{baseURL}}/api/v1/metadata/user/mysqlcluster/14
+GET http://{{baseURL}}/api/v1/metadata/user/mysql-cluster/14
+Accept: application/json
+
+### get all mysqlservers by id
+GET http://{{baseURL}}/api/v1/metadata/user/all-mysql-server/1
 Accept: application/json
 

@@ -37,41 +37,69 @@ const (
 	resultTableRowsHighStruct                    = "TableRowsHigh"
 	resultTableSizeDataStruct                    = "TableSizeData"
 	resultTableSizeHighStruct                    = "TableSizeHigh"
-	resultSlowQueryData                          = "SlowQueryData"
-	resultSlowQueryAdvice                        = "SlowQueryAdvice"
+	resultSlowQueryDataStruct                    = "SlowQueryData"
+	resultSlowQueryAdviceStruct                  = "SlowQueryAdvice"
 	resultAccuracyReviewStruct                   = "AccuracyReview"
 	resultDelFlagStruct                          = "DelFlag"
 	resultCreateTimeStruct                       = "CreateTime"
 	resultLastUpdateTimeStruct                   = "LastUpdateTime"
 )
 
-var defaultIgnoreList = []string{
-	resultDBConfigDataStruct,
-	resultAvgBackupFailedRatioDataStruct,
-	resultAvgBackupFailedRatioHighStruct,
-	resultStatisticFailedRatioDataStruct,
-	resultStatisticFailedRatioHighStruct,
-	resultCPUUsageDataStruct,
-	resultCPUUsageHighStruct,
-	resultIOUtilDataStruct,
-	resultIOUtilHighStruct,
-	resultDiskCapacityUsageDataStruct,
-	resultDiskCapacityUsageHighStruct,
-	resultConnectionUsageDataStruct,
-	resultConnectionUsageHighStruct,
-	resultAverageActiveSessionPercentsDataStruct,
-	resultAverageActiveSessionPercentsHighStruct,
-	resultCacheMissRatioDataStruct,
-	resultCacheMissRatioHighStruct,
-	resultTableRowsDataStruct,
-	resultTableRowsHighStruct,
-	resultTableSizeDataStruct,
-	resultTableSizeHighStruct,
-	resultSlowQueryData,
-	resultAccuracyReviewStruct,
-	resultDelFlagStruct,
-	resultLastUpdateTimeStruct,
-}
+var (
+	defaultIgnoreList = []string{
+		resultDBConfigDataStruct,
+		resultAvgBackupFailedRatioDataStruct,
+		resultAvgBackupFailedRatioHighStruct,
+		resultStatisticFailedRatioDataStruct,
+		resultStatisticFailedRatioHighStruct,
+		resultCPUUsageDataStruct,
+		resultCPUUsageHighStruct,
+		resultIOUtilDataStruct,
+		resultIOUtilHighStruct,
+		resultDiskCapacityUsageDataStruct,
+		resultDiskCapacityUsageHighStruct,
+		resultConnectionUsageDataStruct,
+		resultConnectionUsageHighStruct,
+		resultAverageActiveSessionPercentsDataStruct,
+		resultAverageActiveSessionPercentsHighStruct,
+		resultCacheMissRatioDataStruct,
+		resultCacheMissRatioHighStruct,
+		resultTableRowsDataStruct,
+		resultTableRowsHighStruct,
+		resultTableSizeDataStruct,
+		resultTableSizeHighStruct,
+		resultSlowQueryDataStruct,
+		resultAccuracyReviewStruct,
+		resultDelFlagStruct,
+		resultLastUpdateTimeStruct,
+	}
+	defaultSliceList = []string{
+		resultDBConfigDataStruct,
+		resultDBConfigAdviceStruct,
+		resultAvgBackupFailedRatioDataStruct,
+		resultAvgBackupFailedRatioHighStruct,
+		resultStatisticFailedRatioDataStruct,
+		resultStatisticFailedRatioHighStruct,
+		resultCPUUsageDataStruct,
+		resultCPUUsageHighStruct,
+		resultIOUtilDataStruct,
+		resultIOUtilHighStruct,
+		resultDiskCapacityUsageDataStruct,
+		resultDiskCapacityUsageHighStruct,
+		resultConnectionUsageDataStruct,
+		resultConnectionUsageHighStruct,
+		resultAverageActiveSessionPercentsDataStruct,
+		resultAverageActiveSessionPercentsHighStruct,
+		resultCacheMissRatioDataStruct,
+		resultCacheMissRatioHighStruct,
+		resultTableRowsDataStruct,
+		resultTableRowsHighStruct,
+		resultTableSizeDataStruct,
+		resultTableSizeHighStruct,
+		resultSlowQueryDataStruct,
+		resultSlowQueryAdviceStruct,
+	}
+)
 
 // Result include all data needed in healthcheck
 type Result struct {
@@ -541,8 +569,7 @@ func (r *Result) getString(ignoreList []string) string {
 				reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 				fieldStrTemplate = `"%s":%d,`
 			case reflect.String:
-				if fieldVal.String() != constant.EmptyString &&
-					(fieldType.Name == resultDBConfigAdviceStruct || fieldType.Name == resultSlowQueryAdvice) {
+				if fieldVal.String() != constant.EmptyString && common.StringInSlice(defaultSliceList, fieldType.Name) {
 					fieldStrTemplate = `"%s":%s,`
 				}
 			}
@@ -551,5 +578,5 @@ func (r *Result) getString(ignoreList []string) string {
 		}
 	}
 
-	return strings.Trim(s, constant.CommaString)
+	return strings.Trim(s, constant.CommaString) + constant.RightBraceString
 }

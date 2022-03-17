@@ -22,6 +22,7 @@ const (
 	testUserDB2ID               = 2
 	testUserMiddlewareClusterID = 1
 	testUserMySQLClusterID      = 1
+	testUserMySQLServerID       = 1
 	testUser2ID                 = 15
 )
 
@@ -53,7 +54,7 @@ func TestUserRepoAll(t *testing.T) {
 	TestUserRepo_Transaction(t)
 	TestUserRepo_GetAll(t)
 	TestUserRepo_GetByID(t)
-	TestUserRepo_GetByName(t)
+	TestUserRepo_GetByUserName(t)
 	TestUserRepo_GetByEmployeeID(t)
 	TestUserRepo_GetByAccountName(t)
 	TestUserRepo_GetByEmail(t)
@@ -67,6 +68,8 @@ func TestUserRepoAll(t *testing.T) {
 	TestUserRepo_GetDBsByUserID(t)
 	TestUserRepo_GetMiddlewareClustersByUserID(t)
 	TestUserRepo_GetMySQLClustersByUserID(t)
+	TestUserRepo_GetAllMySQLServersByUserID(t)
+	TestUserRepo_GetByAccountNameOrEmployeeID(t)
 
 }
 
@@ -140,36 +143,48 @@ func TestUserRepo_GetByID(t *testing.T) {
 	asst.Equal(testUserID, entity.Identity(), "test GetByID() failed")
 }
 
-func TestUserRepo_GetByName(t *testing.T) {
+func TestUserRepo_GetByUserName(t *testing.T) {
 	asst := assert.New(t)
 
-	entities, err := testUserRepo.GetByName(testUserUserName)
-	asst.Nil(err, common.CombineMessageWithError("test GetByName() failed", err))
-	asst.Equal(1, len(entities), "test GetByName() failed")
+	entities, err := testUserRepo.GetByUserName(testUserUserName)
+	asst.Nil(err, common.CombineMessageWithError("test GetByUserName() failed", err))
+	asst.Equal(1, len(entities), "test GetByUserName() failed")
 }
 
 func TestUserRepo_GetByEmployeeID(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testUserRepo.GetByEmployeeID(testUserEmployeeID)
-	asst.Nil(err, common.CombineMessageWithError("test GetByEmployeeID failed", err))
-	asst.Equal(testUserEmployeeID, entity.GetEmployeeID(), "test GetByEmployeeID failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByEmployeeID() failed", err))
+	asst.Equal(testUserEmployeeID, entity.GetEmployeeID(), "test GetByEmployeeID() failed")
 }
 
 func TestUserRepo_GetByAccountName(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testUserRepo.GetByAccountName(testUserAccountName)
-	asst.Nil(err, common.CombineMessageWithError("test GetByAccountName failed", err))
-	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountName failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByAccountName() failed", err))
+	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountName() failed")
+}
+
+func TestUserRepo_GetByAccountNameOrEmployeeID(t *testing.T) {
+	asst := assert.New(t)
+
+	entity, err := testUserRepo.GetByAccountNameOrEmployeeID(testUserAccountName)
+	asst.Nil(err, common.CombineMessageWithError("test GetByAccountNameOrEmployeeID() failed", err))
+	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountNameOrEmployeeID() failed")
+
+	entity, err = testUserRepo.GetByAccountNameOrEmployeeID(testUserEmployeeID)
+	asst.Nil(err, common.CombineMessageWithError("test GetByAccountNameOrEmployeeID() failed", err))
+	asst.Equal(testUserAccountName, entity.GetAccountName(), "test GetByAccountNameOrEmployeeID() failed")
 }
 
 func TestUserRepo_GetByEmail(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testUserRepo.GetByEmail(testUserEmail)
-	asst.Nil(err, common.CombineMessageWithError("test GetByEmail failed", err))
-	asst.Equal(testUserEmail, entity.GetEmail(), "test GetByEmail failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByEmail() failed", err))
+	asst.Equal(testUserEmail, entity.GetEmail(), "test GetByEmail() failed")
 
 }
 
@@ -177,24 +192,24 @@ func TestUserRepo_GetByTelephone(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testUserRepo.GetByTelephone(testUserTelephone)
-	asst.Nil(err, common.CombineMessageWithError("test GetByTelephone failed", err))
-	asst.Equal(testUserTelephone, entity.GetTelephone(), "test GetByTelephone failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByTelephone() failed", err))
+	asst.Equal(testUserTelephone, entity.GetTelephone(), "test GetByTelephone() failed")
 }
 
 func TestUserRepo_GetByMobile(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testUserRepo.GetByMobile(testUserMobile)
-	asst.Nil(err, common.CombineMessageWithError("test GetByMobile failed", err))
-	asst.Equal(testUserMobile, entity.GetMobile(), "test GetByMobile failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByMobile() failed", err))
+	asst.Equal(testUserMobile, entity.GetMobile(), "test GetByMobile() failed")
 }
 
 func TestUserRepo_GetID(t *testing.T) {
 	asst := assert.New(t)
 
 	userID, err := testUserRepo.GetID(testUserAccountName)
-	asst.Nil(err, common.CombineMessageWithError("test GetID failed", err))
-	asst.Equal(testUserID, userID, "test GetID failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetID() failed", err))
+	asst.Equal(testUserID, userID, "test GetID() failed")
 }
 
 func TestUserRepo_Create(t *testing.T) {
@@ -252,15 +267,23 @@ func TestUserRepo_GetDBsByUserID(t *testing.T) {
 func TestUserRepo_GetMiddlewareClustersByUserID(t *testing.T) {
 	asst := assert.New(t)
 
-	dbs, err := testUserRepo.GetMiddlewareClustersByUserID(testUserID)
+	mcs, err := testUserRepo.GetMiddlewareClustersByUserID(testUserID)
 	asst.Nil(err, common.CombineMessageWithError("test GetMiddlewareClustersByUserID() failed", err))
-	asst.Equal(testUserMiddlewareClusterID, dbs[constant.ZeroInt].Identity(), "test GetMiddlewareClustersByUserID() failed")
+	asst.Equal(testUserMiddlewareClusterID, mcs[constant.ZeroInt].Identity(), "test GetMiddlewareClustersByUserID() failed")
 }
 
 func TestUserRepo_GetMySQLClustersByUserID(t *testing.T) {
 	asst := assert.New(t)
 
-	dbs, err := testUserRepo.GetMySQLClustersByUserID(testUserID)
+	mcs, err := testUserRepo.GetMySQLClustersByUserID(testUserID)
 	asst.Nil(err, common.CombineMessageWithError("test GetMySQLClustersByUserID() failed", err))
-	asst.Equal(testUserMySQLClusterID, dbs[constant.ZeroInt].Identity(), "test GetMySQLClustersByUserID() failed")
+	asst.Equal(testUserMySQLClusterID, mcs[constant.ZeroInt].Identity(), "test GetMySQLClustersByUserID() failed")
+}
+
+func TestUserRepo_GetAllMySQLServersByUserID(t *testing.T) {
+	asst := assert.New(t)
+
+	mss, err := testUserRepo.GetAllMySQLServersByUserID(testUserID)
+	asst.Nil(err, common.CombineMessageWithError("test GetAllMySQLServersByUserID() failed", err))
+	asst.Equal(testUserMySQLServerID, mss[constant.ZeroInt].Identity(), "test GetAllMySQLServersByUserID() failed")
 }
