@@ -75,6 +75,8 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(DBMonitorMySQLPassKey, DefaultDBMonitorMySQLPass)
 	viper.SetDefault(DBApplicationMySQLUserKey, DefaultDBApplicationMySQLUser)
 	viper.SetDefault(DBApplicationMySQLPassKey, DefaultDBApplicationMySQLPass)
+	// privilege
+	viper.SetDefault(PrivilegeEnabledKey, DefaultPrivilegeEnabled)
 	// metadata
 	viper.SetDefault(MetadataTableAnalyzeMinRoleKey, DefaultMetadataTableAnalyzeMinRole)
 	// alert
@@ -124,6 +126,12 @@ func ValidateConfig() (err error) {
 
 	// validate database section
 	err = ValidateDatabase()
+	if err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	// validate privilege section
+	err = ValidatePrivilege()
 	if err != nil {
 		merr = multierror.Append(merr, err)
 	}
@@ -441,6 +449,19 @@ func ValidateDatabase() error {
 		if !govalidator.IsPort(soarAddr[1]) {
 			merr = multierror.Append(merr, message.NewMessage(message.ErrNotValidDBAddr, dbSoarAddr))
 		}
+	}
+
+	return errors.Trace(merr.ErrorOrNil())
+}
+
+// ValidatePrivilege validates if privilege section is valid
+func ValidatePrivilege() error {
+	merr := &multierror.Error{}
+
+	// validate privilege.enabled
+	_, err := cast.ToBoolE(viper.Get(PrivilegeEnabledKey))
+	if err != nil {
+		merr = multierror.Append(merr, errors.Trace(err))
 	}
 
 	return errors.Trace(merr.ErrorOrNil())

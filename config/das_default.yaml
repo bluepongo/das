@@ -202,6 +202,14 @@ db:
       # default: root
       pass: root
 
+# privilege configuration
+privilege:
+  # description: specify if enables privilege module
+  # command-line-argument: --privilege-enabled
+  # type: bool
+  # default: true
+  enabled: true
+
 # metadata configuration
 metadata:
   # table configuration

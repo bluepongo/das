@@ -540,7 +540,7 @@ func (mcr *MySQLClusterRepo) Update(entity metadata.MySQLCluster) error {
 // therefore use update instead of delete
 func (mcr *MySQLClusterRepo) Delete(id int) error {
 	sql := `delete from t_meta_mysql_cluster_info where id = ?;`
-	log.Debugf("metadata MySQLCLusterRepo.Delete() delete sql(t_meta_mysql_cluster_info): %s", sql)
+	log.Debugf("metadata MySQLClusterRepo.Delete() delete sql(t_meta_mysql_cluster_info): %s", sql)
 
 	_, err := mcr.Execute(sql, id)
 	return err
