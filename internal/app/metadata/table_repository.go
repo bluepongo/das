@@ -12,6 +12,7 @@ import (
 
 var _ metadata.TableRepo = (*TableRepo)(nil)
 
+// TableRepo implements dependency.TableRepo interface
 type TableRepo struct {
 	conn *mysql.Conn
 }
@@ -98,7 +99,7 @@ func (tr *TableRepo) GetIndexStatistics(tableSchema, tableName string) ([]metada
 	}
 	indexStatisticList := make([]metadata.IndexStatistic, result.RowNumber())
 	for i := range indexStatisticList {
-		indexStatisticList[i] = indexStatisticList[i]
+		indexStatisticList[i] = indexStatisticInfoList[i]
 	}
 
 	return indexStatisticList, nil
