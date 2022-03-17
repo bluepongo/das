@@ -10,6 +10,7 @@ import (
 
 var _ metadata.TableStatistic = (*TableStatistic)(nil)
 
+// TableStatistic include statistics of table
 type TableStatistic struct {
 	TableSchema   string    `middleware:"table_schema" json:"table_schema"`
 	TableName     string    `middleware:"table_name" json:"table_name"`
@@ -86,6 +87,7 @@ func (ts TableStatistic) MarshalJSON() ([]byte, error) {
 
 var _ metadata.IndexStatistic = (*IndexStatistic)(nil)
 
+// IndexStatistic include statistics of index
 type IndexStatistic struct {
 	TableSchema string `middleware:"table_schema" json:"table_schema"`
 	TableName   string `middleware:"table_name" json:"table_name"`
@@ -144,6 +146,7 @@ func (is IndexStatistic) MarshalJSON() ([]byte, error) {
 
 var _ metadata.Table = (*TableInfo)(nil)
 
+// TableInfo include information of logic table
 type TableInfo struct {
 	TableRepo   metadata.TableRepo
 	TableSchema string `middleware:"table_schema" json:"table_schema"`

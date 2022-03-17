@@ -9,6 +9,7 @@ const tableStruct = "Tables"
 
 var _ metadata.TableService = (*TableService)(nil)
 
+// TableService implements dependency.TableService
 type TableService struct {
 	metadata.TableRepo
 	Tables          []metadata.Table          `middleware:"tables" json:"tables"`
@@ -17,6 +18,7 @@ type TableService struct {
 	CreateStatement string                    `middleware:"create_statement" json:"create_statement"`
 }
 
+// NewTableService return *TableService
 func NewTableService(repo metadata.TableRepo) *TableService {
 	return &TableService{
 		repo,
