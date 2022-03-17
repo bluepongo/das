@@ -5,18 +5,18 @@ type HostInfo struct {
 	PortNum int    `json:"port_num" bind:"required"`
 }
 
-type NameAndClusterInfo struct {
-	DBName      string `json:"db_name" bind:"required"`
-	ClusterID   int    `json:"cluster_id" bind:"required"`
-	ClusterType int    `json:"cluster_type" bind:"required"`
-}
-
 func (hi *HostInfo) GetHostIP() string {
 	return hi.HostIP
 }
 
 func (hi *HostInfo) GetPortNum() int {
 	return hi.PortNum
+}
+
+type NameAndClusterInfo struct {
+	DBName      string `json:"db_name" bind:"required"`
+	ClusterID   int    `json:"cluster_id" bind:"required"`
+	ClusterType int    `json:"cluster_type" bind:"required"`
 }
 
 func (nc *NameAndClusterInfo) GetDBName() string {
@@ -29,4 +29,22 @@ func (nc *NameAndClusterInfo) GetClusterID() int {
 
 func (nc *NameAndClusterInfo) GetClusterType() int {
 	return nc.ClusterType
+}
+
+type NameAndHostInfo struct {
+	DBName  string `json:"db_name" bind:"required"`
+	HostIP  string `json:"host_ip" bind:"required"`
+	PortNum int    `json:"port_num" bind:"required"`
+}
+
+func (nh *NameAndHostInfo) GetDBName() string {
+	return nh.DBName
+}
+
+func (nh *NameAndHostInfo) GetHostIP() string {
+	return nh.HostIP
+}
+
+func (nh *NameAndHostInfo) GetPortNum() int {
+	return nh.PortNum
 }
