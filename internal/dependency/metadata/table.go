@@ -94,9 +94,9 @@ type TableService interface {
 	// GetTableByHostInfoAndDBNameAndTableName returns the table info by host info、 DB name and table name
 	GetTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName string) error
 	// AnalyzeTableByDBIDAndTableName analyzes the table by DBID and TableName
-	AnalyzeTableByDBIDAndTableName(dbID int, tableName, userName string) error
+	AnalyzeTableByDBIDAndTableName(dbID int, tableName, accountName string) error
 	// AnalyzeTableByHostInfoAndDBNameAndTableName analyzes the table by host info、DB name and table name
-	AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName, userName string) error
+	AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName, accountName string) error
 	// Marshal marshals TableService.Tables to json bytes
 	Marshal() ([]byte, error)
 	// MarshalWithFields marshals only specified fields of the TableService to json bytes
