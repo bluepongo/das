@@ -70,8 +70,8 @@ type DBRepo interface {
 	GetDBsByHostInfo(hostIP string, portNum int) ([]DB, error)
 	// GetID gets the identity with given database name, cluster id and cluster type from the middleware
 	GetID(dbName string, clusterID int, clusterType int) (int, error)
-	// GetMySQLCLusterByID gets the mysql cluster of the given id from the middleware
-	GetMySQLCLusterByID(id int) (MySQLCluster, error)
+	// GetMySQLClusterByID gets the mysql cluster of the given id from the middleware
+	GetMySQLClusterByID(id int) (MySQLCluster, error)
 	// GetAppsByDBID gets apps that uses this db
 	GetAppsByDBID(id int) ([]App, error)
 	// GetAppUsersByDBID gets the application users of the given id from the middleware

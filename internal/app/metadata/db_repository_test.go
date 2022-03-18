@@ -42,7 +42,7 @@ func TestDBRepoAll(t *testing.T) {
 	TestDBRepo_GetDBByNameAndHostInfo(t)
 	TestDBRepo_GetDBsByHostInfo(t)
 	TestDBRepo_GetAppsByDBID(t)
-	TestDBRepo_GetMySQLCLusterByID(t)
+	TestDBRepo_GetMySQLClusterByID(t)
 	TestDBRepo_GetAppUsersByDBID(t)
 	TestDBRepo_GetUsersByDBID(t)
 	TestDBRepo_GetAllUsersByDBID(t)
@@ -152,12 +152,12 @@ func TestDBRepo_GetAppsByDBID(t *testing.T) {
 	asst.Equal(testDBAppID, apps[constant.ZeroInt].Identity(), "test GetAppsByDBID() failed")
 }
 
-func TestDBRepo_GetMySQLCLusterByID(t *testing.T) {
+func TestDBRepo_GetMySQLClusterByID(t *testing.T) {
 	asst := assert.New(t)
 
-	mysqlCLuster, err := testDBRepo.GetMySQLCLusterByID(testDBDBID)
-	asst.Nil(err, common.CombineMessageWithError("test GetMySQLCLusterByID() failed", err))
-	asst.Equal(testDBClusterID, mysqlCLuster.Identity(), "test GetMySQLCLusterByID() failed")
+	mysqlCLuster, err := testDBRepo.GetMySQLClusterByID(testDBDBID)
+	asst.Nil(err, common.CombineMessageWithError("test GetMySQLClusterByID() failed", err))
+	asst.Equal(testDBClusterID, mysqlCLuster.Identity(), "test GetMySQLClusterByID() failed")
 }
 
 func TestDBRepo_GetAppUsersByDBID(t *testing.T) {

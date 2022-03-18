@@ -251,8 +251,8 @@ func (dr *DBRepo) GetID(dbName string, clusterID int, clusterType int) (int, err
 	return result.GetInt(constant.ZeroInt, constant.ZeroInt)
 }
 
-// GetMySQLCLusterByID gets the mysql cluster of the given id from the middleware
-func (dr *DBRepo) GetMySQLCLusterByID(id int) (metadata.MySQLCluster, error) {
+// GetMySQLClusterByID gets the mysql cluster of the given id from the middleware
+func (dr *DBRepo) GetMySQLClusterByID(id int) (metadata.MySQLCluster, error) {
 	sql := `
 		select mci.id, mci.cluster_name, mci.middleware_cluster_id, mci.monitor_system_id, 
 			mci.env_id, mci.del_flag, mci.create_time, mci.last_update_time
@@ -263,7 +263,7 @@ func (dr *DBRepo) GetMySQLCLusterByID(id int) (metadata.MySQLCluster, error) {
 		and db.id = ?;
 			
 	`
-	log.Debugf("metadata DBRepo.GetMySQLCLusterByID() sql: \n%s\nplaceholders: %d", sql, id)
+	log.Debugf("metadata DBRepo.GetMySQLClusterByID() sql: \n%s\nplaceholders: %d", sql, id)
 
 	result, err := dr.Execute(sql, id)
 	if err != nil {
@@ -272,7 +272,7 @@ func (dr *DBRepo) GetMySQLCLusterByID(id int) (metadata.MySQLCluster, error) {
 
 	switch result.RowNumber() {
 	case 0:
-		return nil, fmt.Errorf("metadata DBRepo.GetMySQLCLusterByID(): data does not exists, id: %d", id)
+		return nil, fmt.Errorf("metadata DBRepo.GetMySQLClusterByID(): data does not exists, id: %d", id)
 	case 1:
 		mysqlClusterInfo := NewEmptyMySQLClusterInfoWithGlobal()
 		// map to struct
@@ -282,7 +282,7 @@ func (dr *DBRepo) GetMySQLCLusterByID(id int) (metadata.MySQLCluster, error) {
 		}
 		return mysqlClusterInfo, nil
 	default:
-		return nil, fmt.Errorf("metadata DBRepo.GetMySQLCLusterByID(): duplicate key exists, id: %d", id)
+		return nil, fmt.Errorf("metadata DBRepo.GetMySQLClusterByID(): duplicate key exists, id: %d", id)
 	}
 }
 

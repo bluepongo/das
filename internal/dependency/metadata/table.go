@@ -64,7 +64,7 @@ type Table interface {
 	// GetIndexStatistics returns the index statistics
 	GetIndexStatistics() ([]IndexStatistic, error)
 	// GetCreateStatement returns the create statement
-	GetCreateStatement() (string, error)
+	GetCreateStatement() string
 	// MarshalJSON marshals Table to json string
 	MarshalJSON() ([]byte, error)
 	// MarshalJSONWithFields marshals only specified field of the Table to json string

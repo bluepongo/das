@@ -260,7 +260,7 @@ func GetMasterServersByID(c *gin.Context) {
 // @Produce	application/json
 // @Success	200 {string} string "{"dbs":[{"cluster_type":1,"del_flag":0,"last_update_time":"2021-12-29T14:11:06.500863+08:00","id":2,"db_name":"das","cluster_id":1,"env_id":1,"create_time":"2021-09-02T15:14:40.782387+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/db/:id [get]
-func GetDBsByMySQLCLusterID(c *gin.Context) {
+func GetDBsByMySQLClusterID(c *gin.Context) {
 	// get params
 	idStr := c.Param(mysqlClusterIDJSON)
 	if idStr == constant.EmptyString {
@@ -337,7 +337,7 @@ func GetUsersByMySQLClusterID(c *gin.Context) {
 // @Produce	application/json
 // @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","account_name":"zs001","last_update_time":"2021-11-22T13:46:20.430926+08:00","mobile":"13012345678","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","email":"allinemailtest@163.com","telephone":"01012345678","create_time":"2021-10-25T09:21:50.364327+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/app-user/:id [get]
-func GetAppUsersByMySQLCLusterID(c *gin.Context) {
+func GetAppUsersByMySQLClusterID(c *gin.Context) {
 	// get params
 	idStr := c.Param(mysqlClusterIDJSON)
 	if idStr == constant.EmptyString {
@@ -375,7 +375,7 @@ func GetAppUsersByMySQLCLusterID(c *gin.Context) {
 // @Produce	application/json
 // @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","account_name":"zs001","last_update_time":"2021-11-22T13:46:20.430926+08:00","mobile":"13012345678","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","email":"allinemailtest@163.com","telephone":"01012345678","create_time":"2021-10-25T09:21:50.364327+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/db-user/:id [get]
-func GetDBUsersByMySQLCLusterID(c *gin.Context) {
+func GetDBUsersByMySQLClusterID(c *gin.Context) {
 	// get params
 	idStr := c.Param(mysqlClusterIDJSON)
 	if idStr == constant.EmptyString {
@@ -413,7 +413,7 @@ func GetDBUsersByMySQLCLusterID(c *gin.Context) {
 // @Produce	application/json
 // @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","account_name":"zs001","last_update_time":"2021-11-22T13:46:20.430926+08:00","mobile":"13012345678","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","email":"allinemailtest@163.com","telephone":"01012345678","create_time":"2021-10-25T09:21:50.364327+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/all-user/:id [get]
-func GetAllUsersByMySQLCLusterID(c *gin.Context) {
+func GetAllUsersByMySQLClusterID(c *gin.Context) {
 	// get params
 	idStr := c.Param(mysqlClusterIDJSON)
 	if idStr == constant.EmptyString {

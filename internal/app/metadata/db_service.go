@@ -121,7 +121,7 @@ func (ds *DBService) GetDBsByHostInfo(hostIP string, portNum int) error {
 func (ds *DBService) GetMySQLClusterByID(id int) error {
 	var err error
 
-	ds.MySQLCluster, err = ds.DBRepo.GetMySQLCLusterByID(id)
+	ds.MySQLCluster, err = ds.DBRepo.GetMySQLClusterByID(id)
 
 	return err
 }

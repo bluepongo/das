@@ -69,40 +69,6 @@ func GetUser(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary get user by name
-// @Accept	application/json
-// @Param	user_name path string true "user name"
-// @Produce application/json
-// @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
-// @Router 	/api/v1/metadata/user/user-name/:user_name [get]
-func GetByUserName(c *gin.Context) {
-	// get param
-	userName := c.Param(userNameJSON)
-	if userName == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, userNameJSON)
-		return
-	}
-	// init service
-	s := metadata.NewUserServiceWithDefault()
-	// get UserRepo
-	err := s.GetByUserName(userName)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetByUserName, err, userName)
-		return
-	}
-	// marshal service
-	jsonBytes, err := s.Marshal()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err)
-		return
-	}
-	// response
-	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetByUserName, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetByUserName, userName)
-}
-
-// @Tags 	user
 // @Summary get user by id
 // @Accept	application/json
 // @Param	id path int true "user id"
@@ -139,6 +105,40 @@ func GetUserByID(c *gin.Context) {
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetUserByID, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetUserByID, id)
+}
+
+// @Tags 	user
+// @Summary get user by name
+// @Accept	application/json
+// @Param	user_name path string true "user name"
+// @Produce application/json
+// @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
+// @Router 	/api/v1/metadata/user/user-name/:user_name [get]
+func GetByUserName(c *gin.Context) {
+	// get param
+	userName := c.Param(userNameJSON)
+	if userName == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, userNameJSON)
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// get UserRepo
+	err := s.GetByUserName(userName)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetByUserName, err, userName)
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.Marshal()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetByUserName, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetByUserName, userName)
 }
 
 // @Tags 	user
@@ -346,199 +346,6 @@ func GetUserByMobile(c *gin.Context) {
 }
 
 // @Tags 	user
-// @Summary add a new user
-// @Accept	application/json
-// @Param	user_name 		body string true "user name"
-// @Param	department_name body string true "department name"
-// @Param	employee_id 	body string true "employee id"
-// @Param	telephone 		body string true "user telephone"
-// @Param	role 			body int 	true "user role"
-// @Param	account_name 	body string true "account name"
-// @Param	email 			body string true "email"
-// @Param	mobile 			body string true "mobile"
-// @Produce application/json
-// @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
-// @Router 	/api/v1/metadata/user [post]
-func AddUser(c *gin.Context) {
-	var fields map[string]interface{}
-
-	// get data
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
-		return
-	}
-	// unmarshal data
-	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.UserInfo{}, constant.DefaultMiddlewareTag)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
-		return
-	}
-	_, ok := fields[userNameStruct]
-	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, userNameStruct)
-		return
-	}
-	_, ok = fields[emailStruct]
-	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, emailStruct)
-		return
-	}
-	_, ok = fields[departmentNameStruct]
-	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, departmentNameStruct)
-		return
-	}
-	// _, ok = fields[employeeIDStruct]
-	// if !ok {
-	// 	resp.ResponseNOK(c, message.ErrFieldNotExists, employeeIDStruct)
-	// 	return
-	// }
-	_, ok = fields[accountNameStruct]
-	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, accountNameStruct)
-		return
-	}
-	_, ok = fields[roleStruct]
-	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, roleStruct)
-		return
-	}
-	// init service
-	s := metadata.NewUserServiceWithDefault()
-	// insert into middleware
-	err = s.Create(fields)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddUser, err, fields[userNameStruct])
-		return
-	}
-	// marshal service
-	jsonBytes, err := s.Marshal()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err)
-		return
-	}
-	// response
-	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataAddUser, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddUser, fields[userNameStruct])
-}
-
-// @Tags 	user
-// @Summary update user by id
-// @Accept	application/json
-// @Param	id				path int	true	"user id"
-// @Param	user_name 		body string true 	"user name"
-// @Param	department_name body string true 	"department name"
-// @Param	employee_id 	body string true 	"employee id"
-// @Param	telephone 		body string true 	"user telephone"
-// @Param	role 			body int 	true 	"user role"
-// @Param	account_name 	body string true 	"account name"
-// @Param	email 			body string true 	"email"
-// @Param	mobile 			body string true 	"mobile"
-// @Param 	del_flag 		body int	false	"delete flag"
-// @Produce application/json
-// @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
-// @Router 	/api/v1/metadata/user/update/:id [post]
-func UpdateUserByID(c *gin.Context) {
-	var fields map[string]interface{}
-
-	// get params
-	idStr := c.Param(envIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
-		return
-	}
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
-		return
-	}
-	// unmarshal data
-	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.UserInfo{}, constant.DefaultMiddlewareTag)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
-		return
-	}
-	_, userNameExists := fields[userNameStruct]
-	_, departmentNameExists := fields[departmentNameStruct]
-	_, employeeIDExists := fields[employeeIDStruct]
-	_, accountNameExists := fields[accountNameStruct]
-	_, emailExists := fields[emailStruct]
-	_, mobileExists := fields[mobileStruct]
-	_, telephoneExists := fields[telephoneStruct]
-	_, roleExists := fields[roleStruct]
-	_, delFlagExists := fields[envDelFlagStruct]
-	if !userNameExists && !departmentNameExists && !employeeIDExists && !accountNameExists && !emailExists && !telephoneExists && !roleExists && !delFlagExists && !mobileExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", userNameStruct, envDelFlagStruct))
-		return
-	}
-	// init service
-	s := metadata.NewUserServiceWithDefault()
-	// update UserRepo
-	err = s.Update(id, fields)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateUser, err)
-		return
-	}
-	// marshal service
-	jsonBytes, err := s.Marshal()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err, id)
-		return
-	}
-	// resp
-	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataUpdateUser, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.DebugMetadataUpdateUser, id)
-}
-
-// @Tags 	user
-// @Summary delete user by id
-// @Accept	application/json
-// @Param	id path int true "user id"
-// @Produce application/json
-// @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
-// @Router 	/api/v1/metadata/user/delete/:id [get]
-func DeleteUserByID(c *gin.Context) {
-	var fields map[string]interface{}
-
-	// get params
-	idStr := c.Param(envIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
-		return
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
-	// init service
-	s := metadata.NewUserServiceWithDefault()
-	// update entities
-	err = s.Delete(id)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteUserByID, err, id)
-		return
-	}
-	// marshal service
-	jsonBytes, err := s.Marshal()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err)
-		return
-	}
-	// response
-	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataDeleteUserByID, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteUserByID, fields[userNameStruct])
-}
-
-// @Tags 	user
 // @Summary get apps by id
 // @Accept	application/json
 // @Param	id path int true "user id"
@@ -736,4 +543,197 @@ func GetAllMySQLServersByUserID(c *gin.Context) {
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAllMySQLServersByUserID, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllMySQLServersByUserID, id)
 
+}
+
+// @Tags 	user
+// @Summary add a new user
+// @Accept	application/json
+// @Param	user_name 		body string true "user name"
+// @Param	department_name body string true "department name"
+// @Param	employee_id 	body string true "employee id"
+// @Param	telephone 		body string true "user telephone"
+// @Param	role 			body int 	true "user role"
+// @Param	account_name 	body string true "account name"
+// @Param	email 			body string true "email"
+// @Param	mobile 			body string true "mobile"
+// @Produce application/json
+// @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
+// @Router 	/api/v1/metadata/user [post]
+func AddUser(c *gin.Context) {
+	var fields map[string]interface{}
+
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		return
+	}
+	// unmarshal data
+	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.UserInfo{}, constant.DefaultMiddlewareTag)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
+		return
+	}
+	_, ok := fields[userNameStruct]
+	if !ok {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, userNameStruct)
+		return
+	}
+	_, ok = fields[emailStruct]
+	if !ok {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, emailStruct)
+		return
+	}
+	_, ok = fields[departmentNameStruct]
+	if !ok {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, departmentNameStruct)
+		return
+	}
+	// _, ok = fields[employeeIDStruct]
+	// if !ok {
+	// 	resp.ResponseNOK(c, message.ErrFieldNotExists, employeeIDStruct)
+	// 	return
+	// }
+	_, ok = fields[accountNameStruct]
+	if !ok {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, accountNameStruct)
+		return
+	}
+	_, ok = fields[roleStruct]
+	if !ok {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, roleStruct)
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// insert into middleware
+	err = s.Create(fields)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddUser, err, fields[userNameStruct])
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.Marshal()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataAddUser, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddUser, fields[userNameStruct])
+}
+
+// @Tags 	user
+// @Summary update user by id
+// @Accept	application/json
+// @Param	id				path int	true	"user id"
+// @Param	user_name 		body string true 	"user name"
+// @Param	department_name body string true 	"department name"
+// @Param	employee_id 	body string true 	"employee id"
+// @Param	telephone 		body string true 	"user telephone"
+// @Param	role 			body int 	true 	"user role"
+// @Param	account_name 	body string true 	"account name"
+// @Param	email 			body string true 	"email"
+// @Param	mobile 			body string true 	"mobile"
+// @Param 	del_flag 		body int	false	"delete flag"
+// @Produce application/json
+// @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
+// @Router 	/api/v1/metadata/user/update/:id [post]
+func UpdateUserByID(c *gin.Context) {
+	var fields map[string]interface{}
+
+	// get params
+	idStr := c.Param(envIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		return
+	}
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		return
+	}
+	// unmarshal data
+	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.UserInfo{}, constant.DefaultMiddlewareTag)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
+		return
+	}
+	_, userNameExists := fields[userNameStruct]
+	_, departmentNameExists := fields[departmentNameStruct]
+	_, employeeIDExists := fields[employeeIDStruct]
+	_, accountNameExists := fields[accountNameStruct]
+	_, emailExists := fields[emailStruct]
+	_, mobileExists := fields[mobileStruct]
+	_, telephoneExists := fields[telephoneStruct]
+	_, roleExists := fields[roleStruct]
+	_, delFlagExists := fields[envDelFlagStruct]
+	if !userNameExists && !departmentNameExists && !employeeIDExists && !accountNameExists && !emailExists && !telephoneExists && !roleExists && !delFlagExists && !mobileExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", userNameStruct, envDelFlagStruct))
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// update UserRepo
+	err = s.Update(id, fields)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateUser, err)
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.Marshal()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err, id)
+		return
+	}
+	// resp
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataUpdateUser, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.DebugMetadataUpdateUser, id)
+}
+
+// @Tags 	user
+// @Summary delete user by id
+// @Accept	application/json
+// @Param	id path int true "user id"
+// @Produce application/json
+// @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
+// @Router 	/api/v1/metadata/user/delete/:id [get]
+func DeleteUserByID(c *gin.Context) {
+	var fields map[string]interface{}
+
+	// get params
+	idStr := c.Param(envIDJSON)
+	if idStr == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		return
+	}
+	// init service
+	s := metadata.NewUserServiceWithDefault()
+	// update entities
+	err = s.Delete(id)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteUserByID, err, id)
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.Marshal()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataDeleteUserByID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteUserByID, fields[userNameStruct])
 }

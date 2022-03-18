@@ -141,7 +141,7 @@ func (di *DBInfo) GetApps() ([]metadata.App, error) {
 
 // GetMySQLCluster gets the mysql cluster of this db
 func (di *DBInfo) GetMySQLCluster() (metadata.MySQLCluster, error) {
-	return di.DBRepo.GetMySQLCLusterByID(di.ID)
+	return di.DBRepo.GetMySQLClusterByID(di.ID)
 }
 
 // GetAppUsers gets the application users of this db

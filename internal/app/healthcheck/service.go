@@ -91,13 +91,13 @@ func (s *Service) GetResultByOperationID(id int) error {
 
 // Check performs healthcheck on the mysql server with given mysql server id,
 // initiating is synchronous, actual running is asynchronous
-func (s *Service) Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
+func (s *Service) Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration, accountName string) (int, error) {
 	return s.check(mysqlServerID, startTime, endTime, step)
 }
 
 // CheckByHostInfo performs healthcheck on the mysql server with given mysql server id,
 // initiating is synchronous, actual running is asynchronous
-func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration) (int, error) {
+func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration, userName string) (int, error) {
 	// init mysql server service
 	mss := metadata.NewMySQLServerServiceWithDefault()
 	// get entities
