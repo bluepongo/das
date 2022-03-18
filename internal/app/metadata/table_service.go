@@ -34,15 +34,22 @@ func (ts *TableService) GetTables() []metadata.Table {
 	return ts.Tables
 }
 
-// GetTableByDBIDAndTableName returns the table info by DBID and table name
-func (ts *TableService) GetTableByDBIDAndTableName(dbID int, tableName string) error {
-	// TODO: complete it
-	return nil
+// GetByDBName returns tables info by DB name
+func (ts *TableService) GetByDBName(dbName string) error {
+	var err error
+	ts.Tables, err = ts.TableRepo.GetByDBName(dbName)
+
+	return err
 }
 
-// GetTableByHostInfoAndDBNameAndTableName returns the table info by host info、 DB name and table name
-func (ts *TableService) GetTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName string) error {
-	// TODO: complete it
+// GetStatisticsByDBNameAndTableName returns the full table info by DB name and table name
+func (ts *TableService) GetStatisticsByDBNameAndTableName(dbName, tableName string) error {
+	var err error
+	ts.TableStatistics, ts.IndexStatistics, ts.CreateStatement, err = ts.TableRepo.GetStatisticsByDBNameAndTableName(dbName, tableName)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

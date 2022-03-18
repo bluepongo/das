@@ -103,7 +103,7 @@ func (tr *TableRepo) GetIndexStatistics(tableSchema, tableName string) ([]metada
 	return indexStatisticList, nil
 }
 
-// GetCreateStatement returns the create statement of the table
+// GetCreateStatement gets the create statement of the table
 func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, error) {
 	sql := fmt.Sprintf(`
 		SHOW CREATE TABLE %s.%s;
@@ -119,6 +119,55 @@ func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, 
 	}
 
 	return string(createStatement), nil
+}
+
+// GetByDBName gets the tables info by DBname from middleware
+func (tr *TableRepo) GetByDBName(dbName string) ([]metadata.Table, error) {
+	// TODO: need to be verified
+	sql := `
+		SELECT t.table_schema                        AS table_schema,
+			t.table_name                             AS table_name,
+		FROM information_schema.tables t
+		INNER JOIN  
+			ON t.table_collation = ccsa.collation_name
+		WHERE table_schema = ?;
+	`
+	log.Debugf("metadata TableRepo.GetByDBName() sql: \n%s\nplaceholders: %s", sql, dbName)
+	result, err := tr.Execute(sql)
+	if err != nil {
+		return nil, err
+	}
+
+	tableList := make([]metadata.Table, result.RowNumber())
+	for row := range tableList {
+		tableList[row] = NewEmptyTableInfo()
+	}
+	// map to struct
+	err = result.MapToStructSlice(tableList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+	return tableList, nil
+}
+
+// GetStatisticsByDBNameAndTableName gets the full table info by DB name and table name from middleware
+func (tr *TableRepo) GetStatisticsByDBNameAndTableName(dbName, tableName string) ([]metadata.TableStatistic, []metadata.IndexStatistic, string, error) {
+	tableStatistics, err := tr.GetTableStatistics(dbName, tableName)
+	if err != nil {
+		return nil, nil, "", err
+	}
+
+	indexStatistics, err := tr.GetIndexStatistics(dbName, tableName)
+	if err != nil {
+		return nil, nil, "", err
+	}
+
+	createStatement, err := tr.GetCreateStatement(dbName, tableName)
+	if err != nil {
+		return nil, nil, "", err
+	}
+
+	return tableStatistics, indexStatistics, createStatement, nil
 }
 
 // AnalyzeTableByDBIDAndTableName analyzes the table by DBID and TableName

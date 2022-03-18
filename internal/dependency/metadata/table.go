@@ -78,8 +78,12 @@ type TableRepo interface {
 	GetTableStatistics(tableSchema, tableName string) ([]TableStatistic, error)
 	// GetIndexStatistics gets index statistics from the middleware
 	GetIndexStatistics(tableSchema, tableName string) ([]IndexStatistic, error)
-	// GetCreateStatement returns the create statement of the table
+	// GetCreateStatement gets the create statement of the table
 	GetCreateStatement(tableSchema, tableName string) (string, error)
+	// GetByDBName gets the tables info by DBname from middleware
+	GetByDBName(dbName string) ([]Table, error)
+	// GetStatisticsByDBNameAndTableName gets the full table info by DB name and table name from middleware
+	GetStatisticsByDBNameAndTableName(dbName, tableName string) ([]TableStatistic, []IndexStatistic, string, error)
 	// AnalyzeTableByDBIDAndTableName analyzes the table by DBID and TableName
 	AnalyzeTableByDBIDAndTableName(dbID int, tableName, userName string) error
 	// AnalyzeTableByHostInfoAndDBNameAndTableName analyzes the table by host info、DB name and table name
@@ -89,10 +93,10 @@ type TableRepo interface {
 type TableService interface {
 	// GetTables returns the tables list
 	GetTables() []Table
-	// GetTableByDBIDAndTableName returns the table info by DBID and table name
-	GetTableByDBIDAndTableName(dbID int, tableName string) error
-	// GetTableByHostInfoAndDBNameAndTableName returns the table info by host info、 DB name and table name
-	GetTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName string) error
+	// GetByDBName returns tables info by DB name
+	GetByDBName(dbName string) error
+	// GetStatisticsByDBNameAndTableName returns the full table info by DB name and table name
+	GetStatisticsByDBNameAndTableName(dbName, tableName string) error
 	// AnalyzeTableByDBIDAndTableName analyzes the table by DBID and TableName
 	AnalyzeTableByDBIDAndTableName(dbID int, tableName, accountName string) error
 	// AnalyzeTableByHostInfoAndDBNameAndTableName analyzes the table by host info、DB name and table name
