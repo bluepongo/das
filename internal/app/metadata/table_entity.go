@@ -14,15 +14,20 @@ var _ metadata.TableStatistic = (*TableStatistic)(nil)
 type TableStatistic struct {
 	TableSchema   string    `middleware:"table_schema" json:"table_schema"`
 	TableName     string    `middleware:"table_name" json:"table_name"`
-	Rows          int       `middleware:"rows" json:"table_rows"`
+	Rows          int       `middleware:"table_rows" json:"table_rows"`
 	Size          int       `middleware:"size" json:"size"`
-	SizeMB        int       `middleware:"size_mb" json:"size_mb"`
+	SizeMB        float64   `middleware:"size_mb" json:"size_mb"`
 	AvgRowLength  int       `middleware:"avg_row_length" json:"avg_row_length"`
 	AutoIncrement int       `middleware:"auto_increment" json:"auto_increment"`
 	Engine        string    `middleware:"engine" json:"engine"`
 	CharSet       string    `middleware:"char_set" json:"char_set"`
 	Collation     string    `middleware:"collation" json:"collation"`
 	CreateTime    time.Time `middleware:"create_time" json:"create_time"`
+}
+
+// NewEmptyTableStatistic returns an empty *TableStatistic
+func NewEmptyTableStatistic() *TableStatistic {
+	return &TableStatistic{}
 }
 
 // GetTableSchema returns the table schema
@@ -46,7 +51,7 @@ func (ts TableStatistic) GetSize() int {
 }
 
 // GetSizeMB returns the size(MB) of the table
-func (ts TableStatistic) GetSizeMB() int {
+func (ts TableStatistic) GetSizeMB() float64 {
 	return ts.SizeMB
 }
 
@@ -95,8 +100,13 @@ type IndexStatistic struct {
 	Sequence    int    `middleware:"sequence" json:"sequence"`
 	ColumnName  string `middleware:"column_name" json:"column_name"`
 	Cardinality int    `middleware:"cardinality" json:"cardinality"`
-	Unique      bool   `middleware:"unique" json:"unique"`
+	Unique      bool   `middleware:"non_unique" json:"non_unique"`
 	Nullable    bool   `middleware:"nullable" json:"nullable"`
+}
+
+// NewEmptyIndexStatistic returns an empty *IndexStatistic
+func NewEmptyIndexStatistic() *IndexStatistic {
+	return &IndexStatistic{}
 }
 
 // GetTableSchema returns the table schema

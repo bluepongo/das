@@ -58,14 +58,13 @@ func (tr *TableRepo) GetTableStatistics(tableSchema, tableName string) ([]metada
 	if err != nil {
 		return nil, err
 	}
-	tableStatisticInfoList := make([]*TableStatistic, result.RowNumber())
-	err = result.MapToStructSlice(tableStatisticInfoList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
 	tableStatisticList := make([]metadata.TableStatistic, result.RowNumber())
 	for i := range tableStatisticList {
-		tableStatisticList[i] = tableStatisticInfoList[i]
+		tableStatisticList[i] = NewEmptyTableStatistic()
+	}
+	err = result.MapToStructSlice(tableStatisticList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
 	}
 
 	return tableStatisticList, nil
@@ -80,7 +79,7 @@ func (tr *TableRepo) GetIndexStatistics(tableSchema, tableName string) ([]metada
 			seq_in_index                        AS sequence,
 			column_name                         AS column_name,
 			cardinality                         AS cardinality,
-			IF(non_unique = 0, 'true', 'false') AS unique,
+			IF(non_unique = 0, 'true', 'false') AS non_unique,
 			IF(nullable = '', 'false', 'true')  AS nullable
 		FROM information_schema.statistics
 		WHERE table_schema = ?
@@ -92,14 +91,13 @@ func (tr *TableRepo) GetIndexStatistics(tableSchema, tableName string) ([]metada
 	if err != nil {
 		return nil, err
 	}
-	indexStatisticInfoList := make([]*IndexStatistic, result.RowNumber())
-	err = result.MapToStructSlice(indexStatisticInfoList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
 	indexStatisticList := make([]metadata.IndexStatistic, result.RowNumber())
 	for i := range indexStatisticList {
-		indexStatisticList[i] = indexStatisticInfoList[i]
+		indexStatisticList[i] = NewEmptyIndexStatistic()
+	}
+	err = result.MapToStructSlice(indexStatisticList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
 	}
 
 	return indexStatisticList, nil
@@ -115,7 +113,6 @@ func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, 
 	if err != nil {
 		return "", err
 	}
-	// XXX: will RowNumber always be 1?
 	createStatement, err := result.GetStringByName(0, "Create Table")
 	if err != nil {
 		return "", err

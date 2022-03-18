@@ -16,7 +16,7 @@ type TableStatistic interface {
 	// GetSize returns the size of the table
 	GetSize() int
 	// GetSizeMB returns the size(MB) of the table
-	GetSizeMB() int
+	GetSizeMB() float64
 	// GetAvgRowLength returns the average row length of the table
 	GetAvgRowLength() int
 	// GetAutoIncrement returns the state of auto increment
