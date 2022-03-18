@@ -144,6 +144,11 @@ func (is IndexStatistic) MarshalJSON() ([]byte, error) {
 	return common.MarshalStructWithTag(is, constant.DefaultMarshalTag)
 }
 
+const (
+	tableSchemaStruct = "TableSchema"
+	tableNameStruct   = "TableName"
+)
+
 var _ metadata.Table = (*TableInfo)(nil)
 
 // TableInfo include information of logic table
@@ -153,7 +158,7 @@ type TableInfo struct {
 	TableName   string `middleware:"table_name" json:"table_name"`
 	// TableStatistics []metadata.TableStatistic `middleware:"table_statistics" json:"table_statistics"`
 	// IndexStatistics []metadata.IndexStatistic `middleware:"index_statistics" json:"index_statistics"`
-	CreateStatement string `middleware:"create_statement" json:"create_statement"`
+	// CreateStatement string `middleware:"create_statement" json:"create_statement"`
 }
 
 // NewTableInfo returns a new TableInfo
@@ -163,7 +168,7 @@ func NewTableInfo(
 	tableName string,
 	// tableStatistics []metadata.TableStatistic,
 	// indexStatistics []metadata.IndexStatistic,
-	createStatement string,
+	// createStatement string,
 ) *TableInfo {
 	return &TableInfo{
 		repo,
@@ -171,8 +176,12 @@ func NewTableInfo(
 		tableName,
 		// tableStatistics,
 		// indexStatistics,
-		createStatement,
+		// createStatement,
 	}
+}
+
+func NewEmptyTableInfo() *TableInfo {
+	return &TableInfo{}
 }
 
 // NewTableInfoWithMapAndRandom returns a new *TableInfo with given map
@@ -207,8 +216,8 @@ func (ti *TableInfo) GetIndexStatistics() ([]metadata.IndexStatistic, error) {
 }
 
 // GetCreateStatement returns the create statement
-func (ti *TableInfo) GetCreateStatement() string {
-	return ti.CreateStatement
+func (ti *TableInfo) GetCreateStatement() (string, error) {
+	return ti.TableRepo.GetCreateStatement(ti.TableSchema, ti.TableName)
 }
 
 // MarshalJSON marshals Table to json string

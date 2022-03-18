@@ -123,8 +123,8 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.POST("/user/delete/:id", metadata.DeleteUserByID)
 		// table
 		metadataGroup.GET("/table/db/:id", metadata.GetTablesByDBID)
-		metadataGroup.GET("/table/statistic/db-table", metadata.GetTableByDBIDAndTableName)
-		metadataGroup.GET("/table/statistic/host-info-db-table", metadata.GetTableByHostInfoAndDBNameAndTableName)
+		metadataGroup.GET("/table/statistic/db-table", metadata.GetStatisticsByDBIDAndTableName)
+		metadataGroup.GET("/table/statistic/host-info-db-table", metadata.GetStatisticsByHostInfoAndDBNameAndTableName)
 		// metadataGroup.POST("/table/analyze/db", metadata.AnalyzeTableByDBIDAndTableName)
 		// metadataGroup.POST("/table/analyze/host-info", metadata.AnalyzeTableByHostInfoAndDBNameAndTableName)
 	}
