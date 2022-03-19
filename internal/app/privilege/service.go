@@ -34,10 +34,12 @@ func (s *Service) GetUser() depmeta.User {
 	return s.User
 }
 
+// CheckMySQLServerByID checks if given user has privilege to the mysql server with mysql server id
 func (s *Service) CheckMySQLServerByID(mysqlServerID int) error {
 	return s.checkMySQLServerByID(mysqlServerID)
 }
 
+// CheckMySQLServerByHostInfo checks if given user has privilege to the mysql server with host ip and port number
 func (s *Service) CheckMySQLServerByHostInfo(hostIP string, portNum int) error {
 	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
 	err := mysqlServerService.GetByHostInfo(hostIP, portNum)
@@ -48,10 +50,12 @@ func (s *Service) CheckMySQLServerByHostInfo(hostIP string, portNum int) error {
 	return s.checkMySQLServerByID(mysqlServerService.GetMySQLServers()[constant.ZeroInt].Identity())
 }
 
+// CheckDBByID checks if given user has privilege to the database with db id
 func (s *Service) CheckDBByID(dbID int) error {
 	return s.checkDBByID(dbID)
 }
 
+// CheckDBByNameAndClusterInfo checks if given user has privilege to the database with db name, mysql cluster id and mysql cluster type
 func (s *Service) CheckDBByNameAndClusterInfo(dbName string, mysqlClusterID, mysqlClusterType int) error {
 	dbService := metadata.NewDBServiceWithDefault()
 	err := dbService.GetDBByNameAndClusterInfo(dbName, mysqlClusterID, mysqlClusterType)
@@ -62,6 +66,7 @@ func (s *Service) CheckDBByNameAndClusterInfo(dbName string, mysqlClusterID, mys
 	return s.checkDBByID(dbService.GetDBs()[constant.ZeroInt].Identity())
 }
 
+// CheckDBByNameAndHostInfo checks if given user has privilege to the database with db name, host ip and port number
 func (s *Service) CheckDBByNameAndHostInfo(dbName string, hostIP string, portNum int) error {
 	dbService := metadata.NewDBServiceWithDefault()
 	err := dbService.GetDBByNameAndHostInfo(dbName, hostIP, portNum)
@@ -72,6 +77,7 @@ func (s *Service) CheckDBByNameAndHostInfo(dbName string, hostIP string, portNum
 	return s.checkDBByID(dbService.GetDBs()[constant.ZeroInt].Identity())
 }
 
+// checkMySQLServerByID checks if given user has privilege to the mysql server with mysql server id
 func (s *Service) checkMySQLServerByID(mysqlServerID int) error {
 	if !viper.GetBool(config.PrivilegeEnabledKey) {
 		return nil
@@ -96,6 +102,7 @@ func (s *Service) checkMySQLServerByID(mysqlServerID int) error {
 	return message.NewMessage(msgpriv.ErrPrivilegeNotEnoughPrivilege, s.GetUser().GetUserName(), s.GetUser().GetAccountName(), mysqlServerID)
 }
 
+// checkDBByID checks if given user has privilege to the database with db id
 func (s *Service) checkDBByID(dbID int) error {
 	dbService := metadata.NewDBServiceWithDefault()
 	err := dbService.GetByID(dbID)
