@@ -149,6 +149,108 @@ func (oi *OperationInfo) GetAppName() string {
 	return strings.Trim(name, constant.CommaString)
 }
 
+type OperationHistory struct {
+	ID             int       `middleware:"id" json:"id"`
+	MySQLServerID  int       `middleware:"mysql_server_id" json:"mysql_server_id"`
+	HostIP         string    `middleware:"host_ip" json:"host_ip"`
+	PortNum        int       `middleware:"port_num" json:"port_num"`
+	StartTime      time.Time `middleware:"start_time" json:"start_time"`
+	EndTime        time.Time `middleware:"end_time" json:"end_time"`
+	Step           int       `middleware:"step" json:"step"`
+	Status         int       `middleware:"status" json:"status"`
+	Message        string    `middleware:"message" json:"message"`
+	DelFlag        int       `middleware:"del_flag" json:"del_flag"`
+	CreateTime     time.Time `middleware:"create_time" json:"create_time"`
+	LastUpdateTime time.Time `middleware:"last_update_time" json:"last_update_time"`
+}
+
+func NewOperationHistory(id, mySQLServerID int, hostIP string, portNum int, startTime, endTime time.Time, step, status int, message string,
+	delFlag int, createTime, lastUpdateTime time.Time) healthcheck.OperationHistory {
+	return newOperationHistory(id, mySQLServerID, hostIP, portNum, startTime, endTime, step, status, message, delFlag, createTime, lastUpdateTime)
+}
+
+func NewEmptyOperationHistory() healthcheck.OperationHistory {
+	return &OperationHistory{}
+}
+
+func newOperationHistory(id, mysqlServerID int, hostIP string, portNum int, startTime, endTime time.Time, step, status int, message string,
+	delFlag int, createTime, lastUpdateTime time.Time) *OperationHistory {
+	return &OperationHistory{
+		ID:             id,
+		MySQLServerID:  mysqlServerID,
+		HostIP:         hostIP,
+		PortNum:        portNum,
+		StartTime:      startTime,
+		EndTime:        endTime,
+		Step:           step,
+		Status:         status,
+		Message:        message,
+		DelFlag:        delFlag,
+		CreateTime:     createTime,
+		LastUpdateTime: lastUpdateTime,
+	}
+}
+
+// GetID returns the identity
+func (oh *OperationHistory) GetID() int {
+	return oh.ID
+}
+
+// GetMySQLServerID returns the mysql server id
+func (oh *OperationHistory) GetMySQLServerID() int {
+	return oh.MySQLServerID
+}
+
+// GetHostIP returns the host ip of mysql server
+func (oh *OperationHistory) GetHostIP() string {
+	return oh.HostIP
+}
+
+// GetPortNum returns the port number of mysql server
+func (oh *OperationHistory) GetPortNum() int {
+	return oh.PortNum
+}
+
+// GetStartTime returns the start time
+func (oh *OperationHistory) GetStartTime() time.Time {
+	return oh.StartTime
+}
+
+// GetEndTime returns the end time
+func (oh *OperationHistory) GetEndTime() time.Time {
+	return oh.EndTime
+}
+
+// GetStep returns the step, the unit is seconds
+func (oh *OperationHistory) GetStep() int {
+	return oh.Step
+}
+
+// GetStatus returns the status
+func (oh *OperationHistory) GetStatus() int {
+	return oh.Status
+}
+
+// GetMessage returns the message
+func (oh *OperationHistory) GetMessage() string {
+	return oh.Message
+}
+
+// GetDelFlag returns the delete flag
+func (oh *OperationHistory) GetDelFlag() int {
+	return oh.DelFlag
+}
+
+// GetCreateTime returns the create time
+func (oh *OperationHistory) GetCreateTime() time.Time {
+	return oh.CreateTime
+}
+
+// GetLastUpdateTime returns the last update time
+func (oh *OperationHistory) GetLastUpdateTime() time.Time {
+	return oh.LastUpdateTime
+}
+
 // DefaultItemConfig include all data for a item
 type DefaultItemConfig struct {
 	ID                          int       `middleware:"id" json:"id"`

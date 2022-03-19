@@ -30,7 +30,7 @@ const (
 	userMiddlewareClustersStruct = "MiddlewareClusters"
 	userMySQLClustersStruct      = "MySQLClusters"
 	userMySQLServersStruct       = "MySQLServers"
-	userNameStruct               = "UserName"
+	userNameStruct               = "LoginName"
 	departmentNameStruct         = "DepartmentName"
 	employeeIDStruct             = "EmployeeID"
 	accountNameStruct            = "AccountName"

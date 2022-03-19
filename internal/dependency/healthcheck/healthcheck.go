@@ -12,6 +12,8 @@ type DASRepo interface {
 	Execute(command string, args ...interface{}) (middleware.Result, error)
 	// Transaction returns a middleware.Transaction that could execute multiple commands as a transaction
 	Transaction() (middleware.Transaction, error)
+	// GetOperationHistories gets operation histories from the middleware
+	GetHealthCheckHistories(mysqlServerIDList []int, limit int) ([]OperationHistory, error)
 	// LoadEngineConfig loads engine config from the middleware
 	LoadEngineConfig() (EngineConfig, error)
 	// GetResultByOperationID returns the result
@@ -76,14 +78,18 @@ type Service interface {
 	GetOperationInfo() OperationInfo
 	// GetEngine returns the healthcheck engine
 	GetEngine() Engine
+	// GetOperationHistories returns the operation histories
+	GetOperationHistories() []OperationHistory
 	// GetResult returns the result
 	GetResult() Result
+	// GetOperationHistoriesByLoginName returns the operation histories by login name
+	GetOperationHistoriesByLoginName(loginName string) error
 	// GetResultByOperationID gets the result by operation id from the middleware
 	GetResultByOperationID(id int) error
 	// Check checks the server health status
-	Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error)
+	Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration, loginName string) (int, error)
 	// Check checks the server health status
-	CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration) (int, error)
+	CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration, loginName string) (int, error)
 	// ReviewAccuracy reviews the accuracy of the check
 	ReviewAccuracy(id, review int) error
 	// Marshal marshals Service to json string

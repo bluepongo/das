@@ -25,6 +25,33 @@ type OperationInfo interface {
 	GetAppName() string
 }
 
+type OperationHistory interface {
+	// GetID returns the identity
+	GetID() int
+	// GetMySQLServerID returns the mysql server id
+	GetMySQLServerID() int
+	// GetHostIP returns the host ip of mysql server
+	GetHostIP() string
+	// GetPortNum returns the port number of mysql server
+	GetPortNum() int
+	// GetStartTime returns the start time
+	GetStartTime() time.Time
+	// GetEndTime returns the end time
+	GetEndTime() time.Time
+	// GetStep returns the step, the unit is seconds
+	GetStep() int
+	// GetStatus returns the status
+	GetStatus() int
+	// GetMessage returns the message
+	GetMessage() string
+	// GetDelFlag returns the delete flag
+	GetDelFlag() int
+	// GetCreateTime returns the create time
+	GetCreateTime() time.Time
+	// GetLastUpdateTime returns the last update time
+	GetLastUpdateTime() time.Time
+}
+
 type ItemConfig interface {
 	// GetID returns the identity
 	GetID() int
