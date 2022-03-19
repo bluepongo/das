@@ -10,7 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const testSleepTime = 5 * time.Second
+const (
+	testSleepTime = 5 * time.Second
+	testLoginName = "zs001"
+)
 
 var testService healthcheck.Service
 
@@ -36,7 +39,7 @@ func deleteByOperationID(operationID int) error {
 	if err != nil {
 		return err
 	}
-	sql = `delete from t_hc_operation_info where id = ?`
+	sql = `delete from t_hc_operation_history where id = ?`
 	_, err = testDASRepo.Execute(sql, operationID)
 	if err != nil {
 		return err
@@ -57,7 +60,7 @@ func TestServiceAll(t *testing.T) {
 func TestService_GetResult(t *testing.T) {
 	asst := assert.New(t)
 
-	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep, testLoginName)
 	asst.Nil(err, common.CombineMessageWithError("test GetResult() failed", err))
 	time.Sleep(testSleepTime)
 	err = testService.GetResultByOperationID(operationID)
@@ -71,7 +74,7 @@ func TestService_GetResult(t *testing.T) {
 func TestService_GetResultByOperationID(t *testing.T) {
 	asst := assert.New(t)
 
-	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep, testLoginName)
 	asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))
 	time.Sleep(testSleepTime)
 	err = testService.GetResultByOperationID(operationID)
@@ -86,7 +89,7 @@ func TestService_GetResultByOperationID(t *testing.T) {
 func TestService_Check(t *testing.T) {
 	asst := assert.New(t)
 
-	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep, testLoginName)
 	asst.Nil(err, common.CombineMessageWithError("test Check() failed", err))
 	time.Sleep(testSleepTime)
 	err = testService.GetResultByOperationID(operationID)
@@ -106,6 +109,7 @@ func TestService_CheckByHostInfo(t *testing.T) {
 		time.Now().Add(-constant.Week),
 		time.Now(),
 		testHealthcheckStep,
+		testLoginName,
 	)
 	asst.Nil(err, common.CombineMessageWithError("test CheckByHostInfo() failed", err))
 	time.Sleep(testSleepTime)
@@ -120,7 +124,7 @@ func TestService_CheckByHostInfo(t *testing.T) {
 func TestService_ReviewAccuracy(t *testing.T) {
 	asst := assert.New(t)
 
-	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep, testLoginName)
 	asst.Nil(err, common.CombineMessageWithError("test ReviewAccuracy() failed", err))
 	time.Sleep(testSleepTime)
 	err = testService.ReviewAccuracy(operationID, testResultUpdateAccuracyReview)
@@ -136,7 +140,7 @@ func TestService_ReviewAccuracy(t *testing.T) {
 func TestService_Marshal(t *testing.T) {
 	asst := assert.New(t)
 
-	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep, testLoginName)
 	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
 	time.Sleep(testSleepTime)
 	err = testService.GetResultByOperationID(operationID)
@@ -151,7 +155,7 @@ func TestService_Marshal(t *testing.T) {
 
 func TestService_MarshalWithFields(t *testing.T) {
 	asst := assert.New(t)
-	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	operationID, err := testService.Check(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep, testLoginName)
 	asst.Nil(err, common.CombineMessageWithError("test healthcheckResultStruct() failed", err))
 	time.Sleep(testSleepTime)
 	err = testService.GetResultByOperationID(operationID)

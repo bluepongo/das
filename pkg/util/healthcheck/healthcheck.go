@@ -5,7 +5,7 @@ type Check struct {
 	StartTime string `json:"start_time" binding:"required"`
 	EndTime   string `json:"end_time" binding:"required"`
 	Step      string `json:"step" binding:"required"`
-	UserName  string `json:"user_name" binding:"required"`
+	LoginName string `json:"login_name" binding:"required"`
 }
 
 func (c *Check) GetServerID() int {
@@ -24,8 +24,8 @@ func (c *Check) GetStep() string {
 	return c.Step
 }
 
-func (c *Check) GetUserName() string {
-	return c.UserName
+func (c *Check) GetLoginName() string {
+	return c.LoginName
 }
 
 type CheckByHostInfo struct {
@@ -34,7 +34,7 @@ type CheckByHostInfo struct {
 	StartTime string `json:"start_time" binding:"required"`
 	EndTime   string `json:"end_time" binding:"required"`
 	Step      string `json:"step" binding:"required"`
-	UserName  string `json:"user_name" binding:"required"`
+	LoginName string `json:"login_name" binding:"required"`
 }
 
 func (cbhi *CheckByHostInfo) GetHostIP() string {
@@ -57,6 +57,6 @@ func (cbhi *CheckByHostInfo) GetStep() string {
 	return cbhi.Step
 }
 
-func (cbhi *CheckByHostInfo) GetUserName() string {
-	return cbhi.UserName
+func (cbhi *CheckByHostInfo) GetLoginName() string {
+	return cbhi.LoginName
 }

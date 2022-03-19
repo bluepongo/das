@@ -86,6 +86,55 @@ func (dr *DASRepo) Transaction() (middleware.Transaction, error) {
 	return dr.Database.Transaction()
 }
 
+// GetOperationHistories gets operation histories from the middleware
+func (dr *DASRepo) GetHealthCheckHistories(mysqlServerIDList []int, limit int) ([]healthcheck.OperationHistory, error) {
+	msl, err := common.ConvertInterfaceToSliceInterface(mysqlServerIDList)
+	inClause, err := middleware.ConvertSliceToString(msl...)
+	if err != nil {
+		return nil, err
+	}
+
+	sql := `
+		select oh.id,
+			   oh.mysql_server_id,
+			   msi.host_ip,
+			   msi.port_num,
+			   oh.start_time,
+			   oh.end_time,
+			   oh.step,
+			   oh.status,
+			   oh.message,
+			   oh.del_flag,
+			   oh.create_time,
+			   oh.last_update_time
+		from t_hc_operation_history oh
+			inner join t_meta_mysql_server_info msi on oh.mysql_server_id = msi.id
+		where oh.del_flag = 0
+		  and msi.del_flag = 0
+		  and msi.id in (%s)
+		order by id desc
+		limit ?;
+	`
+	sql = fmt.Sprintf(sql, inClause)
+	log.Debugf("healthcheck DASRepo.GetHealthCheckHistories() sql: \n%s\nplaceholders: %d", sql, limit)
+	result, err := dr.Execute(sql, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	operationHistories := make([]healthcheck.OperationHistory, result.RowNumber())
+	for i := range operationHistories {
+		operationHistories[i] = NewEmptyOperationHistory()
+	}
+
+	err = result.MapToStructSlice(operationHistories, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return operationHistories, nil
+}
+
 // LoadEngineConfig loads engine config from the middleware
 func (dr *DASRepo) LoadEngineConfig() (healthcheck.EngineConfig, error) {
 	// load config
@@ -138,7 +187,7 @@ func (dr *DASRepo) GetResultByOperationID(operationID int) (healthcheck.Result, 
 		and operation_id = ? 
 		order by id;
 	`
-	log.Debugf("healthCheck DASRepo.GetResultByOperationID select sql: \n%s\nplaceholders: %s", sql, operationID)
+	log.Debugf("healthCheck DASRepo.GetResultByOperationID select sql: \n%s\nplaceholders: %d", sql, operationID)
 
 	result, err := dr.Execute(sql, operationID)
 	if err != nil {
@@ -163,8 +212,8 @@ func (dr *DASRepo) GetResultByOperationID(operationID int) (healthcheck.Result, 
 
 // IsRunning gets status by the mysqlServerID from the middleware
 func (dr *DASRepo) IsRunning(mysqlServerID int) (bool, error) {
-	sql := `select count(1) from t_hc_operation_info where del_flag = 0 and mysql_server_id = ? and status = 1;`
-	log.Debugf("healthCheck DASRepo.IsRunning() select sql: \n%s\nplaceholders: %s", sql, mysqlServerID)
+	sql := `select count(1) from t_hc_operation_history where del_flag = 0 and mysql_server_id = ? and status = 1;`
+	log.Debugf("healthCheck DASRepo.IsRunning() select sql: \n%s\nplaceholders: %d", sql, mysqlServerID)
 
 	result, err := dr.Execute(sql, mysqlServerID)
 	if err != nil {
@@ -172,7 +221,7 @@ func (dr *DASRepo) IsRunning(mysqlServerID int) (bool, error) {
 	}
 	count, _ := result.GetInt(constant.ZeroInt, constant.ZeroInt)
 
-	return count != 0, nil
+	return count != constant.ZeroInt, nil
 }
 
 // InitOperation creates a testOperationInfo in the middleware
@@ -181,8 +230,8 @@ func (dr *DASRepo) InitOperation(mysqlServerID int, startTime, endTime time.Time
 	endTimeStr := endTime.Format(constant.TimeLayoutSecond)
 	stepInt := int(step.Seconds())
 
-	sql := `insert into t_hc_operation_info(mysql_server_id, start_time, end_time, step) values(?, ?, ?, ?);`
-	log.Debugf("healthCheck DASRepo.InitOperation() insert sql: \n%s\nplaceholders: %s, %s, %s, %s",
+	sql := `insert into t_hc_operation_history(mysql_server_id, start_time, end_time, step) values(?, ?, ?, ?);`
+	log.Debugf("healthCheck DASRepo.InitOperation() insert sql: \n%s\nplaceholders: %d, %s, %s, %d",
 		sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
 
 	result, err := dr.Execute(sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
@@ -195,7 +244,7 @@ func (dr *DASRepo) InitOperation(mysqlServerID int, startTime, endTime time.Time
 
 // UpdateOperationStatus updates the status and message by the operationID in the middleware
 func (dr *DASRepo) UpdateOperationStatus(operationID int, status int, message string) error {
-	sql := `update t_hc_operation_info set status = ?, message = ? where id = ?;`
+	sql := `update t_hc_operation_history set status = ?, message = ? where id = ?;`
 	log.Debugf("healthCheck DASRepo.UpdateOperationStatus() update sql: \n%s\nplaceholders: %s, %s, %s", sql, status, message, operationID)
 	_, err := dr.Execute(sql, status, message, operationID)
 

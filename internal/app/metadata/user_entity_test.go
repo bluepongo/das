@@ -83,7 +83,7 @@ func TestUserInfo_Identity(t *testing.T) {
 func TestUserInfo_GetUserName(t *testing.T) {
 	asst := assert.New(t)
 
-	asst.Equal(testUserUserName, testUserInfo.GetUserName(), "test GetUserName() failed")
+	asst.Equal(testUserUserName, testUserInfo.GetUserName(), "test GetLoginName() failed")
 }
 
 func TestUserInfo_GetDepartmentName(t *testing.T) {

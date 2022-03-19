@@ -1,4 +1,12 @@
 ### healthcheck.GetResultByOperationID
+GET http://{{baseURL}}/api/v1/healthcheck/history
+Content-Type: application/json
+
+{
+  "login_name": "zhangs"
+}
+
+### healthcheck.GetResultByOperationID
 GET http://{{baseURL}}/api/v1/healthcheck/result/16
 Accept: application/json
 
@@ -10,7 +18,8 @@ Content-Type: application/json
     "server_id": 1,
     "start_time": "{{startTime}}",
     "end_time": "{{endTime}}",
-    "step": "{{step}}"
+    "step": "{{step}}",
+    "login_name": "zhangs"
 }
 
 ### healthcheck.CheckByHostInfo
@@ -22,7 +31,8 @@ Content-Type: application/json
     "port_num": 3306,
     "start_time": "{{startTime}}",
     "end_time": "{{endTime}}",
-    "step": "{{step}}"
+    "step": "{{step}}",
+    "login_name": "zhangs"
 }
 
 ### healthcheck.ReviewAccuracy

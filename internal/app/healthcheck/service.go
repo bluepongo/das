@@ -7,6 +7,7 @@ import (
 	"github.com/pingcap/errors"
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/metadata"
+	"github.com/romberli/das/internal/app/privilege"
 	"github.com/romberli/das/internal/dependency/healthcheck"
 	depmeta "github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/pkg/message"
@@ -21,6 +22,8 @@ import (
 )
 
 const (
+	defaultOperationHistoriesNum = 100
+
 	healthcheckResultStruct        = "Result"
 	defaultMonitorClickhouseDBName = "pmm"
 	defaultMonitorMySQLDBName      = "pmm"
@@ -33,9 +36,10 @@ var _ healthcheck.Service = (*Service)(nil)
 // Service of health check
 type Service struct {
 	healthcheck.DASRepo
-	OperationInfo *OperationInfo
-	Engine        healthcheck.Engine
-	Result        healthcheck.Result `json:"result"`
+	OperationInfo      *OperationInfo
+	Engine             healthcheck.Engine
+	Result             healthcheck.Result             `json:"result"`
+	OperationHistories []healthcheck.OperationHistory `json:"operation_histories"`
 }
 
 // NewService returns a new *Service
@@ -72,9 +76,37 @@ func (s *Service) GetEngine() healthcheck.Engine {
 	return s.Engine
 }
 
+// GetOperationHistories returns the operation histories
+func (s *Service) GetOperationHistories() []healthcheck.OperationHistory {
+	return s.OperationHistories
+}
+
 // GetResult returns the healthcheck result
 func (s *Service) GetResult() healthcheck.Result {
 	return s.Result
+}
+
+// GetOperationHistoriesByLoginName returns the operation histories by login name
+func (s *Service) GetOperationHistoriesByLoginName(loginName string) error {
+	userService := metadata.NewUserServiceWithDefault()
+	err := userService.GetByAccountNameOrEmployeeID(loginName)
+	if err != nil {
+		return err
+	}
+
+	err = userService.GetAllMySQLServersByUserID(userService.GetUsers()[constant.ZeroInt].Identity())
+	if err != nil {
+		return err
+	}
+
+	mysqlServerIDList := make([]int, len(userService.GetMySQLServers()))
+	for i, mysqlServer := range userService.GetMySQLServers() {
+		mysqlServerIDList[i] = mysqlServer.Identity()
+	}
+
+	s.OperationHistories, err = s.GetDASRepo().GetHealthCheckHistories(mysqlServerIDList, defaultOperationHistoriesNum)
+
+	return err
 }
 
 // GetResultByOperationID gets the result of given operation id
@@ -82,22 +114,19 @@ func (s *Service) GetResultByOperationID(id int) error {
 	var err error
 
 	s.Result, err = s.GetDASRepo().GetResultByOperationID(id)
-	if err != nil {
-		return err
-	}
 
 	return err
 }
 
 // Check performs healthcheck on the mysql server with given mysql server id,
 // initiating is synchronous, actual running is asynchronous
-func (s *Service) Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration, accountName string) (int, error) {
-	return s.check(mysqlServerID, startTime, endTime, step)
+func (s *Service) Check(mysqlServerID int, startTime, endTime time.Time, step time.Duration, loginName string) (int, error) {
+	return s.check(mysqlServerID, startTime, endTime, step, loginName)
 }
 
 // CheckByHostInfo performs healthcheck on the mysql server with given mysql server id,
 // initiating is synchronous, actual running is asynchronous
-func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration, userName string) (int, error) {
+func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime time.Time, step time.Duration, loginName string) (int, error) {
 	// init mysql server service
 	mss := metadata.NewMySQLServerServiceWithDefault()
 	// get entities
@@ -107,12 +136,25 @@ func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime
 	}
 	mysqlServerID := mss.GetMySQLServers()[constant.ZeroInt].Identity()
 
-	return s.check(mysqlServerID, startTime, endTime, step)
+	return s.check(mysqlServerID, startTime, endTime, step, loginName)
 }
 
 // check performs healthcheck on the mysql server with given mysql server id,
 // initiating is synchronous, actual running is asynchronous
-func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
+func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step time.Duration, loginName string) (int, error) {
+	userService := metadata.NewUserServiceWithDefault()
+	err := userService.GetByAccountNameOrEmployeeID(loginName)
+	if err != nil {
+		return constant.ZeroInt, err
+	}
+
+	// check privilege
+	privilegeService := privilege.NewService(userService.GetUsers()[constant.ZeroInt])
+	err = privilegeService.CheckMySQLServerByID(mysqlServerID)
+	if err != nil {
+		return constant.ZeroInt, err
+	}
+
 	// init
 	operationID, err := s.init(mysqlServerID, startTime, endTime, step)
 	if err != nil {
