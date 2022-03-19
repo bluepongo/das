@@ -115,7 +115,6 @@ func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, 
 	if err != nil {
 		return "", err
 	}
-	// XXX: will RowNumber always be 1?
 	createStatement, err := result.GetStringByName(0, "Create Table")
 	if err != nil {
 		return "", err
