@@ -42,8 +42,16 @@ func TestTableRepo_GetTableStatistics(t *testing.T) {
 	asst := assert.New(t)
 
 	result, err := testTableRepo.GetTableStatistics(testTableSchema, testTableName)
-	asst.Nil(err, common.CombineMessageWithError("test GetAll() failed", err))
-	asst.Equal(1, len(result), "test GetAll() failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetTableStatistics() failed", err))
+	asst.Equal(1, len(result), "test GetTableStatistics() failed")
+}
+
+func TestTableRepo_GetIndexStatistics(t *testing.T) {
+	asst := assert.New(t)
+
+	result, err := testTableRepo.GetIndexStatistics(testTableSchema, testTableName)
+	asst.Nil(err, common.CombineMessageWithError("test GetIndexStatistics() failed", err))
+	asst.Equal(4, len(result), "test GetIndexStatistics() failed")
 }
 
 func TestTableRepo_GetCreateStatement(t *testing.T) {
