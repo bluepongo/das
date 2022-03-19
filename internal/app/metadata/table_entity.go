@@ -31,62 +31,62 @@ func NewEmptyTableStatistic() *TableStatistic {
 }
 
 // GetTableSchema returns the table schema
-func (ts TableStatistic) GetTableSchema() string {
+func (ts *TableStatistic) GetTableSchema() string {
 	return ts.TableSchema
 }
 
 // GetTableName returns the table name
-func (ts TableStatistic) GetTableName() string {
+func (ts *TableStatistic) GetTableName() string {
 	return ts.TableName
 }
 
 // GetTableRows returns the rows of the table
-func (ts TableStatistic) GetTableRows() int {
+func (ts *TableStatistic) GetTableRows() int {
 	return ts.Rows
 }
 
 // GetSize returns the size of the table
-func (ts TableStatistic) GetSize() int {
+func (ts *TableStatistic) GetSize() int {
 	return ts.Size
 }
 
 // GetSizeMB returns the size(MB) of the table
-func (ts TableStatistic) GetSizeMB() float64 {
+func (ts *TableStatistic) GetSizeMB() float64 {
 	return ts.SizeMB
 }
 
 // GetAvgRowLength returns the average row length of the table
-func (ts TableStatistic) GetAvgRowLength() int {
+func (ts *TableStatistic) GetAvgRowLength() int {
 	return ts.AvgRowLength
 }
 
 // GetAutoIncrement returns the state of auto increment
-func (ts TableStatistic) GetAutoIncrement() int {
+func (ts *TableStatistic) GetAutoIncrement() int {
 	return ts.AutoIncrement
 }
 
 // GetEngine returns the engine type of the table
-func (ts TableStatistic) GetEngine() string {
+func (ts *TableStatistic) GetEngine() string {
 	return ts.Engine
 }
 
 // GetCharSet returns the charset of the table
-func (ts TableStatistic) GetCharSet() string {
+func (ts *TableStatistic) GetCharSet() string {
 	return ts.CharSet
 }
 
 // GetCollation returns the collation of the table
-func (ts TableStatistic) GetCollation() string {
+func (ts *TableStatistic) GetCollation() string {
 	return ts.Collation
 }
 
 // GetCreateTime returns the create time of the table
-func (ts TableStatistic) GetCreateTime() time.Time {
+func (ts *TableStatistic) GetCreateTime() time.Time {
 	return ts.CreateTime
 }
 
 // MarshalJSON marshals Table to json string
-func (ts TableStatistic) MarshalJSON() ([]byte, error) {
+func (ts *TableStatistic) MarshalJSON() ([]byte, error) {
 	return common.MarshalStructWithTag(ts, constant.DefaultMarshalTag)
 }
 
@@ -110,47 +110,47 @@ func NewEmptyIndexStatistic() *IndexStatistic {
 }
 
 // GetTableSchema returns the table schema
-func (is IndexStatistic) GetTableSchema() string {
+func (is *IndexStatistic) GetTableSchema() string {
 	return is.TableSchema
 }
 
 // GetTableName returns the table name
-func (is IndexStatistic) GetTableName() string {
+func (is *IndexStatistic) GetTableName() string {
 	return is.TableName
 }
 
 // GetIndexName returns the index name
-func (is IndexStatistic) GetIndexName() string {
+func (is *IndexStatistic) GetIndexName() string {
 	return is.IndexName
 }
 
 // GetSequence returns the sequence
-func (is IndexStatistic) GetSequence() int {
+func (is *IndexStatistic) GetSequence() int {
 	return is.Sequence
 }
 
 // GetColumnName returns the column name
-func (is IndexStatistic) GetColumnName() string {
+func (is *IndexStatistic) GetColumnName() string {
 	return is.ColumnName
 }
 
 // GetCardinality returns the cardinality
-func (is IndexStatistic) GetCardinality() int {
+func (is *IndexStatistic) GetCardinality() int {
 	return is.Cardinality
 }
 
 // IsUnique returns unique state of index
-func (is IndexStatistic) IsUnique() bool {
+func (is *IndexStatistic) IsUnique() bool {
 	return is.Unique
 }
 
 // IsNullable returns the index is nullable or not
-func (is IndexStatistic) IsNullable() bool {
+func (is *IndexStatistic) IsNullable() bool {
 	return is.Nullable
 }
 
 // MarshalJSON marshals Index to json string
-func (is IndexStatistic) MarshalJSON() ([]byte, error) {
+func (is *IndexStatistic) MarshalJSON() ([]byte, error) {
 	return common.MarshalStructWithTag(is, constant.DefaultMarshalTag)
 }
 
@@ -190,6 +190,7 @@ func NewTableInfo(
 	}
 }
 
+// NewEmptyTableInfo return *TableInfo
 func NewEmptyTableInfo() *TableInfo {
 	return &TableInfo{}
 }

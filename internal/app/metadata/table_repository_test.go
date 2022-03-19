@@ -19,6 +19,10 @@ const (
 var testTableRepo *TableRepo
 
 func init() {
+	initTableRepo()
+}
+
+func initTableRepo() {
 	conn, err := mysql.NewConn(testDASMySQLAddr, constant.EmptyString, testDASMySQLUser, testDASMySQLPass)
 	if err != nil {
 		log.Error(common.CombineMessageWithError("testInitDASMySQLPool() failed", err))
