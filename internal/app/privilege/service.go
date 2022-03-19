@@ -22,7 +22,7 @@ func NewService(user depmeta.User) privilege.Service {
 	return newService(user)
 }
 
-// NewService returns privilege.Service with given user
+// newService returns privilege.Service with given user
 func newService(user depmeta.User) *Service {
 	return &Service{
 		User: user,
