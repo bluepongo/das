@@ -66,7 +66,8 @@ func GetTablesByDBID(c *gin.Context) {
 	dbPass := global.DASMySQLPool.Config.DBPass
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
-		// TODO: complete me
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)
+		return
 	}
 	tableRepo := metadata.NewTableRepo(conn)
 
@@ -153,7 +154,8 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	dbPass := global.DASMySQLPool.Config.DBPass
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
-		// TODO: complete me
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)
+		return
 	}
 	tableRepo := metadata.NewTableRepo(conn)
 
