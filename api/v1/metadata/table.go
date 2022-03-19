@@ -18,7 +18,7 @@ import (
 )
 
 // @Tags	Tables
-// @Summary
+// @Summary get tables by db id
 // @Accept	application/json
 // @Param	id path int true "db id"
 // @Produce	application/json
@@ -91,7 +91,7 @@ func GetTablesByDBID(c *gin.Context) {
 }
 
 // @Tags	Tables
-// @Summary
+// @Summary get table statistics by db id and table name
 // @Accept	application/json
 // @Param	db_id		body int	true "db id"
 // @Param	table_name	body string	true "table name"
@@ -179,7 +179,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 }
 
 // @Tags	Tables
-// @Summary
+// @Summary	get table statistics by host info and db name and table name
 // @Accept	application/json
 // @Param
 // @Produce	application/json
