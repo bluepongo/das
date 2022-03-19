@@ -3,7 +3,7 @@ GET http://{{baseURL}}/api/v1/healthcheck/history
 Content-Type: application/json
 
 {
-  "login_name": "zs001"
+  "login_name": "zhangs"
 }
 
 ### healthcheck.GetResultByOperationID
@@ -19,7 +19,7 @@ Content-Type: application/json
     "start_time": "{{startTime}}",
     "end_time": "{{endTime}}",
     "step": "{{step}}",
-    "login_name": "zs001"
+    "login_name": "zhangs"
 }
 
 ### healthcheck.CheckByHostInfo
@@ -32,7 +32,7 @@ Content-Type: application/json
     "start_time": "{{startTime}}",
     "end_time": "{{endTime}}",
     "step": "{{step}}",
-    "login_name": "zhangsan"
+    "login_name": "zhangs"
 }
 
 ### healthcheck.ReviewAccuracy
