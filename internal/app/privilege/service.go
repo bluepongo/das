@@ -79,17 +79,18 @@ func (s *Service) checkMySQLServerByID(mysqlServerID int) error {
 		return nil
 	}
 
-	// if s.GetUser().GetRole() >= config.MetadataUserDBARole {
-	// 	return nil
-	// }
-
+	if s.GetUser().GetRole() >= config.MetadataUserDBARole {
+		// this user is dba or admin
+		return nil
+	}
+	// get all mysql servers
 	mysqlServerList, err := s.GetUser().GetAllMySQLServers()
 	if err != nil {
 		return err
 	}
-
 	for _, mysqlServer := range mysqlServerList {
 		if mysqlServer.Identity() == mysqlServerID {
+			// user has the privilege to the given mysql
 			return nil
 		}
 	}
