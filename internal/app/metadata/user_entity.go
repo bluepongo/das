@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	userUserNameStruct       = "UserName"
+	userUserNameStruct       = "LoginName"
 	userDepartmentNameStruct = "DepartmentName"
 	userEmployeeIDStruct     = "EmployeeID"
 	userAccountNameStruct    = "AccountName"

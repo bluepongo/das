@@ -23,12 +23,12 @@ import (
 
 const (
 	// modify the connection information
-	testDASMySQLAddr = "192.168.10.219:3306"
+	testDASMySQLAddr = "192.168.137.11:3306"
 	testDASMySQLName = "das"
 	testDASMySQLUser = "root"
 	testDASMySQLPass = "root"
 
-	testHealthcheckApplicationAddr = "192.168.10.219:3306"
+	testHealthcheckApplicationAddr = "192.168.137.11:3306"
 	testHealthcheckApplicationUser = "root"
 	testHealthcheckApplicationPass = "root"
 	testHealthcheckPrometheusUser  = "admin"
@@ -236,7 +236,7 @@ func testInitFileSystems() ([]string, []string) {
 }
 
 func testDeleteOperationInfoByID(id int) error {
-	sql := `delete from t_hc_operation_info where id = ?`
+	sql := `delete from t_hc_operation_history where id = ?`
 	_, err := testDASRepo.Execute(sql, id)
 
 	return err
@@ -412,7 +412,7 @@ func TestDASRepo_UpdateOperationStatus(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test UpdateOperationStatus() failed", err))
 	err = testDASRepo.UpdateOperationStatus(id, testHealthcheckResultUpdateStatus, constant.EmptyString)
 	asst.Nil(err, common.CombineMessageWithError("test UpdateOperationStatus() failed", err))
-	sql := `select status from t_hc_operation_info where id = ?;`
+	sql := `select status from t_hc_operation_history where id = ?;`
 	r, err := testDASRepo.Execute(sql, id)
 	asst.Nil(err, common.CombineMessageWithError("test UpdateOperationStatus() failed", err))
 	status, err := r.GetInt(constant.ZeroInt, constant.ZeroInt)

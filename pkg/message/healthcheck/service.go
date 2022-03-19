@@ -13,29 +13,35 @@ func init() {
 
 const (
 	// debug
-	DebugHealthcheckGetResultByOperationID = 102101
-	DebugHealthcheckCheck                  = 102102
-	DebugHealthcheckCheckByHostInfo        = 102103
-	DebugHealthcheckReviewAccuracy         = 102104
+	DebugHealthcheckGetOperationHistoriesByLoginName = 102101
+	DebugHealthcheckGetResultByOperationID           = 102102
+	DebugHealthcheckCheck                            = 102103
+	DebugHealthcheckCheckByHostInfo                  = 102103
+	DebugHealthcheckReviewAccuracy                   = 102104
 	// info
-	InfoHealthcheckGetResultByOperationID = 202101
-	InfoHealthcheckCheck                  = 202102
-	InfoHealthcheckCheckByHostInfo        = 202103
-	InfoHealthcheckReviewAccuracy         = 202104
+	InfoHealthcheckGetOperationHistoriesByLoginName = 202101
+	InfoHealthcheckGetResultByOperationID           = 202102
+	InfoHealthcheckCheck                            = 202103
+	InfoHealthcheckCheckByHostInfo                  = 202103
+	InfoHealthcheckReviewAccuracy                   = 202104
 	// error
 	ErrHealthcheckDefaultEngineRun                  = 402101
-	ErrHealthcheckGetResultByOperationID            = 402102
-	ErrHealthcheckCheck                             = 402103
-	ErrHealthcheckCheckByHostInfo                   = 402104
-	ErrHealthcheckReviewAccuracy                    = 402105
-	ErrHealthcheckCloseConnection                   = 402106
-	ErrHealthcheckCreateApplicationMySQLConnection  = 402107
-	ErrHealthcheckCreateMonitorMySQLConnection      = 402108
-	ErrHealthcheckCreateMonitorClickhouseConnection = 402109
-	ErrHealthcheckCreateMonitorPrometheusConnection = 402110
+	ErrHealthcheckGetOperationHistoriesByLoginName  = 402102
+	ErrHealthcheckGetResultByOperationID            = 402103
+	ErrHealthcheckCheck                             = 402104
+	ErrHealthcheckCheckByHostInfo                   = 402105
+	ErrHealthcheckReviewAccuracy                    = 402106
+	ErrHealthcheckCloseConnection                   = 402107
+	ErrHealthcheckCreateApplicationMySQLConnection  = 402108
+	ErrHealthcheckCreateMonitorMySQLConnection      = 402109
+	ErrHealthcheckCreateMonitorClickhouseConnection = 402110
+	ErrHealthcheckCreateMonitorPrometheusConnection = 402111
 )
 
 func initServiceDebugMessage() {
+	message.Messages[DebugHealthcheckGetOperationHistoriesByLoginName] = config.NewErrMessage(
+		message.DefaultMessageHeader, DebugHealthcheckGetOperationHistoriesByLoginName,
+		"healthcheck: get operation histories by login name completed. message: %s")
 	message.Messages[DebugHealthcheckGetResultByOperationID] = config.NewErrMessage(
 		message.DefaultMessageHeader, DebugHealthcheckGetResultByOperationID,
 		"healthcheck: get result by operation id completed. message: %s")
@@ -51,6 +57,9 @@ func initServiceDebugMessage() {
 }
 
 func initServiceInfoMessage() {
+	message.Messages[InfoHealthcheckGetOperationHistoriesByLoginName] = config.NewErrMessage(
+		message.DefaultMessageHeader, InfoHealthcheckGetOperationHistoriesByLoginName,
+		"healthcheck: get operation histories by login name completed. login name: %s")
 	message.Messages[InfoHealthcheckGetResultByOperationID] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoHealthcheckGetResultByOperationID,
 		"healthcheck: get result by operation id completed. operation_id: %d")
@@ -69,6 +78,9 @@ func initServiceErrorMessage() {
 	message.Messages[ErrHealthcheckDefaultEngineRun] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckDefaultEngineRun,
 		"default engine run failed")
+	message.Messages[ErrHealthcheckGetOperationHistoriesByLoginName] = config.NewErrMessage(
+		message.DefaultMessageHeader, ErrHealthcheckGetOperationHistoriesByLoginName,
+		"healthcheck: get operation histories by login name failed. login name: %s")
 	message.Messages[ErrHealthcheckGetResultByOperationID] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckGetResultByOperationID,
 		"healthcheck: get result by operation id failed. operation id: %d")

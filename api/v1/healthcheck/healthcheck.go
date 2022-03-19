@@ -18,12 +18,63 @@ import (
 )
 
 const (
-	operationIDJSON            = "operation_id"
-	reviewJSON                 = "review"
+	loginNameJSON   = "login_name"
+	operationIDJSON = "operation_id"
+	reviewJSON      = "review"
+
+	healthcheckOperationHistoriesStruct = "OperationHistories"
+
 	checkRespMessage           = `{"operation_id: %d", "message": "healthcheck started"}`
 	checkByHostInfoRespMessage = `{"operation_id: %d", "message": "healthcheck by host info started"}`
 	reviewAccuracyRespMessage  = `{"operation_id: %d", "message": "reviewed accuracy completed"}`
 )
+
+// @Tags	healthcheck
+// @Summary get result by operation id
+// @Accept	application/json
+// @Param	login_name path string true "login name"
+// @Produce application/json
+// @Success 200 {string} string "{"operation_histories":[{"id":30,"mysql_server_id":1,"host_ip":"192.168.137.11","port_num":3306,"start_time":"2022-03-11T19:46:16+08:00","end_time":"2022-03-18T19:46:16+08:00","step":60,"status":2,"message":"healthcheck completed successfully. engine: default, operation_id: 30","del_flag":0,"create_time":"2022-03-18T19:46:16.215941+08:00","last_update_time":"2022-03-18T19:46:17.450918+08:00"}]}"
+// @Router	/api/v1/healthcheck/history [get]
+func GetOperationHistoriesByLoginName(c *gin.Context) {
+	var fields map[string]string
+
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		return
+	}
+	// unmarshal data
+	err = json.Unmarshal(data, &fields)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
+		return
+	}
+	loginName, ok := fields[loginNameJSON]
+	if !ok || loginName == constant.EmptyString {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, loginNameJSON)
+		return
+	}
+	// init service
+	s := healthcheck.NewServiceWithDefault()
+	// get healthcheck histories
+	err = s.GetOperationHistoriesByLoginName(loginName)
+	if err != nil {
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckGetOperationHistoriesByLoginName, err, loginName)
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(healthcheckOperationHistoriesStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msghealth.DebugHealthcheckGetOperationHistoriesByLoginName, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msghealth.InfoHealthcheckGetOperationHistoriesByLoginName, loginName)
+}
 
 // @Tags	healthcheck
 // @Summary get result by operation id
@@ -97,10 +148,11 @@ func Check(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, errors.Trace(err), rd.GetStep())
 		return
 	}
+
 	// init service
 	s := healthcheck.NewServiceWithDefault()
 	// check health
-	operationID, err := s.Check(rd.GetServerID(), startTime, endTime, step)
+	operationID, err := s.Check(rd.GetServerID(), startTime, endTime, step, rd.GetLoginName())
 	if err != nil {
 		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, err, operationID)
 		return
@@ -147,7 +199,7 @@ func CheckByHostInfo(c *gin.Context) {
 	// init service
 	s := healthcheck.NewServiceWithDefault()
 	// get entities
-	operationID, err := s.CheckByHostInfo(rd.GetHostIP(), rd.GetPortNum(), startTime, endTime, step)
+	operationID, err := s.CheckByHostInfo(rd.GetHostIP(), rd.GetPortNum(), startTime, endTime, step, rd.GetLoginName())
 	if err != nil {
 		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckByHostInfo, err, operationID)
 		return
