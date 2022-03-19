@@ -55,7 +55,7 @@ func init() {
 	testInitDASMySQLPool()
 	testInitViper()
 	testUser = testInitNewUserInfo()
-	testService = NewServiceWithDefault(testUser)
+	testService = NewService(testUser)
 }
 
 func testInitDASMySQLPool() {

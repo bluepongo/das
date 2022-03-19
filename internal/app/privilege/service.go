@@ -17,14 +17,12 @@ type Service struct {
 	User depmeta.User
 }
 
+// NewService returns privilege.Service with given user
 func NewService(user depmeta.User) privilege.Service {
 	return newService(user)
 }
 
-func NewServiceWithDefault(user depmeta.User) privilege.Service {
-	return newService(user)
-}
-
+// NewService returns privilege.Service with given user
 func newService(user depmeta.User) *Service {
 	return &Service{
 		User: user,

@@ -149,7 +149,7 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 	}
 
 	// check privilege
-	privilegeService := privilege.NewServiceWithDefault(userService.GetUsers()[constant.ZeroInt])
+	privilegeService := privilege.NewService(userService.GetUsers()[constant.ZeroInt])
 	err = privilegeService.CheckMySQLServerByID(mysqlServerID)
 	if err != nil {
 		return constant.ZeroInt, err
