@@ -17,6 +17,14 @@ import (
 	"github.com/romberli/log"
 )
 
+const (
+	tableNameJSON    = "table_name"
+	tableHostIPJSON  = "host_ip"
+	tablePortNumJSON = "port_num"
+	tableDBIDJSON    = "db_id"
+	tableDBNameJSON  = "db_name"
+)
+
 // @Tags	Tables
 // @Summary get tables by db id
 // @Accept	application/json
@@ -26,9 +34,9 @@ import (
 // @Router /api/v1/metadata/table/db/:id
 func GetTablesByDBID(c *gin.Context) {
 	// get param
-	dbIDStr := c.Param(mysqlClusterIDJSON)
+	dbIDStr := c.Param(tableDBIDJSON)
 	if dbIDStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, tableDBIDJSON)
 		return
 	}
 	dbID, err := strconv.Atoi(dbIDStr)
@@ -112,13 +120,13 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	dbIDInterface, dbIDExists := dataMap[mysqlClusterUserIDJSON]
+	dbIDInterface, dbIDExists := dataMap[tableDBIDJSON]
 	if !dbIDExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterUserIDJSON)
 		return
 	}
 	dbID := dbIDInterface.(int)
-	tableNameInterface, tableNameExists := dataMap[mysqlClusterUserIDJSON]
+	tableNameInterface, tableNameExists := dataMap[tableNameJSON]
 	if !tableNameExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterUserIDJSON)
 		return
@@ -181,18 +189,85 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 // @Tags	Tables
 // @Summary	get table statistics by host info and db name and table name
 // @Accept	application/json
-// @Param
+// @Param	host_ip		body string	true "host ip"
+// @Param	port_num	body int	true "port num"
+// @Param	db_name		body string	true "db name"
+// @Param	table_name	body string	true "table name"
 // @Produce	application/json
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/statistic/host-info-db-table
 func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
+	// get params
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		return
+	}
 
+	dataMap := make(map[string]interface{})
+	err = json.Unmarshal(data, &dataMap)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
+		return
+	}
+	hostIPInterface, hostIPExists := dataMap[tableHostIPJSON]
+	if !hostIPExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterUserIDJSON)
+		return
+	}
+	hostIP := hostIPInterface.(string)
+	portNumInterface, portNumExists := dataMap[tablePortNumJSON]
+	if !portNumExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterUserIDJSON)
+		return
+	}
+	portNum := portNumInterface.(int)
+	dbNameInterface, dbNameExists := dataMap[tableDBNameJSON]
+	if !dbNameExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterUserIDJSON)
+		return
+	}
+	dbName := dbNameInterface.(string)
+	tableNameInterface, tableNameExists := dataMap[tableNameJSON]
+	if !tableNameExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterUserIDJSON)
+		return
+	}
+	tableName := tableNameInterface.(string)
+
+	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
+	dbUser := global.DASMySQLPool.Config.DBUser
+	dbPass := global.DASMySQLPool.Config.DBPass
+	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)
+		return
+	}
+	tableRepo := metadata.NewTableRepo(conn)
+
+	// init service
+	ts := metadata.NewTableService(tableRepo)
+	// get entity
+	err = ts.GetStatisticsByDBNameAndTableName(dbName, tableName)
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName, err, hostIP, portNum, dbName, tableName)
+	}
+	// marshal service
+	jsonBytes, err := ts.MarshalWithFields()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetStatisticsByDBIDAndTableName, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetStatisticsByHostInfoAndDBNameAndTableName, hostIP, portNum, dbName, tableName)
 }
 
 // @Tags	Tables
 // @Summary
 // @Accept	application/json
-// TODO: @Param
+// TODO: @Param for AnalyzeTableByDBIDAndTableName
 // @Produce	application/json
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/analyze/db
@@ -203,7 +278,7 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 // @Tags	Tables
 // @Summary
 // @Accept	application/json
-// TODO: @Param
+// TODO: @Param for AnalyzeTableByHostInfoAndDBNameAndTableName
 // @Produce	application/json
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/analyze/host-info
