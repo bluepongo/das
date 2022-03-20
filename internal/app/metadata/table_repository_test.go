@@ -31,6 +31,17 @@ func initTableRepo() {
 	testTableRepo = NewTableRepo(conn)
 }
 
+func TestTableRepoAll(t *testing.T) {
+	TestTableRepo_Execute(t)
+	TestTableRepo_GetTableStatistics(t)
+	TestTableRepo_GetIndexStatistics(t)
+	TestTableRepo_GetCreateStatement(t)
+	TestTableRepo_GetByDBName(t)
+	TestTableRepo_GetStatisticsByDBNameAndTableName(t)
+	TestTableRepo_AnalyzeTableByDBIDAndTableName(t)
+	TestTableRepo_AnalyzeTableByHostInfoAndDBNameAndTableName(t)
+}
+
 func TestTableRepo_Execute(t *testing.T) {
 	asst := assert.New(t)
 
