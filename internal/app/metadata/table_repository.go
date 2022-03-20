@@ -117,15 +117,14 @@ func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, 
 
 // GetByDBName gets the tables info by DBname from middleware
 func (tr *TableRepo) GetByDBName(dbName string) ([]metadata.Table, error) {
-	// TODO: need to be verified
 	sql := `
-		SELECT t.table_schema AS table_schema,
-			   t.table_name   AS table_name,
-		FROM information_schema.tables t
-		WHERE t.table_schema = ?;
+		SELECT table_schema AS table_schema,
+			   table_name   AS table_name
+		FROM information_schema.tables 
+		WHERE table_schema = ?;
 	`
 	log.Debugf("metadata TableRepo.GetByDBName() sql: \n%s\nplaceholders: %s", sql, dbName)
-	result, err := tr.Execute(sql)
+	result, err := tr.Execute(sql, dbName)
 	if err != nil {
 		return nil, err
 	}
