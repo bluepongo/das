@@ -7,6 +7,7 @@ import (
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
+	"github.com/romberli/log"
 )
 
 const (
@@ -169,7 +170,7 @@ func (mci *MySQLClusterInfo) GetMasterServers() ([]metadata.MySQLServer, error) 
 	for _, mysqlServer := range mysqlServers {
 		isMaster, err := mysqlServer.IsMaster()
 		if err != nil {
-			return nil, err
+			log.Errorf("failed to connect server %s:%s. %s", mysqlServer.GetHostIP(), mysqlServer.GetPortNum(), err.Error())
 		}
 
 		if isMaster {
