@@ -55,13 +55,13 @@ func (ts *TableService) GetStatisticsByDBNameAndTableName(dbName, tableName stri
 
 // AnalyzeTableByDBIDAndTableName analyzes the table by DBID and TableName
 func (ts *TableService) AnalyzeTableByDBIDAndTableName(dbID int, tableName, accountName string) error {
-	// TODO: complete it
+	// TODO: service AnalyzeTableByDBIDAndTableName
 	return nil
 }
 
 // AnalyzeTableByHostInfoAndDBNameAndTableName analyzes the table by host info、DB name and table name
 func (ts *TableService) AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName, accountName string) error {
-	// TODO: complete it
+	// TODO: service AnalyzeTableByHostInfoAndDBNameAndTableName
 	return nil
 }
 

@@ -24,12 +24,6 @@ func NewTableRepo(conn *mysql.Conn) *TableRepo {
 
 // Execute executes command with arguments on database
 func (tr *TableRepo) Execute(command string, args ...interface{}) (middleware.Result, error) {
-	defer func() {
-		err := tr.conn.Close()
-		if err != nil {
-			log.Errorf("metadata TableRepo.Execute(): close database connection failed.\n%+v", err)
-		}
-	}()
 	return tr.conn.Execute(command, args...)
 }
 
@@ -123,17 +117,14 @@ func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, 
 
 // GetByDBName gets the tables info by DBname from middleware
 func (tr *TableRepo) GetByDBName(dbName string) ([]metadata.Table, error) {
-	// TODO: need to be verified
 	sql := `
-		SELECT t.table_schema                        AS table_schema,
-			t.table_name                             AS table_name,
-		FROM information_schema.tables t
-		INNER JOIN  
-			ON t.table_collation = ccsa.collation_name
+		SELECT table_schema AS table_schema,
+			   table_name   AS table_name
+		FROM information_schema.tables 
 		WHERE table_schema = ?;
 	`
 	log.Debugf("metadata TableRepo.GetByDBName() sql: \n%s\nplaceholders: %s", sql, dbName)
-	result, err := tr.Execute(sql)
+	result, err := tr.Execute(sql, dbName)
 	if err != nil {
 		return nil, err
 	}

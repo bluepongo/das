@@ -21,6 +21,7 @@ const (
 	//error
 	ErrMetadataGetTablesByDBID                 = 400901
 	ErrMetadataGetStatisticsByDBIDAndTableName = 400902
+	ErrMetadataTableCreateApplicationMySQLConn = 400903
 )
 
 func initDebugTableMessage() {
@@ -36,4 +37,5 @@ func initInfoTableMessage() {
 func initErrorTableMessage() {
 	message.Messages[ErrMetadataGetTablesByDBID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetTablesByDBID, "metadata: get tables by db id failed. db_id: %d")
 	message.Messages[ErrMetadataGetStatisticsByDBIDAndTableName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetStatisticsByDBIDAndTableName, "metadata: get tables by db id and table name failed. db_id: %d, table_name: %s")
+	message.Messages[ErrMetadataTableCreateApplicationMySQLConn] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataTableCreateApplicationMySQLConn, "metadata: create application mysql connection failed. db_addr: %s, db_name: %s")
 }
