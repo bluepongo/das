@@ -1,7 +1,3 @@
-@baseURL = localhost:6090
-
-### =============== table ===================
-
 ### get tables by db id
 GET http://{{baseURL}}/api/v1/metadata/table/db/4
 Accept: application/json
