@@ -24,9 +24,9 @@ const (
 
 	healthcheckOperationHistoriesStruct = "OperationHistories"
 
-	checkRespMessage           = `{"operation_id: %d", "message": "healthcheck started"}`
-	checkByHostInfoRespMessage = `{"operation_id: %d", "message": "healthcheck by host info started"}`
-	reviewAccuracyRespMessage  = `{"operation_id: %d", "message": "reviewed accuracy completed"}`
+	checkRespMessage           = `{"operation_id": %d, "message": "healthcheck started"}`
+	checkByHostInfoRespMessage = `{"operation_id": %d, "message": "healthcheck by host info started"}`
+	reviewAccuracyRespMessage  = `{"operation_id": %d, "message": "reviewed accuracy completed"}`
 )
 
 // @Tags	healthcheck
