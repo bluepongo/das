@@ -53,16 +53,9 @@ func (ts *TableService) GetStatisticsByDBNameAndTableName(dbName, tableName stri
 	return nil
 }
 
-// AnalyzeTableByDBIDAndTableName analyzes the table by DBID and TableName
-func (ts *TableService) AnalyzeTableByDBIDAndTableName(dbID int, tableName, accountName string) error {
-	// TODO: service AnalyzeTableByDBIDAndTableName
-	return nil
-}
-
-// AnalyzeTableByHostInfoAndDBNameAndTableName analyzes the table by host info、DB name and table name
-func (ts *TableService) AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName, accountName string) error {
-	// TODO: service AnalyzeTableByHostInfoAndDBNameAndTableName
-	return nil
+// AnalyzeTableByDBNameAndTableName analyzes the table by DBName and TableName
+func (ts *TableService) AnalyzeTableByDBNameAndTableName(dbName, tableName string) error {
+	return ts.TableRepo.AnalyzeTableByDBNameAndTableName(dbName, tableName)
 }
 
 // Marshal marshals TableService.Tables to json bytes

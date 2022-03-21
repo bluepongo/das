@@ -21,7 +21,7 @@ type DASRepo interface {
 	// IsRunning returns if the healthcheck of given mysql server is still running
 	IsRunning(mysqlServerID int) (bool, error)
 	// InitOperation initiates the operation
-	InitOperation(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error)
+	InitOperation(userID, mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error)
 	// UpdateOperationStatus updates operation status
 	UpdateOperationStatus(operationID int, status int, message string) error
 	// SaveResult saves result into the middleware

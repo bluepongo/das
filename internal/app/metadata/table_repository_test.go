@@ -12,8 +12,12 @@ import (
 )
 
 const (
-	testTableSchema = "mysql"
-	testTableName   = "db"
+	testTableSchema      = "mysql"
+	testTableName        = "db"
+	testTableDBName      = "mysql"
+	testTableHostIP      = "127.0.0.1"
+	testTablePortNum     = 3306
+	testTableAccountName = "root"
 )
 
 var testTableRepo *TableRepo
@@ -38,8 +42,7 @@ func TestTableRepoAll(t *testing.T) {
 	TestTableRepo_GetCreateStatement(t)
 	TestTableRepo_GetByDBName(t)
 	TestTableRepo_GetStatisticsByDBNameAndTableName(t)
-	TestTableRepo_AnalyzeTableByDBIDAndTableName(t)
-	TestTableRepo_AnalyzeTableByHostInfoAndDBNameAndTableName(t)
+	TestTableRepo_AnalyzeTableByDBNameAndTableName(t)
 }
 
 func TestTableRepo_Execute(t *testing.T) {
@@ -96,9 +99,10 @@ func TestTableRepo_GetStatisticsByDBNameAndTableName(t *testing.T) {
 
 }
 
-func TestTableRepo_AnalyzeTableByDBIDAndTableName(t *testing.T) {
-	// TODO: compelete repo test AnalyzeTableByDBIDAndTableName
-}
-func TestTableRepo_AnalyzeTableByHostInfoAndDBNameAndTableName(t *testing.T) {
-	// TODO: compelete repo test AnalyzeTableByHostInfoAndDBNameAndTableName
+func TestTableRepo_AnalyzeTableByDBNameAndTableName(t *testing.T) {
+	asst := assert.New(t)
+
+	// err := testTableRepo.AnalyzeTableByDBNameAndTableName(testTableSchema, testTableName, testTableAccountName)
+	err := testTableRepo.AnalyzeTableByDBNameAndTableName(testTableSchema, testTableName)
+	asst.Nil(err, common.CombineMessageWithError("test AnalyzeTableByDBNameAndTableName() failed", err))
 }

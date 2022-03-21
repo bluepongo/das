@@ -294,8 +294,9 @@ CREATE TABLE `t_hc_result` (
   KEY `idx04_weighted_average_score` (`weighted_average_score`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '健康检查结果表';
 
-CREATE TABLE `t_hc_operation_info` (
+CREATE TABLE `t_hc_operation_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `user_id` int(11) NOT NULL COMMENT '用户ID',
   `mysql_server_id` int(11) NOT NULL COMMENT 'mysql服务器ID',
   `start_time` datetime(6) NOT NULL COMMENT '检查范围开始时间',
   `end_time` datetime(6) NOT NULL COMMENT '检查范围结束时间',
@@ -306,8 +307,10 @@ CREATE TABLE `t_hc_operation_info` (
   `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
   `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
   PRIMARY KEY (`id`),
-  KEY `idx01_mysql_server_id_status` (`mysql_server_id`, `status`),
-  KEY `idx02_start_time` (`start_time`)
+  KEY `idx01_user_id_mysql_server_id` (`user_id`, `mysql_server_id`),
+  KEY `idx02_mysql_server_id_status` (`mysql_server_id`, `status`),
+  KEY `idx03_start_time` (`start_time`),
+  KEY `idx04_create_time` (`create_time`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '健康检查操作表';
 
 CREATE TABLE `t_sa_operation_info` (

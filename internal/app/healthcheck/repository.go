@@ -96,6 +96,8 @@ func (dr *DASRepo) GetHealthCheckHistories(mysqlServerIDList []int, limit int) (
 
 	sql := `
 		select oh.id,
+			   oh.user_id,
+			   ui.account_name,
 			   oh.mysql_server_id,
 			   msi.host_ip,
 			   msi.port_num,
@@ -109,8 +111,10 @@ func (dr *DASRepo) GetHealthCheckHistories(mysqlServerIDList []int, limit int) (
 			   oh.last_update_time
 		from t_hc_operation_history oh
 			inner join t_meta_mysql_server_info msi on oh.mysql_server_id = msi.id
+		    inner join t_meta_user_info ui on oh.user_id = ui.id
 		where oh.del_flag = 0
 		  and msi.del_flag = 0
+		  and ui.del_flag = 0
 		  and msi.id in (%s)
 		order by id desc
 		limit ?;
@@ -225,16 +229,16 @@ func (dr *DASRepo) IsRunning(mysqlServerID int) (bool, error) {
 }
 
 // InitOperation creates a testOperationInfo in the middleware
-func (dr *DASRepo) InitOperation(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
+func (dr *DASRepo) InitOperation(userID, mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
 	startTimeStr := startTime.Format(constant.TimeLayoutSecond)
 	endTimeStr := endTime.Format(constant.TimeLayoutSecond)
 	stepInt := int(step.Seconds())
 
-	sql := `insert into t_hc_operation_history(mysql_server_id, start_time, end_time, step) values(?, ?, ?, ?);`
-	log.Debugf("healthCheck DASRepo.InitOperation() insert sql: \n%s\nplaceholders: %d, %s, %s, %d",
-		sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
+	sql := `insert into t_hc_operation_history(user_id, mysql_server_id, start_time, end_time, step) values(?, ?, ?, ?, ?);`
+	log.Debugf("healthCheck DASRepo.InitOperation() insert sql: \n%s\nplaceholders: %d, %d, %s, %s, %d",
+		sql, userID, mysqlServerID, startTimeStr, endTimeStr, stepInt)
 
-	result, err := dr.Execute(sql, mysqlServerID, startTimeStr, endTimeStr, stepInt)
+	result, err := dr.Execute(sql, userID, mysqlServerID, startTimeStr, endTimeStr, stepInt)
 	if err != nil {
 		return constant.ZeroInt, err
 	}

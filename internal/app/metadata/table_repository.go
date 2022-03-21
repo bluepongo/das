@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/romberli/das/internal/dependency/metadata"
@@ -161,12 +162,32 @@ func (tr *TableRepo) GetStatisticsByDBNameAndTableName(dbName, tableName string)
 	return tableStatistics, indexStatistics, createStatement, nil
 }
 
-// AnalyzeTableByDBIDAndTableName analyzes the table by DBID and TableName
-func (tr *TableRepo) AnalyzeTableByDBIDAndTableName(dbID int, tableName, userName string) error {
-	panic("implement me")
-}
+// AnalyzeTableByDBNameAndTableName analyzes the table by DB name and table name
+func (tr *TableRepo) AnalyzeTableByDBNameAndTableName(dbName, tableName string) error {
+	type analyzeResult struct {
+		Table       string `middleware:"Table"`
+		Operation   string `middleware:"Op"`
+		MessageType string `middleware:"Msg_type"`
+		MessageText string `middleware:"Msg_text"`
+	}
+	sql := fmt.Sprintf(`
+		ANALYZE TABLE %s.%s;
+	`, dbName, tableName)
+	log.Debugf("metadata TableRepo.AnalyzeTableByDBNameAndTableName() sql: \n%s", sql, dbName, tableName)
+	result, err := tr.Execute(sql)
+	if err != nil {
+		return err
+	}
+	for rowIdx := 0; rowIdx < result.RowNumber(); rowIdx++ {
+		ar := &analyzeResult{}
+		err = result.MapToStructByRowIndex(ar, rowIdx, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return err
+		}
+		if ar.MessageType == "Error" {
+			return errors.New(ar.MessageText)
+		}
+	}
 
-// AnalyzeTableByHostInfoAndDBNameAndTableName analyzes the table by host info、DB name and table name
-func (tr *TableRepo) AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName, userName string) error {
-	panic("implement me")
+	return nil
 }

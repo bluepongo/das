@@ -18,8 +18,7 @@ func TestTableServiceAll(t *testing.T) {
 	TestTableService_GetTables(t)
 	TestTableService_GetByDBName(t)
 	TestTableService_GetStatisticsByDBNameAndTableName(t)
-	TestTableService_AnalyzeTableByDBIDAndTableName(t)
-	TestTableService_AnalyzeTableByHostInfoAndDBNameAndTableName(t)
+	TestTableService_AnalyzeTableByDBNameAndTableName(t)
 	TestTableService_Marshal(t)
 	TestTableService_MarshalWithFields(t)
 }
@@ -43,11 +42,11 @@ func TestTableService_GetStatisticsByDBNameAndTableName(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test GetStatisticsByDBNameAndTableName() failed", err))
 	asst.Equal(31, len(testTableService.GetTables()), "test GetStatisticsByDBNameAndTableName() failed")
 }
-func TestTableService_AnalyzeTableByDBIDAndTableName(t *testing.T) {
-	// TODO: compelete service test AnalyzeTableByDBIDAndTableName
-}
-func TestTableService_AnalyzeTableByHostInfoAndDBNameAndTableName(t *testing.T) {
-	// TODO: compelete repo test AnalyzeTableByHostInfoAndDBNameAndTableName
+func TestTableService_AnalyzeTableByDBNameAndTableName(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testTableService.AnalyzeTableByDBNameAndTableName(testTableDBName, testTableName)
+	asst.Nil(err, common.CombineMessageWithError("test AnalyzeTableByDBNameAndTableName() failed", err))
 }
 func TestTableService_Marshal(t *testing.T) {
 	asst := assert.New(t)
