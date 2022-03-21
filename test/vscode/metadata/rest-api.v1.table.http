@@ -1,0 +1,29 @@
+@baseURL = localhost:6090
+
+### =============== mysql-cluster ===================
+
+### get tables by db id
+GET http://{{baseURL}}/api/v1/metadata/table/db/4
+Accept: application/json
+
+### get table statistics by db id and table name
+GET http://{{baseURL}}/api/v1/metadata/table/statistic/db-table
+Accept: application/json
+{"db_id": 1,"table_name": "mysql"}
+j
+### get table statistics by host info and db name and table name
+GET http://{{baseURL}}/api/v1/metadata/table/statistic/host-info-db-table
+Accept: application/json
+{"host_ip": "127.0.0.1", "port_num": 3306, "db_name":"das", "table_name":"t_meta_mysql_cluster_info"}
+
+### analyze table by db id and table name
+POST http://{{baseURL}}/api/v1/metadata/table/analyze/db
+Content-Type: application/json
+
+{"db_id": 1,"table_name": "mysql", "account_name": "das"}
+
+### analyze table by host info and db name and table name
+POST http://{{baseURL}}/api/v1/metadata/table/analyze/host-info
+Content-Type: application/json
+
+{"host_ip": "127.0.0.1", "port_num": 3306, "db_name":"das", "table_name":"t_meta_mysql_cluster_info", "account_name": "das"}
