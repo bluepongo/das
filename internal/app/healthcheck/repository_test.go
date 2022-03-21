@@ -28,6 +28,7 @@ const (
 	testDASMySQLUser = "root"
 	testDASMySQLPass = "root"
 
+	testHealthcheckLoginName       = "zhangs"
 	testHealthcheckApplicationAddr = "192.168.137.11:3306"
 	testHealthcheckApplicationUser = "root"
 	testHealthcheckApplicationPass = "root"
@@ -39,8 +40,8 @@ const (
 	testHealthcheckDBName = "pmm"
 
 	testHealthcheckVariableName  = "datadir"
-	testHealthcheckVariableValue = "/mysqldata/mysql3306/data"
-	testHealthcheckFileSystemNum = 2
+	testHealthcheckVariableValue = "/data/mysql/mysqld_multi/mysqld3306/data"
+	testHealthcheckFileSystemNum = 3
 )
 
 var (
@@ -54,6 +55,7 @@ var (
 
 func init() {
 	testInitDASMySQLPool()
+
 	testOperationInfo = testInitOperationInfo()
 	testDASRepo = NewDASRepoWithGlobal()
 	testApplicationMySQLRepo = testInitApplicationMySQLRepo()
@@ -63,8 +65,15 @@ func init() {
 }
 
 func testInitOperationInfo() *OperationInfo {
+	userService := metadata.NewUserServiceWithDefault()
+	err := userService.GetByAccountNameOrEmployeeID(testHealthcheckLoginName)
+	if err != nil {
+		log.Error(common.CombineMessageWithError("testInitOperationInfo() failed", err))
+		os.Exit(constant.DefaultAbnormalExitCode)
+	}
+	user := userService.GetUsers()[constant.ZeroInt]
 	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
-	err := mysqlServerService.GetByID(testHealthcheckMySQLServerID)
+	err = mysqlServerService.GetByID(testHealthcheckMySQLServerID)
 	if err != nil {
 		log.Error(common.CombineMessageWithError("testInitOperationInfo() failed", err))
 		os.Exit(constant.DefaultAbnormalExitCode)
@@ -107,15 +116,7 @@ func testInitOperationInfo() *OperationInfo {
 		}
 	}
 
-	return &OperationInfo{
-		operationID:   testHealthcheckOperationID,
-		apps:          apps,
-		mysqlServer:   mysqlServer,
-		monitorSystem: monitorSystem,
-		startTime:     time.Now().Add(-constant.Week),
-		endTime:       time.Now(),
-		step:          testHealthcheckStep,
-	}
+	return NewOperationInfo(testHealthcheckOperationID, user, apps, mysqlServer, monitorSystem, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
 }
 
 func testInitDASMySQLPool() {
@@ -385,7 +386,13 @@ func TestDASRepo_GetResultByOperationID(t *testing.T) {
 func TestDASRepo_IsRunning(t *testing.T) {
 	asst := assert.New(t)
 
-	id, err := testDASRepo.InitOperation(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	id, err := testDASRepo.InitOperation(
+		testOperationInfo.GetUser().Identity(),
+		testHealthcheckMySQLServerID,
+		time.Now().Add(-constant.Week),
+		time.Now(),
+		testHealthcheckStep,
+	)
 	asst.Nil(err, common.CombineMessageWithError("test IsRunning() failed", err))
 	isRunning, err := testDASRepo.IsRunning(testHealthcheckMySQLServerID)
 	asst.Nil(err, common.CombineMessageWithError("test IsRunning() failed", err))
@@ -398,7 +405,13 @@ func TestDASRepo_IsRunning(t *testing.T) {
 func TestDASRepo_InitOperation(t *testing.T) {
 	asst := assert.New(t)
 
-	id, err := testDASRepo.InitOperation(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	id, err := testDASRepo.InitOperation(
+		testOperationInfo.GetUser().Identity(),
+		testHealthcheckMySQLServerID,
+		time.Now().Add(-constant.Week),
+		time.Now(),
+		testHealthcheckStep,
+	)
 	asst.Nil(err, common.CombineMessageWithError("test InitOperation() failed", err))
 	// delete
 	err = testDeleteOperationInfoByID(id)
@@ -408,7 +421,13 @@ func TestDASRepo_InitOperation(t *testing.T) {
 func TestDASRepo_UpdateOperationStatus(t *testing.T) {
 	asst := assert.New(t)
 
-	id, err := testDASRepo.InitOperation(testHealthcheckMySQLServerID, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	id, err := testDASRepo.InitOperation(
+		testOperationInfo.GetUser().Identity(),
+		testHealthcheckMySQLServerID,
+		time.Now().Add(-constant.Week),
+		time.Now(),
+		testHealthcheckStep,
+	)
 	asst.Nil(err, common.CombineMessageWithError("test UpdateOperationStatus() failed", err))
 	err = testDASRepo.UpdateOperationStatus(id, testHealthcheckResultUpdateStatus, constant.EmptyString)
 	asst.Nil(err, common.CombineMessageWithError("test UpdateOperationStatus() failed", err))

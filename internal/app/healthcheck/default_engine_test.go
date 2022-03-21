@@ -90,14 +90,16 @@ func TestDefaultEngine_Run(t *testing.T) {
 	asst := assert.New(t)
 
 	id, err := testDASRepo.InitOperation(
-		testOperationInfo.GetMySQLServer().Identity(),
-		testOperationInfo.GetStartTime(),
-		testOperationInfo.GetEndTime(),
-		testOperationInfo.GetStep(),
+		testOperationInfo.GetUser().Identity(),
+		testHealthcheckMySQLServerID,
+		time.Now().Add(-constant.Week),
+		time.Now(),
+		testHealthcheckStep,
 	)
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 	operationInfo := NewOperationInfo(
 		id,
+		testOperationInfo.GetUser(),
 		testOperationInfo.GetApps(),
 		testOperationInfo.GetMySQLServer(),
 		testOperationInfo.GetMonitorSystem(),
