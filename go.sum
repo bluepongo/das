@@ -444,8 +444,8 @@ github.com/romberli/dynamic-struct v1.2.1 h1:vle/rxIUl7IgreLScMSg9RhYBjygY/5Hj/O
 github.com/romberli/dynamic-struct v1.2.1/go.mod h1:Jk2Z0Dm0diV7O4Lg1MfIyJ0kvOxfN+imwZVO5SOUL94=
 github.com/romberli/go-multierror v1.1.2-0.20220118054508-60f25a547317 h1:TtgDgZp/5SewHecWKMQZ7QmxNDrmIXV09VfzTsfZFvY=
 github.com/romberli/go-multierror v1.1.2-0.20220118054508-60f25a547317/go.mod h1:zl7X0Cn5uTu9unezPrgXXsrQAq2Nj/6Cne0qJkFiAOs=
-github.com/romberli/go-util v0.3.16-0.20220318095217-c69d5247d68b h1:TlLIY9pTejcr+SFoUeLgbCY6tN0yUENZKBXtxrIPk7o=
-github.com/romberli/go-util v0.3.16-0.20220318095217-c69d5247d68b/go.mod h1:q57M22HrVTKd/ShCeHfLuH5De+u0PG1ExZ/iCFlDl1o=
+github.com/romberli/go-util v0.3.16-0.20220319132106-86043d2486ef h1:2fKzgkzcZYIkazf8GpkfbKJPA+VGTxd6lxoC9jnsM20=
+github.com/romberli/go-util v0.3.16-0.20220319132106-86043d2486ef/go.mod h1:q57M22HrVTKd/ShCeHfLuH5De+u0PG1ExZ/iCFlDl1o=
 github.com/romberli/log v1.0.21-0.20220118103033-fc370f89c0ea h1:83DFT3u0iZYOMyzPVX5bLlW1aseobm/s4qej2jRRq7Y=
 github.com/romberli/log v1.0.21-0.20220118103033-fc370f89c0ea/go.mod h1:dimUkjZUlfFt+ECjq85mQGjEgh5PHYxjOnHzCux3FYE=
 github.com/romberli/pflag v1.0.6-alpha h1:eSC9Fc/QxWpxrj1QbMitsULOGLhSUxxgymfz+XRpfI8=

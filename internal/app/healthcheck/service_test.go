@@ -12,7 +12,7 @@ import (
 
 const (
 	testSleepTime = 5 * time.Second
-	testLoginName = "zs001"
+	testLoginName = "zhangs"
 )
 
 var testService healthcheck.Service

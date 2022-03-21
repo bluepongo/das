@@ -3,11 +3,11 @@ GET http://{{baseURL}}/api/v1/healthcheck/history
 Content-Type: application/json
 
 {
-  "login_name": "zhangs"
+  "login_name": "{{user_account_name}}"
 }
 
 ### healthcheck.GetResultByOperationID
-GET http://{{baseURL}}/api/v1/healthcheck/result/16
+GET http://{{baseURL}}/api/v1/healthcheck/result/{{result_id}}
 Accept: application/json
 
 ### healthcheck.Check
@@ -15,11 +15,11 @@ POST http://{{baseURL}}/api/v1/healthcheck/check
 Content-Type: application/json
 
 {
-    "server_id": 1,
+    "server_id": {{mysql_server_id}},
     "start_time": "{{startTime}}",
     "end_time": "{{endTime}}",
     "step": "{{step}}",
-    "login_name": "zhangs"
+    "login_name": "{{user_account_name}}"
 }
 
 ### healthcheck.CheckByHostInfo
@@ -27,12 +27,12 @@ POST http://{{baseURL}}/api/v1/healthcheck/check/host-info
 Content-Type: application/json
 
 {
-    "host_ip": "192.168.137.11",
-    "port_num": 3306,
+    "host_ip": "{{mysql_host_ip}}",
+    "port_num": {{mysql_port_num}},
     "start_time": "{{startTime}}",
     "end_time": "{{endTime}}",
     "step": "{{step}}",
-    "login_name": "zhangs"
+    "login_name": "{{user_account_name}}"
 }
 
 ### healthcheck.ReviewAccuracy
@@ -40,6 +40,6 @@ POST http://{{baseURL}}/api/v1/healthcheck/review
 Content-Type: application/json
 
 {
-    "operation_id": 1,
-    "review": 1
+    "operation_id": {{operation_id}},
+    "review": {{review}}
 }

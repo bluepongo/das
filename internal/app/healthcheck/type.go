@@ -82,6 +82,7 @@ var (
 
 type OperationInfo struct {
 	operationID   int
+	user          metadata.User
 	apps          []metadata.App
 	mysqlServer   metadata.MySQLServer
 	monitorSystem metadata.MonitorSystem
@@ -91,9 +92,10 @@ type OperationInfo struct {
 }
 
 // NewOperationInfo returns a new *OperationInfo
-func NewOperationInfo(operationID int, apps []metadata.App, mysqlServer metadata.MySQLServer, MonitorSystem metadata.MonitorSystem, startTime, endTime time.Time, step time.Duration) *OperationInfo {
+func NewOperationInfo(operationID int, user metadata.User, apps []metadata.App, mysqlServer metadata.MySQLServer, MonitorSystem metadata.MonitorSystem, startTime, endTime time.Time, step time.Duration) *OperationInfo {
 	return &OperationInfo{
 		operationID:   operationID,
+		user:          user,
 		apps:          apps,
 		mysqlServer:   mysqlServer,
 		monitorSystem: MonitorSystem,
@@ -106,6 +108,11 @@ func NewOperationInfo(operationID int, apps []metadata.App, mysqlServer metadata
 // GetOperationID returns the operation identity
 func (oi *OperationInfo) GetOperationID() int {
 	return oi.operationID
+}
+
+// GetUser returns the user
+func (oi *OperationInfo) GetUser() metadata.User {
+	return oi.user
 }
 
 // GetApps returns the apps
@@ -151,6 +158,8 @@ func (oi *OperationInfo) GetAppName() string {
 
 type OperationHistory struct {
 	ID             int       `middleware:"id" json:"id"`
+	UserID         int       `middleware:"user_id" json:"user_id"`
+	AccountName    string    `middleware:"account_name" json:"account_name"`
 	MySQLServerID  int       `middleware:"mysql_server_id" json:"mysql_server_id"`
 	HostIP         string    `middleware:"host_ip" json:"host_ip"`
 	PortNum        int       `middleware:"port_num" json:"port_num"`
@@ -194,6 +203,16 @@ func newOperationHistory(id, mysqlServerID int, hostIP string, portNum int, star
 // GetID returns the identity
 func (oh *OperationHistory) GetID() int {
 	return oh.ID
+}
+
+// GetUserID returns the user id
+func (oh *OperationHistory) GetUserID() int {
+	return oh.UserID
+}
+
+// GetAccountName returns the user account name
+func (oh *OperationHistory) GetAccountName() string {
+	return oh.AccountName
 }
 
 // GetMySQLServerID returns the mysql server id

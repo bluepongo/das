@@ -9,6 +9,8 @@ import (
 type OperationInfo interface {
 	// GetOperationID returns the operation identity
 	GetOperationID() int
+	// GetUser returns the user
+	GetUser() metadata.User
 	// GetApps returns the apps
 	GetApps() []metadata.App
 	// GetMySQLServer returns the mysql server
@@ -28,6 +30,10 @@ type OperationInfo interface {
 type OperationHistory interface {
 	// GetID returns the identity
 	GetID() int
+	// GetUserID returns the user id
+	GetUserID() int
+	// GetAccountName returns the user account name
+	GetAccountName() string
 	// GetMySQLServerID returns the mysql server id
 	GetMySQLServerID() int
 	// GetHostIP returns the host ip of mysql server

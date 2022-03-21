@@ -29,6 +29,8 @@ const (
 	defaultMonitorMySQLDBName      = "pmm"
 	defaultSuccessStatus           = 2
 	defaultFailedStatus            = 3
+
+	healthcheckMarshalServiceTemplate = `{"result": %s}`
 )
 
 var _ healthcheck.Service = (*Service)(nil)
@@ -142,21 +144,28 @@ func (s *Service) CheckByHostInfo(hostIP string, portNum int, startTime, endTime
 // check performs healthcheck on the mysql server with given mysql server id,
 // initiating is synchronous, actual running is asynchronous
 func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step time.Duration, loginName string) (int, error) {
+	// get user
 	userService := metadata.NewUserServiceWithDefault()
 	err := userService.GetByAccountNameOrEmployeeID(loginName)
 	if err != nil {
 		return constant.ZeroInt, err
 	}
-
+	user := userService.GetUsers()[constant.ZeroInt]
 	// check privilege
-	privilegeService := privilege.NewService(userService.GetUsers()[constant.ZeroInt])
+	privilegeService := privilege.NewService(user)
 	err = privilegeService.CheckMySQLServerByID(mysqlServerID)
 	if err != nil {
 		return constant.ZeroInt, err
 	}
-
+	// get mysql server
+	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
+	err = mysqlServerService.GetByID(mysqlServerID)
+	if err != nil {
+		return constant.ZeroInt, err
+	}
+	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
 	// init
-	operationID, err := s.init(mysqlServerID, startTime, endTime, step)
+	operationID, err := s.init(user, mysqlServer, startTime, endTime, step)
 	if err != nil {
 		updateErr := s.GetDASRepo().UpdateOperationStatus(operationID, defaultFailedStatus, err.Error())
 		if updateErr != nil {
@@ -172,27 +181,26 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 }
 
 // init initiates healthcheck operation and engine
-func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step time.Duration) (int, error) {
+func (s *Service) init(user depmeta.User, mysqlServer depmeta.MySQLServer, startTime, endTime time.Time, step time.Duration) (int, error) {
 	// insert operation message
-	operationID, err := s.GetDASRepo().InitOperation(mysqlServerID, startTime, endTime, step)
+	operationID, err := s.GetDASRepo().InitOperation(
+		user.Identity(),
+		mysqlServer.Identity(),
+		startTime,
+		endTime,
+		step,
+	)
 	if err != nil {
 		return operationID, err
 	}
 	// check if operation with the same mysql server id is still running
-	isRunning, err := s.GetDASRepo().IsRunning(mysqlServerID)
+	isRunning, err := s.GetDASRepo().IsRunning(mysqlServer.Identity())
 	if err != nil {
 		return operationID, err
 	}
 	if isRunning {
-		return operationID, errors.Errorf("healthcheck of mysql server is still running. mysql server id: %d", mysqlServerID)
+		return operationID, errors.Errorf("healthcheck of mysql server is still running. mysql server id: %d", mysqlServer.Identity())
 	}
-	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
-	err = mysqlServerService.GetByID(mysqlServerID)
-	if err != nil {
-		return operationID, err
-	}
-	// get mysql server
-	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
 	// get monitor system
 	monitorSystem, err := mysqlServer.GetMonitorSystem()
 	if err != nil {
@@ -226,7 +234,7 @@ func (s *Service) init(mysqlServerID int, startTime, endTime time.Time, step tim
 		}
 	}
 	// init operation information
-	s.OperationInfo = NewOperationInfo(operationID, apps, mysqlServer, monitorSystem, startTime, endTime, step)
+	s.OperationInfo = NewOperationInfo(operationID, user, apps, mysqlServer, monitorSystem, startTime, endTime, step)
 
 	// init application mysql connection
 	mysqlServerAddr := fmt.Sprintf("%s:%d", mysqlServer.GetHostIP(), mysqlServer.GetPortNum())
@@ -331,7 +339,7 @@ func (s *Service) ReviewAccuracy(id, review int) error {
 
 // Marshal marshals Service to json bytes
 func (s *Service) Marshal() ([]byte, error) {
-	return s.MarshalWithFields(healthcheckResultStruct)
+	return []byte(fmt.Sprintf(healthcheckMarshalServiceTemplate, s.GetResult().String())), nil
 }
 
 // MarshalWithFields marshals only specified fields of the Service to json bytes
