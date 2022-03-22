@@ -25,17 +25,18 @@ const (
 	InfoHealthcheckCheckByHostInfo                  = 202103
 	InfoHealthcheckReviewAccuracy                   = 202104
 	// error
-	ErrHealthcheckDefaultEngineRun                  = 402101
-	ErrHealthcheckGetOperationHistoriesByLoginName  = 402102
-	ErrHealthcheckGetResultByOperationID            = 402103
-	ErrHealthcheckCheck                             = 402104
-	ErrHealthcheckCheckByHostInfo                   = 402105
-	ErrHealthcheckReviewAccuracy                    = 402106
-	ErrHealthcheckCloseConnection                   = 402107
-	ErrHealthcheckCreateApplicationMySQLConnection  = 402108
-	ErrHealthcheckCreateMonitorMySQLConnection      = 402109
-	ErrHealthcheckCreateMonitorClickhouseConnection = 402110
-	ErrHealthcheckCreateMonitorPrometheusConnection = 402111
+	ErrHealthcheckCheckRange                        = 402101
+	ErrHealthcheckDefaultEngineRun                  = 402102
+	ErrHealthcheckGetOperationHistoriesByLoginName  = 402103
+	ErrHealthcheckGetResultByOperationID            = 402104
+	ErrHealthcheckCheck                             = 402105
+	ErrHealthcheckCheckByHostInfo                   = 402106
+	ErrHealthcheckReviewAccuracy                    = 402107
+	ErrHealthcheckCloseConnection                   = 402108
+	ErrHealthcheckCreateApplicationMySQLConnection  = 402109
+	ErrHealthcheckCreateMonitorMySQLConnection      = 402110
+	ErrHealthcheckCreateMonitorClickhouseConnection = 402111
+	ErrHealthcheckCreateMonitorPrometheusConnection = 402112
 )
 
 func initServiceDebugMessage() {
@@ -75,6 +76,9 @@ func initServiceInfoMessage() {
 }
 
 func initServiceErrorMessage() {
+	message.Messages[ErrHealthcheckCheckRange] = config.NewErrMessage(
+		message.DefaultMessageHeader, ErrHealthcheckCheckRange,
+		"check range is larger than the maximum allowed range. check range: %d, allowed range: %d")
 	message.Messages[ErrHealthcheckDefaultEngineRun] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckDefaultEngineRun,
 		"default engine run failed")
@@ -108,5 +112,4 @@ func initServiceErrorMessage() {
 	message.Messages[ErrHealthcheckCreateMonitorPrometheusConnection] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCreateMonitorPrometheusConnection,
 		"create prometheus connection failed. addr: %s, user: %s")
-
 }

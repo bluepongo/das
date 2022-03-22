@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
+	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/healthcheck"
 	"github.com/romberli/das/pkg/message"
 	msghealth "github.com/romberli/das/pkg/message/healthcheck"
@@ -15,9 +16,11 @@ import (
 	utilhealth "github.com/romberli/das/pkg/util/healthcheck"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/log"
+	"github.com/spf13/viper"
 )
 
 const (
+	oneDayHours     = 24
 	loginNameJSON   = "login_name"
 	operationIDJSON = "operation_id"
 	reviewJSON      = "review"
@@ -143,6 +146,14 @@ func Check(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, errors.Trace(err), rd.GetEndTime())
 		return
 	}
+
+	checkRange := int(endTime.Sub(startTime).Hours() / oneDayHours)
+	maxRange := viper.GetInt(config.HealthcheckMaxRangeKey)
+	if checkRange > maxRange {
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckRange, checkRange, maxRange)
+		return
+	}
+
 	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, errors.Trace(err), rd.GetStep())
@@ -191,6 +202,14 @@ func CheckByHostInfo(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, errors.Trace(err), rd.GetEndTime())
 		return
 	}
+
+	checkRange := int(endTime.Sub(startTime).Hours() / oneDayHours)
+	maxRange := viper.GetInt(config.HealthcheckMaxRangeKey)
+	if checkRange > maxRange {
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckRange, checkRange, maxRange)
+		return
+	}
+
 	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, errors.Trace(err), rd.GetStep())
