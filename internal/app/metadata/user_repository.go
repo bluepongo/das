@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"github.com/pingcap/errors"
+	"github.com/romberli/das/config"
 	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/constant"
@@ -482,6 +483,22 @@ func (ur *UserRepo) GetMySQLClustersByUserID(userID int) ([]metadata.MySQLCluste
 
 // GetAllMySQLServersByUserID gets mysql server list that this user owns
 func (ur *UserRepo) GetAllMySQLServersByUserID(id int) ([]metadata.MySQLServer, error) {
+	user, err := ur.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if user.GetRole() >= config.MetadataUserDBARole {
+		// this user is dba or admin, will return all mysql servers
+		mysqlServerService := NewMySQLServerServiceWithDefault()
+		err = mysqlServerService.GetAll()
+		if err != nil {
+			return nil, err
+		}
+
+		return mysqlServerService.GetMySQLServers(), nil
+	}
+
 	sql := `
 		select msi.id,
 			msi.cluster_id,
@@ -546,6 +563,7 @@ func (ur *UserRepo) GetAllMySQLServersByUserID(id int) ([]metadata.MySQLServer, 
 		and msi.del_flag = 0
 		and ui.id = ?;
 	`
+
 	log.Debugf("metadata UserRepo.GetAllMySQLServersByUserID() sql: \n%s\nplaceholders: %d", sql, id)
 
 	result, err := ur.Execute(sql, id, id, id)
