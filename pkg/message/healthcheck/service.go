@@ -26,17 +26,18 @@ const (
 	InfoHealthcheckReviewAccuracy                   = 202104
 	// error
 	ErrHealthcheckCheckRange                        = 402101
-	ErrHealthcheckDefaultEngineRun                  = 402102
-	ErrHealthcheckGetOperationHistoriesByLoginName  = 402103
-	ErrHealthcheckGetResultByOperationID            = 402104
-	ErrHealthcheckCheck                             = 402105
-	ErrHealthcheckCheckByHostInfo                   = 402106
-	ErrHealthcheckReviewAccuracy                    = 402107
-	ErrHealthcheckCloseConnection                   = 402108
-	ErrHealthcheckCreateApplicationMySQLConnection  = 402109
-	ErrHealthcheckCreateMonitorMySQLConnection      = 402110
-	ErrHealthcheckCreateMonitorClickhouseConnection = 402111
-	ErrHealthcheckCreateMonitorPrometheusConnection = 402112
+	ErrHealthcheckStartTime                         = 402102
+	ErrHealthcheckDefaultEngineRun                  = 402103
+	ErrHealthcheckGetOperationHistoriesByLoginName  = 402104
+	ErrHealthcheckGetResultByOperationID            = 402105
+	ErrHealthcheckCheck                             = 402106
+	ErrHealthcheckCheckByHostInfo                   = 402107
+	ErrHealthcheckReviewAccuracy                    = 402108
+	ErrHealthcheckCloseConnection                   = 402109
+	ErrHealthcheckCreateApplicationMySQLConnection  = 402110
+	ErrHealthcheckCreateMonitorMySQLConnection      = 402111
+	ErrHealthcheckCreateMonitorClickhouseConnection = 402112
+	ErrHealthcheckCreateMonitorPrometheusConnection = 402113
 )
 
 func initServiceDebugMessage() {
@@ -79,6 +80,9 @@ func initServiceErrorMessage() {
 	message.Messages[ErrHealthcheckCheckRange] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCheckRange,
 		"check range is larger than the maximum allowed range. check range: %d, allowed range: %d")
+	message.Messages[ErrHealthcheckStartTime] = config.NewErrMessage(
+		message.DefaultMessageHeader, ErrHealthcheckStartTime,
+		"start time is older than the minimum allowed time. start time: %s, minimum allowed time: %s")
 	message.Messages[ErrHealthcheckDefaultEngineRun] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckDefaultEngineRun,
 		"default engine run failed")

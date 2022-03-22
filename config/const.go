@@ -86,7 +86,7 @@ const (
 	DefaultAlertHTTPURL     = "http://127.0.0.1:8080"
 	DefaultAlertHTTPConfig  = "{}"
 	// healthcheck
-	DefaultHealthCheckMaxRange       = 31
+	DefaultHealthCheckMaxRange       = 30
 	HealthcheckAlertOwnerTypeApp     = "app"
 	HealthcheckAlertOwnerTypeDB      = "db"
 	HealthcheckAlertOwnerTypeAll     = "all"

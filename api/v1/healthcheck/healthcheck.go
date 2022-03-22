@@ -154,6 +154,12 @@ func Check(c *gin.Context) {
 		return
 	}
 
+	minStartTime := time.Now().Add(-constant.Day * time.Duration(maxRange))
+	if startTime.Before(minStartTime) {
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckStartTime, startTime.Format(constant.TimeLayoutSecond), minStartTime.Format(constant.TimeLayoutSecond))
+		return
+	}
+
 	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, errors.Trace(err), rd.GetStep())
