@@ -72,11 +72,11 @@ type UserRepo interface {
 	GetAppsByUserID(id int) ([]App, error)
 	// GetDBsByUserID gets app list that this user owns
 	GetDBsByUserID(id int) ([]DB, error)
-	// GetMiddlewareClustersByUserID gets MiddlewareCluster list that this user owns
+	// GetMiddlewareClustersByUserID gets middleware cluster list that this user owns
 	GetMiddlewareClustersByUserID(id int) ([]MiddlewareCluster, error)
-	// GetMySQLClustersByUserID gets MySQLCluster list that this user owns
+	// GetMySQLClustersByUserID gets mysql cluster list that this user owns
 	GetMySQLClustersByUserID(id int) ([]MySQLCluster, error)
-	// GetAllMySQLServersByUserID gets MySQLServers list that this user owns
+	// GetAllMySQLServersByUserID gets mysql servers list that this user owns
 	GetAllMySQLServersByUserID(id int) ([]MySQLServer, error)
 	// Create creates a user in the middleware
 	Create(db User) (User, error)
@@ -93,9 +93,9 @@ type UserService interface {
 	GetApps() []App
 	// GetDBs returns the dbs of the service
 	GetDBs() []DB
-	// GetMiddlewareClusters returns the MiddlewareClusters of the service
+	// GetMiddlewareClusters returns the middleware clusters of the service
 	GetMiddlewareClusters() []MiddlewareCluster
-	// GetMySQLClusters returns the MySQLClusters of the service
+	// GetMySQLClusters returns the mysql clusters of the service
 	GetMySQLClusters() []MySQLCluster
 	// GetAll gets all users
 	GetAll() error
