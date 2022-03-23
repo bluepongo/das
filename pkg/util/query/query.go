@@ -67,6 +67,43 @@ func (sr *ServerRange) GetConfig() (*query.Config, error) {
 	return getConfig(sr.GetStartTime(), sr.GetEndTime(), sr.GetLimit(), sr.GetOffset())
 }
 
+type HostInfoRange struct {
+	HostIP    string `json:"host_ip" bind:"required"`
+	PortNum   int    `json:"port_num" bind:"required"`
+	StartTime string `json:"start_time" bind:"required"`
+	EndTime   string `json:"end_time" bind:"required"`
+	Limit     int    `json:"limit" bind:"required"`
+	Offset    int    `json:"offset" bind:"required"`
+}
+
+func (hir *HostInfoRange) GetHostIP() string {
+	return hir.HostIP
+}
+
+func (hir *HostInfoRange) GetPortNum() int {
+	return hir.PortNum
+}
+
+func (hir *HostInfoRange) GetStartTime() string {
+	return hir.StartTime
+}
+
+func (hir *HostInfoRange) GetEndTime() string {
+	return hir.EndTime
+}
+
+func (hir *HostInfoRange) GetLimit() int {
+	return hir.Limit
+}
+
+func (hir *HostInfoRange) GetOffset() int {
+	return hir.Offset
+}
+
+func (hir *HostInfoRange) GetConfig() (*query.Config, error) {
+	return getConfig(hir.GetStartTime(), hir.GetEndTime(), hir.GetLimit(), hir.GetOffset())
+}
+
 func getConfig(startTime, endTime string, limit, offset int) (*query.Config, error) {
 	st, err := time.ParseInLocation(constant.TimeLayoutSecond, startTime, time.Local)
 	if err != nil {

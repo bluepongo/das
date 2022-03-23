@@ -54,6 +54,8 @@ type Service interface {
 	GetByMySQLClusterID(mysqlClusterID int) error
 	// GetByMySQLServerID gets the query slice by the mysql server identity
 	GetByMySQLServerID(mysqlServerID int) error
+	// GetByHostInfo gets the query slice by the mysql server host ip and port number
+	GetByHostInfo(hostIP string, portNum int) error
 	// GetByDBName gets the query slice by the db identity
 	GetByDBID(mysqlServerID, dbID int) error
 	// GetBySQLID gets the query by the mysql server identity and the sql identity

@@ -1,6 +1,7 @@
 package query
 
 import (
+	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
@@ -61,6 +62,23 @@ func (s *Service) GetByMySQLClusterID(mysqlClusterID int) error {
 func (s *Service) GetByMySQLServerID(mysqlServerID int) error {
 	var err error
 
+	querier := NewQuerierWithGlobal(s.GetConfig())
+	s.Queries, err = querier.GetByMySQLServerID(mysqlServerID)
+	if err != nil {
+		return err
+	}
+
+	return s.Save(constant.DefaultRandomInt, mysqlServerID, constant.DefaultRandomInt, constant.DefaultRandomString)
+}
+
+// GetByHostInfo gets the query slice by the mysql server host ip and port number
+func (s *Service) GetByHostInfo(hostIP string, portNum int) error {
+	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
+	err := mysqlServerService.GetByHostInfo(hostIP, portNum)
+	if err != nil {
+		return err
+	}
+	mysqlServerID := mysqlServerService.GetMySQLServers()[constant.ZeroInt].Identity()
 	querier := NewQuerierWithGlobal(s.GetConfig())
 	s.Queries, err = querier.GetByMySQLServerID(mysqlServerID)
 	if err != nil {

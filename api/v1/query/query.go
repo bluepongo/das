@@ -15,10 +15,12 @@ import (
 )
 
 const (
-	mysqlClusterIDJSON = "mysql_cluster_id"
-	mysqlServerIDJSON  = "mysql_server_id"
-	dbIDJSON           = "db_id"
-	sqlIDJSON          = "sql_id"
+	mysqlClusterIDJSON     = "mysql_cluster_id"
+	mysqlServerIDJSON      = "mysql_server_id"
+	mysqlServerHostIPJSON  = "host_ip"
+	mysqlServerPortNumJSON = "port_num"
+	dbIDJSON               = "db_id"
+	sqlIDJSON              = "sql_id"
 )
 
 // @Tags query
@@ -131,6 +133,54 @@ func GetByMySQLServerID(c *gin.Context) {
 
 	// response
 	resp.ResponseOK(c, jsonStr, msgquery.InfoQueryGetByMySQLServerID, mysqlServerID)
+}
+
+// @Tags query
+// @Summary get slow queries by mysql server host ip and port number
+// @Accept  application/json
+// @Param	host_ip		body 	string	true "mysql server host ip"
+// @Param	port_num	body	int		true "mysql server port number"
+// @Param	start_time	body	string	true "start time"
+// @Param	end_time	body	string	true "end time"
+// @Param	limit		body	int		true "limit"
+// @Param	offset		body	int		true "offset"
+// @Produce  application/json
+// @Success 200 {string} string "{"queries":[{"sql_id":"F9A57DD5A41825CA","fingerprint":"select sleep(?)","example":"select sleep(3)","db_name":"","exec_count":1,"total_exec_time":3,"avg_exec_time":3,"rows_examined_max":0}]}"
+// @Router /api/v1/query/host-info [get]
+func GetByHostInfo(c *gin.Context) {
+	// get data
+
+	var rd *utilquery.HostInfoRange
+	// bind json
+	err := c.ShouldBindJSON(&rd)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
+		return
+	}
+	config, err := rd.GetConfig()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
+		return
+	}
+	// init service
+	service := query.NewServiceWithDefault(config)
+	err = service.GetByHostInfo(rd.GetHostIP(), rd.GetPortNum())
+	if err != nil {
+		resp.ResponseNOK(c, msgquery.ErrQueryGetByHostInfo, err, rd.GetHostIP(), rd.GetPortNum())
+		return
+	}
+
+	// marshal
+	jsonBytes, err := service.Marshal()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		return
+	}
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgquery.DebugQueryGetByHostInfo, rd.GetHostIP(), rd.GetPortNum(), jsonStr).Error())
+
+	// response
+	resp.ResponseOK(c, jsonStr, msgquery.InfoQueryGetByMySQLServerID, rd.GetHostIP(), rd.GetPortNum())
 }
 
 // @Tags query
