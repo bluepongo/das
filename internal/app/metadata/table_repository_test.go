@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	testTableSchema      = "mysql"
+	testDBName           = "mysql"
 	testTableName        = "db"
 	testTableDBName      = "mysql"
 	testTableHostIP      = "127.0.0.1"
@@ -59,7 +59,7 @@ func TestTableRepo_Execute(t *testing.T) {
 func TestTableRepo_GetTableStatistics(t *testing.T) {
 	asst := assert.New(t)
 
-	result, err := testTableRepo.GetTableStatistics(testTableSchema, testTableName)
+	result, err := testTableRepo.GetTableStatistics(testDBName, testTableName)
 	asst.Nil(err, common.CombineMessageWithError("test GetTableStatistics() failed", err))
 	asst.Equal(1, len(result), "test GetTableStatistics() failed")
 }
@@ -67,7 +67,7 @@ func TestTableRepo_GetTableStatistics(t *testing.T) {
 func TestTableRepo_GetIndexStatistics(t *testing.T) {
 	asst := assert.New(t)
 
-	result, err := testTableRepo.GetIndexStatistics(testTableSchema, testTableName)
+	result, err := testTableRepo.GetIndexStatistics(testDBName, testTableName)
 	asst.Nil(err, common.CombineMessageWithError("test GetIndexStatistics() failed", err))
 	asst.Equal(4, len(result), "test GetIndexStatistics() failed")
 }
@@ -75,7 +75,7 @@ func TestTableRepo_GetIndexStatistics(t *testing.T) {
 func TestTableRepo_GetCreateStatement(t *testing.T) {
 	asst := assert.New(t)
 
-	result, err := testTableRepo.GetCreateStatement(testTableSchema, testTableName)
+	result, err := testTableRepo.GetCreateStatement(testDBName, testTableName)
 	asst.Nil(err, common.CombineMessageWithError("test GetAll() failed", err))
 	asst.NotEqual("", result, "test GetAll() failed")
 }
@@ -83,7 +83,7 @@ func TestTableRepo_GetCreateStatement(t *testing.T) {
 func TestTableRepo_GetByDBName(t *testing.T) {
 	asst := assert.New(t)
 
-	result, err := testTableRepo.GetByDBName(testTableSchema)
+	result, err := testTableRepo.GetByDBName(testDBName)
 	asst.Nil(err, common.CombineMessageWithError("test GetByDBName() failed", err))
 	asst.NotEqual(0, len(result), "test GetByDBName() failed")
 }
@@ -91,7 +91,7 @@ func TestTableRepo_GetByDBName(t *testing.T) {
 func TestTableRepo_GetStatisticsByDBNameAndTableName(t *testing.T) {
 	asst := assert.New(t)
 
-	resultTableStatistics, resultIndexStatistics, resultCreateStatement, err := testTableRepo.GetStatisticsByDBNameAndTableName(testTableSchema, testTableName)
+	resultTableStatistics, resultIndexStatistics, resultCreateStatement, err := testTableRepo.GetStatisticsByDBNameAndTableName(testDBName, testTableName)
 	asst.Nil(err, common.CombineMessageWithError("test GetStatisticsByDBNameAndTableName() failed", err))
 	asst.NotEqual(0, len(resultTableStatistics), "test GetStatisticsByDBNameAndTableName() failed")
 	asst.NotEqual(0, len(resultIndexStatistics), "test GetStatisticsByDBNameAndTableName() failed")
@@ -102,7 +102,7 @@ func TestTableRepo_GetStatisticsByDBNameAndTableName(t *testing.T) {
 func TestTableRepo_AnalyzeTableByDBNameAndTableName(t *testing.T) {
 	asst := assert.New(t)
 
-	// err := testTableRepo.AnalyzeTableByDBNameAndTableName(testTableSchema, testTableName, testTableAccountName)
-	err := testTableRepo.AnalyzeTableByDBNameAndTableName(testTableSchema, testTableName)
+	// err := testTableRepo.AnalyzeTableByDBNameAndTableName(testDBName, testTableName, testTableAccountName)
+	err := testTableRepo.AnalyzeTableByDBNameAndTableName(testDBName, testTableName)
 	asst.Nil(err, common.CombineMessageWithError("test AnalyzeTableByDBNameAndTableName() failed", err))
 }

@@ -12,7 +12,7 @@ var _ metadata.TableStatistic = (*TableStatistic)(nil)
 
 // TableStatistic include statistics of table
 type TableStatistic struct {
-	TableSchema   string    `middleware:"table_schema" json:"table_schema"`
+	DBName        string    `middleware:"db_name" json:"db_name"`
 	TableName     string    `middleware:"table_name" json:"table_name"`
 	Rows          int       `middleware:"table_rows" json:"table_rows"`
 	Size          int       `middleware:"size" json:"size"`
@@ -30,9 +30,9 @@ func NewEmptyTableStatistic() *TableStatistic {
 	return &TableStatistic{}
 }
 
-// GetTableSchema returns the table schema
-func (ts *TableStatistic) GetTableSchema() string {
-	return ts.TableSchema
+// GetDBName returns the table schema
+func (ts *TableStatistic) GetDBName() string {
+	return ts.DBName
 }
 
 // GetTableName returns the table name
@@ -94,7 +94,7 @@ var _ metadata.IndexStatistic = (*IndexStatistic)(nil)
 
 // IndexStatistic include statistics of index
 type IndexStatistic struct {
-	TableSchema string `middleware:"table_schema" json:"table_schema"`
+	DBName      string `middleware:"db_name" json:"db_name"`
 	TableName   string `middleware:"table_name" json:"table_name"`
 	IndexName   string `middleware:"index_name" json:"index_name"`
 	Sequence    int    `middleware:"sequence" json:"sequence"`
@@ -109,9 +109,9 @@ func NewEmptyIndexStatistic() *IndexStatistic {
 	return &IndexStatistic{}
 }
 
-// GetTableSchema returns the table schema
-func (is *IndexStatistic) GetTableSchema() string {
-	return is.TableSchema
+// GetDBName returns the table schema
+func (is *IndexStatistic) GetDBName() string {
+	return is.DBName
 }
 
 // GetTableName returns the table name
@@ -155,17 +155,17 @@ func (is *IndexStatistic) MarshalJSON() ([]byte, error) {
 }
 
 const (
-	tableSchemaStruct = "TableSchema"
-	tableNameStruct   = "TableName"
+	dbNameStruct    = "DBName"
+	tableNameStruct = "TableName"
 )
 
 var _ metadata.Table = (*TableInfo)(nil)
 
 // TableInfo include information of logic table
 type TableInfo struct {
-	TableRepo   metadata.TableRepo
-	TableSchema string `middleware:"table_schema" json:"table_schema"`
-	TableName   string `middleware:"table_name" json:"table_name"`
+	TableRepo metadata.TableRepo
+	DBName    string `middleware:"db_name" json:"db_name"`
+	TableName string `middleware:"table_name" json:"table_name"`
 	// TableStatistics []metadata.TableStatistic `middleware:"table_statistics" json:"table_statistics"`
 	// IndexStatistics []metadata.IndexStatistic `middleware:"index_statistics" json:"index_statistics"`
 	// CreateStatement string `middleware:"create_statement" json:"create_statement"`
@@ -174,7 +174,7 @@ type TableInfo struct {
 // NewTableInfo returns a new TableInfo
 func NewTableInfo(
 	repo metadata.TableRepo,
-	tableSchema string,
+	dbName string,
 	tableName string,
 	// tableStatistics []metadata.TableStatistic,
 	// indexStatistics []metadata.IndexStatistic,
@@ -182,7 +182,7 @@ func NewTableInfo(
 ) *TableInfo {
 	return &TableInfo{
 		repo,
-		tableSchema,
+		dbName,
 		tableName,
 		// tableStatistics,
 		// indexStatistics,
@@ -206,9 +206,9 @@ func NewTableInfoWithMapAndRandom(fields map[string]interface{}) (*TableInfo, er
 	return ti, nil
 }
 
-// GetTableSchema returns the table schema
-func (ti *TableInfo) GetTableSchema() string {
-	return ti.TableSchema
+// GetDBName returns the table schema
+func (ti *TableInfo) GetDBName() string {
+	return ti.DBName
 }
 
 // GetTableName returns the table name
@@ -218,17 +218,17 @@ func (ti *TableInfo) GetTableName() string {
 
 // GetTableStatistics returns the table statistics
 func (ti *TableInfo) GetTableStatistics() ([]metadata.TableStatistic, error) {
-	return ti.TableRepo.GetTableStatistics(ti.TableSchema, ti.TableName)
+	return ti.TableRepo.GetTableStatistics(ti.DBName, ti.TableName)
 }
 
 // GetIndexStatistics returns the index statistics
 func (ti *TableInfo) GetIndexStatistics() ([]metadata.IndexStatistic, error) {
-	return ti.TableRepo.GetIndexStatistics(ti.TableSchema, ti.TableName)
+	return ti.TableRepo.GetIndexStatistics(ti.DBName, ti.TableName)
 }
 
 // GetCreateStatement returns the create statement
 func (ti *TableInfo) GetCreateStatement() (string, error) {
-	return ti.TableRepo.GetCreateStatement(ti.TableSchema, ti.TableName)
+	return ti.TableRepo.GetCreateStatement(ti.DBName, ti.TableName)
 }
 
 // MarshalJSON marshals Table to json string

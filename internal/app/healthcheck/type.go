@@ -483,18 +483,18 @@ func NewVariable(variableName, currentValue, advice string) *Variable {
 }
 
 type Table struct {
-	TableSchema string  `middleware:"table_schema" json:"table_schema"`
-	TableName   string  `middleware:"table_name" json:"table_name"`
-	TableRows   int     `middleware:"table_rows" json:"table_rows"`
-	TableSize   float64 `middleware:"table_size" json:"table_size"`
+	DBName    string  `middleware:"db_name" json:"db_name"`
+	TableName string  `middleware:"table_name" json:"table_name"`
+	TableRows int     `middleware:"table_rows" json:"table_rows"`
+	TableSize float64 `middleware:"table_size" json:"table_size"`
 }
 
-func NewTable(schema, name string, rows int, size float64) *Table {
+func NewTable(db, name string, rows int, size float64) *Table {
 	return &Table{
-		TableSchema: schema,
-		TableName:   name,
-		TableRows:   rows,
-		TableSize:   size,
+		DBName:    db,
+		TableName: name,
+		TableRows: rows,
+		TableSize: size,
 	}
 }
 
@@ -503,7 +503,7 @@ func NewEmptyTable() *Table {
 }
 
 func (t *Table) GetSchema() string {
-	return t.TableSchema
+	return t.DBName
 }
 
 func (t *Table) GetName() string {

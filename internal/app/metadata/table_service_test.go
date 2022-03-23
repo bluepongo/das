@@ -31,14 +31,14 @@ func TestTableService_GetTables(t *testing.T) {
 func TestTableService_GetByDBName(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testTableService.GetByDBName(testTableSchema)
+	err := testTableService.GetByDBName(testDBName)
 	asst.Nil(err, common.CombineMessageWithError("test GetByDBName() failed", err))
 	asst.Equal(31, len(testTableService.GetTables()), "test GetByDBName() failed")
 }
 func TestTableService_GetStatisticsByDBNameAndTableName(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testTableService.GetStatisticsByDBNameAndTableName(testTableSchema, testTableName)
+	err := testTableService.GetStatisticsByDBNameAndTableName(testDBName, testTableName)
 	asst.Nil(err, common.CombineMessageWithError("test GetStatisticsByDBNameAndTableName() failed", err))
 	asst.Equal(31, len(testTableService.GetTables()), "test GetStatisticsByDBNameAndTableName() failed")
 }

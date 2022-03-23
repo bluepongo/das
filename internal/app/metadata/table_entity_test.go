@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	testTableStatisticTableSchema      = ""
+	testTableStatisticDBName           = ""
 	testTableStatisticTableName        = ""
 	testTableStatisticTableRows        = 1
 	testTableStatisticSize             = 1
@@ -22,7 +22,7 @@ const (
 	testTableStatisticCollation        = ""
 	testTableStatisticCreateTimeString = "2021-01-21 10:00:00.000000"
 
-	testIndexStatisticTableSchema = ""
+	testIndexStatisticDBName      = ""
 	testIndexStatisticTableName   = ""
 	testIndexStatisticIndexName   = ""
 	testIndexStatisticSequence    = 1
@@ -48,7 +48,7 @@ func initNewTableStatistic() *TableStatistic {
 	createTime, _ := now.Parse(testTableStatisticCreateTimeString)
 
 	return &TableStatistic{
-		testTableStatisticTableSchema,
+		testTableStatisticDBName,
 		testTableStatisticTableName,
 		testTableStatisticTableRows,
 		testTableStatisticSize,
@@ -64,7 +64,7 @@ func initNewTableStatistic() *TableStatistic {
 
 func initNewIndexStatistic() *IndexStatistic {
 	return &IndexStatistic{
-		testIndexStatisticTableSchema,
+		testIndexStatisticDBName,
 		testIndexStatisticTableName,
 		testIndexStatisticIndexName,
 		testIndexStatisticSequence,
@@ -78,7 +78,7 @@ func initNewIndexStatistic() *IndexStatistic {
 func initNewTableInfo() *TableInfo {
 	return &TableInfo{
 		testTableRepo,
-		testTableSchema,
+		testDBName,
 		testTableName,
 	}
 }
@@ -101,7 +101,7 @@ func TestTableEntityAll(t *testing.T) {
 func TestTableStatistic_Get(t *testing.T) {
 	asst := assert.New(t)
 
-	asst.Equal(testTableStatistic.TableSchema, testTableStatistic.GetTableSchema(), "test GetTableSchema failed")
+	asst.Equal(testTableStatistic.DBName, testTableStatistic.GetDBName(), "test GetDBName failed")
 	asst.Equal(testTableStatistic.TableName, testTableStatistic.GetTableName(), "test GetTableName failed")
 	asst.Equal(testTableStatistic.Rows, testTableStatistic.GetTableRows(), "test GetTableRows failed")
 	asst.Equal(testTableStatistic.Size, testTableStatistic.GetSize(), "test GetSize failed")
@@ -124,7 +124,7 @@ func TestTableStatistic_MarshalJSON(t *testing.T) {
 func TestIndexStatistic_Get(t *testing.T) {
 	asst := assert.New(t)
 
-	asst.Equal(testIndexStatistic.TableSchema, testIndexStatistic.GetTableSchema(), "test GetTableSchema failed")
+	asst.Equal(testIndexStatistic.DBName, testIndexStatistic.GetDBName(), "test GetDBName failed")
 	asst.Equal(testIndexStatistic.TableName, testIndexStatistic.GetTableName(), "test GetTableName failed")
 	asst.Equal(testIndexStatistic.IndexName, testIndexStatistic.GetIndexName(), "test GetIndexName failed")
 	asst.Equal(testIndexStatistic.Sequence, testIndexStatistic.GetSequence(), "test GetSequence failed")
@@ -144,7 +144,7 @@ func TestIndexStatistic_MarshalJSON(t *testing.T) {
 func TestTableInfo_Get(t *testing.T) {
 	asst := assert.New(t)
 
-	asst.Equal(testTableInfo.TableSchema, testTableInfo.GetTableSchema(), "test GetTableSchema failed")
+	asst.Equal(testTableInfo.DBName, testTableInfo.GetDBName(), "test GetDBName failed")
 	asst.Equal(testTableInfo.TableName, testTableInfo.GetTableName(), "test GetTableName failed")
 }
 func TestTableInfo_GetTableStatistics(t *testing.T) {
@@ -180,7 +180,7 @@ func TestTableInfo_MarshalJSON(t *testing.T) {
 func TestTableInfo_MarshalJSONWithFields(t *testing.T) {
 	asst := assert.New(t)
 
-	jsonBytes, err := testTableInfo.MarshalJSONWithFields(tableSchemaStruct)
+	jsonBytes, err := testTableInfo.MarshalJSONWithFields(dbNameStruct)
 	asst.Nil(err, common.CombineMessageWithError("test MarshalJSONWithFields() failed", err))
 	t.Log(string(jsonBytes))
 }

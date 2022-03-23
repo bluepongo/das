@@ -29,9 +29,9 @@ func (tr *TableRepo) Execute(command string, args ...interface{}) (middleware.Re
 }
 
 // GetTableStatistics gets table statistics from the middleware
-func (tr *TableRepo) GetTableStatistics(tableSchema, tableName string) ([]metadata.TableStatistic, error) {
+func (tr *TableRepo) GetTableStatistics(dbName, tableName string) ([]metadata.TableStatistic, error) {
 	sql := `
-		SELECT t.table_schema                        AS table_schema,
+		SELECT t.db_name                        	 AS db_name,
 			t.table_name                             AS table_name,
 			t.table_rows                             AS table_rows,
 			t.data_length                            AS size,
@@ -45,11 +45,11 @@ func (tr *TableRepo) GetTableStatistics(tableSchema, tableName string) ([]metada
 		FROM information_schema.tables t
 		INNER JOIN information_schema.collation_character_set_applicability ccsa
 			ON t.table_collation = ccsa.collation_name
-		WHERE table_schema = ? AND table_name = ? ;
+		WHERE db_name = ? AND table_name = ? ;
 	`
-	log.Debugf("metadata TableRepo.GetTableStatistics() sql: \n%s", sql, tableSchema, tableName)
+	log.Debugf("metadata TableRepo.GetTableStatistics() sql: \n%s", sql, dbName, tableName)
 
-	result, err := tr.Execute(sql, tableSchema, tableName)
+	result, err := tr.Execute(sql, dbName, tableName)
 	if err != nil {
 		return nil, err
 	}
@@ -66,9 +66,9 @@ func (tr *TableRepo) GetTableStatistics(tableSchema, tableName string) ([]metada
 }
 
 // GetIndexStatistics gets index statistics from the middleware
-func (tr *TableRepo) GetIndexStatistics(tableSchema, tableName string) ([]metadata.IndexStatistic, error) {
+func (tr *TableRepo) GetIndexStatistics(dbName, tableName string) ([]metadata.IndexStatistic, error) {
 	sql := `
-		SELECT table_schema                     AS table_schema,
+		SELECT db_name                          AS db_name,
 			table_name                          AS table_name,
 			index_name                          AS index_name,
 			seq_in_index                        AS sequence,
@@ -77,12 +77,12 @@ func (tr *TableRepo) GetIndexStatistics(tableSchema, tableName string) ([]metada
 			IF(non_unique = 0, 'true', 'false') AS non_unique,
 			IF(nullable = '', 'false', 'true')  AS nullable
 		FROM information_schema.statistics
-		WHERE table_schema = ?
+		WHERE db_name = ?
   		AND table_name = ? ;
 	`
-	log.Debugf("metadata TableRepo.GetIndexStatistics() sql: \n%s", sql, tableSchema, tableName)
+	log.Debugf("metadata TableRepo.GetIndexStatistics() sql: \n%s", sql, dbName, tableName)
 
-	result, err := tr.Execute(sql, tableSchema, tableName)
+	result, err := tr.Execute(sql, dbName, tableName)
 	if err != nil {
 		return nil, err
 	}
@@ -99,11 +99,11 @@ func (tr *TableRepo) GetIndexStatistics(tableSchema, tableName string) ([]metada
 }
 
 // GetCreateStatement gets the create statement of the table
-func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, error) {
+func (tr *TableRepo) GetCreateStatement(dbName, tableName string) (string, error) {
 	sql := fmt.Sprintf(`
 		SHOW CREATE TABLE %s.%s;
-	`, tableSchema, tableName)
-	log.Debugf("metadata TableRepo.GetCreateStatement() sql: \n%s", sql, tableSchema, tableName)
+	`, dbName, tableName)
+	log.Debugf("metadata TableRepo.GetCreateStatement() sql: \n%s", sql, dbName, tableName)
 	result, err := tr.Execute(sql)
 	if err != nil {
 		return "", err
@@ -119,10 +119,10 @@ func (tr *TableRepo) GetCreateStatement(tableSchema, tableName string) (string, 
 // GetByDBName gets the tables info by DBname from middleware
 func (tr *TableRepo) GetByDBName(dbName string) ([]metadata.Table, error) {
 	sql := `
-		SELECT table_schema AS table_schema,
+		SELECT db_name      AS db_name,
 			   table_name   AS table_name
 		FROM information_schema.tables 
-		WHERE table_schema = ?;
+		WHERE db_name = ?;
 	`
 	log.Debugf("metadata TableRepo.GetByDBName() sql: \n%s\nplaceholders: %s", sql, dbName)
 	result, err := tr.Execute(sql, dbName)

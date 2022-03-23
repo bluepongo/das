@@ -7,8 +7,8 @@ import (
 )
 
 type TableStatistic interface {
-	// GetTableSchema returns the table schema
-	GetTableSchema() string
+	// GetDBName returns the table schema
+	GetDBName() string
 	// GetTableName returns the table name
 	GetTableName() string
 	// GetTableRows returns the rows of the table
@@ -34,8 +34,8 @@ type TableStatistic interface {
 }
 
 type IndexStatistic interface {
-	// GetTableSchema returns the table schema
-	GetTableSchema() string
+	// GetDBName returns the table schema
+	GetDBName() string
 	// GetTableName returns the table name
 	GetTableName() string
 	// GetIndexName returns the index name
@@ -55,8 +55,8 @@ type IndexStatistic interface {
 }
 
 type Table interface {
-	// GetTableSchema returns the table schema
-	GetTableSchema() string
+	// GetDBName returns the table schema
+	GetDBName() string
 	// GetTableName returns the table name
 	GetTableName() string
 	// GetTableStatistics returns the table statistics
@@ -75,11 +75,11 @@ type TableRepo interface {
 	// Execute executes given command and placeholders on the middleware
 	Execute(command string, args ...interface{}) (middleware.Result, error)
 	// GetTableStatistics gets table statistics from the middleware
-	GetTableStatistics(tableSchema, tableName string) ([]TableStatistic, error)
+	GetTableStatistics(dbName, tableName string) ([]TableStatistic, error)
 	// GetIndexStatistics gets index statistics from the middleware
-	GetIndexStatistics(tableSchema, tableName string) ([]IndexStatistic, error)
+	GetIndexStatistics(dbName, tableName string) ([]IndexStatistic, error)
 	// GetCreateStatement gets the create statement of the table
-	GetCreateStatement(tableSchema, tableName string) (string, error)
+	GetCreateStatement(dbName, tableName string) (string, error)
 	// GetByDBName gets the tables info by DBname from middleware
 	GetByDBName(dbName string) ([]Table, error)
 	// GetStatisticsByDBNameAndTableName gets the full table info by DB name and table name from middleware
