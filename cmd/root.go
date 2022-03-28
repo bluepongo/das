@@ -86,6 +86,7 @@ var (
 	alertHTTPURL        string
 	alertHTTPConfig     string
 	// healthcheck
+	healthcheckMaxRange       int
 	healthcheckAlertOwnerType string
 	// query
 	queryMinRowsExamined int
@@ -189,6 +190,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&alertHTTPURL, "alert-http-url", constant.DefaultRandomString, fmt.Sprintf("specify actual alert api url(default: %s)", config.DefaultAlertHTTPURL))
 	rootCmd.PersistentFlags().StringVar(&alertHTTPConfig, "alert-http-config", constant.DefaultRandomString, fmt.Sprintf("specify alert api parameters(default: %s)", config.DefaultAlertHTTPConfig))
 	// healthcheck
+	rootCmd.PersistentFlags().IntVar(&healthcheckMaxRange, "healthcheck-max-range", constant.DefaultRandomInt, fmt.Sprintf("specify healthcheck maximum range(default: %d)", config.DefaultHealthCheckMaxRange))
 	rootCmd.PersistentFlags().StringVar(&healthcheckAlertOwnerType, "healthcheck-alert-owner-type", constant.DefaultRandomString, fmt.Sprintf("specify healthcheck alert owner type(default: %s)", config.DefaultHealthcheckAlertOwnerType))
 	// query
 	rootCmd.PersistentFlags().IntVar(&queryMinRowsExamined, "query-min-rows-examined", constant.DefaultRandomInt, fmt.Sprintf("specify query min rows examined(default: %d", config.DefaultQueryMinRowsExamined))
@@ -449,6 +451,9 @@ func OverrideConfig() (err error) {
 	}
 
 	// override healthcheck
+	if healthcheckMaxRange != constant.DefaultRandomInt {
+		viper.Set(config.HealthcheckMaxRangeKey, healthcheckMaxRange)
+	}
 	if healthcheckAlertOwnerType != constant.DefaultRandomString {
 		viper.Set(config.HealthcheckAlertOwnerTypeKey, healthcheckAlertOwnerType)
 	}

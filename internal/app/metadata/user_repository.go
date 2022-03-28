@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"github.com/pingcap/errors"
+	"github.com/romberli/das/config"
 	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/constant"
@@ -82,7 +83,7 @@ func (ur *UserRepo) GetAll() ([]metadata.User, error) {
 	return userList, nil
 }
 
-// GetID gets the identity with given accountName from the middleware
+// GetID gets the identity with given account name from the middleware
 func (ur *UserRepo) GetID(accountName string) (int, error) {
 	sql := `select id from t_meta_user_info where del_flag = 0 and account_name = ?;`
 	log.Debugf("metadata UserRepo.GetID() select sql: %s", sql)
@@ -313,7 +314,7 @@ func (ur *UserRepo) GetByMobile(mobile string) (metadata.User, error) {
 	}
 }
 
-// GetByAccountNameOrEmployeeID gets a user of given loginName from the middleware
+// GetByAccountNameOrEmployeeID gets a user of given login name from the middleware
 func (ur *UserRepo) GetByAccountNameOrEmployeeID(loginName string) (metadata.User, error) {
 	sql := `
 	select id, user_name, department_name, employee_id, account_name, email, telephone, mobile, role, del_flag, create_time, last_update_time
@@ -480,8 +481,24 @@ func (ur *UserRepo) GetMySQLClustersByUserID(userID int) ([]metadata.MySQLCluste
 	return mysqlClusterList, nil
 }
 
-// GetAllMySQLServersByUserID gets mysqlserver list that this user owns
+// GetAllMySQLServersByUserID gets mysql server list that this user owns
 func (ur *UserRepo) GetAllMySQLServersByUserID(id int) ([]metadata.MySQLServer, error) {
+	user, err := ur.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if user.GetRole() >= config.MetadataUserDBARole {
+		// this user is dba or admin, will return all mysql servers
+		mysqlServerService := NewMySQLServerServiceWithDefault()
+		err = mysqlServerService.GetAll()
+		if err != nil {
+			return nil, err
+		}
+
+		return mysqlServerService.GetMySQLServers(), nil
+	}
+
 	sql := `
 		select msi.id,
 			msi.cluster_id,
@@ -546,6 +563,7 @@ func (ur *UserRepo) GetAllMySQLServersByUserID(id int) ([]metadata.MySQLServer, 
 		and msi.del_flag = 0
 		and ui.id = ?;
 	`
+
 	log.Debugf("metadata UserRepo.GetAllMySQLServersByUserID() sql: \n%s\nplaceholders: %d", sql, id)
 
 	result, err := ur.Execute(sql, id, id, id)

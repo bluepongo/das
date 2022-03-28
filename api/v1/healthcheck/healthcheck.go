@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
+	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/healthcheck"
 	"github.com/romberli/das/pkg/message"
 	msghealth "github.com/romberli/das/pkg/message/healthcheck"
@@ -15,18 +16,20 @@ import (
 	utilhealth "github.com/romberli/das/pkg/util/healthcheck"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/log"
+	"github.com/spf13/viper"
 )
 
 const (
+	oneDayHours     = 24
 	loginNameJSON   = "login_name"
 	operationIDJSON = "operation_id"
 	reviewJSON      = "review"
 
 	healthcheckOperationHistoriesStruct = "OperationHistories"
 
-	checkRespMessage           = `{"operation_id: %d", "message": "healthcheck started"}`
-	checkByHostInfoRespMessage = `{"operation_id: %d", "message": "healthcheck by host info started"}`
-	reviewAccuracyRespMessage  = `{"operation_id: %d", "message": "reviewed accuracy completed"}`
+	checkRespMessage           = `{"operation_id": %d, "message": "healthcheck started"}`
+	checkByHostInfoRespMessage = `{"operation_id": %d, "message": "healthcheck by host info started"}`
+	reviewAccuracyRespMessage  = `{"operation_id": %d, "message": "reviewed accuracy completed"}`
 )
 
 // @Tags	healthcheck
@@ -143,6 +146,20 @@ func Check(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, errors.Trace(err), rd.GetEndTime())
 		return
 	}
+
+	checkRange := int(endTime.Sub(startTime).Hours() / oneDayHours)
+	maxRange := viper.GetInt(config.HealthcheckMaxRangeKey)
+	if checkRange > maxRange {
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckRange, checkRange, maxRange)
+		return
+	}
+
+	minStartTime := time.Now().Add(-constant.Day * time.Duration(maxRange))
+	if startTime.Before(minStartTime) {
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckStartTime, startTime.Format(constant.TimeLayoutSecond), minStartTime.Format(constant.TimeLayoutSecond))
+		return
+	}
+
 	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, errors.Trace(err), rd.GetStep())
@@ -191,6 +208,14 @@ func CheckByHostInfo(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrNotValidTimeLayout, errors.Trace(err), rd.GetEndTime())
 		return
 	}
+
+	checkRange := int(endTime.Sub(startTime).Hours() / oneDayHours)
+	maxRange := viper.GetInt(config.HealthcheckMaxRangeKey)
+	if checkRange > maxRange {
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheckRange, checkRange, maxRange)
+		return
+	}
+
 	step, err := time.ParseDuration(rd.GetStep())
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrNotValidTimeDuration, errors.Trace(err), rd.GetStep())

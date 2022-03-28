@@ -90,6 +90,7 @@ func SetDefaultConfig(baseDir string) {
 	viper.SetDefault(AlertHTTPURLKey, DefaultAlertHTTPURL)
 	viper.SetDefault(AlertHTTPConfigKey, DefaultAlertHTTPConfig)
 	// healthcheck
+	viper.SetDefault(HealthcheckMaxRangeKey, DefaultHealthCheckMaxRange)
 	viper.SetDefault(HealthcheckAlertOwnerTypeKey, DefaultHealthcheckAlertOwnerType)
 	// query
 	viper.SetDefault(QueryMinRowsExaminedKey, DefaultQueryMinRowsExamined)
@@ -554,6 +555,12 @@ func ValidateAlert() error {
 // ValidateHealthcheck validates if health check section is valid
 func ValidateHealthcheck() error {
 	merr := &multierror.Error{}
+
+	// validate healthcheck.maxRange
+	_, err := cast.ToIntE(viper.Get(HealthcheckMaxRangeKey))
+	if err != nil {
+		merr = multierror.Append(merr, errors.Trace(err))
+	}
 
 	// validate healthcheck.alert.ownerType
 	ownerType, err := cast.ToStringE(viper.Get(HealthcheckAlertOwnerTypeKey))

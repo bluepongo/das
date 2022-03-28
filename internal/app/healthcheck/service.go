@@ -339,7 +339,8 @@ func (s *Service) ReviewAccuracy(id, review int) error {
 
 // Marshal marshals Service to json bytes
 func (s *Service) Marshal() ([]byte, error) {
-	return []byte(fmt.Sprintf(healthcheckMarshalServiceTemplate, s.GetResult().String())), nil
+	// return []byte(fmt.Sprintf(healthcheckMarshalServiceTemplate, s.GetResult().String())), nil
+	return s.MarshalWithFields(healthcheckResultStruct)
 }
 
 // MarshalWithFields marshals only specified fields of the Service to json bytes

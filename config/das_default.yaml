@@ -283,6 +283,12 @@ alert:
 
 # healthcheck configuration
 healthcheck:
+  # description: healthcheck max range
+  # command-line-argument: --healthcheck-max-range
+  # unit: day
+  # type: int
+  # default: 31
+  maxRange: 31
   # alert configuration
   alert:
     # description: specify owner type

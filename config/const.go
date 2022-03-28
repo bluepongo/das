@@ -86,6 +86,7 @@ const (
 	DefaultAlertHTTPURL     = "http://127.0.0.1:8080"
 	DefaultAlertHTTPConfig  = "{}"
 	// healthcheck
+	DefaultHealthCheckMaxRange       = 30
 	HealthcheckAlertOwnerTypeApp     = "app"
 	HealthcheckAlertOwnerTypeDB      = "db"
 	HealthcheckAlertOwnerTypeAll     = "all"
@@ -149,6 +150,7 @@ const (
 	AlertHTTPURLKey     = "alert.http.url"
 	AlertHTTPConfigKey  = "alert.http.config"
 	// healthcheck
+	HealthcheckMaxRangeKey       = "healthcheck.maxRange"
 	HealthcheckAlertOwnerTypeKey = "healthcheck.alert.ownerType"
 	// query
 	QueryMinRowsExaminedKey = "query.minRowsExamined"

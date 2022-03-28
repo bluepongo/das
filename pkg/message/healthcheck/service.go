@@ -25,17 +25,19 @@ const (
 	InfoHealthcheckCheckByHostInfo                  = 202103
 	InfoHealthcheckReviewAccuracy                   = 202104
 	// error
-	ErrHealthcheckDefaultEngineRun                  = 402101
-	ErrHealthcheckGetOperationHistoriesByLoginName  = 402102
-	ErrHealthcheckGetResultByOperationID            = 402103
-	ErrHealthcheckCheck                             = 402104
-	ErrHealthcheckCheckByHostInfo                   = 402105
-	ErrHealthcheckReviewAccuracy                    = 402106
-	ErrHealthcheckCloseConnection                   = 402107
-	ErrHealthcheckCreateApplicationMySQLConnection  = 402108
-	ErrHealthcheckCreateMonitorMySQLConnection      = 402109
-	ErrHealthcheckCreateMonitorClickhouseConnection = 402110
-	ErrHealthcheckCreateMonitorPrometheusConnection = 402111
+	ErrHealthcheckCheckRange                        = 402101
+	ErrHealthcheckStartTime                         = 402102
+	ErrHealthcheckDefaultEngineRun                  = 402103
+	ErrHealthcheckGetOperationHistoriesByLoginName  = 402104
+	ErrHealthcheckGetResultByOperationID            = 402105
+	ErrHealthcheckCheck                             = 402106
+	ErrHealthcheckCheckByHostInfo                   = 402107
+	ErrHealthcheckReviewAccuracy                    = 402108
+	ErrHealthcheckCloseConnection                   = 402109
+	ErrHealthcheckCreateApplicationMySQLConnection  = 402110
+	ErrHealthcheckCreateMonitorMySQLConnection      = 402111
+	ErrHealthcheckCreateMonitorClickhouseConnection = 402112
+	ErrHealthcheckCreateMonitorPrometheusConnection = 402113
 )
 
 func initServiceDebugMessage() {
@@ -75,6 +77,12 @@ func initServiceInfoMessage() {
 }
 
 func initServiceErrorMessage() {
+	message.Messages[ErrHealthcheckCheckRange] = config.NewErrMessage(
+		message.DefaultMessageHeader, ErrHealthcheckCheckRange,
+		"check range is larger than the maximum allowed range. check range: %d, allowed range: %d")
+	message.Messages[ErrHealthcheckStartTime] = config.NewErrMessage(
+		message.DefaultMessageHeader, ErrHealthcheckStartTime,
+		"start time is older than the minimum allowed time. start time: %s, minimum allowed time: %s")
 	message.Messages[ErrHealthcheckDefaultEngineRun] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckDefaultEngineRun,
 		"default engine run failed")
@@ -108,5 +116,4 @@ func initServiceErrorMessage() {
 	message.Messages[ErrHealthcheckCreateMonitorPrometheusConnection] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrHealthcheckCreateMonitorPrometheusConnection,
 		"create prometheus connection failed. addr: %s, user: %s")
-
 }

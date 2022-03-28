@@ -19,25 +19,91 @@ import (
 )
 
 const (
-	testDASMySQLAddr = "192.168.10.219:3306"
+	testDASMySQLAddr = "192.168.137.11:3306"
 	testDASMySQLName = "das"
 	testDASMySQLUser = "root"
 	testDASMySQLPass = "root"
+
+	testPMM1ServiceName    = "192-168-137-11-mysql"
+	testPMM1MySQLClusterID = 2
+	testPMM1MySQLServerID  = 2
+	testPMM1MySQLHostIP    = "192.168.137.11"
+	testPMM1MySQLPortNum   = 3306
+	testPMM1DBID           = 3
+	testPMM1DBName         = "das"
+	testPMM1SQLID          = "999ECD050D719733"
+
+	testPMM2ServiceName    = "192-168-137-11-mysql"
+	testPMM2MySQLClusterID = 1
+	testPMM2MySQLServerID  = 1
+	testPMM2MySQLHostIP    = "192.168.137.11"
+	testPMM2MySQLPortNum   = 3306
+	testPMM2DBID           = 1
+	testPMM2DBName         = "das"
+	testPMM2SQLID          = "F4F85858E527B409"
+
+	testMinRowsExamined = 1
 )
 
 var (
+	testPMMVersion     int
+	testServiceName    string
+	testMySQLClusterID int
+	testMySQLServerID  int
+	testMySQLHostIP    string
+	testMySQLPortNum   int
+	testDBID           int
+	testDBName         string
+	testSQLID          string
+
 	testDASRepo        *DASRepo
 	testMySQLRepo      *MySQLRepo
 	testClickhouseRepo *ClickhouseRepo
 )
 
 func init() {
+	testPMMVersion = 2
+	testInitMySQLInfo()
 	testInitDASMySQLPool()
 	testInitViper()
 
 	testDASRepo = NewDASRepoWithGlobal()
-	testMySQLRepo = testInitMySQLRepo()
-	testClickhouseRepo = testInitClickhouseRepo()
+
+	switch testPMMVersion {
+	case 1:
+		testMySQLRepo = testInitMySQLRepo()
+	case 2:
+		testClickhouseRepo = testInitClickhouseRepo()
+	default:
+		log.Errorf(fmt.Sprintf("pmm version should be 1 or 2, %d is not valid", testPMMVersion))
+		os.Exit(constant.DefaultAbnormalExitCode)
+	}
+}
+
+func testInitMySQLInfo() {
+	switch testPMMVersion {
+	case 1:
+		testServiceName = testPMM1ServiceName
+		testMySQLClusterID = testPMM1MySQLClusterID
+		testMySQLServerID = testPMM1MySQLServerID
+		testMySQLHostIP = testPMM1MySQLHostIP
+		testMySQLPortNum = testPMM1MySQLPortNum
+		testDBID = testPMM1DBID
+		testDBName = testPMM1DBName
+		testSQLID = testPMM1SQLID
+	case 2:
+		testServiceName = testPMM2ServiceName
+		testMySQLClusterID = testPMM2MySQLClusterID
+		testMySQLServerID = testPMM2MySQLServerID
+		testMySQLHostIP = testPMM2MySQLHostIP
+		testMySQLPortNum = testPMM2MySQLPortNum
+		testDBID = testPMM2DBID
+		testDBName = testPMM2DBName
+		testSQLID = testPMM2SQLID
+	default:
+		log.Errorf(fmt.Sprintf("pmm version should be 1 or 2, %d is not valid", testPMMVersion))
+		os.Exit(constant.DefaultAbnormalExitCode)
+	}
 }
 
 func testInitDASMySQLPool() {
@@ -57,12 +123,12 @@ func testInitViper() {
 	viper.Set(config.DBMonitorMySQLPassKey, config.DefaultDBMonitorMySQLPass)
 	viper.Set(config.DBMonitorClickhouseUserKey, config.DefaultDBMonitorClickhouseUser)
 	viper.Set(config.DBMonitorClickhousePassKey, config.DefaultDBMonitorClickhousePass)
-	viper.Set(config.QueryMinRowsExaminedKey, 1)
+	viper.Set(config.QueryMinRowsExaminedKey, testMinRowsExamined)
 }
 
 func testInitMySQLRepo() *MySQLRepo {
 	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
-	err := mysqlServerService.GetByID(testPMM1MySQLServerID)
+	err := mysqlServerService.GetByID(testMySQLServerID)
 	if err != nil {
 		log.Error(common.CombineMessageWithError("testInitMySQLRepo() failed", err))
 		os.Exit(constant.DefaultAbnormalExitCode)
@@ -86,7 +152,7 @@ func testInitMySQLRepo() *MySQLRepo {
 
 func testInitClickhouseRepo() *ClickhouseRepo {
 	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
-	err := mysqlServerService.GetByID(testPMM2MySQLServerID)
+	err := mysqlServerService.GetByID(testMySQLServerID)
 	if err != nil {
 		log.Error(common.CombineMessageWithError("testInitClickhouseRepo() failed", err))
 		os.Exit(constant.DefaultAbnormalExitCode)
@@ -108,11 +174,25 @@ func testInitClickhouseRepo() *ClickhouseRepo {
 	return NewClickHouseRepo(NewConfigWithDefault(), conn)
 }
 
-func TestQueryRepositoryAll(t *testing.T) {
+func TestQueryRepository_All(t *testing.T) {
 	TestDASRepo_Save(t)
+	// test PMM1.x
+	TestQueryRepository_PMM1(t)
+	// test PMM2.x
+	TestQueryRepository_PMM2(t)
+}
+
+func TestQueryRepository_PMM1(t *testing.T) {
+	testPMMVersion = 1
+	testInitMySQLInfo()
 	TestMySQLRepo_GetByServiceNames(t)
 	TestMySQLRepo_GetByDBName(t)
 	TestMySQLRepo_GetBySQLID(t)
+}
+
+func TestQueryRepository_PMM2(t *testing.T) {
+	testPMMVersion = 2
+	testInitMySQLInfo()
 	TestClickhouseRepo_GetByServiceNames(t)
 	TestClickhouseRepo_GetByDBName(t)
 	TestClickhouseRepo_GetBySQLID(t)
@@ -122,10 +202,10 @@ func TestDASRepo_Save(t *testing.T) {
 	asst := assert.New(t)
 
 	err := testDASRepo.Save(
-		testPMM2MySQLClusterID,
-		testPMM2MySQLServerID,
-		testPMM2DBID,
-		testPMM2SQLID,
+		testMySQLClusterID,
+		testMySQLServerID,
+		testDBID,
+		testSQLID,
 		time.Now().Add(-constant.Week),
 		time.Now(),
 		defaultLimit,
@@ -137,7 +217,7 @@ func TestDASRepo_Save(t *testing.T) {
 func TestMySQLRepo_GetByServiceNames(t *testing.T) {
 	asst := assert.New(t)
 
-	queries, err := testMySQLRepo.GetByServiceNames([]string{testPMM1ServiceName})
+	queries, err := testMySQLRepo.GetByServiceNames([]string{testServiceName})
 	asst.Nil(err, common.CombineMessageWithError("test GetByServiceNames() failed", err))
 	asst.GreaterOrEqual(len(queries), constant.ZeroInt, "test TestMySQLRepo_GetByServiceNames() failed")
 }
@@ -145,7 +225,7 @@ func TestMySQLRepo_GetByServiceNames(t *testing.T) {
 func TestMySQLRepo_GetByDBName(t *testing.T) {
 	asst := assert.New(t)
 
-	queries, err := testMySQLRepo.GetByDBName(testPMM1ServiceName, testPMM1DBName)
+	queries, err := testMySQLRepo.GetByDBName(testServiceName, testDBName)
 	asst.Nil(err, common.CombineMessageWithError("test GetByDBName() failed", err))
 	asst.GreaterOrEqual(len(queries), constant.ZeroInt, "test GetByDBName() failed")
 }
@@ -153,7 +233,7 @@ func TestMySQLRepo_GetByDBName(t *testing.T) {
 func TestMySQLRepo_GetBySQLID(t *testing.T) {
 	asst := assert.New(t)
 
-	query, err := testMySQLRepo.GetBySQLID(testPMM1ServiceName, testPMM1SQLID)
+	query, err := testMySQLRepo.GetBySQLID(testServiceName, testSQLID)
 	asst.Nil(err, common.CombineMessageWithError("test GetBySQLID() failed", err))
 	asst.NotNil(query, "test GetBySQLID() failed")
 }
@@ -161,7 +241,7 @@ func TestMySQLRepo_GetBySQLID(t *testing.T) {
 func TestClickhouseRepo_GetByServiceNames(t *testing.T) {
 	asst := assert.New(t)
 
-	queries, err := testClickhouseRepo.GetByServiceNames([]string{testPMM2ServiceName})
+	queries, err := testClickhouseRepo.GetByServiceNames([]string{testServiceName})
 	asst.Nil(err, common.CombineMessageWithError("test GetByServiceNames() failed", err))
 	asst.GreaterOrEqual(len(queries), constant.ZeroInt, "test GetByServiceNames() Failed")
 }
@@ -169,7 +249,7 @@ func TestClickhouseRepo_GetByServiceNames(t *testing.T) {
 func TestClickhouseRepo_GetByDBName(t *testing.T) {
 	asst := assert.New(t)
 
-	queries, err := testClickhouseRepo.GetByDBName(testPMM2ServiceName, testPMM2DBName)
+	queries, err := testClickhouseRepo.GetByDBName(testServiceName, testDBName)
 	asst.Nil(err, common.CombineMessageWithError("test GetByDBName() failed", err))
 	asst.GreaterOrEqual(len(queries), constant.ZeroInt, "test GetByDBName() Failed")
 }
@@ -177,7 +257,7 @@ func TestClickhouseRepo_GetByDBName(t *testing.T) {
 func TestClickhouseRepo_GetBySQLID(t *testing.T) {
 	asst := assert.New(t)
 
-	query, err := testClickhouseRepo.GetBySQLID(testPMM2ServiceName, testPMM2SQLID)
+	query, err := testClickhouseRepo.GetBySQLID(testServiceName, testSQLID)
 	asst.Nil(err, common.CombineMessageWithError("test GetBySQLID() failed", err))
 	asst.NotNil(query, "test GetBySQLID() Failed")
 }
