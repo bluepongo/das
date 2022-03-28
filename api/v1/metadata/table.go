@@ -3,11 +3,12 @@ package metadata
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/romberli/das/config"
+	"github.com/spf13/viper"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
-	"github.com/romberli/das/global"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/internal/app/privilege"
 	"github.com/romberli/das/pkg/message"
@@ -74,8 +75,11 @@ func GetTablesByDBID(c *gin.Context) {
 	hostIP := masterServers[constant.ZeroInt].GetHostIP()
 	portNum := masterServers[constant.ZeroInt].GetPortNum()
 	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
-	dbUser := global.DASMySQLPool.Config.DBUser
-	dbPass := global.DASMySQLPool.Config.DBPass
+	// 获取application 的
+	// dbUser := global.DASMySQLPool.Config.DBUser
+	// dbPass := global.DASMySQLPool.Config.DBPass
+	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
+	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)
@@ -118,24 +122,28 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	dataMap := make(map[string]interface{})
+	dataMap := make(map[string]string)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	dbIDInterface, dbIDExists := dataMap[tableDBIDJSON]
+	dbIDStr, dbIDExists := dataMap[tableDBIDJSON]
 	if !dbIDExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tableDBIDJSON)
 		return
 	}
-	dbID := int(dbIDInterface.(float64))
-	tableNameInterface, tableNameExists := dataMap[tableNameJSON]
+	dbID, err := strconv.Atoi(dbIDStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		return
+	}
+	// dbID := int(dbIDInterface.(float64))
+	tableName, tableNameExists := dataMap[tableNameJSON]
 	if !tableNameExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tableNameJSON)
 		return
 	}
-	tableName := tableNameInterface.(string)
 	// get host info, db name and table name
 	ds := metadata.NewDBServiceWithDefault()
 	err = ds.GetByID(dbID)
@@ -158,8 +166,8 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	hostIP := masterServers[constant.ZeroInt].GetHostIP()
 	portNum := masterServers[constant.ZeroInt].GetPortNum()
 	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
-	dbUser := global.DASMySQLPool.Config.DBUser
-	dbPass := global.DASMySQLPool.Config.DBPass
+	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
+	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)
@@ -204,40 +212,46 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 		return
 	}
 
-	dataMap := make(map[string]interface{})
+	dataMap := make(map[string]string)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	hostIPInterface, hostIPExists := dataMap[tableHostIPJSON]
+	hostIPStr, hostIPExists := dataMap[tableHostIPJSON]
 	if !hostIPExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tableHostIPJSON)
 		return
 	}
-	hostIP := hostIPInterface.(string)
-	portNumInterface, portNumExists := dataMap[tablePortNumJSON]
+	hostIP, err := strconv.Atoi(hostIPStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		return
+	}
+	portNumStr, portNumExists := dataMap[tablePortNumJSON]
 	if !portNumExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tablePortNumJSON)
 		return
 	}
-	portNum := int(portNumInterface.(float64))
-	dbNameInterface, dbNameExists := dataMap[tableDBNameJSON]
+	portNum, err := strconv.Atoi(portNumStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		return
+	}
+	dbName, dbNameExists := dataMap[tableDBNameJSON]
 	if !dbNameExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tableDBNameJSON)
 		return
 	}
-	dbName := dbNameInterface.(string)
-	tableNameInterface, tableNameExists := dataMap[tableNameJSON]
+	tableName, tableNameExists := dataMap[tableNameJSON]
 	if !tableNameExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tableNameJSON)
 		return
 	}
-	tableName := tableNameInterface.(string)
 
 	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
-	dbUser := global.DASMySQLPool.Config.DBUser
-	dbPass := global.DASMySQLPool.Config.DBPass
+	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
+	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)
@@ -281,30 +295,32 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	dataMap := make(map[string]interface{})
+	dataMap := make(map[string]string)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	dbIDInterface, dbIDExists := dataMap[tableDBIDJSON]
+	dbIDStr, dbIDExists := dataMap[tableDBIDJSON]
 	if !dbIDExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tableDBIDJSON)
 		return
 	}
-	dbID := int(dbIDInterface.(float64))
-	tableNameInterface, tableNameExists := dataMap[tableNameJSON]
+	dbID, err := strconv.Atoi(dbIDStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		return
+	}
+	tableName, tableNameExists := dataMap[tableNameJSON]
 	if !tableNameExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tableNameJSON)
 		return
 	}
-	tableName := tableNameInterface.(string)
-	accountNameInterface, accountNameExists := dataMap[tableAccountNameJSON]
+	loginName, accountNameExists := dataMap[tableAccountNameJSON]
 	if !accountNameExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tableAccountNameJSON)
 		return
 	}
-	loginName := accountNameInterface.(string)
 	// check privilege
 	us := metadata.NewUserServiceWithDefault()
 	err = us.GetByAccountNameOrEmployeeID(loginName)
@@ -340,8 +356,8 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 	hostIP := masterServers[constant.ZeroInt].GetHostIP()
 	portNum := masterServers[constant.ZeroInt].GetPortNum()
 	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
-	dbUser := global.DASMySQLPool.Config.DBUser
-	dbPass := global.DASMySQLPool.Config.DBPass
+	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
+	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)
@@ -380,42 +396,44 @@ func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
 		return
 	}
 
-	dataMap := make(map[string]interface{})
+	dataMap := make(map[string]string)
 	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	hostIPInterface, hostIPExists := dataMap[tableHostIPJSON]
+	hostIP, hostIPExists := dataMap[tableHostIPJSON]
 	if !hostIPExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tableHostIPJSON)
 		return
 	}
-	hostIP := hostIPInterface.(string)
-	portNumInterface, portNumExists := dataMap[tablePortNumJSON]
+
+	portNumStr, portNumExists := dataMap[tablePortNumJSON]
 	if !portNumExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tablePortNumJSON)
 		return
 	}
-	portNum := int(portNumInterface.(float64))
-	dbNameInterface, dbNameExists := dataMap[tableDBNameJSON]
+	portNum, err := strconv.Atoi(portNumStr)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		return
+	}
+
+	dbName, dbNameExists := dataMap[tableDBNameJSON]
 	if !dbNameExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tableDBNameJSON)
 		return
 	}
-	dbName := dbNameInterface.(string)
-	tableNameInterface, tableNameExists := dataMap[tableNameJSON]
+	tableName, tableNameExists := dataMap[tableNameJSON]
 	if !tableNameExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tableNameJSON)
 		return
 	}
-	tableName := tableNameInterface.(string)
-	accountNameInterface, accountNameExists := dataMap[tableAccountNameJSON]
+	loginName, accountNameExists := dataMap[tableAccountNameJSON]
 	if !accountNameExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, tableAccountNameJSON)
 		return
 	}
-	loginName := accountNameInterface.(string)
 	// check privilege
 	us := metadata.NewUserServiceWithDefault()
 	err = us.GetByAccountNameOrEmployeeID(loginName)
@@ -430,8 +448,8 @@ func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
 		return
 	}
 	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
-	dbUser := global.DASMySQLPool.Config.DBUser
-	dbPass := global.DASMySQLPool.Config.DBPass
+	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
+	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)

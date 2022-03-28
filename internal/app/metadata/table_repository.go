@@ -142,8 +142,8 @@ func (tr *TableRepo) GetByDBName(dbName string) ([]metadata.Table, error) {
 	return tableList, nil
 }
 
-// GetStatisticsByDBNameAndTableName gets the full table info by DB name and table name from middleware
-func (tr *TableRepo) GetStatisticsByDBNameAndTableName(dbName, tableName string) ([]metadata.TableStatistic, []metadata.IndexStatistic, string, error) {
+// GetStatisticsByDBNameAndTableName gets the full table info by DB id and table name from middleware
+func (tr *TableRepo) GetStatisticsByDBNameAndTableName(dbName string, tableName string) ([]metadata.TableStatistic, []metadata.IndexStatistic, string, error) {
 	tableStatistics, err := tr.GetTableStatistics(dbName, tableName)
 	if err != nil {
 		return nil, nil, "", err
