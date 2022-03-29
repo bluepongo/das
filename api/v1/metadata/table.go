@@ -119,7 +119,7 @@ func GetTablesByDBID(c *gin.Context) {
 func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	var rd *utilmeta.GetStatisticsByDBIDAndTableName
 	// bind json
-	err := c.ShouldBind(&rd)
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
@@ -189,7 +189,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	var rd *utilmeta.GetStatisticsByHostInfoAndDBNameAndTableName
 	// bind json
-	err := c.ShouldBind(&rd)
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return

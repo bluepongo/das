@@ -31,7 +31,7 @@ func (tr *TableRepo) Execute(command string, args ...interface{}) (middleware.Re
 // GetTableStatistics gets table statistics from the middleware
 func (tr *TableRepo) GetTableStatistics(dbName, tableName string) ([]metadata.TableStatistic, error) {
 	sql := `
-		SELECT t.db_name                        	 AS db_name,
+		SELECT t.table_schema                        AS db_name,
 			t.table_name                             AS table_name,
 			t.table_rows                             AS table_rows,
 			t.data_length                            AS size,
@@ -45,7 +45,7 @@ func (tr *TableRepo) GetTableStatistics(dbName, tableName string) ([]metadata.Ta
 		FROM information_schema.tables t
 		INNER JOIN information_schema.collation_character_set_applicability ccsa
 			ON t.table_collation = ccsa.collation_name
-		WHERE db_name = ? AND table_name = ? ;
+		WHERE table_schema = ? AND table_name = ? ;
 	`
 	log.Debugf("metadata TableRepo.GetTableStatistics() sql: \n%s", sql, dbName, tableName)
 
@@ -68,7 +68,7 @@ func (tr *TableRepo) GetTableStatistics(dbName, tableName string) ([]metadata.Ta
 // GetIndexStatistics gets index statistics from the middleware
 func (tr *TableRepo) GetIndexStatistics(dbName, tableName string) ([]metadata.IndexStatistic, error) {
 	sql := `
-		SELECT db_name                          AS db_name,
+		SELECT table_schema                     AS db_name,
 			table_name                          AS table_name,
 			index_name                          AS index_name,
 			seq_in_index                        AS sequence,
@@ -77,7 +77,7 @@ func (tr *TableRepo) GetIndexStatistics(dbName, tableName string) ([]metadata.In
 			IF(non_unique = 0, 'true', 'false') AS non_unique,
 			IF(nullable = '', 'false', 'true')  AS nullable
 		FROM information_schema.statistics
-		WHERE db_name = ?
+		WHERE table_schema = ?
   		AND table_name = ? ;
 	`
 	log.Debugf("metadata TableRepo.GetIndexStatistics() sql: \n%s", sql, dbName, tableName)
@@ -119,10 +119,10 @@ func (tr *TableRepo) GetCreateStatement(dbName, tableName string) (string, error
 // GetByDBName gets the tables info by DBname from middleware
 func (tr *TableRepo) GetByDBName(dbName string) ([]metadata.Table, error) {
 	sql := `
-		SELECT db_name      AS db_name,
+		SELECT table_schema AS db_name,
 			   table_name   AS table_name
 		FROM information_schema.tables 
-		WHERE db_name = ?;
+		WHERE table_schema = ?;
 	`
 	log.Debugf("metadata TableRepo.GetByDBName() sql: \n%s\nplaceholders: %s", sql, dbName)
 	result, err := tr.Execute(sql, dbName)
