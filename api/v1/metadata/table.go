@@ -1,11 +1,11 @@
 package metadata
 
 import (
-	"encoding/json"
 	"fmt"
+	"strconv"
+
 	"github.com/romberli/das/config"
 	"github.com/spf13/viper"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
@@ -14,6 +14,7 @@ import (
 	"github.com/romberli/das/pkg/message"
 	msgmeta "github.com/romberli/das/pkg/message/metadata"
 	"github.com/romberli/das/pkg/resp"
+	utilmeta "github.com/romberli/das/pkg/util/metadata"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
@@ -116,34 +117,15 @@ func GetTablesByDBID(c *gin.Context) {
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/statistic/db-table
 func GetStatisticsByDBIDAndTableName(c *gin.Context) {
-	// get params
-	data, err := c.GetRawData()
+	var rd *utilmeta.GetStatisticsByDBIDAndTableName
+	// bind json
+	err := c.ShouldBind(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
-	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
-		return
-	}
-	dbIDStr, dbIDExists := dataMap[tableDBIDJSON]
-	if !dbIDExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableDBIDJSON)
-		return
-	}
-	dbID, err := strconv.Atoi(dbIDStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
-	// dbID := int(dbIDInterface.(float64))
-	tableName, tableNameExists := dataMap[tableNameJSON]
-	if !tableNameExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableNameJSON)
-		return
-	}
+	dbID := rd.GetDBID()
+	tableName := rd.GetTableName()
 	// get host info, db name and table name
 	ds := metadata.NewDBServiceWithDefault()
 	err = ds.GetByID(dbID)
@@ -205,49 +187,17 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/statistic/host-info-db-table
 func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
-	// get params
-	data, err := c.GetRawData()
+	var rd *utilmeta.GetStatisticsByHostInfoAndDBNameAndTableName
+	// bind json
+	err := c.ShouldBind(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
-
-	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
-		return
-	}
-	hostIPStr, hostIPExists := dataMap[tableHostIPJSON]
-	if !hostIPExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableHostIPJSON)
-		return
-	}
-	hostIP, err := strconv.Atoi(hostIPStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
-	portNumStr, portNumExists := dataMap[tablePortNumJSON]
-	if !portNumExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tablePortNumJSON)
-		return
-	}
-	portNum, err := strconv.Atoi(portNumStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
-	dbName, dbNameExists := dataMap[tableDBNameJSON]
-	if !dbNameExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableDBNameJSON)
-		return
-	}
-	tableName, tableNameExists := dataMap[tableNameJSON]
-	if !tableNameExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableNameJSON)
-		return
-	}
+	hostIP := rd.GetHostIP()
+	portNum := rd.GetPortNum()
+	dbName := rd.GetDBName()
+	tableName := rd.GetTableName()
 
 	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
 	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
@@ -289,38 +239,16 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/analyze/db
 func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
-	// get params
-	data, err := c.GetRawData()
+	var rd *utilmeta.AnalyzeTableByDBIDAndTableName
+	// bind json
+	err := c.ShouldBind(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
-	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
-		return
-	}
-	dbIDStr, dbIDExists := dataMap[tableDBIDJSON]
-	if !dbIDExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableDBIDJSON)
-		return
-	}
-	dbID, err := strconv.Atoi(dbIDStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
-	tableName, tableNameExists := dataMap[tableNameJSON]
-	if !tableNameExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableNameJSON)
-		return
-	}
-	loginName, accountNameExists := dataMap[tableAccountNameJSON]
-	if !accountNameExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableAccountNameJSON)
-		return
-	}
+	dbID := rd.GetDBID()
+	tableName := rd.GetTableName()
+	loginName := rd.GetLoginName()
 	// check privilege
 	us := metadata.NewUserServiceWithDefault()
 	err = us.GetByAccountNameOrEmployeeID(loginName)
@@ -389,51 +317,18 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/analyze/host-info
 func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
-	// get params
-	data, err := c.GetRawData()
+	var rd *utilmeta.AnalyzeTableByHostInfoAndDBNameAndTableName
+	// bind json
+	err := c.ShouldBind(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
-
-	dataMap := make(map[string]string)
-	err = json.Unmarshal(data, &dataMap)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
-		return
-	}
-	hostIP, hostIPExists := dataMap[tableHostIPJSON]
-	if !hostIPExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableHostIPJSON)
-		return
-	}
-
-	portNumStr, portNumExists := dataMap[tablePortNumJSON]
-	if !portNumExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tablePortNumJSON)
-		return
-	}
-	portNum, err := strconv.Atoi(portNumStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
-
-	dbName, dbNameExists := dataMap[tableDBNameJSON]
-	if !dbNameExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableDBNameJSON)
-		return
-	}
-	tableName, tableNameExists := dataMap[tableNameJSON]
-	if !tableNameExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableNameJSON)
-		return
-	}
-	loginName, accountNameExists := dataMap[tableAccountNameJSON]
-	if !accountNameExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableAccountNameJSON)
-		return
-	}
+	hostIP := rd.GetHostIP()
+	portNum := rd.GetPortNum()
+	dbName := rd.GetDBName()
+	tableName := rd.GetTableName()
+	loginName := rd.GetLoginName()
 	// check privilege
 	us := metadata.NewUserServiceWithDefault()
 	err = us.GetByAccountNameOrEmployeeID(loginName)
