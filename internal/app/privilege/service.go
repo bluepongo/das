@@ -1,120 +1,106 @@
 package privilege
 
 import (
-	"github.com/romberli/das/config"
-	"github.com/romberli/das/internal/app/metadata"
-	depmeta "github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/das/internal/dependency/privilege"
 	"github.com/romberli/das/pkg/message"
 	msgpriv "github.com/romberli/das/pkg/message/privilege"
-	"github.com/romberli/go-util/constant"
-	"github.com/spf13/viper"
 )
 
 var _ privilege.Service = (*Service)(nil)
 
 type Service struct {
-	User depmeta.User
+	privilege.Repository
+	loginName string
 }
 
 // NewService returns privilege.Service with given user
-func NewService(user depmeta.User) privilege.Service {
-	return newService(user)
+func NewService(repo privilege.Repository, loginName string) privilege.Service {
+	return newService(repo, loginName)
+}
+
+// NewServiceWithDefault returns privilege.Service with default value
+func NewServiceWithDefault(loginName string) privilege.Service {
+	return newService(NewRepositoryWithGlobal(), loginName)
 }
 
 // newService returns privilege.Service with given user
-func newService(user depmeta.User) *Service {
+func newService(repo privilege.Repository, loginName string) *Service {
 	return &Service{
-		User: user,
+		Repository: repo,
+		loginName:  loginName,
 	}
 }
 
-// GetUser returns the user
-func (s *Service) GetUser() depmeta.User {
-	return s.User
+// GetLoginName returns the login name
+func (s *Service) GetLoginName() string {
+	return s.loginName
 }
 
 // CheckMySQLServerByID checks if given user has privilege to the mysql server with mysql server id
 func (s *Service) CheckMySQLServerByID(mysqlServerID int) error {
-	return s.checkMySQLServerByID(mysqlServerID)
+	mysqlClusterID, err := s.Repository.GetMySQLClusterIDByMySQLServerID(mysqlServerID)
+	if err != nil {
+		return err
+	}
+
+	ok, err := s.checkPrivilege(mysqlClusterID)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return message.NewMessage(msgpriv.ErrPrivilegeNotEnoughPrivilegeByMySQLServerID, mysqlServerID, s.GetLoginName())
+	}
+
+	return nil
 }
 
 // CheckMySQLServerByHostInfo checks if given user has privilege to the mysql server with host ip and port number
 func (s *Service) CheckMySQLServerByHostInfo(hostIP string, portNum int) error {
-	mysqlServerService := metadata.NewMySQLServerServiceWithDefault()
-	err := mysqlServerService.GetByHostInfo(hostIP, portNum)
+	mysqlClusterID, err := s.Repository.GetMySQLClusterIDByHostInfo(hostIP, portNum)
 	if err != nil {
 		return err
 	}
 
-	return s.checkMySQLServerByID(mysqlServerService.GetMySQLServers()[constant.ZeroInt].Identity())
+	ok, err := s.checkPrivilege(mysqlClusterID)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return message.NewMessage(msgpriv.ErrPrivilegeNotEnoughPrivilegeByHostInfo, hostIP, portNum, s.GetLoginName())
+	}
+
+	return nil
 }
 
 // CheckDBByID checks if given user has privilege to the database with db id
 func (s *Service) CheckDBByID(dbID int) error {
-	return s.checkDBByID(dbID)
-}
-
-// CheckDBByNameAndClusterInfo checks if given user has privilege to the database with db name, mysql cluster id and mysql cluster type
-func (s *Service) CheckDBByNameAndClusterInfo(dbName string, mysqlClusterID, mysqlClusterType int) error {
-	dbService := metadata.NewDBServiceWithDefault()
-	err := dbService.GetDBByNameAndClusterInfo(dbName, mysqlClusterID, mysqlClusterType)
+	mysqlClusterID, err := s.Repository.GetMySQLClusterIDByDBID(dbID)
 	if err != nil {
 		return err
 	}
 
-	return s.checkDBByID(dbService.GetDBs()[constant.ZeroInt].Identity())
-}
-
-// CheckDBByNameAndHostInfo checks if given user has privilege to the database with db name, host ip and port number
-func (s *Service) CheckDBByNameAndHostInfo(dbName string, hostIP string, portNum int) error {
-	dbService := metadata.NewDBServiceWithDefault()
-	err := dbService.GetDBByNameAndHostInfo(dbName, hostIP, portNum)
+	ok, err := s.checkPrivilege(mysqlClusterID)
 	if err != nil {
 		return err
 	}
+	if !ok {
+		return message.NewMessage(msgpriv.ErrPrivilegeNotEnoughPrivilegeByDBID, dbID, s.GetLoginName())
+	}
 
-	return s.checkDBByID(dbService.GetDBs()[constant.ZeroInt].Identity())
+	return nil
 }
 
-// checkMySQLServerByID checks if given user has privilege to the mysql server with mysql server id
-func (s *Service) checkMySQLServerByID(mysqlServerID int) error {
-	if !viper.GetBool(config.PrivilegeEnabledKey) {
-		return nil
+func (s *Service) checkPrivilege(mysqlClusterID int) (bool, error) {
+	mysqlClusterIDList, err := s.Repository.GetMySQLServerClusterIDListByLoginName(s.GetLoginName())
+	if err != nil {
+		return false, err
 	}
 
-	if s.GetUser().GetRole() >= config.MetadataUserDBARole {
-		// this user is dba or admin
-		return nil
-	}
-	// get all mysql servers
-	mysqlServerList, err := s.GetUser().GetAllMySQLServers()
-	if err != nil {
-		return err
-	}
-	for _, mysqlServer := range mysqlServerList {
-		if mysqlServer.Identity() == mysqlServerID {
-			// user has the privilege to the given mysql
-			return nil
+	for _, clusterID := range mysqlClusterIDList {
+		if clusterID == mysqlClusterID {
+			return true, nil
 		}
 	}
 
-	return message.NewMessage(msgpriv.ErrPrivilegeNotEnoughPrivilege, s.GetUser().GetUserName(), s.GetUser().GetAccountName(), mysqlServerID)
-}
-
-// checkDBByID checks if given user has privilege to the database with db id
-func (s *Service) checkDBByID(dbID int) error {
-	dbService := metadata.NewDBServiceWithDefault()
-	err := dbService.GetByID(dbID)
-	if err != nil {
-		return err
-	}
-
-	mysqlClusterService := metadata.NewMySQLClusterServiceWithDefault()
-	err = mysqlClusterService.GetMasterServersByID(dbService.GetDBs()[constant.ZeroInt].GetClusterID())
-	if err != nil {
-		return err
-	}
-
-	return s.checkMySQLServerByID(mysqlClusterService.GetMySQLServers()[constant.ZeroInt].Identity())
+	return false, nil
 }

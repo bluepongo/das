@@ -14,7 +14,7 @@ func init() {
 	testQuerier = newQuerier(NewConfigWithDefault(), testDASRepo)
 }
 
-func TestQueryAll(t *testing.T) {
+func TestQuery_All(t *testing.T) {
 	// test PMM1.x
 	TestQuery_PMM1(t)
 	// test PMM2.x

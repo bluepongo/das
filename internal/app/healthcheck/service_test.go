@@ -48,7 +48,7 @@ func deleteByOperationID(operationID int) error {
 	return tx.Commit()
 }
 
-func TestServiceAll(t *testing.T) {
+func TestService_All(t *testing.T) {
 	TestService_GetResult(t)
 	TestService_GetResultByOperationID(t)
 	TestService_Check(t)

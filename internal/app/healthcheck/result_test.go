@@ -110,7 +110,7 @@ func testInitResult() *Result {
 	)
 }
 
-func TestResultAll(t *testing.T) {
+func TestResult_All(t *testing.T) {
 	TestResult_Identity(t)
 	TestResult_GetOperationID(t)
 	TestResult_GetWeightedAverageScore(t)

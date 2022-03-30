@@ -250,7 +250,7 @@ func testDeleteResultByID(id int) error {
 	return err
 }
 
-func TestRepositoryAll(t *testing.T) {
+func TestRepository_All(t *testing.T) {
 	// das repository
 	TestDASRepo_Execute(t)
 	TestDASRepo_GetResultByOperationID(t)
