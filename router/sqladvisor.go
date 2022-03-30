@@ -10,6 +10,6 @@ func RegisterSQLAdvisor(group *gin.RouterGroup) {
 	{
 		sqladvisorGroup.GET("/fingerprint", sqladvisor.GetFingerprint)
 		sqladvisorGroup.GET("/sql-id", sqladvisor.GetSQLID)
-		sqladvisorGroup.POST("/advise/:db_id", sqladvisor.Advise)
+		sqladvisorGroup.POST("/advise", sqladvisor.Advise)
 	}
 }
