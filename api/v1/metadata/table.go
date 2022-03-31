@@ -10,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/metadata"
-	"github.com/romberli/das/internal/app/privilege"
 	"github.com/romberli/das/pkg/message"
 	msgmeta "github.com/romberli/das/pkg/message/metadata"
 	"github.com/romberli/das/pkg/resp"
@@ -72,13 +71,10 @@ func GetTablesByDBID(c *gin.Context) {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMasterServers, mysqlCluster.Identity(), err)
 		return
 	}
-
 	hostIP := masterServers[constant.ZeroInt].GetHostIP()
 	portNum := masterServers[constant.ZeroInt].GetPortNum()
+
 	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
-	// 获取application 的
-	// dbUser := global.DASMySQLPool.Config.DBUser
-	// dbPass := global.DASMySQLPool.Config.DBPass
 	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
 	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
@@ -113,11 +109,12 @@ func GetTablesByDBID(c *gin.Context) {
 // @Accept	application/json
 // @Param	db_id		body int	true "db id"
 // @Param	table_name	body string	true "table name"
+// @Param	account_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/statistic/db-table
 func GetStatisticsByDBIDAndTableName(c *gin.Context) {
-	var rd *utilmeta.GetStatisticsByDBIDAndTableName
+	var rd *utilmeta.GetTableByDBIDAndTableName
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
@@ -126,6 +123,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	}
 	dbID := rd.GetDBID()
 	tableName := rd.GetTableName()
+	loginName := rd.GetLoginName()
 	// get host info, db name and table name
 	ds := metadata.NewDBServiceWithDefault()
 	err = ds.GetByID(dbID)
@@ -159,7 +157,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	// init service
 	ts := metadata.NewTableService(tableRepo)
 	// get entity
-	err = ts.GetStatisticsByDBNameAndTableName(dbName, tableName)
+	err = ts.GetStatisticsByHostInfoAndDBNameAndTableName(hostIP, portNum, loginName, dbName, tableName)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByDBIDAndTableName, err, dbID, tableName)
 		return
@@ -183,11 +181,12 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 // @Param	port_num	body int	true "port num"
 // @Param	db_name		body string	true "db name"
 // @Param	table_name	body string	true "table name"
+// @Param	account_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/statistic/host-info-db-table
 func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
-	var rd *utilmeta.GetStatisticsByHostInfoAndDBNameAndTableName
+	var rd *utilmeta.GetTableByHostInfoAndDBNameAndTableName
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
@@ -196,6 +195,7 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	}
 	hostIP := rd.GetHostIP()
 	portNum := rd.GetPortNum()
+	loginName := rd.GetLoginName()
 	dbName := rd.GetDBName()
 	tableName := rd.GetTableName()
 
@@ -212,7 +212,7 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	// init service
 	ts := metadata.NewTableService(tableRepo)
 	// get entity
-	err = ts.GetStatisticsByDBNameAndTableName(dbName, tableName)
+	err = ts.GetStatisticsByHostInfoAndDBNameAndTableName(hostIP, portNum, loginName, dbName, tableName)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName, err, hostIP, portNum, dbName, tableName)
 		return
@@ -239,9 +239,9 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/analyze/db
 func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
-	var rd *utilmeta.AnalyzeTableByDBIDAndTableName
+	var rd *utilmeta.GetTableByDBIDAndTableName
 	// bind json
-	err := c.ShouldBind(&rd)
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
@@ -249,19 +249,6 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 	dbID := rd.GetDBID()
 	tableName := rd.GetTableName()
 	loginName := rd.GetLoginName()
-	// check privilege
-	us := metadata.NewUserServiceWithDefault()
-	err = us.GetByAccountNameOrEmployeeID(loginName)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetByAccountNameOrEmployeeID, loginName, err)
-		return
-	}
-	privilegeService := privilege.NewService(us.GetUsers()[constant.ZeroInt])
-	err = privilegeService.CheckDBByID(dbID)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByDBIDAndTableName, err, dbID, tableName)
-		return
-	}
 	// get host info, db name and table name
 	ds := metadata.NewDBServiceWithDefault()
 	err = ds.GetByID(dbID)
@@ -295,7 +282,7 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 	// init service
 	ts := metadata.NewTableService(tableRepo)
 	// get entity
-	err = ts.AnalyzeTableByDBNameAndTableName(dbName, tableName)
+	err = ts.AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP, portNum, loginName, dbName, tableName)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByDBIDAndTableName, err, dbID, tableName)
 		return
@@ -317,9 +304,9 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/analyze/host-info
 func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
-	var rd *utilmeta.AnalyzeTableByHostInfoAndDBNameAndTableName
+	var rd *utilmeta.GetTableByHostInfoAndDBNameAndTableName
 	// bind json
-	err := c.ShouldBind(&rd)
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
@@ -329,19 +316,7 @@ func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	dbName := rd.GetDBName()
 	tableName := rd.GetTableName()
 	loginName := rd.GetLoginName()
-	// check privilege
-	us := metadata.NewUserServiceWithDefault()
-	err = us.GetByAccountNameOrEmployeeID(loginName)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetByAccountNameOrEmployeeID, loginName, err)
-		return
-	}
-	privilegeService := privilege.NewService(us.GetUsers()[constant.ZeroInt])
-	err = privilegeService.CheckDBByNameAndHostInfo(dbName, hostIP, portNum)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, err, hostIP, portNum, dbName, tableName)
-		return
-	}
+
 	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
 	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
 	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
@@ -355,7 +330,7 @@ func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	// init service
 	ts := metadata.NewTableService(tableRepo)
 	// get entity
-	err = ts.AnalyzeTableByDBNameAndTableName(dbName, tableName)
+	err = ts.AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP, portNum, loginName, dbName, tableName)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, err, hostIP, portNum, dbName, tableName)
 	}
