@@ -25,7 +25,7 @@ const (
 	tablePortNumJSON     = "port_num"
 	tableDBIDJSON        = "db_id"
 	tableDBNameJSON      = "db_name"
-	tableAccountNameJSON = "account_name"
+	tableAccountNameJSON = "login_name"
 
 	analyzeRespMessage = `{"message": "analyze table completed. db name: %s, table name: %s"}`
 )
@@ -109,7 +109,7 @@ func GetTablesByDBID(c *gin.Context) {
 // @Accept	application/json
 // @Param	db_id		body int	true "db id"
 // @Param	table_name	body string	true "table name"
-// @Param	account_name	body string true "account name or employee id"
+// @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/statistic/db-table
@@ -181,7 +181,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 // @Param	port_num	body int	true "port num"
 // @Param	db_name		body string	true "db name"
 // @Param	table_name	body string	true "table name"
-// @Param	account_name	body string true "account name or employee id"
+// @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/statistic/host-info-db-table
@@ -232,9 +232,9 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 // @Tags	Tables
 // @Summary analyze table by db id and table name
 // @Accept	application/json
-// @Param	db_id			body int	true "db id"
-// @Param	table_name		body string	true "table name"
-// @Param	account_name	body string true "account name or employee id"
+// @Param	db_id		body int	true "db id"
+// @Param	table_name	body string	true "table name"
+// @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/analyze/db
@@ -295,11 +295,11 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 // @Tags	Tables
 // @Summary analyze table by host info and db name and table name
 // @Accept	application/json
-// @Param	host_ip			body string	true "host ip"
-// @Param	port_num		body int	true "port num"
-// @Param	db_name			body string	true "db name"
-// @Param	table_name		body string	true "table name"
-// @Param	account_name	body string true "account name or employee id"
+// @Param	host_ip		body string	true "host ip"
+// @Param	port_num	body int	true "port num"
+// @Param	db_name		body string	true "db name"
+// @Param	table_name	body string	true "table name"
+// @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/analyze/host-info

@@ -4,7 +4,7 @@ package metadata
 type GetTableByDBIDAndTableName struct {
 	DBID      int    `json:"db_id" binding:"required"`
 	TableName string `json:"table_name" binding:"required"`
-	LoginName string `json:"account_name" binding:"required"`
+	LoginName string `json:"login_name" binding:"required"`
 }
 
 // GetDBID is getter of db id
@@ -28,7 +28,7 @@ type GetTableByHostInfoAndDBNameAndTableName struct {
 	PortNum   int    `json:"port_num" binding:"required"`
 	DBName    string `json:"db_name" binding:"required"`
 	TableName string `json:"table_name" binding:"required"`
-	LoginName string `json:"account_name" binding:"required"`
+	LoginName string `json:"login_name" binding:"required"`
 }
 
 // GetHostIP is getter of host ip

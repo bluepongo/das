@@ -12,12 +12,12 @@ import (
 )
 
 const (
-	testDBName           = "mysql"
-	testTableName        = "db"
-	testTableDBName      = "mysql"
-	testTableHostIP      = "127.0.0.1"
-	testTablePortNum     = 3306
-	testTableAccountName = "yc_admin"
+	testDBName         = "mysql"
+	testTableName      = "db"
+	testTableDBName    = "mysql"
+	testTableHostIP    = "127.0.0.1"
+	testTablePortNum   = 3306
+	testTableLoginName = "yc_admin"
 )
 
 var testTableRepo *TableRepo
