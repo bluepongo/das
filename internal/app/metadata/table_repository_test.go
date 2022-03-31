@@ -17,7 +17,7 @@ const (
 	testTableDBName      = "mysql"
 	testTableHostIP      = "127.0.0.1"
 	testTablePortNum     = 3306
-	testTableAccountName = "root"
+	testTableAccountName = "yc_admin"
 )
 
 var testTableRepo *TableRepo

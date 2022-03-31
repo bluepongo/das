@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"github.com/romberli/das/internal/app/privilege"
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/common"
 )
@@ -34,6 +35,21 @@ func (ts *TableService) GetTables() []metadata.Table {
 	return ts.Tables
 }
 
+// GetTableStatistics returns the table statistics list
+func (ts *TableService) GetTableStatistics() []metadata.TableStatistic {
+	return ts.TableStatistics
+}
+
+// GetIndexStatistics returns the index statistics list
+func (ts *TableService) GetIndexStatistics() []metadata.IndexStatistic {
+	return ts.IndexStatistics
+}
+
+// GetCreateStatement returns the create statement of table
+func (ts *TableService) GetCreateStatement() string {
+	return ts.CreateStatement
+}
+
 // GetByDBName returns tables info by DB name
 func (ts *TableService) GetByDBName(dbName string) error {
 	var err error
@@ -42,9 +58,15 @@ func (ts *TableService) GetByDBName(dbName string) error {
 	return err
 }
 
-// GetStatisticsByDBNameAndTableName returns the full table info by DB name and table name
-func (ts *TableService) GetStatisticsByDBNameAndTableName(dbName, tableName string) error {
-	var err error
+// GetStatisticsByHostInfoAndDBNameAndTableName returns the full table info by DB name and table name
+func (ts *TableService) GetStatisticsByHostInfoAndDBNameAndTableName(hostIP string, portNum int, loginName, dbName, tableName string) error {
+	// check privilege
+	privilegeService := privilege.NewServiceWithDefault(loginName)
+	err := privilegeService.CheckMySQLServerByHostInfo(hostIP, portNum)
+	if err != nil {
+		return err
+	}
+
 	ts.TableStatistics, ts.IndexStatistics, ts.CreateStatement, err = ts.TableRepo.GetStatisticsByDBNameAndTableName(dbName, tableName)
 	if err != nil {
 		return err
@@ -53,8 +75,15 @@ func (ts *TableService) GetStatisticsByDBNameAndTableName(dbName, tableName stri
 	return nil
 }
 
-// AnalyzeTableByDBNameAndTableName analyzes the table by DBName and TableName
-func (ts *TableService) AnalyzeTableByDBNameAndTableName(dbName, tableName string) error {
+// AnalyzeTableByHostInfoAndDBNameAndTableName analyzes the table by DBName and TableName
+func (ts *TableService) AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, loginName, dbName, tableName string) error {
+	// check privilege
+	privilegeService := privilege.NewServiceWithDefault(loginName)
+	err := privilegeService.CheckMySQLServerByHostInfo(hostIP, portNum)
+	if err != nil {
+		return err
+	}
+
 	return ts.TableRepo.AnalyzeTableByDBNameAndTableName(dbName, tableName)
 }
 

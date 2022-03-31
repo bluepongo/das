@@ -38,9 +38,11 @@ func TestTableService_GetByDBName(t *testing.T) {
 func TestTableService_GetStatisticsByDBNameAndTableName(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testTableService.GetStatisticsByDBNameAndTableName(testDBName, testTableName)
+	err := testTableService.GetStatisticsByHostInfoAndDBNameAndTableName(testTableHostIP, testTablePortNum, testTableAccountName, testDBName, testTableName)
 	asst.Nil(err, common.CombineMessageWithError("test GetStatisticsByDBNameAndTableName() failed", err))
-	asst.Equal(31, len(testTableService.GetTables()), "test GetStatisticsByDBNameAndTableName() failed")
+	asst.Equal(1, len(testTableService.GetTableStatistics()), "test GetStatisticsByDBNameAndTableName() failed")
+	asst.Equal(4, len(testTableService.GetIndexStatistics()), "test GetStatisticsByDBNameAndTableName() failed")
+	asst.NotEqual(0, len(testTableService.GetCreateStatement()), "test GetStatisticsByDBNameAndTableName() failed")
 }
 func TestTableService_AnalyzeTableByDBNameAndTableName(t *testing.T) {
 	asst := assert.New(t)
