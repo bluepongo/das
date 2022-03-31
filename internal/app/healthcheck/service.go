@@ -29,8 +29,6 @@ const (
 	defaultMonitorMySQLDBName      = "pmm"
 	defaultSuccessStatus           = 2
 	defaultFailedStatus            = 3
-
-	healthcheckMarshalServiceTemplate = `{"result": %s}`
 )
 
 var _ healthcheck.Service = (*Service)(nil)
@@ -152,7 +150,7 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 	}
 	user := userService.GetUsers()[constant.ZeroInt]
 	// check privilege
-	privilegeService := privilege.NewService(user)
+	privilegeService := privilege.NewServiceWithDefault(loginName)
 	err = privilegeService.CheckMySQLServerByID(mysqlServerID)
 	if err != nil {
 		return constant.ZeroInt, err

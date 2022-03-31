@@ -12,7 +12,10 @@ Content-Type: application/json
 { "sql_text": "select * from a;" }
 
 ### sqladvisor.Advise
-POST http://{{baseURL}}/api/v1/sqladvisor/advise/1
+POST http://{{baseURL}}/api/v1/sqladvisor/advise
 Content-Type: application/json
 
-{ "sql_text": "select * from t_meta_db_info where create_time<'2021-01-01';" }
+{
+  "db_id": {{db_id}},
+  "sql_text": "select * from t_meta_db_info where create_time<'2021-01-01';"
+}

@@ -54,7 +54,7 @@ func testInitViper() {
 	viper.Set(config.SQLAdvisorSoarConfigKey, testSoarConfig)
 }
 
-func TestDefaultEngineAll(t *testing.T) {
+func TestDefaultEngine_All(t *testing.T) {
 	TestDefaultEngineConfig_Validate(t)
 	TestDefaultEngine_Run(t)
 }

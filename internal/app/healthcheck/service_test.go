@@ -48,7 +48,7 @@ func deleteByOperationID(operationID int) error {
 	return tx.Commit()
 }
 
-func TestServiceAll(t *testing.T) {
+func TestService_All(t *testing.T) {
 	TestService_GetResult(t)
 	TestService_GetResultByOperationID(t)
 	TestService_Check(t)
@@ -65,7 +65,7 @@ func TestService_GetResult(t *testing.T) {
 	time.Sleep(testSleepTime)
 	err = testService.GetResultByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test GetResult() failed", err))
-	t.Log(testService.GetResult().String())
+	// t.Log(testService.GetResult().String())
 	// delete
 	err = deleteByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test GetResult() failed", err))
@@ -79,7 +79,7 @@ func TestService_GetResultByOperationID(t *testing.T) {
 	time.Sleep(testSleepTime)
 	err = testService.GetResultByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))
-	t.Log(testService.GetResult().String())
+	// t.Log(testService.GetResult().String())
 	// delete
 	err = deleteByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test GetResultByOperationID() failed", err))
@@ -94,7 +94,7 @@ func TestService_Check(t *testing.T) {
 	time.Sleep(testSleepTime)
 	err = testService.GetResultByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test Check() failed", err))
-	t.Log(testService.GetResult().String())
+	// t.Log(testService.GetResult().String())
 	// delete
 	err = deleteByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test Check() failed", err))
@@ -115,7 +115,7 @@ func TestService_CheckByHostInfo(t *testing.T) {
 	time.Sleep(testSleepTime)
 	err = testService.GetResultByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test CheckByHostInfo() failed", err))
-	t.Log(testService.GetResult().String())
+	// t.Log(testService.GetResult().String())
 	// delete
 	err = deleteByOperationID(operationID)
 	asst.Nil(err, common.CombineMessageWithError("test CheckByHostInfo() failed", err))

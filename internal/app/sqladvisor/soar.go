@@ -27,6 +27,8 @@ const (
 	logExp               = `^\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}\.\d{3}`
 	errExp               = `\[1;31m\[E]|\[1;31m\[F]`
 	defaultLogMessageLen = 3
+
+	caseStr = `"Case":`
 )
 
 var (
@@ -196,6 +198,9 @@ func (da *DefaultAdvisor) parseResult(result string) (string, string, error) {
 			continue
 		}
 
+		if strings.Contains(line, caseStr) {
+			line = strings.ReplaceAll(line, constant.CRLFString, constant.EmptyString)
+		}
 		advice += line
 	}
 
