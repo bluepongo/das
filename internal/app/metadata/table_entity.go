@@ -166,9 +166,6 @@ type TableInfo struct {
 	TableRepo metadata.TableRepo
 	DBName    string `middleware:"db_name" json:"db_name"`
 	TableName string `middleware:"table_name" json:"table_name"`
-	// TableStatistics []metadata.TableStatistic `middleware:"table_statistics" json:"table_statistics"`
-	// IndexStatistics []metadata.IndexStatistic `middleware:"index_statistics" json:"index_statistics"`
-	// CreateStatement string `middleware:"create_statement" json:"create_statement"`
 }
 
 // NewTableInfo returns a new TableInfo
@@ -176,17 +173,11 @@ func NewTableInfo(
 	repo metadata.TableRepo,
 	dbName string,
 	tableName string,
-	// tableStatistics []metadata.TableStatistic,
-	// indexStatistics []metadata.IndexStatistic,
-	// createStatement string,
 ) *TableInfo {
 	return &TableInfo{
 		repo,
 		dbName,
 		tableName,
-		// tableStatistics,
-		// indexStatistics,
-		// createStatement,
 	}
 }
 
