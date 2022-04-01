@@ -159,7 +159,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	// get entity
 	err = ts.GetStatisticsByHostInfoAndDBNameAndTableName(hostIP, portNum, dbName, tableName, loginName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByDBIDAndTableName, err, dbID, tableName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByDBIDAndTableName, err, dbID, tableName, loginName)
 		return
 	}
 	// marshal service
@@ -171,7 +171,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetStatisticsByDBIDAndTableName, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetStatisticsByDBIDAndTableName, dbID, tableName)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetStatisticsByDBIDAndTableName, dbID, tableName, loginName)
 }
 
 // @Tags	Tables
@@ -214,7 +214,7 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	// get entity
 	err = ts.GetStatisticsByHostInfoAndDBNameAndTableName(hostIP, portNum, dbName, tableName, loginName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName, err, hostIP, portNum, dbName, tableName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName, err, hostIP, portNum, dbName, tableName, loginName)
 		return
 	}
 	// marshal service
@@ -226,7 +226,7 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetStatisticsByDBIDAndTableName, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetStatisticsByHostInfoAndDBNameAndTableName, hostIP, portNum, dbName, tableName)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetStatisticsByHostInfoAndDBNameAndTableName, hostIP, portNum, dbName, tableName, loginName)
 }
 
 // @Tags	Tables
@@ -284,12 +284,12 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 	// get entity
 	err = ts.AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP, portNum, dbName, tableName, loginName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByDBIDAndTableName, err, dbID, tableName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByDBIDAndTableName, err, dbID, tableName, loginName)
 		return
 	}
 	// response
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAnalyzeTableByHostInfoAndDBNameAndTableName).Error())
-	resp.ResponseOK(c, fmt.Sprintf(analyzeRespMessage, dbName, tableName), msgmeta.InfoMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, hostIP, portNum, dbName, tableName)
+	resp.ResponseOK(c, fmt.Sprintf(analyzeRespMessage, dbName, tableName), msgmeta.InfoMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, hostIP, portNum, dbName, tableName, loginName)
 }
 
 // @Tags	Tables
@@ -332,9 +332,9 @@ func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	// get entity
 	err = ts.AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP, portNum, dbName, tableName, loginName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, err, hostIP, portNum, dbName, tableName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, err, hostIP, portNum, dbName, tableName, loginName)
 	}
 	// response
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAnalyzeTableByHostInfoAndDBNameAndTableName).Error())
-	resp.ResponseOK(c, fmt.Sprintf(analyzeRespMessage, dbName, tableName), msgmeta.InfoMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, hostIP, portNum, dbName, tableName)
+	resp.ResponseOK(c, fmt.Sprintf(analyzeRespMessage, dbName, tableName), msgmeta.InfoMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, hostIP, portNum, dbName, tableName, loginName)
 }
