@@ -63,21 +63,21 @@ func GetTablesByDBID(c *gin.Context) {
 
 	err = ds.GetByID(dbID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByID, dbID, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByID, err, dbID)
 		return
 	}
 	dbName := ds.GetDBs()[constant.ZeroInt].GetDBName()
 
 	err = ds.GetMySQLClusterByID(dbID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByDBID, dbID, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByDBID, err, dbID)
 		return
 	}
 	mysqlCluster := ds.GetMySQLCluster()
 
 	masterServers, err := mysqlCluster.GetMasterServers()
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMasterServers, mysqlCluster.Identity(), err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMasterServers, err, mysqlCluster.Identity())
 		return
 	}
 	hostIP := masterServers[constant.ZeroInt].GetHostIP()
@@ -143,13 +143,13 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	dbName := ds.GetDBs()[constant.ZeroInt].GetDBName()
 	err = ds.GetMySQLClusterByID(dbID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByDBID, dbID, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByDBID, err, dbID)
 		return
 	}
 	mysqlCluster := ds.GetMySQLCluster()
 	masterServers, err := mysqlCluster.GetMasterServers()
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMasterServers, mysqlCluster.Identity(), err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMasterServers, err, mysqlCluster.Identity())
 		return
 	}
 	hostIP := masterServers[constant.ZeroInt].GetHostIP()
@@ -174,7 +174,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	// marshal service
 	jsonBytes, err := ts.MarshalWithFields()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
 		return
 	}
 	// response
@@ -213,7 +213,7 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, err, dbAddr, dbName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, errors.Trace(err), dbAddr, dbName)
 		return
 	}
 	tableRepo := metadata.NewTableRepo(conn)
@@ -229,7 +229,7 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	// marshal service
 	jsonBytes, err := ts.MarshalWithFields()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
 		return
 	}
 	// response
@@ -262,19 +262,19 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 	ds := metadata.NewDBServiceWithDefault()
 	err = ds.GetByID(dbID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByID, dbID, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByID, err, dbID)
 		return
 	}
 	dbName := ds.GetDBs()[constant.ZeroInt].GetDBName()
 	err = ds.GetMySQLClusterByID(dbID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByDBID, dbID, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByDBID, err, dbID)
 		return
 	}
 	mysqlCluster := ds.GetMySQLCluster()
 	masterServers, err := mysqlCluster.GetMasterServers()
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMasterServers, mysqlCluster.Identity(), err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMasterServers, err, mysqlCluster.Identity())
 		return
 	}
 	hostIP := masterServers[constant.ZeroInt].GetHostIP()
@@ -284,7 +284,7 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, err, dbAddr, dbName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, errors.Trace(err), dbAddr, dbName)
 		return
 	}
 	tableRepo := metadata.NewTableRepo(conn)
@@ -331,7 +331,7 @@ func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, err, dbAddr, dbName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, errors.Trace(err), dbAddr, dbName)
 		return
 	}
 	tableRepo := metadata.NewTableRepo(conn)
