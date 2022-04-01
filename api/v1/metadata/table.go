@@ -79,7 +79,7 @@ func GetTablesByDBID(c *gin.Context) {
 	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, err, dbAddr, dbName)
 		return
 	}
 	tableRepo := metadata.NewTableRepo(conn)
@@ -150,7 +150,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, err, dbAddr, dbName)
 		return
 	}
 	tableRepo := metadata.NewTableRepo(conn)
@@ -204,7 +204,7 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, err, dbAddr, dbName)
 		return
 	}
 	tableRepo := metadata.NewTableRepo(conn)
@@ -275,7 +275,7 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, err, dbAddr, dbName)
 		return
 	}
 	tableRepo := metadata.NewTableRepo(conn)
@@ -322,7 +322,7 @@ func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, dbAddr, dbName, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, err, dbAddr, dbName)
 		return
 	}
 	tableRepo := metadata.NewTableRepo(conn)
