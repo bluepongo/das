@@ -88,7 +88,7 @@ func GetTablesByDBID(c *gin.Context) {
 	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, err, dbAddr, dbName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, errors.Trace(err), dbAddr, dbName)
 		return
 	}
 	tableRepo := metadata.NewTableRepo(conn)
@@ -137,7 +137,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	ds := metadata.NewDBServiceWithDefault()
 	err = ds.GetByID(dbID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByID, dbID, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByID, err, dbID)
 		return
 	}
 	dbName := ds.GetDBs()[constant.ZeroInt].GetDBName()
@@ -159,7 +159,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
 	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, err, dbAddr, dbName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, errors.Trace(err), dbAddr, dbName)
 		return
 	}
 	tableRepo := metadata.NewTableRepo(conn)
