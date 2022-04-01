@@ -157,7 +157,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	// init service
 	ts := metadata.NewTableService(tableRepo)
 	// get entity
-	err = ts.GetStatisticsByHostInfoAndDBNameAndTableName(hostIP, portNum, loginName, dbName, tableName)
+	err = ts.GetStatisticsByHostInfoAndDBNameAndTableName(hostIP, portNum, dbName, tableName, loginName)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByDBIDAndTableName, err, dbID, tableName)
 		return
@@ -212,7 +212,7 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	// init service
 	ts := metadata.NewTableService(tableRepo)
 	// get entity
-	err = ts.GetStatisticsByHostInfoAndDBNameAndTableName(hostIP, portNum, loginName, dbName, tableName)
+	err = ts.GetStatisticsByHostInfoAndDBNameAndTableName(hostIP, portNum, dbName, tableName, loginName)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName, err, hostIP, portNum, dbName, tableName)
 		return
@@ -282,7 +282,7 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 	// init service
 	ts := metadata.NewTableService(tableRepo)
 	// get entity
-	err = ts.AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP, portNum, loginName, dbName, tableName)
+	err = ts.AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP, portNum, dbName, tableName, loginName)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByDBIDAndTableName, err, dbID, tableName)
 		return
@@ -330,7 +330,7 @@ func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	// init service
 	ts := metadata.NewTableService(tableRepo)
 	// get entity
-	err = ts.AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP, portNum, loginName, dbName, tableName)
+	err = ts.AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP, portNum, dbName, tableName, loginName)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, err, hostIP, portNum, dbName, tableName)
 	}

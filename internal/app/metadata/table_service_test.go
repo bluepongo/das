@@ -17,8 +17,8 @@ func init() {
 func TestTableServiceAll(t *testing.T) {
 	TestTableService_GetTables(t)
 	TestTableService_GetByDBName(t)
-	TestTableService_GetStatisticsByDBNameAndTableName(t)
-	TestTableService_AnalyzeTableByDBNameAndTableName(t)
+	TestTableService_GetStatisticsByHostInfoAndDBNameAndTableName(t)
+	TestTableService_AnalyzeTableByHostInfoAndDBNameAndTableName(t)
 	TestTableService_Marshal(t)
 	TestTableService_MarshalWithFields(t)
 }
@@ -35,20 +35,20 @@ func TestTableService_GetByDBName(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test GetByDBName() failed", err))
 	asst.Equal(31, len(testTableService.GetTables()), "test GetByDBName() failed")
 }
-func TestTableService_GetStatisticsByDBNameAndTableName(t *testing.T) {
+func TestTableService_GetStatisticsByHostInfoAndDBNameAndTableName(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testTableService.GetStatisticsByHostInfoAndDBNameAndTableName(testTableHostIP, testTablePortNum, testTableLoginName, testDBName, testTableName)
-	asst.Nil(err, common.CombineMessageWithError("test GetStatisticsByDBNameAndTableName() failed", err))
-	asst.Equal(1, len(testTableService.GetTableStatistics()), "test GetStatisticsByDBNameAndTableName() failed")
-	asst.Equal(4, len(testTableService.GetIndexStatistics()), "test GetStatisticsByDBNameAndTableName() failed")
-	asst.NotEqual(0, len(testTableService.GetCreateStatement()), "test GetStatisticsByDBNameAndTableName() failed")
+	err := testTableService.GetStatisticsByHostInfoAndDBNameAndTableName(testTableHostIP, testTablePortNum, testDBName, testTableName, testTableLoginName)
+	asst.Nil(err, common.CombineMessageWithError("test GetStatisticsByHostInfoAndDBNameAndTableName() failed", err))
+	asst.Equal(1, len(testTableService.GetTableStatistics()), "test GetStatisticsByHostInfoAndDBNameAndTableName() failed")
+	asst.Equal(4, len(testTableService.GetIndexStatistics()), "test GetStatisticsByHostInfoAndDBNameAndTableName() failed")
+	asst.NotEqual(0, len(testTableService.GetCreateStatement()), "test GetStatisticsByHostInfoAndDBNameAndTableName() failed")
 }
-func TestTableService_AnalyzeTableByDBNameAndTableName(t *testing.T) {
+func TestTableService_AnalyzeTableByHostInfoAndDBNameAndTableName(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testTableService.AnalyzeTableByDBNameAndTableName(testTableDBName, testTableName)
-	asst.Nil(err, common.CombineMessageWithError("test AnalyzeTableByDBNameAndTableName() failed", err))
+	err := testTableService.AnalyzeTableByHostInfoAndDBNameAndTableName(testTableHostIP, testTablePortNum, testTableDBName, testTableName, testTableLoginName)
+	asst.Nil(err, common.CombineMessageWithError("test AnalyzeTableByHostInfoAndDBNameAndTableName() failed", err))
 }
 func TestTableService_Marshal(t *testing.T) {
 	asst := assert.New(t)

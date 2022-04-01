@@ -59,7 +59,7 @@ func (ts *TableService) GetByDBName(dbName string) error {
 }
 
 // GetStatisticsByHostInfoAndDBNameAndTableName returns the full table info by DB name and table name
-func (ts *TableService) GetStatisticsByHostInfoAndDBNameAndTableName(hostIP string, portNum int, loginName, dbName, tableName string) error {
+func (ts *TableService) GetStatisticsByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName, loginName string) error {
 	// check privilege
 	privilegeService := privilege.NewServiceWithDefault(loginName)
 	err := privilegeService.CheckMySQLServerByHostInfo(hostIP, portNum)
@@ -76,7 +76,7 @@ func (ts *TableService) GetStatisticsByHostInfoAndDBNameAndTableName(hostIP stri
 }
 
 // AnalyzeTableByHostInfoAndDBNameAndTableName analyzes the table by DBName and TableName
-func (ts *TableService) AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, loginName, dbName, tableName string) error {
+func (ts *TableService) AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName, loginName string) error {
 	// check privilege
 	privilegeService := privilege.NewServiceWithDefault(loginName)
 	err := privilegeService.CheckMySQLServerByHostInfo(hostIP, portNum)
