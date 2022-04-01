@@ -91,8 +91,8 @@ type TableRepo interface {
 type TableService interface {
 	// GetTables returns the tables list
 	GetTables() []Table
-	// GetByDBName returns tables info by DB name
-	GetByDBName(dbName string) error
+	// GetByHostInfoAndDBName returns tables info by DB name
+	GetByHostInfoAndDBName(hostIP string, portNum int, dbName, loginName string) error
 	// GetStatisticsByDBNameAndTableName returns the full table info by DB name and table name
 	GetStatisticsByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName, loginName string) error
 	// AnalyzeTableByDBNameAndTableName analyzes the table by host info、DB name and table name

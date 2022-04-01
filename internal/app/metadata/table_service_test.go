@@ -16,7 +16,7 @@ func init() {
 
 func TestTableServiceAll(t *testing.T) {
 	TestTableService_GetTables(t)
-	TestTableService_GetByDBName(t)
+	TestTableService_GetByHostInfoAndDBName(t)
 	TestTableService_GetStatisticsByHostInfoAndDBNameAndTableName(t)
 	TestTableService_AnalyzeTableByHostInfoAndDBNameAndTableName(t)
 	TestTableService_Marshal(t)
@@ -28,12 +28,12 @@ func TestTableService_GetTables(t *testing.T) {
 	tables := testTableService.GetTables()
 	asst.Equal(0, len(tables), "test GetTables() failed")
 }
-func TestTableService_GetByDBName(t *testing.T) {
+func TestTableService_GetByHostInfoAndDBName(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testTableService.GetByDBName(testDBName)
-	asst.Nil(err, common.CombineMessageWithError("test GetByDBName() failed", err))
-	asst.Equal(31, len(testTableService.GetTables()), "test GetByDBName() failed")
+	err := testTableService.GetByHostInfoAndDBName(testTableHostIP, testTablePortNum, testDBName, testTableLoginName)
+	asst.Nil(err, common.CombineMessageWithError("test GetByHostInfoAndDBName() failed", err))
+	asst.Equal(31, len(testTableService.GetTables()), "test GetByHostInfoAndDBName() failed")
 }
 func TestTableService_GetStatisticsByHostInfoAndDBNameAndTableName(t *testing.T) {
 	asst := assert.New(t)

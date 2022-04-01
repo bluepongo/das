@@ -1,5 +1,15 @@
 package metadata
 
+// GetTablesByDBID is the struct bind to JSON param
+type GetTablesByDBID struct {
+	LoginName string `json:"login_name" binding:"required"`
+}
+
+// GetLoginName is getter of login name
+func (g *GetTablesByDBID) GetLoginName() string {
+	return g.LoginName
+}
+
 // GetTableByDBIDAndTableName is the struct bind to JSON param
 type GetTableByDBIDAndTableName struct {
 	DBID      int    `json:"db_id" binding:"required"`

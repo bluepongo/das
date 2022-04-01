@@ -33,7 +33,8 @@ const (
 // @Tags	Tables
 // @Summary get tables by db id
 // @Accept	application/json
-// @Param	id path int true "db id"
+// @Param	id			path int	true "db id"
+// @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
 // @Router /api/v1/metadata/table/db/:db_id
@@ -50,6 +51,14 @@ func GetTablesByDBID(c *gin.Context) {
 		return
 
 	}
+	var rd *utilmeta.GetTablesByDBID
+	// bind json
+	err = c.ShouldBindJSON(&rd)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
+		return
+	}
+	loginName := rd.GetLoginName()
 	ds := metadata.NewDBServiceWithDefault()
 
 	err = ds.GetByID(dbID)
@@ -87,9 +96,9 @@ func GetTablesByDBID(c *gin.Context) {
 	// init service
 	ts := metadata.NewTableService(tableRepo)
 	// get entity
-	err = ts.GetByDBName(dbName)
+	err = ts.GetByHostInfoAndDBName(hostIP, portNum, dbName, loginName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetTablesByDBID, dbID, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetTablesByDBID, err, dbID, loginName)
 		return
 	}
 	// marshal service
@@ -101,7 +110,7 @@ func GetTablesByDBID(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetTablesByDBID, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetTablesByDBID, dbID)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetTablesByDBID, dbID, loginName)
 }
 
 // @Tags	Tables

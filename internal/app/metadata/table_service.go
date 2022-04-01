@@ -50,9 +50,15 @@ func (ts *TableService) GetCreateStatement() string {
 	return ts.CreateStatement
 }
 
-// GetByDBName returns tables info by DB name
-func (ts *TableService) GetByDBName(dbName string) error {
-	var err error
+// GetByHostInfoAndDBName returns tables info by DB name
+func (ts *TableService) GetByHostInfoAndDBName(hostIP string, portNum int, dbName, loginName string) error {
+	// check privilege
+	privilegeService := privilege.NewServiceWithDefault(loginName)
+	err := privilegeService.CheckMySQLServerByHostInfo(hostIP, portNum)
+	if err != nil {
+		return err
+	}
+
 	ts.Tables, err = ts.TableRepo.GetByDBName(dbName)
 
 	return err

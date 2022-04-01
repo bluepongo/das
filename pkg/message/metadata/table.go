@@ -43,7 +43,7 @@ func initDebugTableMessage() {
 }
 
 func initInfoTableMessage() {
-	message.Messages[InfoMetadataGetTablesByDBID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetTablesByDBID, "metadata: get tables by db id completed. db_id: %d")
+	message.Messages[InfoMetadataGetTablesByDBID] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetTablesByDBID, "metadata: get tables by db id completed. db_id: %d, login_name: %s")
 	message.Messages[InfoMetadataGetStatisticsByDBIDAndTableName] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetStatisticsByDBIDAndTableName, "metadata: get tables by db id and table name completed. db_id: %d, table_name: %s, login_name: %s")
 	message.Messages[InfoMetadataGetStatisticsByHostInfoAndDBNameAndTableName] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataGetStatisticsByHostInfoAndDBNameAndTableName, "metadata: get tables by host info and db name and table name completed. host_ip: %s, port_num: %d, db_name: %s, table_name: %s, login_name %s")
 	message.Messages[InfoMetadataAnalyzeTableByDBIDAndTableName] = config.NewErrMessage(message.DefaultMessageHeader, InfoMetadataAnalyzeTableByDBIDAndTableName, "metadata: analyze table by db id and table name completed. db_id: %d, table_name: %s, login_name: %s")
@@ -51,7 +51,7 @@ func initInfoTableMessage() {
 }
 
 func initErrorTableMessage() {
-	message.Messages[ErrMetadataGetTablesByDBID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetTablesByDBID, "metadata: get tables by db id failed. db_id: %d")
+	message.Messages[ErrMetadataGetTablesByDBID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetTablesByDBID, "metadata: get tables by db id failed. db_id: %d, login_name: %s")
 	message.Messages[ErrMetadataGetStatisticsByDBIDAndTableName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetStatisticsByDBIDAndTableName, "metadata: get statistics by db id and table name failed. db_id: %d, table_name: % s, login_name:%s")
 	message.Messages[ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName, "metadata: get statistics by host info and db name and table name failed. host_ip: %s, port_num: %d, db_name: %s, table_name: %s, login_name: %s")
 	message.Messages[ErrMetadataAnalyzeTableByDBIDAndTableName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAnalyzeTableByDBIDAndTableName, "metadata: analyze table by db id and table name failed. db_id: %d, table_name: %s, login_name: %s")

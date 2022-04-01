@@ -6,6 +6,8 @@
 GET http://{{baseURL}}/api/v1/metadata/table/db/4
 Accept: application/json
 
+{"login_name": "yc_admin"}
+
 ### get table statistics by db id and table name
 GET http://{{baseURL}}/api/v1/metadata/table/statistic/db-table
 Accept: application/json
