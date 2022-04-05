@@ -28,7 +28,7 @@ const (
 // @Param	id			body int	true "db id"
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
-// @Success	200 {string} string "{"tables": [{"db_name": "das","table_name": "health_check_record"}]}"
+// @Success	200 {string} string "{"tables": [{"db_name": "das","table_name": "t_meta_db_info"}]}"
 // @Router /api/v1/metadata/table/db [get]
 func GetTablesByDBID(c *gin.Context) {
 	var rd *utilmeta.TablesByDBID
