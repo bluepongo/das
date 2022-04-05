@@ -169,11 +169,7 @@ type TableInfo struct {
 }
 
 // NewTableInfo returns a new TableInfo
-func NewTableInfo(
-	repo metadata.TableRepo,
-	dbName string,
-	tableName string,
-) *TableInfo {
+func NewTableInfo(repo metadata.TableRepo, dbName string, tableName string) *TableInfo {
 	return &TableInfo{
 		repo,
 		dbName,

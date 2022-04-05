@@ -2,10 +2,6 @@ package metadata
 
 import (
 	"fmt"
-	"strconv"
-
-	"github.com/romberli/das/config"
-	"github.com/spf13/viper"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
@@ -14,91 +10,40 @@ import (
 	msgmeta "github.com/romberli/das/pkg/message/metadata"
 	"github.com/romberli/das/pkg/resp"
 	utilmeta "github.com/romberli/das/pkg/util/metadata"
-	"github.com/romberli/go-util/constant"
-	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
 )
 
 const (
-	tableNameJSON        = "table_name"
-	tableHostIPJSON      = "host_ip"
-	tablePortNumJSON     = "port_num"
-	tableDBIDJSON        = "db_id"
-	tableDBNameJSON      = "db_name"
-	tableAccountNameJSON = "login_name"
+	tableStatisticsStruct = "TableStatistics"
+	indexStatisticsStruct = "IndexStatistics"
+	createStatementStruct = "CreateStatement"
 
-	analyzeRespMessage = `{"message": "analyze table completed. db name: %s, table name: %s"}`
+	analyzeDBIDRespMessage     = `{"message": "analyze table completed. db id: %d, table name: %s"}`
+	analyzeHostInfoRespMessage = `{"message": "analyze table completed. host ip: %s, port num: %d, db name: %s, table name: %s"}`
 )
 
 // @Tags	Tables
 // @Summary get tables by db id
 // @Accept	application/json
-// @Param	id			path int	true "db id"
+// @Param	id			body int	true "db id"
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
-// @Router /api/v1/metadata/table/db/:db_id
+// @Router /api/v1/metadata/table/db [get]
 func GetTablesByDBID(c *gin.Context) {
-	// get param
-	dbIDStr := c.Param(tableDBIDJSON)
-	if dbIDStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, tableDBIDJSON)
-		return
-	}
-	dbID, err := strconv.Atoi(dbIDStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-
-	}
-	var rd *utilmeta.GetTablesByDBID
+	var rd *utilmeta.TablesByDBID
 	// bind json
-	err = c.ShouldBindJSON(&rd)
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
-	loginName := rd.GetLoginName()
-	ds := metadata.NewDBServiceWithDefault()
-
-	err = ds.GetByID(dbID)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByID, err, dbID)
-		return
-	}
-	dbName := ds.GetDBs()[constant.ZeroInt].GetDBName()
-
-	err = ds.GetMySQLClusterByID(dbID)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByDBID, err, dbID)
-		return
-	}
-	mysqlCluster := ds.GetMySQLCluster()
-
-	masterServers, err := mysqlCluster.GetMasterServers()
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMasterServers, err, mysqlCluster.Identity())
-		return
-	}
-	hostIP := masterServers[constant.ZeroInt].GetHostIP()
-	portNum := masterServers[constant.ZeroInt].GetPortNum()
-
-	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
-	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
-	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
-	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, errors.Trace(err), dbAddr, dbName)
-		return
-	}
-	tableRepo := metadata.NewTableRepo(conn)
-
 	// init service
-	ts := metadata.NewTableService(tableRepo)
+	ts := metadata.NewTableServiceWithDefault()
 	// get entity
-	err = ts.GetByHostInfoAndDBName(hostIP, portNum, dbName, loginName)
+	err = ts.GetByDBID(rd.GetDBID(), rd.GetLoginName())
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetTablesByDBID, err, dbID, loginName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetTablesByDBID, err, rd.GetDBID(), rd.GetLoginName())
 		return
 	}
 	// marshal service
@@ -110,7 +55,7 @@ func GetTablesByDBID(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetTablesByDBID, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetTablesByDBID, dbID, loginName)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetTablesByDBID, rd.GetDBID(), rd.GetLoginName())
 }
 
 // @Tags	Tables
@@ -121,66 +66,33 @@ func GetTablesByDBID(c *gin.Context) {
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
-// @Router /api/v1/metadata/table/statistic/db-table
+// @Router /api/v1/metadata/table/statistic/db-table [get]
 func GetStatisticsByDBIDAndTableName(c *gin.Context) {
-	var rd *utilmeta.GetTableByDBIDAndTableName
+	var rd *utilmeta.TableByDBIDAndTableName
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
-	dbID := rd.GetDBID()
-	tableName := rd.GetTableName()
-	loginName := rd.GetLoginName()
-	// get host info, db name and table name
-	ds := metadata.NewDBServiceWithDefault()
-	err = ds.GetByID(dbID)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByID, err, dbID)
-		return
-	}
-	dbName := ds.GetDBs()[constant.ZeroInt].GetDBName()
-	err = ds.GetMySQLClusterByID(dbID)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByDBID, err, dbID)
-		return
-	}
-	mysqlCluster := ds.GetMySQLCluster()
-	masterServers, err := mysqlCluster.GetMasterServers()
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMasterServers, err, mysqlCluster.Identity())
-		return
-	}
-	hostIP := masterServers[constant.ZeroInt].GetHostIP()
-	portNum := masterServers[constant.ZeroInt].GetPortNum()
-	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
-	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
-	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
-	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, errors.Trace(err), dbAddr, dbName)
-		return
-	}
-	tableRepo := metadata.NewTableRepo(conn)
 	// init service
-	ts := metadata.NewTableService(tableRepo)
+	ts := metadata.NewTableServiceWithDefault()
 	// get entity
-	err = ts.GetStatisticsByHostInfoAndDBNameAndTableName(hostIP, portNum, dbName, tableName, loginName)
+	err = ts.GetStatisticsByDBIDAndTableName(rd.GetDBID(), rd.GetTableName(), rd.LoginName)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByDBIDAndTableName, err, dbID, tableName, loginName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByDBIDAndTableName, err, rd.GetDBID(), rd.GetTableName(), rd.LoginName)
 		return
 	}
 	// marshal service
-	jsonBytes, err := ts.MarshalWithFields()
+	jsonBytes, err := ts.MarshalWithFields(tableStatisticsStruct, indexStatisticsStruct, createStatementStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetStatisticsByDBIDAndTableName, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetStatisticsByDBIDAndTableName, dbID, tableName, loginName)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetStatisticsByDBIDAndTableName, rd.GetDBID(), rd.GetTableName(), rd.LoginName)
 }
 
 // @Tags	Tables
@@ -193,49 +105,33 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
-// @Router /api/v1/metadata/table/statistic/host-info-db-table
+// @Router /api/v1/metadata/table/statistic/host-info-db-table [get]
 func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
-	var rd *utilmeta.GetTableByHostInfoAndDBNameAndTableName
+	var rd *utilmeta.TableByHostInfoAndDBNameAndTableName
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
-	hostIP := rd.GetHostIP()
-	portNum := rd.GetPortNum()
-	loginName := rd.GetLoginName()
-	dbName := rd.GetDBName()
-	tableName := rd.GetTableName()
-
-	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
-	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
-	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
-	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, errors.Trace(err), dbAddr, dbName)
-		return
-	}
-	tableRepo := metadata.NewTableRepo(conn)
-
 	// init service
-	ts := metadata.NewTableService(tableRepo)
+	ts := metadata.NewTableServiceWithDefault()
 	// get entity
-	err = ts.GetStatisticsByHostInfoAndDBNameAndTableName(hostIP, portNum, dbName, tableName, loginName)
+	err = ts.GetStatisticsByHostInfoAndDBNameAndTableName(rd.GetHostIP(), rd.GetPortNum(), rd.GetDBName(), rd.GetTableName(), rd.GetLoginName())
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName, err, hostIP, portNum, dbName, tableName, loginName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName, err, rd.GetHostIP(), rd.GetPortNum(), rd.GetDBName(), rd.GetTableName(), rd.GetLoginName())
 		return
 	}
 	// marshal service
-	jsonBytes, err := ts.MarshalWithFields()
+	jsonBytes, err := ts.MarshalWithFields(tableStatisticsStruct, indexStatisticsStruct, createStatementStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetStatisticsByDBIDAndTableName, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetStatisticsByHostInfoAndDBNameAndTableName, hostIP, portNum, dbName, tableName, loginName)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetStatisticsByHostInfoAndDBNameAndTableName, rd.GetHostIP(), rd.GetPortNum(), rd.GetDBName(), rd.GetTableName(), rd.GetLoginName())
 }
 
 // @Tags	Tables
@@ -246,59 +142,26 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
-// @Router /api/v1/metadata/table/analyze/db
+// @Router /api/v1/metadata/table/analyze/db-table [get]
 func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
-	var rd *utilmeta.GetTableByDBIDAndTableName
+	var rd *utilmeta.TableByDBIDAndTableName
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
-	dbID := rd.GetDBID()
-	tableName := rd.GetTableName()
-	loginName := rd.GetLoginName()
-	// get host info, db name and table name
-	ds := metadata.NewDBServiceWithDefault()
-	err = ds.GetByID(dbID)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBByID, err, dbID)
-		return
-	}
-	dbName := ds.GetDBs()[constant.ZeroInt].GetDBName()
-	err = ds.GetMySQLClusterByID(dbID)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLClusterByDBID, err, dbID)
-		return
-	}
-	mysqlCluster := ds.GetMySQLCluster()
-	masterServers, err := mysqlCluster.GetMasterServers()
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMasterServers, err, mysqlCluster.Identity())
-		return
-	}
-	hostIP := masterServers[constant.ZeroInt].GetHostIP()
-	portNum := masterServers[constant.ZeroInt].GetPortNum()
-	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
-	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
-	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
-	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, errors.Trace(err), dbAddr, dbName)
-		return
-	}
-	tableRepo := metadata.NewTableRepo(conn)
 	// init service
-	ts := metadata.NewTableService(tableRepo)
+	ts := metadata.NewTableServiceWithDefault()
 	// get entity
-	err = ts.AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP, portNum, dbName, tableName, loginName)
+	err = ts.AnalyzeTableByDBIDAndTableName(rd.GetDBID(), rd.GetTableName(), rd.GetLoginName())
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByDBIDAndTableName, err, dbID, tableName, loginName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByDBIDAndTableName, err, rd.GetDBID(), rd.GetTableName(), rd.GetLoginName())
 		return
 	}
 	// response
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAnalyzeTableByHostInfoAndDBNameAndTableName).Error())
-	resp.ResponseOK(c, fmt.Sprintf(analyzeRespMessage, dbName, tableName), msgmeta.InfoMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, hostIP, portNum, dbName, tableName, loginName)
+	resp.ResponseOK(c, fmt.Sprintf(analyzeDBIDRespMessage, rd.GetDBID(), rd.GetTableName()), msgmeta.ErrMetadataAnalyzeTableByDBIDAndTableName, rd.GetDBID(), rd.GetTableName(), rd.GetLoginName())
 }
 
 // @Tags	Tables
@@ -311,39 +174,23 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
-// @Router /api/v1/metadata/table/analyze/host-info
+// @Router /api/v1/metadata/table/analyze/host-info-db-table [get]
 func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
-	var rd *utilmeta.GetTableByHostInfoAndDBNameAndTableName
+	var rd *utilmeta.TableByHostInfoAndDBNameAndTableName
 	// bind json
 	err := c.ShouldBindJSON(&rd)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
-	hostIP := rd.GetHostIP()
-	portNum := rd.GetPortNum()
-	dbName := rd.GetDBName()
-	tableName := rd.GetTableName()
-	loginName := rd.GetLoginName()
-
-	dbAddr := fmt.Sprintf("%s:%d", hostIP, portNum)
-	dbUser := viper.GetString(config.DBApplicationMySQLUserKey)
-	dbPass := viper.GetString(config.DBApplicationMySQLPassKey)
-	conn, err := mysql.NewConn(dbAddr, dbName, dbUser, dbPass)
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataTableCreateApplicationMySQLConn, errors.Trace(err), dbAddr, dbName)
-		return
-	}
-	tableRepo := metadata.NewTableRepo(conn)
-
 	// init service
-	ts := metadata.NewTableService(tableRepo)
+	ts := metadata.NewTableServiceWithDefault()
 	// get entity
-	err = ts.AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP, portNum, dbName, tableName, loginName)
+	err = ts.AnalyzeTableByHostInfoAndDBNameAndTableName(rd.GetHostIP(), rd.GetPortNum(), rd.GetDBName(), rd.GetTableName(), rd.GetLoginName())
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, err, hostIP, portNum, dbName, tableName, loginName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, err, rd.GetHostIP(), rd.GetPortNum(), rd.GetDBName(), rd.GetTableName(), rd.GetLoginName())
 	}
 	// response
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAnalyzeTableByHostInfoAndDBNameAndTableName).Error())
-	resp.ResponseOK(c, fmt.Sprintf(analyzeRespMessage, dbName, tableName), msgmeta.InfoMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, hostIP, portNum, dbName, tableName, loginName)
+	resp.ResponseOK(c, fmt.Sprintf(analyzeHostInfoRespMessage, rd.GetHostIP(), rd.GetPortNum(), rd.GetDBName(), rd.GetTableName()), msgmeta.InfoMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, rd.GetHostIP(), rd.GetPortNum(), rd.GetDBName(), rd.GetTableName(), rd.GetLoginName())
 }

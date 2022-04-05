@@ -13,19 +13,19 @@ func init() {
 
 // Message Code for metadata-table
 const (
-	//debug
+	// debug
 	DebugMetadataGetTablesByDBID                              = 100901
 	DebugMetadataGetStatisticsByDBIDAndTableName              = 100902
 	DebugMetadataGetStatisticsByHostInfoAndDBNameAndTableName = 100903
 	DebugMetadataAnalyzeTableByDBIDAndTableName               = 100904
 	DebugMetadataAnalyzeTableByHostInfoAndDBNameAndTableName  = 100905
-	//info
+	// info
 	InfoMetadataGetTablesByDBID                              = 200901
 	InfoMetadataGetStatisticsByDBIDAndTableName              = 200902
 	InfoMetadataGetStatisticsByHostInfoAndDBNameAndTableName = 200903
 	InfoMetadataAnalyzeTableByDBIDAndTableName               = 200904
 	InfoMetadataAnalyzeTableByHostInfoAndDBNameAndTableName  = 200905
-	//error
+	// error
 	ErrMetadataGetTablesByDBID                              = 400901
 	ErrMetadataGetStatisticsByDBIDAndTableName              = 400902
 	ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName = 400903
@@ -56,5 +56,5 @@ func initErrorTableMessage() {
 	message.Messages[ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName, "metadata: get statistics by host info and db name and table name failed. host_ip: %s, port_num: %d, db_name: %s, table_name: %s, login_name: %s")
 	message.Messages[ErrMetadataAnalyzeTableByDBIDAndTableName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAnalyzeTableByDBIDAndTableName, "metadata: analyze table by db id and table name failed. db_id: %d, table_name: %s, login_name: %s")
 	message.Messages[ErrMetadataAnalyzeTableByHostInfoAndDBNameAndTableName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, "metadata: analyze table by host info and db name and table name failed. host_ip: %s, port_num: %d, db_name: %s, table_name: %s, login_name: %s")
-	message.Messages[ErrMetadataTableCreateApplicationMySQLConn] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataTableCreateApplicationMySQLConn, "metadata: create application mysql connection failed. db_addr: %s, db_name: %s")
+	message.Messages[ErrMetadataTableCreateApplicationMySQLConn] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataTableCreateApplicationMySQLConn, "metadata: create application mysql connection failed. db id: %d")
 }

@@ -1,31 +1,113 @@
 package metadata
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/pingcap/errors"
+	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/dependency/metadata"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware"
 	"github.com/romberli/go-util/middleware/mysql"
 	"github.com/romberli/log"
+	"github.com/spf13/viper"
+)
+
+const (
+	msgTypeColumn = "Msg_type"
+	msgTextColumn = "Msg_text"
+	errorMessage  = "Error"
 )
 
 var _ metadata.TableRepo = (*TableRepo)(nil)
 
 // TableRepo implements dependency.TableRepo interface
 type TableRepo struct {
-	conn *mysql.Conn
+	Conn *mysql.Conn
 }
 
-// NewTableRepo returns *TableRepo with mysql
-func NewTableRepo(conn *mysql.Conn) *TableRepo {
+// NewTableRepo returns *TableRepo
+func NewTableRepo(conn *mysql.Conn) metadata.TableRepo {
+	return newTableRepo(conn)
+}
+
+// NewTableRepoWithDefault returns *TableRepo with default value
+func NewTableRepoWithDefault() metadata.TableRepo {
+	return newTableRepo(nil)
+}
+
+// newTableRepo returns *TableRepo
+func newTableRepo(conn *mysql.Conn) *TableRepo {
 	return &TableRepo{conn}
 }
 
-// Execute executes command with arguments on database
+// Close closes the mysql connection
+func (tr *TableRepo) Close() error {
+	if tr.Conn != nil {
+		err := tr.Conn.Close()
+		if err != nil {
+			return err
+		}
+
+		tr.Conn = nil
+	}
+
+	return nil
+}
+
+// InitMySQLConn initialize the mysql connection of the repository
+func (tr *TableRepo) InitMySQLConn(hostIP string, portNum int, dbName string) error {
+	var err error
+
+	if tr.Conn == nil {
+		tr.Conn, err = mysql.NewConn(
+			fmt.Sprintf("%s:%d", hostIP, portNum),
+			dbName,
+			viper.GetString(config.DBApplicationMySQLUserKey),
+			viper.GetString(config.DBApplicationMySQLPassKey),
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// Execute implements dependency.MySQLServerRepo interface,
+// it executes command with arguments on database
 func (tr *TableRepo) Execute(command string, args ...interface{}) (middleware.Result, error) {
-	return tr.conn.Execute(command, args...)
+	if tr.Conn == nil {
+		return nil, errors.New("connection of table repository is nil, please initialize it first")
+	}
+
+	return tr.Conn.Execute(command, args...)
+}
+
+// GetByDBName gets the table info by db name from middleware
+func (tr *TableRepo) GetByDBName(dbName string) ([]metadata.Table, error) {
+	sql := `
+		SELECT table_schema AS db_name,
+			   table_name   AS table_name
+		FROM information_schema.tables
+		WHERE table_schema = ?;
+	`
+	log.Debugf("metadata TableRepo.GetByDBName() sql: \n%s\nplaceholders: %s", sql, dbName)
+	result, err := tr.Execute(sql, dbName)
+	if err != nil {
+		return nil, err
+	}
+
+	tableList := make([]metadata.Table, result.RowNumber())
+	for row := range tableList {
+		tableList[row] = NewEmptyTableInfo()
+	}
+	// map to struct
+	err = result.MapToStructSlice(tableList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+	return tableList, nil
 }
 
 // GetTableStatistics gets table statistics from the middleware
@@ -116,33 +198,7 @@ func (tr *TableRepo) GetCreateStatement(dbName, tableName string) (string, error
 	return string(createStatement), nil
 }
 
-// GetByDBName gets the tables info by DBname from middleware
-func (tr *TableRepo) GetByDBName(dbName string) ([]metadata.Table, error) {
-	sql := `
-		SELECT table_schema AS db_name,
-			   table_name   AS table_name
-		FROM information_schema.tables 
-		WHERE table_schema = ?;
-	`
-	log.Debugf("metadata TableRepo.GetByDBName() sql: \n%s\nplaceholders: %s", sql, dbName)
-	result, err := tr.Execute(sql, dbName)
-	if err != nil {
-		return nil, err
-	}
-
-	tableList := make([]metadata.Table, result.RowNumber())
-	for row := range tableList {
-		tableList[row] = NewEmptyTableInfo()
-	}
-	// map to struct
-	err = result.MapToStructSlice(tableList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
-	return tableList, nil
-}
-
-// GetStatisticsByDBNameAndTableName gets the full table info by DB name and table name from middleware
+// GetStatisticsByDBNameAndTableName gets the full table info by db name and table name from middleware
 func (tr *TableRepo) GetStatisticsByDBNameAndTableName(dbName string, tableName string) ([]metadata.TableStatistic, []metadata.IndexStatistic, string, error) {
 	tableStatistics, err := tr.GetTableStatistics(dbName, tableName)
 	if err != nil {
@@ -164,29 +220,24 @@ func (tr *TableRepo) GetStatisticsByDBNameAndTableName(dbName string, tableName 
 
 // AnalyzeTableByDBNameAndTableName analyzes the table by DB name and table name
 func (tr *TableRepo) AnalyzeTableByDBNameAndTableName(dbName, tableName string) error {
-	type analyzeResult struct {
-		Table       string `middleware:"Table"`
-		Operation   string `middleware:"Op"`
-		MessageType string `middleware:"Msg_type"`
-		MessageText string `middleware:"Msg_text"`
-	}
-	sql := fmt.Sprintf(`
-		ANALYZE TABLE %s.%s;
-	`, dbName, tableName)
+	sql := fmt.Sprintf("ANALYZE TABLE %s.%s;", dbName, tableName)
 	log.Debugf("metadata TableRepo.AnalyzeTableByDBNameAndTableName() sql: \n%s", sql, dbName, tableName)
 	result, err := tr.Execute(sql)
 	if err != nil {
 		return err
 	}
-	for rowIdx := 0; rowIdx < result.RowNumber(); rowIdx++ {
-		ar := &analyzeResult{}
-		err = result.MapToStructByRowIndex(ar, rowIdx, constant.DefaultMiddlewareTag)
-		if err != nil {
-			return err
-		}
-		if ar.MessageType == "Error" {
-			return errors.New(ar.MessageText)
-		}
+
+	msgType, err := result.GetStringByName(constant.ZeroInt, msgTypeColumn)
+	if err != nil {
+		return err
+	}
+	msgText, err := result.GetStringByName(constant.ZeroInt, msgTextColumn)
+	if err != nil {
+		return err
+	}
+
+	if msgType == errorMessage {
+		return errors.New(msgText)
 	}
 
 	return nil

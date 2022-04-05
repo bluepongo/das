@@ -59,7 +59,7 @@ func GetMiddlewareServer(c *gin.Context) {
 // @Accept	application/json
 // @Param	cluster_id	path	int	true	"middleware cluster id"
 // @Produce	application/json
-// @Success {"middleware_servers":[{"id":1,"cluster_id":1,"server_name":"middleware-server-1","host_ip":"192.168.10.219","port_num":33061,"del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","middleware_role":1}]}
+// @Success 200 {string} string {"middleware_servers":[{"id":1,"cluster_id":1,"server_name":"middleware-server-1","host_ip":"192.168.10.219","port_num":33061,"del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","middleware_role":1}]}
 // @Router	/api/v1/metadata/middleware-server/cluster-id/:cluster_id [get]
 func GetMiddlewareServerByClusterID(c *gin.Context) {
 	// get param

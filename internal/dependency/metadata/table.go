@@ -72,30 +72,38 @@ type Table interface {
 }
 
 type TableRepo interface {
+	// Close closes the mysql connection
+	Close() error
+	// InitMySQLConn initialize the mysql connection of the repository
+	InitMySQLConn(hostIP string, portNum int, dbName string) error
 	// Execute executes given command and placeholders on the middleware
 	Execute(command string, args ...interface{}) (middleware.Result, error)
+	// GetByDBName gets the table info by db name from middleware
+	GetByDBName(dbName string) ([]Table, error)
 	// GetTableStatistics gets table statistics from the middleware
 	GetTableStatistics(dbName, tableName string) ([]TableStatistic, error)
 	// GetIndexStatistics gets index statistics from the middleware
 	GetIndexStatistics(dbName, tableName string) ([]IndexStatistic, error)
 	// GetCreateStatement gets the create statement of the table
 	GetCreateStatement(dbName, tableName string) (string, error)
-	// GetByDBName gets the tables info by DBname from middleware
-	GetByDBName(dbName string) ([]Table, error)
-	// GetStatisticsByDBNameAndTableName gets the full table info by DB name and table name from middleware
+	// GetStatisticsByDBNameAndTableName gets the full table info by db name and table name from middleware
 	GetStatisticsByDBNameAndTableName(dbName, tableName string) ([]TableStatistic, []IndexStatistic, string, error)
-	// AnalyzeTableByDBNameAndTableName analyzes the table by DB name and table name
+	// AnalyzeTableByDBNameAndTableName analyzes the table by db name and table name
 	AnalyzeTableByDBNameAndTableName(dbName, tableName string) error
 }
 
 type TableService interface {
 	// GetTables returns the tables list
 	GetTables() []Table
-	// GetByHostInfoAndDBName returns tables info by DB name
-	GetByHostInfoAndDBName(hostIP string, portNum int, dbName, loginName string) error
-	// GetStatisticsByDBNameAndTableName returns the full table info by DB name and table name
+	// GetByHostInfoAndDBName returns tables info by db name
+	GetByDBID(dbID int, loginName string) error
+	// GetStatisticsByDBIDAndTableName gets the table statistics by db id and table name
+	GetStatisticsByDBIDAndTableName(dbID int, tableName, loginName string) error
+	// GetStatisticsByHostInfoAndDBNameAndTableName gets the table statistics by host info and db name and table name
 	GetStatisticsByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName, loginName string) error
-	// AnalyzeTableByDBNameAndTableName analyzes the table by host info、DB name and table name
+	// AnalyzeTableByDBIDAndTableName analyzes the table by db id and table name
+	AnalyzeTableByDBIDAndTableName(dbID int, tableName, loginName string) error
+	// AnalyzeTableByHostInfoAndDBNameAndTableName analyzes the table by host info and db name and table name
 	AnalyzeTableByHostInfoAndDBNameAndTableName(hostIP string, portNum int, dbName, tableName, loginName string) error
 	// Marshal marshals TableService.Tables to json bytes
 	Marshal() ([]byte, error)
