@@ -100,8 +100,8 @@ type IndexStatistic struct {
 	Sequence    int    `middleware:"sequence" json:"sequence"`
 	ColumnName  string `middleware:"column_name" json:"column_name"`
 	Cardinality int    `middleware:"cardinality" json:"cardinality"`
-	Unique      bool   `middleware:"unique" json:"unique"`
-	Nullable    bool   `middleware:"nullable" json:"nullable"`
+	Unique      bool   `middleware:"is_unique" json:"is_unique"`
+	Nullable    bool   `middleware:"is_nullable" json:"is_nullable"`
 }
 
 // NewEmptyIndexStatistic returns an empty *IndexStatistic

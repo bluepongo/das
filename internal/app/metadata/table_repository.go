@@ -156,8 +156,8 @@ func (tr *TableRepo) GetIndexStatistics(dbName, tableName string) ([]metadata.In
 			seq_in_index                        AS sequence,
 			column_name                         AS column_name,
 			cardinality                         AS cardinality,
-			IF(non_unique = 0, 'true', 'false') AS unique,
-			IF(nullable = '', 'false', 'true')  AS nullable
+			IF(non_unique = 0, 'true', 'false') AS is_unique,
+			IF(nullable = '', 'false', 'true')  AS is_nullable
 		FROM information_schema.statistics
 		WHERE table_schema = ?
   		AND table_name = ? ;

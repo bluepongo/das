@@ -448,7 +448,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: middleware cluster id
+      - description: app id
         in: path
         name: id
         required: true
@@ -457,12 +457,14 @@ paths:
       - application/json
       responses:
         "200":
-          description: middleware_clusters":[{"id":65,"cluster_name":"new_middleware_cluster","env_id":1,"del_flag":0,"create_time":"2022-03-02T10:39:06.206145+08:00","last_update_time":"2022-03-02T10:39:06.206145+08:00"}]}
+          description: '{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag":
+            0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time":
+            "2021-12-21T09:15:47.688546+08:00"}]}'
           schema:
             type: string
-      summary: delete middleware cluster by id
+      summary: delete app by id
       tags:
-      - middleware cluster
+      - application
   /api/v1/metadata/db:
     get:
       consumes:
@@ -2262,7 +2264,7 @@ paths:
       tags:
       - mysql server
   /api/v1/metadata/table/analyze/db:
-    get:
+    post:
       consumes:
       - application/json
       parameters:
@@ -2296,7 +2298,7 @@ paths:
       tags:
       - Tables
   /api/v1/metadata/table/analyze/host-info-db:
-    get:
+    post:
       consumes:
       - application/json
       parameters:
@@ -2395,12 +2397,28 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"table_statistics":[{"size_mb":0.015,"engine":"InnoDB","char_set":"utf8mb4","collation":"utf8mb4_general_ci","create_time":"2022-03-04T14:24:11+08:00","table_name":"t_meta_db_info","size":16384,"avg_row_length":16384,"auto_increment":2,"db_name":"das","table_rows":1}],"index_statistics":[{"nullable":false,"db_name":"das","table_name":"t_meta_db_info","index_name":"PRIMARY","sequence":1,"column_name":"id","cardinality":1,"non_unique":true},{"nullable":false,"db_name":"das","table_name":"t_meta_db_info","index_name":"idx01_db_name_cluster_id_cluster_type_env_id","sequence":1,"column_name":"db_name","cardinality":1,"non_unique":true},{"column_name":"cluster_id","cardinality":1,"non_unique":true,"nullable":false,"db_name":"das","table_name":"t_meta_db_info","index_name":"idx01_db_name_cluster_id_cluster_type_env_id","sequence":2},{"cardinality":1,"non_unique":true,"nullable":false,"db_name":"das","table_name":"t_meta_db_info","index_name":"idx01_db_name_cluster_id_cluster_type_env_id","sequence":3,"column_name":"cluster_type"},{"sequence":4,"column_name":"env_id","cardinality":1,"non_unique":true,"nullable":false,"db_name":"das","table_name":"t_meta_db_info","index_name":"idx01_db_name_cluster_id_cluster_type_env_id"}],"create_statement":"CREATE
-            TABLE `t_meta_db_info` (\n  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT
-            ''主键ID'',\n  `db_name` varchar(100) NOT NULL COMMENT ''数据库名称'',\n  `cluster_id`
-            int(11) NOT NULL COMMENT ''数据库集群ID'',\n  `cluster_type` tinyint(4) NOT
-            NULL DEFAULT ''1'' COMMENT ''集群类型: 1-单库, 2-分库分表'',\n  `env_id` int(11)
-            NOT NULL COMMENT ''环境: 1-online, 2-rel, 3-uat, 4-sit, 5-pt, 6-dev'',\n  `del_flag`
+          description: '{"table_statistics": [{"size_mb": 0.015, "engine": "InnoDB",
+            "char_set": "utf8mb4", "collation": "utf8mb4_general_ci", "create_time":
+            "2022-03-04T14:24:11+08:00", "table_name": "t_meta_db_info", "size": 16384,
+            "avg_row_length": 16384, "auto_increment": 2, "db_name": "das", "table_rows":
+            1}], "index_statistics": [{"is_nullable": false,"db_name": "das", "table_name":
+            "t_meta_db_info", "index_name": "PRIMARY", "sequence":1, "column_name":
+            "id", "cardinality": 1, "is_unique": true}, {"is_nullable": false, "db_name":
+            "das", "table_name": "t_meta_db_info", "index_name": "idx01_db_name_cluster_id_cluster_type_env_id",
+            "sequence": 1, "column_name": "db_name", "cardinality": 1, "is_unique":
+            true}, {"column_name": "cluster_id", "cardinality": 1, "is_unique": true,
+            "is_nullable": false, "db_name": "das", "table_name": "t_meta_db_info",
+            "index_name": "idx01_db_name_cluster_id_cluster_type_env_id", "sequence":
+            2}, {"cardinality": 1, "is_unique": true, "is_nullable": false, "db_name":
+            "das", "table_name": "t_meta_db_info", "index_name": "idx01_db_name_cluster_id_cluster_type_env_id",
+            "sequence":3 ,"column_name": "cluster_type"}, {"sequence": 4,"column_name":
+            "env_id", "cardinality": 1, "is_unique":true, "is_nullable": false, "db_name":
+            "das", "table_name": "t_meta_db_info", "index_name": "idx01_db_name_cluster_id_cluster_type_env_id"}],
+            "create_statement": "CREATE TABLE `t_meta_db_info` (\n  `id` int(11) NOT
+            NULL AUTO_INCREMENT COMMENT ''主键ID'',\n  `db_name` varchar(100) NOT NULL
+            COMMENT ''数据库名称'',\n  `cluster_id` int(11) NOT NULL COMMENT ''数据库集群ID'',\n  `cluster_type`
+            tinyint(4) NOT NULL DEFAULT ''1'' COMMENT ''集群类型: 1-单库, 2-分库分表'',\n  `env_id`
+            int(11) NOT NULL COMMENT ''环境: 1-online, 2-rel, 3-uat, 4-sit, 5-pt, 6-dev'',\n  `del_flag`
             tinyint(4) NOT NULL DEFAULT ''0'' COMMENT ''删除标记: 0-未删除, 1-已删除'',\n  `create_time`
             datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT ''创建时间'',\n  `last_update_time`
             datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
@@ -2455,18 +2473,18 @@ paths:
             "char_set": "utf8mb4", "collation": "utf8mb4_general_ci", "create_time":
             "2022-03-04T14:24:11+08:00", "table_name": "t_meta_db_info", "size": 16384,
             "avg_row_length": 16384, "auto_increment": 2, "db_name": "das", "table_rows":
-            1}], "index_statistics": [{"nullable": false,"db_name": "das", "table_name":
+            1}], "index_statistics": [{"is_nullable": false,"db_name": "das", "table_name":
             "t_meta_db_info", "index_name": "PRIMARY", "sequence":1, "column_name":
-            "id", "cardinality": 1, "non_unique": true}, {"nullable": false, "db_name":
+            "id", "cardinality": 1, "is_unique": true}, {"is_nullable": false, "db_name":
             "das", "table_name": "t_meta_db_info", "index_name": "idx01_db_name_cluster_id_cluster_type_env_id",
-            "sequence": 1, "column_name": "db_name", "cardinality": 1, "non_unique":
-            true}, {"column_name": "cluster_id", "cardinality": 1, "non_unique": true,
-            "nullable": false, "db_name": "das", "table_name": "t_meta_db_info", "index_name":
-            "idx01_db_name_cluster_id_cluster_type_env_id", "sequence": 2}, {"cardinality":
-            1, "non_unique": true, "nullable": false, "db_name": "das", "table_name":
-            "t_meta_db_info", "index_name": "idx01_db_name_cluster_id_cluster_type_env_id",
+            "sequence": 1, "column_name": "db_name", "cardinality": 1, "is_unique":
+            true}, {"column_name": "cluster_id", "cardinality": 1, "is_unique": true,
+            "is_nullable": false, "db_name": "das", "table_name": "t_meta_db_info",
+            "index_name": "idx01_db_name_cluster_id_cluster_type_env_id", "sequence":
+            2}, {"cardinality": 1, "is_unique": true, "is_nullable": false, "db_name":
+            "das", "table_name": "t_meta_db_info", "index_name": "idx01_db_name_cluster_id_cluster_type_env_id",
             "sequence":3 ,"column_name": "cluster_type"}, {"sequence": 4,"column_name":
-            "env_id", "cardinality": 1, "non_unique":true, "nullable": false, "db_name":
+            "env_id", "cardinality": 1, "is_unique":true, "is_nullable": false, "db_name":
             "das", "table_name": "t_meta_db_info", "index_name": "idx01_db_name_cluster_id_cluster_type_env_id"}],
             "create_statement": "CREATE TABLE `t_meta_db_info` (\n  `id` int(11) NOT
             NULL AUTO_INCREMENT COMMENT ''主键ID'',\n  `db_name` varchar(100) NOT NULL
