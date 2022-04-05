@@ -8,7 +8,7 @@ Accept: application/json
 }
 
 ### get table statistics by db id and table name
-GET http://{{baseURL}}/api/v1/metadata/table/statistic/db-table
+GET http://{{baseURL}}/api/v1/metadata/table/statistic/db
 Accept: application/json
 
 {
@@ -18,7 +18,7 @@ Accept: application/json
 }
 
 ### get table statistics by host info and db name and table name
-GET http://{{baseURL}}/api/v1/metadata/table/statistic/host-info-db-table
+GET http://{{baseURL}}/api/v1/metadata/table/statistic/host-info-db
 Accept: application/json
 
 {
@@ -30,7 +30,7 @@ Accept: application/json
 }
 
 ### analyze table by db id and table name
-POST http://{{baseURL}}/api/v1/metadata/table/analyze/db-table
+POST http://{{baseURL}}/api/v1/metadata/table/analyze/db
 Content-Type: application/json
 
 {
@@ -40,7 +40,7 @@ Content-Type: application/json
 }
 
 ### analyze table by host info and db name and table name
-POST http://{{baseURL}}/api/v1/metadata/table/analyze/host-info-db-table
+POST http://{{baseURL}}/api/v1/metadata/table/analyze/host-info-db
 Content-Type: application/json
 
 {

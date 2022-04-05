@@ -28,7 +28,7 @@ const (
 // @Param	id			body int	true "db id"
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"tables": [{"db_name": "das","table_name": "health_check_record"}]}"
 // @Router /api/v1/metadata/table/db [get]
 func GetTablesByDBID(c *gin.Context) {
 	var rd *utilmeta.TablesByDBID
@@ -65,7 +65,7 @@ func GetTablesByDBID(c *gin.Context) {
 // @Param	table_name	body string	true "table name"
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"table_statistics":[{"size_mb":0.015,"engine":"InnoDB","char_set":"utf8mb4","collation":"utf8mb4_general_ci","create_time":"2022-03-04T14:24:11+08:00","table_name":"t_meta_db_info","size":16384,"avg_row_length":16384,"auto_increment":2,"db_name":"das","table_rows":1}],"index_statistics":[{"nullable":false,"db_name":"das","table_name":"t_meta_db_info","index_name":"PRIMARY","sequence":1,"column_name":"id","cardinality":1,"non_unique":true},{"nullable":false,"db_name":"das","table_name":"t_meta_db_info","index_name":"idx01_db_name_cluster_id_cluster_type_env_id","sequence":1,"column_name":"db_name","cardinality":1,"non_unique":true},{"column_name":"cluster_id","cardinality":1,"non_unique":true,"nullable":false,"db_name":"das","table_name":"t_meta_db_info","index_name":"idx01_db_name_cluster_id_cluster_type_env_id","sequence":2},{"cardinality":1,"non_unique":true,"nullable":false,"db_name":"das","table_name":"t_meta_db_info","index_name":"idx01_db_name_cluster_id_cluster_type_env_id","sequence":3,"column_name":"cluster_type"},{"sequence":4,"column_name":"env_id","cardinality":1,"non_unique":true,"nullable":false,"db_name":"das","table_name":"t_meta_db_info","index_name":"idx01_db_name_cluster_id_cluster_type_env_id"}],"create_statement":"CREATE TABLE `t_meta_db_info` (\n  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',\n  `db_name` varchar(100) NOT NULL COMMENT '数据库名称',\n  `cluster_id` int(11) NOT NULL COMMENT '数据库集群ID',\n  `cluster_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '集群类型: 1-单库, 2-分库分表',\n  `env_id` int(11) NOT NULL COMMENT '环境: 1-online, 2-rel, 3-uat, 4-sit, 5-pt, 6-dev',\n  `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',\n  `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',\n  `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `idx01_db_name_cluster_id_cluster_type_env_id` (`db_name`,`cluster_id`,`cluster_type`,`env_id`)\n) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='数据库信息表'"}"
 // @Router /api/v1/metadata/table/statistic/db [get]
 func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	var rd *utilmeta.TableByDBIDAndTableName
@@ -104,7 +104,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 // @Param	table_name	body string	true "table name"
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"table_statistics": [{"size_mb": 0.015, "engine": "InnoDB", "char_set": "utf8mb4", "collation": "utf8mb4_general_ci", "create_time": "2022-03-04T14:24:11+08:00", "table_name": "t_meta_db_info", "size": 16384, "avg_row_length": 16384, "auto_increment": 2, "db_name": "das", "table_rows": 1}], "index_statistics": [{"nullable": false,"db_name": "das", "table_name": "t_meta_db_info", "index_name": "PRIMARY", "sequence":1, "column_name": "id", "cardinality": 1, "non_unique": true}, {"nullable": false, "db_name": "das", "table_name": "t_meta_db_info", "index_name": "idx01_db_name_cluster_id_cluster_type_env_id", "sequence": 1, "column_name": "db_name", "cardinality": 1, "non_unique": true}, {"column_name": "cluster_id", "cardinality": 1, "non_unique": true, "nullable": false, "db_name": "das", "table_name": "t_meta_db_info", "index_name": "idx01_db_name_cluster_id_cluster_type_env_id", "sequence": 2}, {"cardinality": 1, "non_unique": true, "nullable": false, "db_name": "das", "table_name": "t_meta_db_info", "index_name": "idx01_db_name_cluster_id_cluster_type_env_id", "sequence":3 ,"column_name": "cluster_type"}, {"sequence": 4,"column_name": "env_id", "cardinality": 1, "non_unique":true, "nullable": false, "db_name": "das", "table_name": "t_meta_db_info", "index_name": "idx01_db_name_cluster_id_cluster_type_env_id"}], "create_statement": "CREATE TABLE `t_meta_db_info` (\n  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',\n  `db_name` varchar(100) NOT NULL COMMENT '数据库名称',\n  `cluster_id` int(11) NOT NULL COMMENT '数据库集群ID',\n  `cluster_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '集群类型: 1-单库, 2-分库分表',\n  `env_id` int(11) NOT NULL COMMENT '环境: 1-online, 2-rel, 3-uat, 4-sit, 5-pt, 6-dev',\n  `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',\n  `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',\n  `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `idx01_db_name_cluster_id_cluster_type_env_id` (`db_name`,`cluster_id`,`cluster_type`,`env_id`)\n) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='数据库信息表'"}"
 // @Router /api/v1/metadata/table/statistic/host-info-db [get]
 func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	var rd *utilmeta.TableByHostInfoAndDBNameAndTableName
@@ -141,7 +141,7 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 // @Param	table_name	body string	true "table name"
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"message": "analyze table completed. db id: 1, table name: t_meta_db_info"}"
 // @Router /api/v1/metadata/table/analyze/db [get]
 func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 	var rd *utilmeta.TableByDBIDAndTableName
@@ -173,7 +173,7 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 // @Param	table_name	body string	true "table name"
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"message": "analyze table completed. host ip: 192.168.137.11, port num: 3306, db name: das, table name: t_meta_db_info"}"
 // @Router /api/v1/metadata/table/analyze/host-info-db [get]
 func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	var rd *utilmeta.TableByHostInfoAndDBNameAndTableName
