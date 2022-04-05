@@ -100,7 +100,7 @@ type IndexStatistic struct {
 	Sequence    int    `middleware:"sequence" json:"sequence"`
 	ColumnName  string `middleware:"column_name" json:"column_name"`
 	Cardinality int    `middleware:"cardinality" json:"cardinality"`
-	Unique      bool   `middleware:"non_unique" json:"non_unique"`
+	Unique      bool   `middleware:"unique" json:"unique"`
 	Nullable    bool   `middleware:"nullable" json:"nullable"`
 }
 
