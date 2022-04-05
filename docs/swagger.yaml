@@ -2261,7 +2261,7 @@ paths:
       summary: get mysql cluster by id
       tags:
       - mysql server
-  /api/v1/metadata/table/analyze/db-table:
+  /api/v1/metadata/table/analyze/db:
     get:
       consumes:
       - application/json
@@ -2294,7 +2294,7 @@ paths:
       summary: analyze table by db id and table name
       tags:
       - Tables
-  /api/v1/metadata/table/analyze/host-info-db-table:
+  /api/v1/metadata/table/analyze/host-info-db:
     get:
       consumes:
       - application/json
@@ -2366,7 +2366,7 @@ paths:
       summary: get tables by db id
       tags:
       - Tables
-  /api/v1/metadata/table/statistic/db-table:
+  /api/v1/metadata/table/statistic/db:
     get:
       consumes:
       - application/json
@@ -2399,7 +2399,7 @@ paths:
       summary: get table statistics by db id and table name
       tags:
       - Tables
-  /api/v1/metadata/table/statistic/host-info-db-table:
+  /api/v1/metadata/table/statistic/host-info-db:
     get:
       consumes:
       - application/json

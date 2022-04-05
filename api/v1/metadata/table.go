@@ -66,7 +66,7 @@ func GetTablesByDBID(c *gin.Context) {
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
-// @Router /api/v1/metadata/table/statistic/db-table [get]
+// @Router /api/v1/metadata/table/statistic/db [get]
 func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 	var rd *utilmeta.TableByDBIDAndTableName
 	// bind json
@@ -105,7 +105,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
-// @Router /api/v1/metadata/table/statistic/host-info-db-table [get]
+// @Router /api/v1/metadata/table/statistic/host-info-db [get]
 func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	var rd *utilmeta.TableByHostInfoAndDBNameAndTableName
 	// bind json
@@ -142,7 +142,7 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
-// @Router /api/v1/metadata/table/analyze/db-table [get]
+// @Router /api/v1/metadata/table/analyze/db [get]
 func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 	var rd *utilmeta.TableByDBIDAndTableName
 	// bind json
@@ -174,7 +174,7 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
 // @Success	200 {string} string ""
-// @Router /api/v1/metadata/table/analyze/host-info-db-table [get]
+// @Router /api/v1/metadata/table/analyze/host-info-db [get]
 func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	var rd *utilmeta.TableByHostInfoAndDBNameAndTableName
 	// bind json

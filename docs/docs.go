@@ -3410,7 +3410,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/table/analyze/db-table": {
+        "/api/v1/metadata/table/analyze/db": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -3461,7 +3461,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/table/analyze/host-info-db-table": {
+        "/api/v1/metadata/table/analyze/host-info-db": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -3572,7 +3572,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/table/statistic/db-table": {
+        "/api/v1/metadata/table/statistic/db": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -3623,7 +3623,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/table/statistic/host-info-db-table": {
+        "/api/v1/metadata/table/statistic/host-info-db": {
             "get": {
                 "consumes": [
                     "application/json"
