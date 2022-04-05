@@ -129,7 +129,7 @@ func (tr *TableRepo) GetTableStatistics(dbName, tableName string) ([]metadata.Ta
 			ON t.table_collation = ccsa.collation_name
 		WHERE table_schema = ? AND table_name = ? ;
 	`
-	log.Debugf("metadata TableRepo.GetTableStatistics() sql: \n%s", sql, dbName, tableName)
+	log.Debugf("metadata TableRepo.GetTableStatistics() sql: \n%s, placeholders: %s, %s", sql, dbName, tableName)
 
 	result, err := tr.Execute(sql, dbName, tableName)
 	if err != nil {
@@ -162,7 +162,7 @@ func (tr *TableRepo) GetIndexStatistics(dbName, tableName string) ([]metadata.In
 		WHERE table_schema = ?
   		AND table_name = ? ;
 	`
-	log.Debugf("metadata TableRepo.GetIndexStatistics() sql: \n%s", sql, dbName, tableName)
+	log.Debugf("metadata TableRepo.GetIndexStatistics() sql: \n%s, placeholders: %s, %s", sql, dbName, tableName)
 
 	result, err := tr.Execute(sql, dbName, tableName)
 	if err != nil {
@@ -185,7 +185,7 @@ func (tr *TableRepo) GetCreateStatement(dbName, tableName string) (string, error
 	sql := fmt.Sprintf(`
 		SHOW CREATE TABLE %s.%s;
 	`, dbName, tableName)
-	log.Debugf("metadata TableRepo.GetCreateStatement() sql: \n%s", sql, dbName, tableName)
+	log.Debugf("metadata TableRepo.GetCreateStatement() sql: \n%s, placeholders: %s, %s", sql, dbName, tableName)
 	result, err := tr.Execute(sql)
 	if err != nil {
 		return "", err
@@ -221,7 +221,7 @@ func (tr *TableRepo) GetStatisticsByDBNameAndTableName(dbName string, tableName 
 // AnalyzeTableByDBNameAndTableName analyzes the table by DB name and table name
 func (tr *TableRepo) AnalyzeTableByDBNameAndTableName(dbName, tableName string) error {
 	sql := fmt.Sprintf("ANALYZE TABLE %s.%s;", dbName, tableName)
-	log.Debugf("metadata TableRepo.AnalyzeTableByDBNameAndTableName() sql: \n%s", sql, dbName, tableName)
+	log.Debugf("metadata TableRepo.AnalyzeTableByDBNameAndTableName() sql: \n%s, placeholders: %s, %s", sql, dbName, tableName)
 	result, err := tr.Execute(sql)
 	if err != nil {
 		return err
