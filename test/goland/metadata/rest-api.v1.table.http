@@ -1,6 +1,6 @@
 ### get tables by db id
 GET http://{{baseURL}}/api/v1/metadata/table/db
-Accept: application/json
+Content-Type: application/json
 
 {
   "db_id": {{db_id}},
@@ -9,7 +9,7 @@ Accept: application/json
 
 ### get table statistics by db id and table name
 GET http://{{baseURL}}/api/v1/metadata/table/statistic/db
-Accept: application/json
+Content-Type: application/json
 
 {
   "db_id": {{db_id}},
@@ -19,7 +19,7 @@ Accept: application/json
 
 ### get table statistics by host info and db name and table name
 GET http://{{baseURL}}/api/v1/metadata/table/statistic/host-info-db
-Accept: application/json
+Content-Type: application/json
 
 {
   "host_ip": "{{mysql_host_ip}}",

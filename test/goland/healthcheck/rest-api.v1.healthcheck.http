@@ -8,7 +8,7 @@ Content-Type: application/json
 
 ### healthcheck.GetResultByOperationID
 GET http://{{baseURL}}/api/v1/healthcheck/result/{{result_id}}
-Accept: application/json
+Content-Type: application/json
 
 ### healthcheck.Check
 POST http://{{baseURL}}/api/v1/healthcheck/check
