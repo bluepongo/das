@@ -6,6 +6,27 @@ import (
 	"github.com/romberli/go-util/middleware"
 )
 
+type Config interface {
+	// GetStartTime returns the start time
+	GetStartTime() time.Time
+	// GetEndTime returns the end time
+	GetEndTime() time.Time
+	// GetLimit returns the limit
+	GetLimit() int
+	// GetOffset returns the offset
+	GetOffset() int
+	// SetStartTime sets the start time
+	SetStartTime(startTime time.Time)
+	// SetEndTime sets the end time
+	SetEndTime(endTime time.Time)
+	// SetLimit sets the limit
+	SetLimit(limit int)
+	// SetOffset sets the offset
+	SetOffset(offset int)
+	// IsValid checks if the config is valid
+	IsValid() bool
+}
+
 type Query interface {
 	// GetSQLID returns the sql identity
 	GetSQLID() string

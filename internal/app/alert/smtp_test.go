@@ -23,7 +23,7 @@ func init() {
 	testSMTPSender = testInitSMTPSender()
 }
 
-func TestSMTP_ALL(t *testing.T) {
+func TestSMTP_All(t *testing.T) {
 	TestSMTP_Send(t)
 }
 

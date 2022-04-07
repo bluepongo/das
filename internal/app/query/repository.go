@@ -227,13 +227,13 @@ type DASRepo struct {
 	Database middleware.Pool
 }
 
-// NewDASRepo returns *DASRepo
-func NewDASRepo(db middleware.Pool) *DASRepo {
+// NewDASRepo returns query.DASRepo
+func NewDASRepo(db middleware.Pool) query.DASRepo {
 	return newDASRepo(db)
 }
 
-// NewDASRepoWithGlobal returns *DASRepo with global mysql pool
-func NewDASRepoWithGlobal() *DASRepo {
+// NewDASRepoWithGlobal returns query.DASRepo with global mysql pool
+func NewDASRepoWithGlobal() query.DASRepo {
 	return NewDASRepo(global.DASMySQLPool)
 }
 
@@ -274,12 +274,17 @@ func (dr *DASRepo) Save(mysqlClusterID, mysqlServerID, dbID int, sqlID string, s
 }
 
 type MySQLRepo struct {
-	config *Config
+	config query.Config
 	conn   *mysql.Conn
 }
 
-// NewMySQLRepo returns a new mysqlRepo
-func NewMySQLRepo(config *Config, conn *mysql.Conn) *MySQLRepo {
+// NewMySQLRepo returns a new query.MonitorRepo
+func NewMySQLRepo(config query.Config, conn *mysql.Conn) query.MonitorRepo {
+	return newMySQLRepo(config, conn)
+}
+
+// NewMySQLRepo returns a new *MySQLRepo
+func newMySQLRepo(config query.Config, conn *mysql.Conn) *MySQLRepo {
 	return &MySQLRepo{
 		config: config,
 		conn:   conn,
@@ -287,7 +292,7 @@ func NewMySQLRepo(config *Config, conn *mysql.Conn) *MySQLRepo {
 }
 
 // getConfig gets Config
-func (mr *MySQLRepo) getConfig() *Config {
+func (mr *MySQLRepo) getConfig() query.Config {
 	return mr.config
 }
 
@@ -391,12 +396,17 @@ func (mr *MySQLRepo) execute(command string, args ...interface{}) ([]query.Query
 }
 
 type ClickhouseRepo struct {
-	config *Config
+	config query.Config
 	conn   *clickhouse.Conn
 }
 
-// NewClickHouseRepo returns a new ClickHouseRepo
-func NewClickHouseRepo(config *Config, conn *clickhouse.Conn) *ClickhouseRepo {
+// NewClickHouseRepo returns a new query.MonitorRepo
+func NewClickHouseRepo(config query.Config, conn *clickhouse.Conn) query.MonitorRepo {
+	return newClickHouseRepo(config, conn)
+}
+
+// newClickHouseRepo returns a new *ClickHouseRepo
+func newClickHouseRepo(config query.Config, conn *clickhouse.Conn) *ClickhouseRepo {
 	return &ClickhouseRepo{
 		config: config,
 		conn:   conn,
@@ -404,7 +414,7 @@ func NewClickHouseRepo(config *Config, conn *clickhouse.Conn) *ClickhouseRepo {
 }
 
 // getConfig returns the configuration
-func (cr *ClickhouseRepo) getConfig() *Config {
+func (cr *ClickhouseRepo) getConfig() query.Config {
 	return cr.config
 }
 

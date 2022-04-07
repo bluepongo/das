@@ -26,7 +26,7 @@ func testInitViper() {
 	viper.Set(config.AlertSMTPFromKey, testSMTPFrom)
 }
 
-func TestAppRepoAll(t *testing.T) {
+func TestAppRepo_All(t *testing.T) {
 	TestAlertService_SendEmail(t)
 	TestAlertService_sendViaSMTP(t)
 	TestAlertService_sendViaHTTP(t)

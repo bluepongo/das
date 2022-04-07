@@ -35,8 +35,8 @@ type Query struct {
 	RowsExaminedMax int     `middleware:"rows_examined_max" json:"rows_examined_max"`
 }
 
-// NewEmptyQuery return *Query
-func NewEmptyQuery() *Query {
+// NewEmptyQuery return query.Query
+func NewEmptyQuery() query.Query {
 	return &Query{}
 }
 
@@ -87,28 +87,28 @@ func (q *Query) SetDBName(dbName string) {
 
 // Querier include config of query and connection pool of DAS repo
 type Querier struct {
-	config  *Config
-	dasRepo *DASRepo
+	config  query.Config
+	dasRepo query.DASRepo
 }
 
 // NewQuerier return *Querier
-func NewQuerier(config *Config, dasRepo *DASRepo) *Querier {
+func NewQuerier(config query.Config, dasRepo query.DASRepo) *Querier {
 	return newQuerier(config, dasRepo)
 }
 
 // NewQuerierWithGlobal return *Querier with global DASRepo
-func NewQuerierWithGlobal(config *Config) *Querier {
+func NewQuerierWithGlobal(config query.Config) *Querier {
 	return newQuerier(config, NewDASRepoWithGlobal())
 }
 
-func newQuerier(config *Config, dasRepo *DASRepo) *Querier {
+func newQuerier(config query.Config, dasRepo query.DASRepo) *Querier {
 	return &Querier{
 		config:  config,
 		dasRepo: dasRepo,
 	}
 }
 
-func (q *Querier) getConfig() *Config {
+func (q *Querier) getConfig() query.Config {
 	return q.config
 }
 

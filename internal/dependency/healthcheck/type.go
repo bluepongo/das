@@ -90,6 +90,8 @@ type ItemConfig interface {
 type EngineConfig interface {
 	// GetItemConfig returns the item config
 	GetItemConfig(item string) ItemConfig
+	// SetItemConfig sets item config with given item and config
+	SetItemConfig(item string, config ItemConfig)
 	// Validate validates if engine configuration is valid
 	Validate() error
 }

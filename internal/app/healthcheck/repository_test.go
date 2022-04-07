@@ -57,7 +57,7 @@ func init() {
 	testInitDASMySQLPool()
 
 	testOperationInfo = testInitOperationInfo()
-	testDASRepo = NewDASRepoWithGlobal()
+	testDASRepo = newDASRepo(global.DASMySQLPool)
 	testApplicationMySQLRepo = testInitApplicationMySQLRepo()
 	testPrometheusRepo = testInitPrometheusRepo()
 	testQueryRepo = testInitQueryRepo()
@@ -116,7 +116,7 @@ func testInitOperationInfo() *OperationInfo {
 		}
 	}
 
-	return NewOperationInfo(testHealthcheckOperationID, user, apps, mysqlServer, monitorSystem, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
+	return newOperationInfo(testHealthcheckOperationID, user, apps, mysqlServer, monitorSystem, time.Now().Add(-constant.Week), time.Now(), testHealthcheckStep)
 }
 
 func testInitDASMySQLPool() {
@@ -143,7 +143,7 @@ func testInitApplicationMySQLRepo() *ApplicationMySQLRepo {
 		os.Exit(constant.DefaultAbnormalExitCode)
 	}
 
-	return NewApplicationMySQLRepo(testOperationInfo, conn)
+	return newApplicationMySQLRepo(testOperationInfo, conn)
 }
 
 func testInitPrometheusRepo() *PrometheusRepo {

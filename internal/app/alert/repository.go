@@ -14,13 +14,17 @@ type Repository struct {
 }
 
 // NewRepository returns *Repository with given middleware.Pool
-func NewRepository(db middleware.Pool) *Repository {
-	return &Repository{Database: db}
+func NewRepository(db middleware.Pool) alert.Repository {
+	return newRepository(db)
 }
 
 // NewRepository returns *Repository with global mysql pool
-func NewRepositoryWithGlobal() *Repository {
-	return NewRepository(global.DASMySQLPool)
+func NewRepositoryWithGlobal() alert.Repository {
+	return newRepository(global.DASMySQLPool)
+}
+
+func newRepository(db middleware.Pool) *Repository {
+	return &Repository{Database: db}
 }
 
 // Execute executes given command and placeholders on the middleware

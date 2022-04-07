@@ -62,7 +62,7 @@ var (
 // DefaultEngine work for health check module
 type DefaultEngine struct {
 	operationInfo        healthcheck.OperationInfo
-	engineConfig         DefaultEngineConfig
+	engineConfig         healthcheck.EngineConfig
 	result               *Result
 	mountPoints          []string
 	devices              []string
@@ -72,8 +72,17 @@ type DefaultEngine struct {
 	queryRepo            healthcheck.QueryRepo
 }
 
-// NewDefaultEngine returns a new *DefaultEngine
+// NewDefaultEngine returns a new healthcheck.DefaultEngine
 func NewDefaultEngine(operationInfo healthcheck.OperationInfo,
+	dasRepo healthcheck.DASRepo,
+	applicationMySQLRepo healthcheck.ApplicationMySQLRepo,
+	prometheusRepo healthcheck.PrometheusRepo,
+	queryRepo healthcheck.QueryRepo) healthcheck.Engine {
+	return newDefaultEngine(operationInfo, dasRepo, applicationMySQLRepo, prometheusRepo, queryRepo)
+}
+
+// newDefaultEngine returns a new *DefaultEngine
+func newDefaultEngine(operationInfo healthcheck.OperationInfo,
 	dasRepo healthcheck.DASRepo,
 	applicationMySQLRepo healthcheck.ApplicationMySQLRepo,
 	prometheusRepo healthcheck.PrometheusRepo,
@@ -95,12 +104,12 @@ func (de *DefaultEngine) GetOperationInfo() healthcheck.OperationInfo {
 }
 
 // getEngineConfig returns the default engine config
-func (de *DefaultEngine) getEngineConfig() DefaultEngineConfig {
+func (de *DefaultEngine) getEngineConfig() healthcheck.EngineConfig {
 	return de.engineConfig
 }
 
 // getResult returns the result
-func (de *DefaultEngine) getResult() *Result {
+func (de *DefaultEngine) getResult() healthcheck.Result {
 	return de.result
 }
 
@@ -309,31 +318,11 @@ func (de *DefaultEngine) preRun() error {
 
 // loadEngineConfig loads engine config
 func (de *DefaultEngine) loadEngineConfig() error {
+	var err error
 	// load config
-	sql := `
-		select id, item_name, item_weight, low_watermark, high_watermark, unit, score_deduction_per_unit_high, max_score_deduction_high,
-		score_deduction_per_unit_medium, max_score_deduction_medium, del_flag, create_time, last_update_time
-		from t_hc_default_engine_config
-		where del_flag = 0;
-	`
-	log.Debugf("healthcheck DASRepo.loadEngineConfig() sql: \n%s\n", sql)
-	result, err := de.getDASRepo().Execute(sql)
+	de.engineConfig, err = de.getDASRepo().LoadEngineConfig()
 	if err != nil {
 		return err
-	}
-	// init []*DefaultItemConfig
-	defaultEngineConfigList := make([]*DefaultItemConfig, result.RowNumber())
-	for i := range defaultEngineConfigList {
-		defaultEngineConfigList[i] = NewEmptyDefaultItemConfig()
-	}
-	// map to struct
-	err = result.MapToStructSlice(defaultEngineConfigList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return err
-	}
-
-	for _, defaultEngineConfig := range defaultEngineConfigList {
-		de.engineConfig[defaultEngineConfig.ItemName] = defaultEngineConfig
 	}
 	// validate config
 	return de.engineConfig.Validate()

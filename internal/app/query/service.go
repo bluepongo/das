@@ -12,23 +12,23 @@ const QueriesStruct = "Queries"
 var _ query.Service = (*Service)(nil)
 
 type Service struct {
-	config  *Config
-	dasRepo *DASRepo
+	config  query.Config
+	dasRepo query.DASRepo
 	Queries []query.Query `json:"queries"`
 }
 
-// NewService returns a new *Service
-func NewService(config *Config, dasRepo *DASRepo) *Service {
+// NewService returns a new query.Service
+func NewService(config query.Config, dasRepo query.DASRepo) query.Service {
 	return newService(config, dasRepo)
 }
 
-// NewServiceWithDefault returns a new *Service with default repository
-func NewServiceWithDefault(config *Config) *Service {
+// NewServiceWithDefault returns a new query.Service with default repository
+func NewServiceWithDefault(config query.Config) query.Service {
 	return newService(config, NewDASRepoWithGlobal())
 }
 
 // newService returns a new *Service
-func newService(config *Config, dasRepo *DASRepo) *Service {
+func newService(config query.Config, dasRepo query.DASRepo) *Service {
 	return &Service{
 		config:  config,
 		dasRepo: dasRepo,
@@ -36,7 +36,7 @@ func newService(config *Config, dasRepo *DASRepo) *Service {
 }
 
 // GetConfig returns the config of query
-func (s *Service) GetConfig() *Config {
+func (s *Service) GetConfig() query.Config {
 	return s.config
 }
 

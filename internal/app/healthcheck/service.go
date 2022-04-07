@@ -36,7 +36,7 @@ var _ healthcheck.Service = (*Service)(nil)
 // Service of health check
 type Service struct {
 	healthcheck.DASRepo
-	OperationInfo      *OperationInfo
+	OperationInfo      healthcheck.OperationInfo
 	Engine             healthcheck.Engine
 	Result             healthcheck.Result             `json:"result"`
 	OperationHistories []healthcheck.OperationHistory `json:"operation_histories"`

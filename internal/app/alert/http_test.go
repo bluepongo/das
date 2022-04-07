@@ -30,7 +30,7 @@ func testInitHTTPSender() *HTTPSender {
 	return newHTTPSender(client, cfg, testHTTPURL)
 }
 
-func TestHTTP_ALL(t *testing.T) {
+func TestHTTP_All(t *testing.T) {
 	TestHTTP_Send(t)
 }
 

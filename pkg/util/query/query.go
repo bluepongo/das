@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/romberli/das/internal/app/query"
+	depquery "github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/go-util/constant"
 	"github.com/romberli/go-util/middleware/sql/parser"
 )
@@ -31,7 +32,7 @@ func (r *Range) GetOffset() int {
 	return r.Offset
 }
 
-func (r *Range) GetConfig() (*query.Config, error) {
+func (r *Range) GetConfig() (depquery.Config, error) {
 	return getConfig(r.GetStartTime(), r.GetEndTime(), r.GetLimit(), r.GetOffset())
 }
 
@@ -63,7 +64,7 @@ func (sr *ServerRange) GetOffset() int {
 	return sr.Offset
 }
 
-func (sr *ServerRange) GetConfig() (*query.Config, error) {
+func (sr *ServerRange) GetConfig() (depquery.Config, error) {
 	return getConfig(sr.GetStartTime(), sr.GetEndTime(), sr.GetLimit(), sr.GetOffset())
 }
 
@@ -100,11 +101,11 @@ func (hir *HostInfoRange) GetOffset() int {
 	return hir.Offset
 }
 
-func (hir *HostInfoRange) GetConfig() (*query.Config, error) {
+func (hir *HostInfoRange) GetConfig() (depquery.Config, error) {
 	return getConfig(hir.GetStartTime(), hir.GetEndTime(), hir.GetLimit(), hir.GetOffset())
 }
 
-func getConfig(startTime, endTime string, limit, offset int) (*query.Config, error) {
+func getConfig(startTime, endTime string, limit, offset int) (depquery.Config, error) {
 	st, err := time.ParseInLocation(constant.TimeLayoutSecond, startTime, time.Local)
 	if err != nil {
 		return nil, err

@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	testDASMySQLAddr = "192.168.10.219:3306"
+	testDASMySQLAddr = "192.168.137.11:3306"
 	testDASMySQLName = "das"
 	testDASMySQLUser = "root"
 	testDASMySQLPass = "root"
@@ -28,7 +28,7 @@ var testRepo *Repository
 
 func init() {
 	testInitDASMySQLPool()
-	testRepo = NewRepositoryWithGlobal()
+	testRepo = newRepository(global.DASMySQLPool)
 }
 
 func testInitDASMySQLPool() {

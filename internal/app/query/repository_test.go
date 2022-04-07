@@ -67,7 +67,7 @@ func init() {
 	testInitDASMySQLPool()
 	testInitViper()
 
-	testDASRepo = NewDASRepoWithGlobal()
+	testDASRepo = newDASRepo(global.DASMySQLPool)
 
 	switch testPMMVersion {
 	case 1:
@@ -147,7 +147,7 @@ func testInitMySQLRepo() *MySQLRepo {
 		os.Exit(constant.DefaultAbnormalExitCode)
 	}
 
-	return NewMySQLRepo(NewConfigWithDefault(), conn)
+	return newMySQLRepo(NewConfigWithDefault(), conn)
 }
 
 func testInitClickhouseRepo() *ClickhouseRepo {
@@ -171,7 +171,7 @@ func testInitClickhouseRepo() *ClickhouseRepo {
 		os.Exit(constant.DefaultAbnormalExitCode)
 	}
 
-	return NewClickHouseRepo(NewConfigWithDefault(), conn)
+	return newClickHouseRepo(NewConfigWithDefault(), conn)
 }
 
 func TestQueryRepository_All(t *testing.T) {

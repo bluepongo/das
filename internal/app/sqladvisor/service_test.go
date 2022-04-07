@@ -3,7 +3,9 @@ package sqladvisor
 import (
 	"testing"
 
+	"github.com/romberli/das/config"
 	"github.com/romberli/go-util/common"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +20,7 @@ func init() {
 	testInitDASMySQLPool()
 	testInitViper()
 
-	service = NewServiceWithDefault()
+	service = newService(viper.GetString(config.SQLAdvisorSoarBinKey), viper.GetString(config.SQLAdvisorSoarConfigKey))
 }
 
 func TestService_All(t *testing.T) {

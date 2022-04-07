@@ -50,14 +50,14 @@ type DASRepo struct {
 	Database middleware.Pool
 }
 
-// NewDASRepo returns *DASRepo with given middleware.Pool
-func NewDASRepo(db middleware.Pool) *DASRepo {
+// NewDASRepo returns healthcheck.DASRepo with given middleware.Pool
+func NewDASRepo(db middleware.Pool) healthcheck.DASRepo {
 	return newDASRepo(db)
 }
 
-// NewDASRepoWithGlobal returns *DASRepo with global mysql pool
-func NewDASRepoWithGlobal() *DASRepo {
-	return NewDASRepo(global.DASMySQLPool)
+// NewDASRepoWithGlobal returns healthcheck.DASRepo with global mysql pool
+func NewDASRepoWithGlobal() healthcheck.DASRepo {
+	return newDASRepo(global.DASMySQLPool)
 }
 
 // newDASRepo returns *DASRepo with given middleware.Pool
@@ -154,21 +154,21 @@ func (dr *DASRepo) LoadEngineConfig() (healthcheck.EngineConfig, error) {
 		return nil, err
 	}
 	// init []*DefaultItemConfig
-	defaultItemConfigs := make([]*DefaultItemConfig, result.RowNumber())
-	for i := range defaultItemConfigs {
-		defaultItemConfigs[i] = NewEmptyDefaultItemConfig()
+	itemConfigList := make([]healthcheck.ItemConfig, result.RowNumber())
+	for i := range itemConfigList {
+		itemConfigList[i] = NewEmptyDefaultItemConfig()
 	}
 	// map to struct
-	err = result.MapToStructSlice(defaultItemConfigs, constant.DefaultMiddlewareTag)
+	err = result.MapToStructSlice(itemConfigList, constant.DefaultMiddlewareTag)
 	if err != nil {
 		return nil, err
 	}
-	defaultEngineConfig := NewEmptyDefaultEngineConfig()
-	for _, defaultItemConfig := range defaultItemConfigs {
-		defaultEngineConfig[defaultItemConfig.ItemName] = defaultItemConfig
+	engineConfig := NewEmptyDefaultEngineConfig()
+	for _, itemConfig := range itemConfigList {
+		engineConfig.SetItemConfig(itemConfig.GetItemName(), itemConfig)
 	}
 
-	return defaultEngineConfig, nil
+	return engineConfig, nil
 }
 
 // GetResultByOperationID gets a Result by the operationID from the middleware
@@ -312,45 +312,18 @@ func (dr *DASRepo) UpdateAccuracyReviewByOperationID(operationID int, review int
 	return err
 }
 
-// loadEngineConfig loads engine config from the middleware
-func (dr *DASRepo) loadEngineConfig() (DefaultEngineConfig, error) {
-	// load config
-	sql := `
-		select id, item_name, item_weight, low_watermark, high_watermark, unit, score_deduction_per_unit_high, max_score_deduction_high,
-		score_deduction_per_unit_medium, max_score_deduction_medium, del_flag, create_time, last_update_time
-		from t_hc_default_engine_config
-		where del_flag = 0;
-	`
-	log.Debugf("healthcheck DASRepo.loadEngineConfig() sql: \n%s\n", sql)
-	result, err := dr.Execute(sql)
-	if err != nil {
-		return nil, err
-	}
-	// init []*DefaultItemConfig
-	defaultItemConfigs := make([]*DefaultItemConfig, result.RowNumber())
-	for i := range defaultItemConfigs {
-		defaultItemConfigs[i] = NewEmptyDefaultItemConfig()
-	}
-	// map to struct
-	err = result.MapToStructSlice(defaultItemConfigs, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
-	defaultEngineConfig := NewEmptyDefaultEngineConfig()
-	for _, defaultItemConfig := range defaultItemConfigs {
-		defaultEngineConfig[defaultItemConfig.ItemName] = defaultItemConfig
-	}
-
-	return defaultEngineConfig, nil
-}
-
 type ApplicationMySQLRepo struct {
 	operationInfo healthcheck.OperationInfo
 	conn          *mysql.Conn
 }
 
-// NewApplicationMySQLRepo returns a new *ApplicationMySQLRepo
-func NewApplicationMySQLRepo(operationInfo healthcheck.OperationInfo, conn *mysql.Conn) *ApplicationMySQLRepo {
+// NewApplicationMySQLRepo returns a new healthcheck.ApplicationMySQLRepo
+func NewApplicationMySQLRepo(operationInfo healthcheck.OperationInfo, conn *mysql.Conn) healthcheck.ApplicationMySQLRepo {
+	return newApplicationMySQLRepo(operationInfo, conn)
+}
+
+// newApplicationMySQLRepo returns a new *ApplicationMySQLRepo
+func newApplicationMySQLRepo(operationInfo healthcheck.OperationInfo, conn *mysql.Conn) *ApplicationMySQLRepo {
 	return &ApplicationMySQLRepo{
 		operationInfo: operationInfo,
 		conn:          conn,
@@ -453,7 +426,7 @@ func (amr *ApplicationMySQLRepo) GetDBName(tableNames []string) (string, error) 
 		return constant.EmptyString, nil
 	}
 
-	sql := `select db_name from information_schema.tables where table_name in (%s);`
+	sql := `select table_schema from information_schema.tables where table_name in (%s);`
 	interfaces, err := common.ConvertInterfaceToSliceInterface(tableNames)
 	if err != nil {
 		return constant.EmptyString, err

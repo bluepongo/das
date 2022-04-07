@@ -91,8 +91,13 @@ type OperationInfo struct {
 	step          time.Duration
 }
 
-// NewOperationInfo returns a new *OperationInfo
-func NewOperationInfo(operationID int, user metadata.User, apps []metadata.App, mysqlServer metadata.MySQLServer, MonitorSystem metadata.MonitorSystem, startTime, endTime time.Time, step time.Duration) *OperationInfo {
+// NewOperationInfo returns a new healthcheck.OperationInfo
+func NewOperationInfo(operationID int, user metadata.User, apps []metadata.App, mysqlServer metadata.MySQLServer, MonitorSystem metadata.MonitorSystem, startTime, endTime time.Time, step time.Duration) healthcheck.OperationInfo {
+	return newOperationInfo(operationID, user, apps, mysqlServer, MonitorSystem, startTime, endTime, step)
+}
+
+// newOperationInfo returns a new *OperationInfo
+func newOperationInfo(operationID int, user metadata.User, apps []metadata.App, mysqlServer metadata.MySQLServer, MonitorSystem metadata.MonitorSystem, startTime, endTime time.Time, step time.Duration) *OperationInfo {
 	return &OperationInfo{
 		operationID:   operationID,
 		user:          user,
@@ -173,15 +178,18 @@ type OperationHistory struct {
 	LastUpdateTime time.Time `middleware:"last_update_time" json:"last_update_time"`
 }
 
+// NewOperationHistory returns healthcheck.OperationHistory
 func NewOperationHistory(id, mySQLServerID int, hostIP string, portNum int, startTime, endTime time.Time, step, status int, message string,
 	delFlag int, createTime, lastUpdateTime time.Time) healthcheck.OperationHistory {
 	return newOperationHistory(id, mySQLServerID, hostIP, portNum, startTime, endTime, step, status, message, delFlag, createTime, lastUpdateTime)
 }
 
+// NewEmptyOperationHistory returns healthcheck.OperationHistory with empty value
 func NewEmptyOperationHistory() healthcheck.OperationHistory {
 	return &OperationHistory{}
 }
 
+// newOperationHistory returns *OperationHistory
 func newOperationHistory(id, mysqlServerID int, hostIP string, portNum int, startTime, endTime time.Time, step, status int, message string,
 	delFlag int, createTime, lastUpdateTime time.Time) *OperationHistory {
 	return &OperationHistory{
@@ -287,8 +295,24 @@ type DefaultItemConfig struct {
 	LastUpdateTime              time.Time `middleware:"last_update_time" json:"last_update_time"`
 }
 
-// NewDefaultItemConfig returns new *DefaultItemConfig
+// NewDefaultItemConfig returns new healthcheck.ItemConfig
 func NewDefaultItemConfig(itemName string, itemWeight int, lowWatermark float64, highWatermark float64, unit float64,
+	scoreDeductionPerUnitHigh float64, maxScoreDeductionHigh float64, scoreDeductionPerUnitMedium float64, maxScoreDeductionMedium float64) healthcheck.ItemConfig {
+	return newDefaultItemConfig(
+		itemName,
+		itemWeight,
+		lowWatermark,
+		highWatermark,
+		unit,
+		scoreDeductionPerUnitHigh,
+		maxScoreDeductionHigh,
+		scoreDeductionPerUnitMedium,
+		maxScoreDeductionMedium,
+	)
+}
+
+// newDefaultItemConfig returns new *DefaultItemConfig
+func newDefaultItemConfig(itemName string, itemWeight int, lowWatermark float64, highWatermark float64, unit float64,
 	scoreDeductionPerUnitHigh float64, maxScoreDeductionHigh float64, scoreDeductionPerUnitMedium float64, maxScoreDeductionMedium float64) *DefaultItemConfig {
 	return &DefaultItemConfig{
 		ItemName:                    itemName,
@@ -303,8 +327,8 @@ func NewDefaultItemConfig(itemName string, itemWeight int, lowWatermark float64,
 	}
 }
 
-// NewEmptyDefaultItemConfig returns a new *DefaultItemConfig
-func NewEmptyDefaultItemConfig() *DefaultItemConfig {
+// NewEmptyDefaultItemConfig returns a new healthcheck.DefaultItemConfig with empty value
+func NewEmptyDefaultItemConfig() healthcheck.ItemConfig {
 	return &DefaultItemConfig{}
 }
 
@@ -374,21 +398,21 @@ func (dic *DefaultItemConfig) GetLastUpdateTime() time.Time {
 }
 
 // DefaultEngineConfig is a map of DefaultItemConfig
-type DefaultEngineConfig map[string]*DefaultItemConfig
+type DefaultEngineConfig map[string]healthcheck.ItemConfig
 
-// NewEmptyDefaultEngineConfig returns a new empty *DefaultItemConfig
-func NewEmptyDefaultEngineConfig() DefaultEngineConfig {
-	return map[string]*DefaultItemConfig{}
+// NewEmptyDefaultEngineConfig returns a new empty DefaultItemConfig
+func NewEmptyDefaultEngineConfig() healthcheck.EngineConfig {
+	return DefaultEngineConfig{}
 }
 
 // GetItemConfig returns healthcheck.ItemConfig with given item name
 func (dec DefaultEngineConfig) GetItemConfig(item string) healthcheck.ItemConfig {
-	return dec.getItemConfig(item)
+	return dec[item]
 }
 
-// getItemConfig returns *DefaultItemConfig with given item name
-func (dec DefaultEngineConfig) getItemConfig(item string) *DefaultItemConfig {
-	return dec[item]
+// SetItemConfig sets item config with given item and config
+func (dec DefaultEngineConfig) SetItemConfig(item string, config healthcheck.ItemConfig) {
+	dec[item] = config
 }
 
 // Validate validates if engine configuration is valid
@@ -400,38 +424,38 @@ func (dec DefaultEngineConfig) Validate() error {
 	}
 	for itemName, defaultItemConfig := range dec {
 		// validate item weight
-		if defaultItemConfig.ItemWeight > defaultHundred || defaultItemConfig.ItemWeight < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrHealthcheckItemWeightItemInvalid, itemName, defaultItemConfig.ItemWeight)
+		if defaultItemConfig.GetItemWeight() > defaultHundred || defaultItemConfig.GetItemWeight() < constant.ZeroInt {
+			return message.NewMessage(msghc.ErrHealthcheckItemWeightItemInvalid, itemName, defaultItemConfig.GetItemWeight())
 		}
 		// validate low watermark
-		if defaultItemConfig.LowWatermark < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrHealthcheckLowWatermarkItemInvalid, itemName, defaultItemConfig.LowWatermark)
+		if defaultItemConfig.GetLowWatermark() < constant.ZeroInt {
+			return message.NewMessage(msghc.ErrHealthcheckLowWatermarkItemInvalid, itemName, defaultItemConfig.GetLowWatermark())
 		}
 		// validate high watermark
-		if defaultItemConfig.HighWatermark < defaultItemConfig.LowWatermark {
-			return message.NewMessage(msghc.ErrHealthcheckHighWatermarkItemInvalid, itemName, defaultItemConfig.HighWatermark)
+		if defaultItemConfig.GetHighWatermark() < defaultItemConfig.GetLowWatermark() {
+			return message.NewMessage(msghc.ErrHealthcheckHighWatermarkItemInvalid, itemName, defaultItemConfig.GetHighWatermark())
 		}
 		// validate unit
-		if defaultItemConfig.Unit < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrHealthcheckUnitItemInvalid, itemName, defaultItemConfig.Unit)
+		if defaultItemConfig.GetUnit() < constant.ZeroInt {
+			return message.NewMessage(msghc.ErrHealthcheckUnitItemInvalid, itemName, defaultItemConfig.GetUnit())
 		}
 		// validate score deduction per unit high
-		if defaultItemConfig.ScoreDeductionPerUnitHigh > defaultHundred || defaultItemConfig.ScoreDeductionPerUnitHigh < constant.ZeroInt || defaultItemConfig.ScoreDeductionPerUnitHigh > defaultItemConfig.MaxScoreDeductionHigh {
-			return message.NewMessage(msghc.ErrHealthcheckScoreDeductionPerUnitHighItemInvalid, itemName, defaultItemConfig.ScoreDeductionPerUnitHigh)
+		if defaultItemConfig.GetScoreDeductionPerUnitHigh() > defaultHundred || defaultItemConfig.GetScoreDeductionPerUnitHigh() < constant.ZeroInt || defaultItemConfig.GetScoreDeductionPerUnitHigh() > defaultItemConfig.GetMaxScoreDeductionHigh() {
+			return message.NewMessage(msghc.ErrHealthcheckScoreDeductionPerUnitHighItemInvalid, itemName, defaultItemConfig.GetScoreDeductionPerUnitHigh())
 		}
 		// validate max score deduction high
-		if defaultItemConfig.MaxScoreDeductionHigh > defaultHundred || defaultItemConfig.MaxScoreDeductionHigh < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrHealthcheckMaxScoreDeductionHighItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionHigh)
+		if defaultItemConfig.GetMaxScoreDeductionHigh() > defaultHundred || defaultItemConfig.GetMaxScoreDeductionHigh() < constant.ZeroInt {
+			return message.NewMessage(msghc.ErrHealthcheckMaxScoreDeductionHighItemInvalid, itemName, defaultItemConfig.GetMaxScoreDeductionHigh())
 		}
 		// validate score deduction per unit medium
-		if defaultItemConfig.ScoreDeductionPerUnitMedium > defaultHundred || defaultItemConfig.ScoreDeductionPerUnitMedium < constant.ZeroInt || defaultItemConfig.ScoreDeductionPerUnitMedium > defaultItemConfig.MaxScoreDeductionMedium {
-			return message.NewMessage(msghc.ErrHealthcheckScoreDeductionPerUnitMediumItemInvalid, itemName, defaultItemConfig.ScoreDeductionPerUnitMedium)
+		if defaultItemConfig.GetScoreDeductionPerUnitMedium() > defaultHundred || defaultItemConfig.GetScoreDeductionPerUnitMedium() < constant.ZeroInt || defaultItemConfig.GetScoreDeductionPerUnitMedium() > defaultItemConfig.GetMaxScoreDeductionMedium() {
+			return message.NewMessage(msghc.ErrHealthcheckScoreDeductionPerUnitMediumItemInvalid, itemName, defaultItemConfig.GetScoreDeductionPerUnitMedium())
 		}
 		// validate max score deduction medium
-		if defaultItemConfig.MaxScoreDeductionMedium > defaultHundred || defaultItemConfig.MaxScoreDeductionMedium < constant.ZeroInt {
-			return message.NewMessage(msghc.ErrHealthcheckMaxScoreDeductionMediumItemInvalid, itemName, defaultItemConfig.MaxScoreDeductionMedium)
+		if defaultItemConfig.GetMaxScoreDeductionMedium() > defaultHundred || defaultItemConfig.GetMaxScoreDeductionMedium() < constant.ZeroInt {
+			return message.NewMessage(msghc.ErrHealthcheckMaxScoreDeductionMediumItemInvalid, itemName, defaultItemConfig.GetMaxScoreDeductionMedium())
 		}
-		itemWeightSummary += defaultItemConfig.ItemWeight
+		itemWeightSummary += defaultItemConfig.GetItemWeight()
 	}
 	// validate item weigh count is 100
 	if itemWeightSummary != defaultHundred {
@@ -489,7 +513,7 @@ type Table struct {
 	TableSize float64 `middleware:"table_size" json:"table_size"`
 }
 
-func NewTable(db, name string, rows int, size float64) *Table {
+func NewTable(db, name string, rows int, size float64) healthcheck.Table {
 	return &Table{
 		DBName:    db,
 		TableName: name,
@@ -498,7 +522,7 @@ func NewTable(db, name string, rows int, size float64) *Table {
 	}
 }
 
-func NewEmptyTable() *Table {
+func NewEmptyTable() healthcheck.Table {
 	return &Table{}
 }
 
@@ -523,14 +547,14 @@ type PrometheusData struct {
 	Value     float64 `middleware:"value" json:"value"`
 }
 
-func NewPrometheusData(ts string, value float64) *PrometheusData {
+func NewPrometheusData(ts string, value float64) healthcheck.PrometheusData {
 	return &PrometheusData{
 		Timestamp: ts,
 		Value:     value,
 	}
 }
 
-func NewEmptyPrometheusData() *PrometheusData {
+func NewEmptyPrometheusData() healthcheck.PrometheusData {
 	return &PrometheusData{}
 }
 
@@ -547,7 +571,7 @@ type FileSystem struct {
 	Device     string `middleware:"device" json:"device"`
 }
 
-func NewFileSystem(mountPoint, device string) *FileSystem {
+func NewFileSystem(mountPoint, device string) healthcheck.FileSystem {
 	return &FileSystem{
 		MountPoint: mountPoint,
 		Device:     device,

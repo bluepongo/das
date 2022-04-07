@@ -6,6 +6,7 @@ import (
 
 	"github.com/romberli/das/config"
 	_ "github.com/romberli/das/internal/app/alert"
+	"github.com/romberli/das/internal/dependency/healthcheck"
 	"github.com/romberli/go-util/common"
 	"github.com/romberli/go-util/constant"
 	"github.com/spf13/viper"
@@ -70,19 +71,18 @@ func TestDefaultEngineConfig_Validate(t *testing.T) {
 	`
 	result, err := testDASRepo.Execute(sql)
 	asst.Nil(err, common.CombineMessageWithError("test Validate() failed", err))
-	defaultItemConfigList := make([]*DefaultItemConfig, result.RowNumber())
-	for i := range defaultItemConfigList {
-		defaultItemConfigList[i] = NewEmptyDefaultItemConfig()
+	itemConfigList := make([]healthcheck.ItemConfig, result.RowNumber())
+	for i := range itemConfigList {
+		itemConfigList[i] = NewEmptyDefaultItemConfig()
 	}
-	err = result.MapToStructSlice(defaultItemConfigList, constant.DefaultMiddlewareTag)
+	err = result.MapToStructSlice(itemConfigList, constant.DefaultMiddlewareTag)
 	asst.Nil(err, common.CombineMessageWithError("test Validate() failed", err))
-	entityList := NewEmptyDefaultEngineConfig()
-	for i := range defaultItemConfigList {
-		itemName := defaultItemConfigList[i].ItemName
-		entityList[itemName] = defaultItemConfigList[i]
+	engineConfig := NewEmptyDefaultEngineConfig()
+	for _, itemConfig := range itemConfigList {
+		engineConfig.SetItemConfig(itemConfig.GetItemName(), itemConfig)
 	}
 	// validate config
-	err = entityList.Validate()
+	err = engineConfig.Validate()
 	asst.Nil(err, common.CombineMessageWithError("test Validate() failed", err))
 }
 
@@ -108,7 +108,7 @@ func TestDefaultEngine_Run(t *testing.T) {
 		testOperationInfo.GetStep(),
 	)
 
-	de := NewDefaultEngine(operationInfo, testDASRepo, testApplicationMySQLRepo, testPrometheusRepo, testQueryRepo)
+	de := newDefaultEngine(operationInfo, testDASRepo, testApplicationMySQLRepo, testPrometheusRepo, testQueryRepo)
 	err = de.run()
 	asst.Nil(err, common.CombineMessageWithError("test Run() failed", err))
 	r, err := testDASRepo.GetResultByOperationID(de.GetOperationInfo().GetOperationID())

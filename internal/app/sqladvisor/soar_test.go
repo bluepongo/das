@@ -22,7 +22,7 @@ var advisor *DefaultAdvisor
 func init() {
 	testInitViper()
 
-	advisor = NewDefaultAdvisor(testSoarBin, testConfigFile)
+	advisor = newDefaultAdvisor(testSoarBin, testConfigFile)
 }
 
 func testInitViper() {

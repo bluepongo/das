@@ -48,13 +48,13 @@ type DefaultAdvisor struct {
 	configFile string
 }
 
-// NewDefaultAdvisor returns a new *DefaultAdvisor
-func NewDefaultAdvisor(soarBin, configFile string) *DefaultAdvisor {
+// NewDefaultAdvisor returns a new sqladvisor.Advisor
+func NewDefaultAdvisor(soarBin, configFile string) sqladvisor.Advisor {
 	return newDefaultAdvisor(soarBin, configFile)
 }
 
-// NewDefaultAdvisorWithDefault returns a new *DefaultAdvisor with default value
-func NewDefaultAdvisorWithDefault() *DefaultAdvisor {
+// NewDefaultAdvisorWithDefault returns a new sqladvisor.Advisor with default value
+func NewDefaultAdvisorWithDefault() sqladvisor.Advisor {
 	soarBin := viper.GetString(config.SQLAdvisorSoarBinKey)
 	configFile := viper.GetString(config.SQLAdvisorSoarConfigKey)
 

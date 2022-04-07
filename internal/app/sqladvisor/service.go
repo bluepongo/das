@@ -19,12 +19,12 @@ type Service struct {
 }
 
 // NewService returns a new *Service
-func NewService(soarBin, configFile string) *Service {
+func NewService(soarBin, configFile string) sqladvisor.Service {
 	return newService(soarBin, configFile)
 }
 
 // NewServiceWithDefault returns a new *Service with default value
-func NewServiceWithDefault() *Service {
+func NewServiceWithDefault() sqladvisor.Service {
 	soarBin := viper.GetString(config.SQLAdvisorSoarBinKey)
 	configFile := viper.GetString(config.SQLAdvisorSoarConfigKey)
 

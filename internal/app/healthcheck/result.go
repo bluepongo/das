@@ -269,12 +269,12 @@ func NewResultWithDefault(operationID int, hostIP string, portNum int, weightedA
 	}
 }
 
-// NewEmptyResult returns an empty Result
+// NewEmptyResult returns an empty *Result
 func NewEmptyResult() *Result {
 	return NewEmptyResultWithOperationIDAndHostInfo(constant.ZeroInt, constant.EmptyString, constant.ZeroInt)
 }
 
-// NewEmptyResultWithOperationIDAndHostInfo returns an empty Result but with operation identity and host information
+// NewEmptyResultWithOperationIDAndHostInfo returns an empty *Result but with operation identity and host information
 func NewEmptyResultWithOperationIDAndHostInfo(operationID int, hostIP string, portNum int) *Result {
 	return &Result{
 		OperationID: operationID,

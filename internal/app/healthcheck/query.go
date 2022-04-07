@@ -8,7 +8,7 @@ const (
 		where variable_name in (%s);
     `
 	applicationMySQLTableSize = `
-    	select db_name,
+    	select table_schema,
 			   table_name,
 			   table_rows,
 			   truncate((data_length + index_length) / 1024 / 1024 / 1024, 2) as table_size
