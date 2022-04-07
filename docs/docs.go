@@ -83,7 +83,7 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "message\": \"sending email completed successfully\"}",
+                        "description": "{\"message\": \"sending email completed successfully\"}",
                         "schema": {
                             "type": "string"
                         }
