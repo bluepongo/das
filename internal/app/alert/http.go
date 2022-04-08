@@ -89,7 +89,7 @@ func (hs *HTTPSender) Send() error {
 		return err
 	}
 
-	log.Debugf("alert.Send() http body: %s", string(reqBody))
+	log.Debugf("alert HTTPSender.Send() http body: %s", string(reqBody))
 	// call http api
 	resp, err := hs.GetClient().Post(hs.GetURL(), defaultContentType, bytes.NewBuffer(reqBody))
 	if err != nil {
