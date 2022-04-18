@@ -218,11 +218,13 @@
                 "summary": "get result by operation id",
                 "parameters": [
                     {
-                        "type": "string",
                         "description": "login name",
                         "name": "login_name",
-                        "in": "path",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -652,13 +654,13 @@
                     "application/json"
                 ],
                 "tags": [
-                    "middleware cluster"
+                    "application"
                 ],
-                "summary": "delete middleware cluster by id",
+                "summary": "delete app by id",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "middleware cluster id",
+                        "description": "app id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -666,7 +668,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "middleware_clusters\":[{\"id\":65,\"cluster_name\":\"new_middleware_cluster\",\"env_id\":1,\"del_flag\":0,\"create_time\":\"2022-03-02T10:39:06.206145+08:00\",\"last_update_time\":\"2022-03-02T10:39:06.206145+08:00\"}]}",
+                        "description": "{\"apps\": [ {\"id\": 2,\"app_name\": \"app2\",\"level\": 2,\"del_flag\": 0,\"create_time\": \"2021-10-25T09:46:04.275796+08:00\",\"last_update_time\": \"2021-12-21T09:15:47.688546+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
