@@ -31,6 +31,10 @@ func NewGinRouter() *GinRouter {
 	return &GinRouter{gin.Default()}
 }
 
+func (gr *GinRouter) Use(middleware ...gin.HandlerFunc) {
+	gr.Engine.Use(middleware...)
+}
+
 func (gr *GinRouter) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	gr.Engine.ServeHTTP(w, req)
 }
@@ -56,6 +60,8 @@ func (gr *GinRouter) Register() {
 }
 
 func (gr *GinRouter) Run(addr ...string) error {
+	gr.Register()
+
 	return errors.Trace(gr.Engine.Run(addr...))
 }
 

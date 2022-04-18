@@ -3,6 +3,7 @@ package query
 import (
 	"time"
 
+	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/query"
 	depquery "github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/go-util/constant"
@@ -108,11 +109,11 @@ func (hir *HostInfoRange) GetConfig() (depquery.Config, error) {
 func getConfig(startTime, endTime string, limit, offset int) (depquery.Config, error) {
 	st, err := time.ParseInLocation(constant.TimeLayoutSecond, startTime, time.Local)
 	if err != nil {
-		return nil, err
+		return nil, errors.Trace(err)
 	}
 	et, err := time.ParseInLocation(constant.TimeLayoutSecond, endTime, time.Local)
 	if err != nil {
-		return nil, err
+		return nil, errors.Trace(err)
 	}
 
 	return query.NewConfig(st, et, limit, offset), nil

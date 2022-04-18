@@ -2,20 +2,27 @@
 GET http://{{baseURL}}/api/v1/sqladvisor/fingerprint
 Content-Type: application/json
 
-{ "sql_text": "select * from a where id = 1;" }
+{
+    "token": "f3171bd9-beec-11ec-acc0-000c291d6734",
+    "sql_text": "select * from a where id = 1;"
+}
 
 
 ### sqladvisor.GetSQLID
 GET http://{{baseURL}}/api/v1/sqladvisor/sql-id
 Content-Type: application/json
 
-{ "sql_text": "select * from a where id = 1;" }
+{
+    "token": "f3171bd9-beec-11ec-acc0-000c291d6734",
+    "sql_text": "select * from a where id = 1;"
+}
 
 ### sqladvisor.Advise
 POST http://{{baseURL}}/api/v1/sqladvisor/advise
 Content-Type: application/json
 
 {
-  "db_id": {{db_id}},
-  "sql_text": "select * from t_meta_db_info where create_time<'2021-01-01';"
+    "token": "f3171bd9-beec-11ec-acc0-000c291d6734",
+    "db_id": {{db_id}},
+    "sql_text": "select * from t_meta_db_info where create_time<'2021-01-01';"
 }

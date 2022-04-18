@@ -1,0 +1,35 @@
+package router
+
+import (
+	"github.com/romberli/das/pkg/message"
+	"github.com/romberli/go-util/config"
+)
+
+func init() {
+	initRouterDebugMessage()
+	initRouterInfoMessage()
+	initRouterErrorMessage()
+}
+
+const (
+	// debug
+
+	// info
+
+	// error
+	ErrRouterGetHandlerFunc = 407001
+	ErrRouterValidateToken  = 407002
+)
+
+func initRouterDebugMessage() {
+
+}
+
+func initRouterInfoMessage() {
+
+}
+
+func initRouterErrorMessage() {
+	message.Messages[ErrRouterGetHandlerFunc] = config.NewErrMessage(message.DefaultMessageHeader, ErrRouterGetHandlerFunc, "router: get token handler func failed")
+	message.Messages[ErrRouterValidateToken] = config.NewErrMessage(message.DefaultMessageHeader, ErrRouterValidateToken, "router: validate token failed. token: %s, client ip: %s")
+}

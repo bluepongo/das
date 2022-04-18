@@ -50,39 +50,39 @@ func initDebugMySQLServerMessage() {
 	message.Messages[DebugMetadataGetMySQLServerAll] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLServerAll,
-		"metadata: get all mysql servers message: %s")
+		"metadata: get all mysql servers. message: %s")
 	message.Messages[DebugMetadataGetMySQLServerByClusterID] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLServerByClusterID,
-		"metadata: get mysql server by cluster id message: %s")
+		"metadata: get mysql server by cluster id. message: %s")
 	message.Messages[DebugMetadataGetMySQLServerByID] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLServerByID,
-		"metadata: get mysql server by id message: %s")
+		"metadata: get mysql server by id. message: %s")
 	message.Messages[DebugMetadataGetMySQLServerByHostInfo] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLServerByHostInfo,
-		"metadata: get mysql server by host info message: %s")
+		"metadata: get mysql server by host info. message: %s")
 	message.Messages[DebugMetadataIsMaster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataIsMaster,
-		"metadata: check if server is master message: %s")
+		"metadata: check if server is master. message: %s")
 	message.Messages[DebugMetadataGetMySQLClusterByServerID] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLClusterByServerID,
-		"metadata: get mysql cluster by mysql server id message: %s")
+		"metadata: get mysql cluster by mysql server id. message: %s")
 	message.Messages[DebugMetadataAddMySQLServer] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataAddMySQLServer,
-		"metadata: add new mysql server message: %s")
+		"metadata: add new mysql server. message: %s")
 	message.Messages[DebugMetadataUpdateMySQLServer] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataUpdateMySQLServer,
-		"metadata: update mysql server message: %s")
+		"metadata: update mysql server. message: %s")
 	message.Messages[DebugMetadataDeleteMySQLServer] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataDeleteMySQLServer,
-		"metadata: delete mysql server message: %s")
+		"metadata: delete mysql server. message: %s")
 }
 
 func initInfoMySQLServerMessage() {

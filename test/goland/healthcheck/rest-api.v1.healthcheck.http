@@ -3,18 +3,24 @@ GET http://{{baseURL}}/api/v1/healthcheck/history
 Content-Type: application/json
 
 {
-  "login_name": "{{login_name}}"
+    "token": "f3171bd9-beec-11ec-acc0-000c291d6734",
+    "login_name": "{{login_name}}"
 }
 
 ### healthcheck.GetResultByOperationID
 GET http://{{baseURL}}/api/v1/healthcheck/result/{{result_id}}
 Content-Type: application/json
 
+{
+    "token": "f3171bd9-beec-11ec-acc0-000c291d6734"
+}
+
 ### healthcheck.Check
 POST http://{{baseURL}}/api/v1/healthcheck/check
 Content-Type: application/json
 
 {
+    "token": "f3171bd9-beec-11ec-acc0-000c291d6734",
     "server_id": {{mysql_server_id}},
     "start_time": "{{startTime}}",
     "end_time": "{{endTime}}",
@@ -27,6 +33,7 @@ POST http://{{baseURL}}/api/v1/healthcheck/check/host-info
 Content-Type: application/json
 
 {
+    "token": "f3171bd9-beec-11ec-acc0-000c291d6734",
     "host_ip": "{{mysql_host_ip}}",
     "port_num": {{mysql_port_num}},
     "start_time": "{{startTime}}",
@@ -40,6 +47,7 @@ POST http://{{baseURL}}/api/v1/healthcheck/review
 Content-Type: application/json
 
 {
+    "token": "f3171bd9-beec-11ec-acc0-000c291d6734",
     "operation_id": {{operation_id}},
     "review": {{review}}
 }

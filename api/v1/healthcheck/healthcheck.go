@@ -51,7 +51,7 @@ func GetOperationHistoriesByLoginName(c *gin.Context) {
 	// unmarshal data
 	err = json.Unmarshal(data, &fields)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 	loginName, ok := fields[loginNameJSON]
