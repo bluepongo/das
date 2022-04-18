@@ -1,7 +1,9 @@
 package router
 
 import (
+	"bytes"
 	"encoding/json"
+	"io/ioutil"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
@@ -83,7 +85,8 @@ func (ta *TokenAuth) GetHandlerFunc(tokens []string) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-
+		// set body back so that body can be read in the router
+		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 		// unmarshal data
 		err = json.Unmarshal(data, &fields)
 		if err != nil {

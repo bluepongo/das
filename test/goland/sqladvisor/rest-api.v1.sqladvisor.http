@@ -3,7 +3,7 @@ GET http://{{baseURL}}/api/v1/sqladvisor/fingerprint
 Content-Type: application/json
 
 {
-    "token": "f3171bd9-beec-11ec-acc0-000c291d6734",
+    "token": "{{token}}",
     "sql_text": "select * from a where id = 1;"
 }
 
@@ -13,7 +13,7 @@ GET http://{{baseURL}}/api/v1/sqladvisor/sql-id
 Content-Type: application/json
 
 {
-    "token": "f3171bd9-beec-11ec-acc0-000c291d6734",
+    "token": "{{token}}",
     "sql_text": "select * from a where id = 1;"
 }
 
@@ -22,7 +22,7 @@ POST http://{{baseURL}}/api/v1/sqladvisor/advise
 Content-Type: application/json
 
 {
-    "token": "f3171bd9-beec-11ec-acc0-000c291d6734",
+    "token": "{{token}}",
     "db_id": {{db_id}},
     "sql_text": "select * from t_meta_db_info where create_time<'2021-01-01';"
 }

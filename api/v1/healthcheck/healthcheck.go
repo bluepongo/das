@@ -35,7 +35,7 @@ const (
 // @Tags	healthcheck
 // @Summary get result by operation id
 // @Accept	application/json
-// @Param	login_name path string true "login name"
+// @Param	login_name body string true "login name"
 // @Produce application/json
 // @Success 200 {string} string "{"operation_histories":[{"id":30,"mysql_server_id":1,"host_ip":"192.168.137.11","port_num":3306,"start_time":"2022-03-11T19:46:16+08:00","end_time":"2022-03-18T19:46:16+08:00","step":60,"status":2,"message":"healthcheck completed successfully. engine: default, operation_id: 30","del_flag":0,"create_time":"2022-03-18T19:46:16.215941+08:00","last_update_time":"2022-03-18T19:46:17.450918+08:00"}]}"
 // @Router	/api/v1/healthcheck/history [get]
