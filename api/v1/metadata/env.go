@@ -26,6 +26,7 @@ const (
 // @Tags	environment
 // @Summary	get all environments
 // @Accept	application/json
+// @Param	token body string true "token"
 // @Param	token body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Produce application/json
 // @Success	200 {string} string "{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
@@ -54,6 +55,7 @@ func GetEnv(c *gin.Context) {
 // @Tags	environment
 // @Summary get environment by id
 // @Accept	application/json
+// @Param	token body string true "token"
 // @Param	id 		path int 	true "env id"
 // @Param	token	body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Produce application/json
@@ -94,6 +96,7 @@ func GetEnvByID(c *gin.Context) {
 // @Tags 	environment
 // @Summary	get environment by Name
 // @Accept	application/json
+// @Param	token body string true "token"
 // @Param	env_name path string true "env name"
 // @Param	token	 body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Produce application/json
@@ -129,6 +132,7 @@ func GetEnvByName(c *gin.Context) {
 // @Tags	environment
 // @Summary add a new environment
 // @Accept	application/json
+// @Param	token body string true "token"
 // @Param	token	 body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Param	env_name body string true "env name"
 // @Produce application/json
@@ -177,6 +181,7 @@ func AddEnv(c *gin.Context) {
 // @Tags	environment
 // @Summary	update environment by id
 // @Accept	application/json
+// @Param	token body string true "token"
 // @Param	id		 path 	int		true	"env id"
 // @Param	token	 body 	string 	true 	"f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Param 	env_name body 	string 	false	"env name"
@@ -238,6 +243,7 @@ func UpdateEnvByID(c *gin.Context) {
 // @Tags	environment
 // @Summary delete environment by id
 // @Accept	application/json
+// @Param	token body string true "token"
 // @Param	id 		 path 	int 	true 	"env id"
 // @Param	token	 body 	string 	true 	"f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Produce application/json

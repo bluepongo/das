@@ -1,63 +1,110 @@
 @baseURL = 127.0.0.1:6090
+@token = 
 
 ### metadata.GetApp
 GET http://{{baseURL}}/api/v1/metadata/app 
 Accept: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### metadata.GetAppByID
 GET http://{{baseURL}}/api/v1/metadata/app/get/1 
 Accept: application/json
 
-{"system_name": "1", "del_flag":0}
+{
+    "token": "{{token}}",
+    "system_name": "1",
+    "del_flag":0
+}
 
 ### metadata.GetAppByName
 GET http://{{baseURL}}/api/v1/metadata/app/app-name/1 
 Accept: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### metadata.GetDBsByAppID
 GET http://{{baseURL}}/api/v1/metadata/app/db/1
 Accept: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### metadata.GetUsersByAppID
 GET http://{{baseURL}}/api/v1/metadata/app/user/1
 Accept: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### metadata.AddApp
 POST http://{{baseURL}}/api/v1/metadata/app 
 Content-Type: application/json
 
-{"app_name": "tese","level":1,"owner_id":1,"id": 1}
+{
+    "token": "{{token}}",
+    "app_name": "tese",
+    "level":1,
+    "owner_id":1,
+    "id": 1}
 
 ### metadata.UpdateAppByID
 POST http://{{baseURL}}/api/v1/metadata/app/update/14
 Content-Type: application/json
 
-{"app_name": "tes13123","level":1,"owner_id":1}
+{
+    "token": "{{token}}",
+    "app_name": "tes13123",
+    "level":1,
+    "owner_id":1
+}
 
 ### metadata.DeleteAppByID
 POST http://{{baseURL}}/api/v1/metadata/app/delete/14 
+
+{
+    "token": "{{token}}"
+}
 
 ### metadata.AppAddDB
 POST http://{{baseURL}}/api/v1/metadata/app/add-db/1111
 Content-Type: application/json
 
-{"db_id":9}
+{
+    "token": "{{token}}",
+    "db_id":9
+}
 
 ### metadata.AppAddUser
 POST http://{{baseURL}}/api/v1/metadata/app/add-user/3
 Content-Type: application/json
 
-{"user_id":15}
+{
+    "token": "{{token}}",
+    "user_id":15
+}
 
 
 ### metadata.AppDeleteDB
 POST http://{{baseURL}}/api/v1/metadata/app/delete-db/1111
 Content-Type: application/json
 
-{"db_id":9}
+{
+    "token": "{{token}}",
+    "db_id":9
+}
 
 ### metadata.AppDeleteUser
 POST http://{{baseURL}}/api/v1/metadata/app/delete-user/3
 Content-Type: application/json
 
-{"user_id":15}
+{
+    "token": "{{token}}",
+    "user_id":15
+}
