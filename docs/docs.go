@@ -46,6 +46,15 @@ var doc = `{
                 "summary": "send email",
                 "parameters": [
                     {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "optional config",
                         "name": "config",
                         "in": "body",
@@ -104,6 +113,15 @@ var doc = `{
                 ],
                 "summary": "check health of the database",
                 "parameters": [
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "mysql server id",
                         "name": "server_id",
@@ -164,6 +182,15 @@ var doc = `{
                 ],
                 "summary": "check health of the database by host ip and port number",
                 "parameters": [
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "mysql host ip",
                         "name": "host_ip",
@@ -234,6 +261,15 @@ var doc = `{
                 "summary": "get result by operation id",
                 "parameters": [
                     {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "login name",
                         "name": "login_name",
                         "in": "body",
@@ -272,6 +308,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -297,6 +342,15 @@ var doc = `{
                 ],
                 "summary": "update accuracy review",
                 "parameters": [
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "operation id",
                         "name": "operation_id",
@@ -1394,6 +1448,17 @@ var doc = `{
                     "environment"
                 ],
                 "summary": "get all environments",
+                "parameters": [
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"envs\": [{\"id\": 1, \"env_name\": \"online\", \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
@@ -1415,6 +1480,15 @@ var doc = `{
                 ],
                 "summary": "add a new environment",
                 "parameters": [
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "env name",
                         "name": "env_name",
@@ -1454,6 +1528,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1485,6 +1568,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1516,6 +1608,15 @@ var doc = `{
                         "name": "env_name",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1547,6 +1648,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "env name",
@@ -4356,6 +4466,15 @@ var doc = `{
                         "required": true
                     },
                     {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "mysql server id",
                         "name": "mysql_server_id",
                         "in": "body",
@@ -4432,6 +4551,15 @@ var doc = `{
                         "required": true
                     },
                     {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "start time",
                         "name": "start_time",
                         "in": "body",
@@ -4497,6 +4625,15 @@ var doc = `{
                         "name": "db_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "mysql server id",
@@ -4567,6 +4704,15 @@ var doc = `{
                 ],
                 "summary": "get slow queries by mysql server host ip and port number",
                 "parameters": [
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "mysql server host ip",
                         "name": "host_ip",
@@ -4653,6 +4799,15 @@ var doc = `{
                         "required": true
                     },
                     {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "start time",
                         "name": "start_time",
                         "in": "body",
@@ -4713,6 +4868,15 @@ var doc = `{
                 "summary": "get advice",
                 "parameters": [
                     {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "db id",
                         "name": "db_id",
                         "in": "body",
@@ -4755,6 +4919,15 @@ var doc = `{
                 "summary": "get sql fingerprint",
                 "parameters": [
                     {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "sql text",
                         "name": "sql_text",
                         "in": "body",
@@ -4787,6 +4960,15 @@ var doc = `{
                 ],
                 "summary": "get sql id",
                 "parameters": [
+                    {
+                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "sql text",
                         "name": "sql_text",
