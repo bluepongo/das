@@ -15,6 +15,8 @@ import (
 
 type Router interface {
 	http.Handler
+	Use(middleware ...gin.HandlerFunc)
+	ServeHTTP(w http.ResponseWriter, req *http.Request)
 	Register()
 	Run(addr ...string) error
 }
@@ -23,7 +25,7 @@ type GinRouter struct {
 	Engine *gin.Engine
 }
 
-func NewGinRouter() *GinRouter {
+func NewGinRouter() Router {
 	if log.GetLevel() != zapcore.DebugLevel {
 		gin.SetMode(gin.ReleaseMode)
 	}

@@ -127,15 +127,15 @@ var startCmd = &cobra.Command{
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 			// init router
-			gr := router.NewGinRouter()
-			gr.Use(ta.GetHandlerFunc(tokens))
+			r := router.NewGinRouter()
+			r.Use(ta.GetHandlerFunc(tokens))
 			// init server
 			s := server.NewServer(
 				viper.GetString(config.ServerAddrKey),
 				viper.GetString(config.ServerPidFileKey),
 				viper.GetInt(config.ServerReadTimeoutKey),
 				viper.GetInt(config.ServerWriteTimeoutKey),
-				gr,
+				r,
 			)
 			// start server
 			go s.Run()
