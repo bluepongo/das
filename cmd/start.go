@@ -105,8 +105,6 @@ var startCmd = &cobra.Command{
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 
-			log.CloneStdoutLogger().Info(message.NewMessage(message.InfoServerStart, serverPid, serverPidFile).Error())
-
 			// init connection pool
 			err = global.InitDASMySQLPool()
 			if err != nil {
@@ -127,13 +125,16 @@ var startCmd = &cobra.Command{
 			// init server
 			s := server.NewServer(
 				viper.GetString(config.ServerAddrKey),
-				viper.GetString(config.ServerPidFileKey),
+				serverPidFile,
 				viper.GetInt(config.ServerReadTimeoutKey),
 				viper.GetInt(config.ServerWriteTimeoutKey),
 				r,
 			)
 			// start server
 			go s.Run()
+
+			log.CloneStdoutLogger().Info(message.NewMessage(message.InfoServerStart, s.Addr(), serverPid, serverPidFile).Error())
+			log.Info(message.NewMessage(message.InfoServerStart, s.Addr(), serverPid, serverPidFile).Error())
 
 			// handle signal
 			linux.HandleSignalsWithPidFile(serverPidFile)

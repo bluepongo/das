@@ -51,7 +51,7 @@ type server struct {
 }
 
 // NewServer returns new *server
-func NewServer(addr string, pidFile string, readTimeout, writeTimeout int, router router.Router) *server {
+func NewServer(addr string, pidFile string, readTimeout, writeTimeout int, router router.Router) Server {
 	return &server{
 		Server: &http.Server{
 			Addr:         addr,
@@ -82,11 +82,11 @@ func (s *server) Router() router.Router {
 
 // Run runs server
 func (s *server) Run() {
-	fmt.Println(fmt.Sprintf("server started. addr: %s, pid file: %s", s.addr, s.pidFile))
-
 	err := s.router.Run(s.addr)
 	if err != nil {
-		log.Errorf("server run failed.\n%+v", err)
+		fmt.Println(fmt.Sprintf("server run failed. addr: %s, pid file: %s\n%+v", s.Addr(), s.PidFile(), err))
+		log.Errorf("server run failed. addr: %s, pid file: %s\n%+v", s.Addr(), s.PidFile(), err)
+		os.Exit(constant.DefaultAbnormalExitCode)
 	}
 }
 
