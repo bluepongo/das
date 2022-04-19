@@ -31,7 +31,7 @@ const (
 // @Tags	middleware cluster
 // @Summary	get all middleware clusters
 // @Accept	application/json
-// @Param	token body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token body string true "token"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_clusters":[{"id":1,"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00"}]}
 // @Router	/api/v1/metadata/middleware-cluster [get]
@@ -59,7 +59,7 @@ func GetMiddlewareCluster(c *gin.Context) {
 // @Tags	middleware cluster
 // @Summary	get middleware cluster by env_id
 // @Accept	application/json
-// @Param	token 	body 	string 	true 	"f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token 	body 	string 	true 	"token"
 // @Param	env_id	path	int		true	"env id"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_clusters":[{"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00","id":1,"cluster_name":"middleware-cluster-1","env_id":1}]}
@@ -99,7 +99,7 @@ func GetMiddlewareClusterByEnv(c *gin.Context) {
 // @Tags	middleware cluster
 // @Summary	get middleware cluster by id
 // @Accept	application/json
-// @Param	token 	body 	string 	true 	"f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token 	body 	string 	true 	"token"
 // @Param	id		path	int		true	"middleware cluster id"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_clusters":[{"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00","id":1,"cluster_name":"middleware-cluster-1","env_id":1}]}
@@ -139,7 +139,7 @@ func GetMiddlewareClusterByID(c *gin.Context) {
 // @Tags	middleware cluster
 // @Summary	get middleware cluster by name
 // @Accept	application/json
-// @Param	token 			body 	string 	true 	"f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token 			body 	string 	true 	"token"
 // @Param	cluster_name	path	string	true	"middleware cluster name"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_clusters":[{"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00","id":1}]}
@@ -174,7 +174,7 @@ func GetMiddlewareClusterByName(c *gin.Context) {
 // @Tags	middleware cluster
 // @Summary	get middleware servers by cluster id
 // @Accept	application/json
-// @Param	token 	body 	string 	true 	"f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token 	body 	string 	true 	"token"
 // @Param	id		path	int		true	"middleware cluster id"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_servers":[{"id":1,"cluster_id":1,"server_name":"update_middeware_server","middleware_role":1,"port_num":33061,"del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2022-03-02T10:18:52.564191+08:00","host_ip":"192.168.10.219"}]}
@@ -214,7 +214,7 @@ func GetMiddlewareServers(c *gin.Context) {
 // @Tags	middleware cluster
 // @Summary	get middleware servers by cluster id
 // @Accept	application/json
-// @Param	token 	body 	string 	true 	"f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token 	body 	string 	true 	"token"
 // @Param	id		path	int		true	"middleware cluster id"
 // @Produce	application/json
 // @Success	200 {string} string {"users":[{"id":1,"email":"allinemailtest@163.com","role":3,"del_flag":0,"last_update_time":"2021-11-22T13:46:20.430926+08:00","create_time":"2021-10-25T09:21:50.364327+08:00","user_name":"zhangsan","department_name":"arch","employee_id":"100001","account_name":"zs001","telephone":"01012345678","mobile":"13012345678"}]}
@@ -254,7 +254,7 @@ func GetUsersByMiddlewareClusterID(c *gin.Context) {
 // @Tags	middleware cluster
 // @Summary	add a new middleware cluster
 // @Accept	application/json
-// @Param	token 			body 	string 	true 	"f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token 			body 	string 	true 	"token"
 // @Param	cluster_name	body	string	true	"middleware cluster name"
 // @Param	env_id			body	int    	true 	"env id"
 // @Produce	application/json
@@ -308,7 +308,7 @@ func AddMiddlewareCluster(c *gin.Context) {
 // @Tags	middleware cluster
 // @Summary	update middleware cluster by id
 // @Accept	application/json
-// @Param	token 			body 	string 	true 	"f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token 			body 	string 	true 	"token"
 // @Param	id				path	int		true	"middleware cluster id"
 // @Param	cluster_name	body	string	false	"middleware cluster name"
 // @Param	env_id			body	int		false	"env id"
@@ -371,7 +371,7 @@ func UpdateMiddlewareClusterByID(c *gin.Context) {
 // @Tags	middleware cluster
 // @Summary	delete middleware cluster by id
 // @Accept	application/json
-// @Param	token 	body	string 	true 	"f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token 	body	string 	true 	"token"
 // @Param	id		path	int		true	"middleware cluster id"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_clusters":[{"id":65,"cluster_name":"new_middleware_cluster","env_id":1,"del_flag":0,"create_time":"2022-03-02T10:39:06.206145+08:00","last_update_time":"2022-03-02T10:39:06.206145+08:00"}]}
@@ -413,7 +413,7 @@ func DeleteMiddlewareClusterByID(c *gin.Context) {
 // @Tags	middleware cluster
 // @Summary	add user map
 // @Accept	application/json
-// @Param	token 	body 	string 	true 	"f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token 	body 	string 	true 	"token"
 // @Param	id		path	int		true	"middleware cluster id"
 // @Param	user_id	body	int		true	"user id"
 // @Produce	application/json
@@ -471,7 +471,7 @@ func MiddlewareClusterAddUser(c *gin.Context) {
 // @Tags	middleware cluster
 // @Summary	delete user map
 // @Accept	application/json
-// @Param	token 	body 	string 	true 	"f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token 	body 	string 	true 	"token"
 // @Param	id		path	int		true	"middleware cluster id"
 // @Param	user_id	body	int		true	"user id"
 // @Produce	application/json
