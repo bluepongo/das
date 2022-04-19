@@ -1,6 +1,6 @@
 ### get all mysql clusters
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -8,7 +8,7 @@ Accept: application/json
 
 ### get mysql cluster by env_id
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/env/1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -16,7 +16,7 @@ Accept: application/json
 
 ### get mysql cluster by id
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/get/1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -24,7 +24,7 @@ Accept: application/json
 
 ### get mysql cluster by cluster_name
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/cluster-name/mysql-cluster-pmm1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -32,7 +32,7 @@ Accept: application/json
 
 ### get mysql_server of mysql cluster
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/mysql-server/1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -40,7 +40,7 @@ Accept: application/json
 
 ### get master mysql server of mysql cluster
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/master-server/1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -48,7 +48,7 @@ Accept: application/json
 
 ### get get dbs by id
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/db/1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -56,7 +56,7 @@ Accept: application/json
 
 ### get mysql cluster users
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/user/1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -64,7 +64,7 @@ Accept: application/json
 
 ### get app users
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/app-user/1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -72,7 +72,7 @@ Accept: application/json
 
 ### get db users
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/db-user/1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -80,7 +80,7 @@ Accept: application/json
 
 ### get all users
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/all-user/1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"

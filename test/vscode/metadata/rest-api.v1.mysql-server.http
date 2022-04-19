@@ -3,7 +3,7 @@
 
 ### get all mysql servers
 GET http://{{baseURL}}/api/v1/metadata/mysql-server
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -11,7 +11,7 @@ Accept: application/json
 
 ### get mysql server by cluster-id
 GET http://{{baseURL}}/api/v1/metadata/mysql-server/cluster-id/1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -20,7 +20,7 @@ Accept: application/json
 
 ### get mysql server by id
 GET http://{{baseURL}}/api/v1/metadata/mysql-server/get/1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -28,7 +28,7 @@ Accept: application/json
 
 ### get mysql server by id
 GET http://{{baseURL}}/api/v1/metadata/mysql-server/host-info
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}",
@@ -38,7 +38,7 @@ Accept: application/json
 
 ### judge if serve is master
 GET http://{{baseURL}}/api/v1/metadata/mysql-server/is-master/host-info
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}",
@@ -48,7 +48,7 @@ Accept: application/json
 
 ### get mysql cluster by mysql server id
 GET http://{{baseURL}}/api/v1/metadata/mysql-server/mysql-cluster/1
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
