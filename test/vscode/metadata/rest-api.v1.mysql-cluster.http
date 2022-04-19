@@ -1,75 +1,139 @@
 @baseURL = localhost:6090
-
-### =============== mysql-cluster ===================
+@token = f3171bd9-beec-11ec-acc0-000c291d6734
 
 ### get all mysql clusters
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster
 Accept: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### get mysql cluster by env_id
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/env/1
 Accept: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### get mysql cluster by id
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/get/1
 Accept: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### get mysql cluster by cluster_name
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/cluster-name/mysql-cluster-pmm1
 Accept: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### get mysql_server of mysql cluster
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/mysql-server/1
 Accept: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### get master mysql server of mysql cluster
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/master-server/1
 Accept: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### get get dbs by id
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/db/1
 Accept: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### get mysql cluster users
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/user/1
 Accept: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### get app users
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/app-user/1
 Accept: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### get db users
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/db-user/1
 Accept: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### get all users
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/all-user/1
 Accept: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### add user map
 POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/add-user/1
 Content-Type: application/json
 
-{"user_id": 14}
+{
+    "token": "{{token}}",
+    "user_id": 14
+}
+
 
 ### delete user map
 POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/delete-user/1
 Content-Type: application/json
 
-{"user_id": 14}
+{
+    "token": "{{token}}",
+    "user_id": 14
+}
+
 
 ### add new mysql cluster
 POST http://{{baseURL}}/api/v1/metadata/mysql-cluster
 Content-Type: application/json
 
-{"cluster_name": "api_test", "env_id": 1}
+{
+    "token": "{{token}}",
+    "cluster_name": "api_test",
+    "env_id": 2
+}
+
 
 ### update mysql cluster by id
 POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/update/3
 Content-Type: application/json
 
-{"cluster_name": "test", "del_flag": 0}
+{
+    "token": "{{token}}",
+    "cluster_name": "test",
+    "del_flag": 0
+}
 
 ### delete mysql cluster by id
 POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/delete/3
 Content-Type: application/json
+
+{
+    "token": "{{token}}"
+}
