@@ -21,7 +21,6 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
 	"github.com/romberli/das/config"
 	"github.com/romberli/das/global"
@@ -34,7 +33,6 @@ import (
 	"github.com/romberli/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.uber.org/zap/zapcore"
 )
 
 // startCmd represents the start command
@@ -116,9 +114,6 @@ var startCmd = &cobra.Command{
 				os.Exit(constant.DefaultAbnormalExitCode)
 			}
 
-			if log.GetLevel() != zapcore.DebugLevel {
-				gin.SetMode(gin.ReleaseMode)
-			}
 			// init token auth
 			ta := router.NewTokenAuthWithGlobal()
 			tokens, err := ta.GetTokens()
