@@ -85,7 +85,7 @@ var startCmd = &cobra.Command{
 			}
 
 			// start server with new process
-			startCommand := exec.Command(os.Args[0], args...)
+			startCommand := exec.Command(os.Args[constant.ZeroInt], args...)
 			err = startCommand.Start()
 			if err != nil {
 				log.Errorf("%+v", message.NewMessage(message.ErrStartAsForeground, errors.Trace(err)))
