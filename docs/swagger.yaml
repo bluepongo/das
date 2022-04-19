@@ -17,6 +17,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: optional config
         in: body
         name: config
@@ -55,6 +61,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: mysql server id
         in: body
         name: server_id
@@ -94,6 +106,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: mysql host ip
         in: body
         name: host_ip
@@ -140,6 +158,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: login name
         in: body
         name: login_name
@@ -167,6 +191,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -184,6 +214,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: operation id
         in: body
         name: operation_id
@@ -945,6 +981,13 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -960,6 +1003,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: env name
         in: body
         name: env_name
@@ -987,6 +1036,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1008,6 +1063,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1029,6 +1090,12 @@ paths:
         name: env_name
         required: true
         type: string
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1050,6 +1117,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: env name
         in: body
         name: env_name
@@ -2981,6 +3054,12 @@ paths:
         name: sql_id
         required: true
         type: integer
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: mysql server id
         in: body
         name: mysql_server_id
@@ -3032,6 +3111,12 @@ paths:
         name: mysql_cluster_id
         required: true
         type: integer
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: start time
         in: body
         name: start_time
@@ -3077,6 +3162,12 @@ paths:
         name: db_id
         required: true
         type: integer
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: mysql server id
         in: body
         name: mysql_server_id
@@ -3123,6 +3214,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: mysql server host ip
         in: body
         name: host_ip
@@ -3180,6 +3277,12 @@ paths:
         name: mysql_server_id
         required: true
         type: integer
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: start time
         in: body
         name: start_time
@@ -3220,6 +3323,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: db id
         in: body
         name: db_id
@@ -3257,6 +3366,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: sql text
         in: body
         name: sql_text
@@ -3279,6 +3394,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: sql text
         in: body
         name: sql_text

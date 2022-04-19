@@ -16,12 +16,12 @@ const (
 	sqlTextJSON     = "sql_text"
 	fingerprintJSON = "fingerprint"
 	sqlIDJSON       = "sql_id"
-	dbIDJSON        = "db_id"
 )
 
 // @Tags sqladvisor
 // @Summary get sql fingerprint
 // @Accept  application/json
+// @Param	token	 body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Param	sql_text body string true "sql text"
 // @Produce application/json
 // @Success 200 {string} string "{"fingerprint":"select * from a","sql_text":"select * from a;"}"
@@ -63,6 +63,7 @@ func GetFingerprint(c *gin.Context) {
 // @Tags sqladvisor
 // @Summary get sql id
 // @Accept  application/json
+// @Param	token	 body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Param	sql_text body string true "sql text"
 // @Produce application/json
 // @Success 200 {string} string "{"sql_id":"EE56B94E867DC9D5","sql_text":"select * from a;"}"
@@ -104,6 +105,7 @@ func GetSQLID(c *gin.Context) {
 // @Tags sqladvisor
 // @Summary get advice
 // @Accept  application/json
+// @Param	token	 	body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Param	db_id		body int	true "db id"
 // @Param	sql_text	body string true "sql text"
 // @Produce application/json

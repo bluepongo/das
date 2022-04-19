@@ -77,7 +77,7 @@ func (ta *TokenAuth) GetTokens() ([]string, error) {
 
 func (ta *TokenAuth) GetHandlerFunc(tokens []string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var fields map[string]string
+		var fields map[string]interface{}
 		// get data
 		data, err := c.GetRawData()
 		if err != nil {
@@ -85,7 +85,7 @@ func (ta *TokenAuth) GetHandlerFunc(tokens []string) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		// set body back so that body can be read in the router
+		// set body back so that body can be read later in the router
 		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 		// unmarshal data
 		err = json.Unmarshal(data, &fields)
@@ -95,12 +95,13 @@ func (ta *TokenAuth) GetHandlerFunc(tokens []string) gin.HandlerFunc {
 			return
 		}
 		// check if http dody has token field
-		token, ok := fields[tokenTokenJSON]
+		token, ok := fields[tokenTokenJSON].(string)
 		if !ok || token == constant.EmptyString {
 			resp.ResponseNOK(c, message.ErrFieldNotExists, tokenTokenJSON)
 			c.Abort()
 			return
 		}
+
 		if !common.StringInSlice(tokens, token) {
 			// not a valid token
 			resp.ResponseNOK(c, router.ErrRouterValidateToken, token, c.ClientIP())
