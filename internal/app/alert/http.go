@@ -95,9 +95,6 @@ func (hs *HTTPSender) Send() error {
 	if err != nil {
 		return errors.Trace(err)
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
 
 	return hs.parseResponse(resp)
 }
@@ -114,10 +111,6 @@ func (hs *HTTPSender) buildRequestBody() ([]byte, error) {
 
 // parseResponse parses the http response to find out if sending email completed successfully
 func (hs *HTTPSender) parseResponse(resp *http.Response) error {
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-
 	// read response body
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -127,17 +120,6 @@ func (hs *HTTPSender) parseResponse(resp *http.Response) error {
 		return errors.Errorf("got http error when calling alert http api. status code: %d, message: %s",
 			resp.StatusCode, string(respBody))
 	}
-	// unmarshal to a map
-	response := NewEmptyResponse()
-	err = json.Unmarshal(respBody, &response)
-	if err != nil {
-		return errors.Trace(err)
-	}
-	// get value from the map
-	if response.GetCode() != constant.ZeroInt {
-		return errors.Errorf("got internal error when calling alert http api. code: %d, message: %s",
-			response.GetCode(), response.GetMessage())
-	}
 
-	return nil
+	return errors.Trace(resp.Body.Close())
 }
