@@ -25,6 +25,7 @@ const (
 // @Tags	Tables
 // @Summary get tables by db id
 // @Accept	application/json
+// @Param	token 		body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Param	id			body int	true "db id"
 // @Param	login_name	body string true "account name or employee id"
 // @Produce	application/json
@@ -61,6 +62,7 @@ func GetTablesByDBID(c *gin.Context) {
 // @Tags	Tables
 // @Summary get table statistics by db id and table name
 // @Accept	application/json
+// @Param	token 		body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Param	db_id		body int	true "db id"
 // @Param	table_name	body string	true "table name"
 // @Param	login_name	body string true "account name or employee id"
@@ -98,6 +100,7 @@ func GetStatisticsByDBIDAndTableName(c *gin.Context) {
 // @Tags	Tables
 // @Summary	get table statistics by host info and db name and table name
 // @Accept	application/json
+// @Param	token 		body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Param	host_ip		body string	true "host ip"
 // @Param	port_num	body int	true "port num"
 // @Param	db_name		body string	true "db name"
@@ -137,6 +140,7 @@ func GetStatisticsByHostInfoAndDBNameAndTableName(c *gin.Context) {
 // @Tags	Tables
 // @Summary analyze table by db id and table name
 // @Accept	application/json
+// @Param	token 		body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Param	db_id		body int	true "db id"
 // @Param	table_name	body string	true "table name"
 // @Param	login_name	body string true "account name or employee id"
@@ -167,6 +171,7 @@ func AnalyzeTableByDBIDAndTableName(c *gin.Context) {
 // @Tags	Tables
 // @Summary analyze table by host info and db name and table name
 // @Accept	application/json
+// @Param	token 		body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
 // @Param	host_ip		body string	true "host ip"
 // @Param	port_num	body int	true "port num"
 // @Param	db_name		body string	true "db name"

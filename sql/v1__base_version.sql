@@ -1,4 +1,4 @@
-CREATE TABLE `t_sys_token_info` (
+ CREATE TABLE `t_sys_token_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `token` varchar(100) NOT NULL COMMENT 'token',
   `app_id` int(11) DEFAULT NULL COMMENT '应用ID',

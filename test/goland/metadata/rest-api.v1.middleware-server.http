@@ -2,32 +2,62 @@
 GET http://{{baseURL}}/api/v1/metadata/middleware-server
 Content-Type: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### get middleware server by cluster id
 GET http://{{baseURL}}/api/v1/metadata/middleware-server/cluster-id/1
 Content-Type: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### get middleware server by id
 GET http://{{baseURL}}/api/v1/metadata/middleware-server/get/1
 Content-Type: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### get middleware server by host info
 GET http://{{baseURL}}/api/v1/metadata/middleware-server/host-info
 Content-Type: application/json
 
-{"host_ip": "192.168.10.219", "port_num": 33061}
+{
+    "token": "{{token}}",
+    "host_ip": "192.168.10.219",
+    "port_num": 33061
+}
 
 ### add new middleware server
 POST http://{{baseURL}}/api/v1/metadata/middleware-server
 Content-Type: application/json
 
-{"cluster_id": 1, "server_name": "new_middleware_server", "middleware_role": 1, "host_ip": "192.168.10.219", "port_num": 33062}
+{
+    "token": "{{token}}",
+    "cluster_id": 1,
+    "server_name": "new_middleware_server",
+    "middleware_role": 1,
+    "host_ip": "192.168.10.219",
+    "port_num": 33062
+}
 
 ### update middleware-server by id
 POST http://{{baseURL}}/api/v1/metadata/middleware-server/update/1
 Content-Type: application/json
 
-{"server_name": "update_middeware_server"}
+{
+    "token": "{{token}}",
+    "server_name": "update_middeware_server"
+}
 
 ### delete middleware-server by id
 POST http://{{baseURL}}/api/v1/metadata/middleware-server/delete/42
 Content-Type: application/json
+
+{
+    "token": "{{token}}"
+}
