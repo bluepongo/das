@@ -230,7 +230,7 @@ func AddApp(c *gin.Context) {
 // @Summary update application by id
 // @Accept	application/json
 // @Param	id 		 path int 	 true 	"app id"
-// @Param	token 	 body string true "token"
+// @Param	token 	 body string true 	"token"
 // @Param	app_name body string false 	"app name"
 // @Param	level 	 body int 	 false 	"app level"
 // @Param 	del_flag body int	 false	"delete flag"
@@ -393,7 +393,7 @@ func AppAddDB(c *gin.Context) {
 // @Summary delete database map
 // @Accept	application/json
 // @Param	id 	  path int true 	"app id"
-// @Param	token body string true "token"
+// @Param	token body string true  "token"
 // @Param	db_id body int false 	"db id"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1,"db_name": "db2","cluster_id": 3,"cluster_type": 1,"env_id": 1,"del_flag": 0,"create_time": "2022-01-04T15:08:33.418288+08:00","last_update_time": "2022-01-25T16:17:26.284761+08:00"},}]}"
@@ -489,8 +489,8 @@ func GetUsersByAppID(c *gin.Context) {
 // @Tags 	application
 // @Summary add user map
 // @Accept	application/json
-// @Param	id 		path int    true "app id"
-// @Param	token 	body string true "token"
+// @Param	id 		path int    true  "app id"
+// @Param	token 	body string true  "token"
 // @Param	user_id body int    false "user id"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
