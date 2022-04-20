@@ -46,7 +46,7 @@ var doc = `{
                 "summary": "send email",
                 "parameters": [
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -114,7 +114,7 @@ var doc = `{
                 "summary": "check health of the database",
                 "parameters": [
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -183,7 +183,7 @@ var doc = `{
                 "summary": "check health of the database by host ip and port number",
                 "parameters": [
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -261,7 +261,7 @@ var doc = `{
                 "summary": "get result by operation id",
                 "parameters": [
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -310,7 +310,7 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -343,7 +343,7 @@ var doc = `{
                 "summary": "update accuracy review",
                 "parameters": [
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -1450,7 +1450,7 @@ var doc = `{
                 "summary": "get all environments",
                 "parameters": [
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -1481,7 +1481,7 @@ var doc = `{
                 "summary": "add a new environment",
                 "parameters": [
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -1530,7 +1530,7 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -1570,7 +1570,7 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -1610,7 +1610,7 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -1650,7 +1650,7 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -4466,7 +4466,7 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -4551,7 +4551,7 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -4627,7 +4627,7 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -4705,7 +4705,7 @@ var doc = `{
                 "summary": "get slow queries by mysql server host ip and port number",
                 "parameters": [
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -4799,7 +4799,7 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -4868,7 +4868,7 @@ var doc = `{
                 "summary": "get advice",
                 "parameters": [
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -4919,7 +4919,7 @@ var doc = `{
                 "summary": "get sql fingerprint",
                 "parameters": [
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
@@ -4961,7 +4961,7 @@ var doc = `{
                 "summary": "get sql id",
                 "parameters": [
                     {
-                        "description": "f3171bd9-beec-11ec-acc0-000c291d6734",
+                        "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
