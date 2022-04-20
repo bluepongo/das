@@ -27,7 +27,7 @@ const (
 // @Summary get slow queries by mysql server id
 // @Accept  application/json
 // @Param	mysql_cluster_id 	path int	true "mysql cluster id"
-// @Param	token	 			body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token	 			body string true "token"
 // @Param	start_time			body string true "start time"
 // @Param	end_time			body string true "end time"
 // @Param	limit				body int	true "limit"
@@ -84,7 +84,7 @@ func GetByMySQLClusterID(c *gin.Context) {
 // @Summary get slow queries by mysql server id
 // @Accept  application/json
 // @Param	mysql_server_id	path int	true "mysql server id"
-// @Param	token	 		body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token	 		body string true "token"
 // @Param	start_time		body string true "start time"
 // @Param	end_time		body string true "end time"
 // @Param	limit			body int	true "limit"
@@ -140,7 +140,7 @@ func GetByMySQLServerID(c *gin.Context) {
 // @Tags query
 // @Summary get slow queries by mysql server host ip and port number
 // @Accept  application/json
-// @Param	token	 	body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token	 	body string true "token"
 // @Param	host_ip		body string	true "mysql server host ip"
 // @Param	port_num	body int	true "mysql server port number"
 // @Param	start_time	body string	true "start time"
@@ -190,7 +190,7 @@ func GetByHostInfo(c *gin.Context) {
 // @Summary get slow queries by db id
 // @Accept  application/json
 // @Param	db_id			path int	true "db id"
-// @Param	token	 		body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token	 		body string true "token"
 // @Param	mysql_server_id	body int	true "mysql server id"
 // @Param	start_time		body string true "start time"
 // @Param	end_time		body string true "end time"
@@ -248,7 +248,7 @@ func GetByDBID(c *gin.Context) {
 // @Summary get slow query by query id
 // @Accept  application/json
 // @Param	sql_id			path int	true "sql id"
-// @Param	token	 		body string true "f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token	 		body string true "token"
 // @Param	mysql_server_id	body int	true "mysql server id"
 // @Param	start_time		body string true "start time"
 // @Param	end_time		body string true "end time"

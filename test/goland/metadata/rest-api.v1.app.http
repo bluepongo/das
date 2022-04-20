@@ -2,47 +2,88 @@
 GET http://{{baseURL}}/api/v1/metadata/app
 Content-Type: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### metadata.GetAppByID
 GET http://{{baseURL}}/api/v1/metadata/app/get/1
 Content-Type: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### metadata.GetAppByName
 GET http://{{baseURL}}/api/v1/metadata/app/app-name/app1
 Content-Type: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### metadata.GetDBsByAppID
 GET http://{{baseURL}}/api/v1/metadata/app/db/1
 Content-Type: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### metadata.AddApp
 POST http://{{baseURL}}/api/v1/metadata/app
 Content-Type: application/json
 
-{"app_name": "new_app", "level": 1, "owner_id": 1}
+{
+    "token": "{{token}}",
+    "app_name": "new_app",
+    "level": 1, 
+    "owner_id": 1
+}
 
 ### metadata.UpdateAppByID
 POST http://{{baseURL}}/api/v1/metadata/app/update/1
 Content-Type: application/json
 
-{"app_name": "update_app", "level": 1, "owner_id": 1}
+{
+    "token": "{{token}}",
+    "app_name": "update_app", 
+    "level": 1, 
+    "owner_id": 1
+}
 
 ### metadata.UpdateAppByID
 POST http://{{baseURL}}/api/v1/metadata/app/update/1
 Content-Type: application/json
 
-{"app_name": "app1", "level": 1, "owner_id": 1}
+{
+    "token": "{{token}}",
+    "app_name": "app1", 
+    "level": 1, 
+    "owner_id": 1
+}
 
 ### metadata.DeleteAppByID
 POST http://{{baseURL}}/api/v1/metadata/app/delete/21
+
+{
+    "token": "{{token}}"
+}
 
 ### metadata.AppAddDB
 POST http://{{baseURL}}/api/v1/metadata/app/add-db/1
 Content-Type: application/json
 
-{"db_id":2}
+{
+    "token": "{{token}}",
+    "db_id":2
+}
 
 ### metadata.AppDeleteDB
 POST http://{{baseURL}}/api/v1/metadata/app/delete-db/1
 Content-Type: application/json
 
-{"db_id":2}
+{
+    "token": "{{token}}",
+    "db_id":2
+}

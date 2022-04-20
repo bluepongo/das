@@ -25,7 +25,7 @@ const (
 // @Tags 	alert
 // @Summary send email
 // @Accept	application/json
-// @Param	token 	body string true	"f3171bd9-beec-11ec-acc0-000c291d6734"
+// @Param	token 	body string true	"token"
 // @Param	config 	body string false	"optional config"
 // @Param	toAddrs body string true	"to addrs"
 // @Param	ccAddrs body string true 	"cc addrs"

@@ -36,6 +36,7 @@ const (
 // @Tags    database
 // @Summary get all databases
 // @Accept	application/json
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router  /api/v1/metadata/db [get]
@@ -63,7 +64,8 @@ func GetDB(c *gin.Context) {
 // @Tags    database
 // @Summary get database by env_id
 // @Accept	application/json
-// @Param	env_id path int true "env id"
+// @Param	env_id path int    true "env id"
+// @Param	token  body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router  /api/v1/metadata/db/env/:env_id [get]
@@ -103,7 +105,8 @@ func GetDBByEnv(c *gin.Context) {
 // @Tags    database
 // @Summary get database by id
 // @Accept	application/json
-// @Param	id path int true "db id"
+// @Param	id    path int    true "db id"
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router  /api/v1/metadata/db/get/:id [get]
@@ -145,6 +148,7 @@ func GetDBByID(c *gin.Context) {
 // @Param	db_name	     body string true "db name"
 // @Param 	cluster_id   body int    true "cluster id"
 // @Param 	cluster_type body int	 true "cluster type"
+// @Param	token        body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router  /api/v1/metadata/db/name-and-cluster-info [get]
@@ -182,6 +186,7 @@ func GetDBByNameAndClusterInfo(c *gin.Context) {
 // @Param	db_name	 body string true "db name"
 // @Param 	host_ip  body string true "host_ip"
 // @Param 	port_num body int	 true "port_num"
+// @Param	token    body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "pmm_test", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2022-03-14T09:59:21.379851+08:00", "last_update_time": "2022-03-14T09:59:21.379851+08:00"}]}"
 // @Router  /api/v1/metadata/db/name-and-host-info [get]
@@ -218,6 +223,7 @@ func GetDBByNameAndHostInfo(c *gin.Context) {
 // @Accept	application/json
 // @Param 	host_ip  body string true "host_ip"
 // @Param 	port_num body int	 true "port_num"
+// @Param	token    body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "pmm_test", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2022-03-14T09:59:21.379851+08:00", "last_update_time": "2022-03-14T09:59:21.379851+08:00"}]}"
 // @Router  /api/v1/metadata/db/host-info [get]
@@ -252,7 +258,8 @@ func GetDBsByHostInfo(c *gin.Context) {
 // @Tags    database
 // @Summary get apps by id
 // @Accept	application/json
-// @Param	id path int true "db id"
+// @Param	id    path int    true "db id"
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [{"id": 66, "system_name": "kkk", "del_flag": 0, "create_time": "2021-01-21T10:00:00+08:00", "last_update_time": "2021-01-21T10:00:00+08:00", "level": 8, "owner_group": "k"}]}"
 // @Router  /api/v1/metadata/db/app/:id [get]
@@ -291,7 +298,8 @@ func GetAppsByDBID(c *gin.Context) {
 // @Tags    database
 // @Summary get mysql cluster by id
 // @Accept	application/json
-// @Param	id path int true "db id"
+// @Param	id    path int    true "db id"
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"mysql_cluster": [{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"},{"monitor_system_id":1, "env_id":1,"create_time":"2021-02-23T04:14:23.707238+08:00","last_update_time":"2021-02-23T04:14:23.707238+08:00","id":2,"cluster_name":"newTest","middleware_cluster_id":1,"del_flag":0}]}"
 // @Router  /api/v1/metadata/db/mysql-cluster/:id [get]
@@ -330,7 +338,8 @@ func GetMySQLClusterByDBID(c *gin.Context) {
 // @Tags    database
 // @Summary get app users
 // @Accept	application/json
-// @Param	id path int true "db id"
+// @Param	id    path int    true "db id"
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"department_name": "dn","account_name": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router  /api/v1/metadata/db/app-user/:id [get]
@@ -369,7 +378,8 @@ func GetAppUsersByDBID(c *gin.Context) {
 // @Tags    database
 // @Summary get db users
 // @Accept	application/json
-// @Param	id path int true "db id"
+// @Param	id    path int    true "db id"
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"department_name": "dn","account_name": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router  /api/v1/metadata/db/db-user/:id [get]
@@ -408,7 +418,8 @@ func GetUsersByDBID(c *gin.Context) {
 // @Tags    database
 // @Summary get all users
 // @Accept	application/json
-// @Param	id path int true "db id"
+// @Param	id    path int    true "db id"
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"department_name": "dn","account_name": "da", "mobile": "m", "del_flag": 0,"last_update_time": "2021-01-21T13:00:00+08:00","user_name": "un","create_time": "2021-01-21T13:00:00+08:00","employee_id": 1,"email": "e","telephone": "t","role": 1, "id": 1}]}"
 // @Router  /api/v1/metadata/db/all-user/:id [get]
@@ -447,6 +458,7 @@ func GetAllUsersByDBID(c *gin.Context) {
 // @Tags    database
 // @Summary add a new database
 // @Accept	application/json
+// @Param	token        body string true "token"
 // @Param	db_name	     body string true	"db name"
 // @Param 	cluster_id   body int    true	"cluster id"
 // @Param 	cluster_type body int	 false	"cluster type"
@@ -503,6 +515,7 @@ func AddDB(c *gin.Context) {
 // @Summary update database by id
 // @Accept	application/json
 // @Param	id		     path int	 true	"db id"
+// @Param	token        body string true "token"
 // @Param	db_name	     body string false	"db name"
 // @Param 	cluster_id   body int    false	"cluster id"
 // @Param 	cluster_type body int	 false	"cluster type"
@@ -570,7 +583,8 @@ func UpdateDBByID(c *gin.Context) {
 // @Tags    database
 // @Summary delete database by id
 // @Accept	application/json
-// @Param	id path int	true "db id"
+// @Param	id    path int	  true "db id"
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1, "db_name": "db1", "cluster_id": 1, "cluster_type": 1, "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
 // @Router  /api/v1/metadata/db/delete/:id [post]
@@ -608,8 +622,9 @@ func DeleteDBByID(c *gin.Context) {
 
 // @Tags    database
 // @Summary add application map
-// @Param	id     path int	true "db id"
-// @Param	app_id body int	true "app id"
+// @Param	id     path int	   true "db id"
+// @Param	token  body string true "token"
+// @Param	app_id body int	   true "app id"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [{"create_time":"2021-11-10T18:39:12.395612+08:00","last_update_time":"2021-12-21T09:15:47.688546+08:00","id":1,"app_name":"app1","level":1,"del_flag":0},{"last_update_time":"2021-12-21T09:15:47.688546+08:00","id":3,"app_name":"app3","level":3,"del_flag":0,"create_time":"2021-11-02T18:02:34.153234+08:00"}]}"
 // @Router  /api/v1/metadata/db/add-app/:id [post]
@@ -663,8 +678,9 @@ func DBAddApp(c *gin.Context) {
 
 // @Tags    database
 // @Summary delete application map
-// @Param	id     path int	true "db id"
-// @Param	app_id body int	true "app id"
+// @Param	id     path int	   true "db id"
+// @Param	token  body string true "token"
+// @Param	app_id body int	   true "app id"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [{"last_update_time":"2021-12-21T09:15:47.688546+08:00","id":1,"app_name":"app1","level":1,"del_flag":0,"create_time":"2021-11-10T18:39:12.395612+08:00"}]}"
 // @Router  /api/v1/metadata/db/delete-app/:id [post]
@@ -718,8 +734,9 @@ func DBDeleteApp(c *gin.Context) {
 
 // @Tags    database
 // @Summary add user map
-// @Param	id      path int true "db id"
-// @Param	user_id body int true "user id"
+// @Param	id      path int    true "db id"
+// @Param	token   body string true "token"
+// @Param	user_id body int    true "user id"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"employee_id":"","telephone":"","create_time":"2022-03-01T17:53:21.046511+08:00","last_update_time":"2022-03-01T17:53:21.046511+08:00","mobile":"","role":3,"id":2,"user_name":"test","department_name":"","account_name":"aaaa","email":"qqqq","del_flag":0},{"role":3,"create_time":"2022-01-25T12:21:05.19953+08:00","user_name":"test1","employee_id":"","account_name":"aaa","email":"aaa","telephone":"","mobile":"","last_update_time":"2022-01-25T12:21:05.19953+08:00","id":3,"department_name":"","del_flag":0}]}"
 // @Router  /api/v1/metadata/db/add-user/:id [post]
@@ -774,8 +791,9 @@ func DBAddUser(c *gin.Context) {
 
 // @Tags    database
 // @Summary delete user map
-// @Param	id      path int true "db id"
-// @Param	user_id body int true "user id"
+// @Param	id      path int    true "db id"
+// @Param	token   body string true "token"
+// @Param	user_id body int    true "user id"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id":2,"employee_id":"","role":3,"del_flag":0,"create_time":"2022-03-01T17:53:21.046511+08:00","last_update_time":"2022-03-01T17:53:21.046511+08:00","user_name":"test","department_name":"","account_name":"aaaa","email":"qqqq","telephone":"","mobile":""}]}"
 // @Router  /api/v1/metadata/db/delete-user/:id [post]
