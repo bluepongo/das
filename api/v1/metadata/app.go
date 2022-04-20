@@ -32,6 +32,7 @@ const (
 // @Tags 	application
 // @Summary get all applications
 // @Accept	application/json
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
 // @Router 	/api/v1/metadata/app [get]
@@ -59,7 +60,8 @@ func GetApp(c *gin.Context) {
 // @Tags 	application
 // @Summary get application by id
 // @Accept	application/json
-// @Param	id path int true "app id"
+// @Param	id 	  path int 	  true "app id"
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
 // @Router  /api/v1/metadata/app/:id [get]
@@ -98,7 +100,8 @@ func GetAppByID(c *gin.Context) {
 // @Tags 	application
 // @Summary get application by system name
 // @Accept	application/json
-// @Param	name path string true "app name"
+// @Param	name  path string true "app name"
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
 // @Router 	/api/v1/metadata/app/app-name/:name [get]
@@ -132,7 +135,8 @@ func GetAppByName(c *gin.Context) {
 // @Tags 	application
 // @Summary get dbs
 // @Accept	application/json
-// @Param	id path int true "app id"
+// @Param	id 	  path int    true "app id"
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1,"db_name": "db2","cluster_id": 3,"cluster_type": 1,"env_id": 1,"del_flag": 0,"create_time": "2022-01-04T15:08:33.418288+08:00","last_update_time": "2022-01-25T16:17:26.284761+08:00"},}]}"
 // @Router 	/api/vi/metadata/app/db/:id [get]
@@ -171,6 +175,7 @@ func GetDBsByAppID(c *gin.Context) {
 // @Tags 	application
 // @Summary add a new application
 // @Accept	application/json
+// @Param	token 	 body string true "token"
 // @Param	app_name body string true "app name"
 // @Param	level 	 body int 	 true "app level"
 // @Produce application/json
@@ -225,6 +230,7 @@ func AddApp(c *gin.Context) {
 // @Summary update application by id
 // @Accept	application/json
 // @Param	id 		 path int 	 true 	"app id"
+// @Param	token 	 body string true "token"
 // @Param	app_name body string false 	"app name"
 // @Param	level 	 body int 	 false 	"app level"
 // @Param 	del_flag body int	 false	"delete flag"
@@ -286,7 +292,8 @@ func UpdateAppByID(c *gin.Context) {
 // @Tags 	 application
 // @Summary  delete app by id
 // @Accept	 application/json
-// @Param	 id path int true "app id"
+// @Param	id    path int    true "app id"
+// @Param	token body string true "token"
 // @Produce  application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
 // @Router 	 /api/v1/metadata/app/delete/:id [post]
@@ -327,8 +334,9 @@ func DeleteAppByID(c *gin.Context) {
 // @Tags 	application
 // @Summary add database map
 // @Accept	application/json
-// @Param	id 		path int true "app id"
-// @Param	db_id   body int true "db id"
+// @Param	id 		path int    true "app id"
+// @Param	token   body string true "token"
+// @Param	db_id   body int    true "db id"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1,"db_name": "db2","cluster_id": 3,"cluster_type": 1,"env_id": 1,"del_flag": 0,"create_time": "2022-01-04T15:08:33.418288+08:00","last_update_time": "2022-01-25T16:17:26.284761+08:00"},}]}"
 // @Router 	/api/v1/metadata/app/add-db/:id [post]
@@ -385,6 +393,7 @@ func AppAddDB(c *gin.Context) {
 // @Summary delete database map
 // @Accept	application/json
 // @Param	id 	  path int true 	"app id"
+// @Param	token body string true "token"
 // @Param	db_id body int false 	"db id"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1,"db_name": "db2","cluster_id": 3,"cluster_type": 1,"env_id": 1,"del_flag": 0,"create_time": "2022-01-04T15:08:33.418288+08:00","last_update_time": "2022-01-25T16:17:26.284761+08:00"},}]}"
@@ -440,7 +449,8 @@ func AppDeleteDB(c *gin.Context) {
 // @Tags 	application
 // @Summary get users
 // @Accept	application/json
-// @Param	id path int true "app id"
+// @Param	id 	  path int    true "app id"
+// @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
 // @Router  /api/vi/metadata/app/user/:id [get]
@@ -479,8 +489,9 @@ func GetUsersByAppID(c *gin.Context) {
 // @Tags 	application
 // @Summary add user map
 // @Accept	application/json
-// @Param	id 		path int true 	"app id"
-// @Param	user_id body int false 	"user id"
+// @Param	id 		path int    true "app id"
+// @Param	token 	body string true "token"
+// @Param	user_id body int    false "user id"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
 // @Router  /api/v1/metadata/app/add-user/:id [post]
@@ -536,8 +547,9 @@ func AppAddUser(c *gin.Context) {
 // @Tags 	application
 // @Summary delete user map
 // @Accept	application/json
-// @Param	id 		path int true "app id"
-// @Param	user_id body int true "user id"
+// @Param	id 		path int 	true "app id"
+// @Param	token 	body string true "token"
+// @Param	user_id body int 	true "user id"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
 // @Router  /api/v1/metadata/app/delete-user/:id [post]

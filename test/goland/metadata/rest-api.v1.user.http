@@ -2,39 +2,72 @@
 GET http://{{baseURL}}/api/v1/metadata/user
 Content-Type: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### GetUserByName
 GET http://{{baseURL}}/api/v1/metadata/user/user-name/zhangsan
 Content-Type: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### GetUserByID
 GET http://{{baseURL}}/api/v1/metadata/user/get/1
 Content-Type: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### GetUserByEmployeeID
 GET http://{{baseURL}}/api/v1/metadata/user/employee-id/100001
 Content-Type: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### GetUserByAccountName
 GET http://{{baseURL}}/api/v1/metadata/user/account-name/zs001
 Content-Type: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### GetUserByEmail
 GET http://{{baseURL}}/api/v1/metadata/user/email/allinemailtest@163.com
 Content-Type: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### GetUserByTelephone
 GET http://{{baseURL}}/api/v1/metadata/user/telephone/01012345678
 Content-Type: application/json
 
+{
+    "token": "{{token}}"
+}
+
 ### GetUserByMobile
 GET http://{{baseURL}}/api/v1/metadata/user/mobile/13012345678
 Content-Type: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### AddUser
 POST http://{{baseURL}}/api/v1/metadata/user
 Content-Type: application/json
 
 {
+  "token": "{{token}}",
   "user_name": "test_new_user_name",
   "department_name": "department_name",
   "employee_id": "200001",
@@ -50,6 +83,7 @@ POST http://{{baseURL}}/api/v1/metadata/user/update/1
 Content-Type: application/json
 
 {
+  "token": "{{token}}",
   "user_name": "update_user_name",
   "department_name": "update_department_name",
   "employee_id": "update_employee_id",
@@ -62,6 +96,7 @@ POST http://{{baseURL}}/api/v1/metadata/user/update/1
 Content-Type: application/json
 
 {
+  "token": "{{token}}",
   "user_name": "zhangsan",
   "department_name": "arch",
   "employee_id": "100001",
@@ -72,3 +107,7 @@ Content-Type: application/json
 ### DeleteUserByID
 POST http://{{baseURL}}/api/v1/metadata/user/delete/13
 Content-Type: application/json
+
+{
+    "token": "{{token}}"
+}
