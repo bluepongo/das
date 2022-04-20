@@ -58,8 +58,8 @@ func GetMiddlewareServer(c *gin.Context) {
 // @Tags     middleware server
 // @Summary	get middleware servers by cluster id
 // @Accept	application/json
-// @Param	token 		body 	string 	true 	"token"
 // @Param	cluster_id	path	int		true	"middleware cluster id"
+// @Param	token 		body 	string 	true 	"token"
 // @Produce	application/json
 // @Success 200 {string} string {"middleware_servers":[{"id":1,"cluster_id":1,"server_name":"middleware-server-1","host_ip":"192.168.10.219","port_num":33061,"del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","middleware_role":1}]}
 // @Router	/api/v1/metadata/middleware-server/cluster-id/:cluster_id [get]
@@ -98,8 +98,8 @@ func GetMiddlewareServerByClusterID(c *gin.Context) {
 // @Tags	middleware server
 // @Summary	get middleware server by id
 // @Accept	application/json
-// @Param	token 	body 	string 	true 	"token"
 // @Param	id		path	int		true	"middleware server id"
+// @Param	token 	body 	string 	true 	"token"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_servers":[{"last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"server_name":"middleware-server-1","middleware_role":1,"port_num":33061,"cluster_id":1,"host_ip":"192.168.10.219","del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00"}]}
 // @Router	/api/v1/metadata/middleware-server/get/:id [get]
@@ -314,8 +314,8 @@ func UpdateMiddlewareServerByID(c *gin.Context) {
 // @Tags	middleware server
 // @Summary	delete middleware server by id
 // @Accept	application/json
-// @Param	token 	body 	string 	true 	"token"
 // @Param	id		path	int		true	"middleware server id"
+// @Param	token 	body 	string 	true 	"token"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_servers":[{"server_name":"new_middleware_server","host_ip":"192.168.10.219","port_num":33062,"create_time":"2022-03-02T10:18:28.021994+08:00","last_update_time":"2022-03-02T10:18:28.021994+08:00","id":42,"cluster_id":1,"middleware_role":1,"del_flag":0}]}
 // @Router	/api/v1/metadata/middleware-server/delete/:id [post]
