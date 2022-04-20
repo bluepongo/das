@@ -567,7 +567,7 @@ func GetAllMySQLServersByUserID(c *gin.Context) {
 // @Param	department_name body string true "department name"
 // @Param	employee_id     body string true "employee id"
 // @Param	telephone       body string true "user telephone"
-// @Param	role            body int 	true "user role"
+// @Param	role            body int    true "user role"
 // @Param	account_name    body string true "account name"
 // @Param	email           body string true "email"
 // @Param	mobile          body string true "mobile"
