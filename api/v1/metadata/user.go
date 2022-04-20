@@ -357,7 +357,7 @@ func GetUserByMobile(c *gin.Context) {
 // @Tags 	user
 // @Summary get apps by id
 // @Accept	application/json
-// @Param	id    path int true "user id"
+// @Param	id    path int    true "user id"
 // @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
@@ -398,7 +398,7 @@ func GetAppsByUserID(c *gin.Context) {
 // @Tags 	user
 // @Summary get dbs by id
 // @Accept	application/json
-// @Param	id 	  path int true "user id"
+// @Param	id 	  path int 	  true "user id"
 // @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1,"db_name": "db2","cluster_id": 3,"cluster_type": 1,"env_id": 1,"del_flag": 0,"create_time": "2022-01-04T15:08:33.418288+08:00","last_update_time": "2022-01-25T16:17:26.284761+08:00"},}]}"
@@ -439,7 +439,7 @@ func GetDBsByUserID(c *gin.Context) {
 // @Tags 	user
 // @Summary get middleware clusters by id
 // @Accept	application/json
-// @Param	id    path int true "user id"
+// @Param	id    path int 	  true "user id"
 // @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"middleware_clusters": [{"id": 1,"cluster_name": "middleware-cluster-1","env_id": 1,"del_flag": 0,"create_time": "2021-11-09T18:06:57.917596+08:00","last_update_time": "2021-11-18T15:39:52.927116+08:00"}]}"

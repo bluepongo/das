@@ -292,7 +292,7 @@ func UpdateAppByID(c *gin.Context) {
 // @Tags 	 application
 // @Summary  delete app by id
 // @Accept	 application/json
-// @Param	 id   path int    true "app id"
+// @Param	id    path int    true "app id"
 // @Param	token body string true "token"
 // @Produce  application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
