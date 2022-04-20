@@ -177,7 +177,7 @@ func GetDBsByAppID(c *gin.Context) {
 // @Accept	application/json
 // @Param	token 	 body string true "token"
 // @Param	app_name body string true "app name"
-// @Param	level 	 body int 	 true "app level"
+// @Param	level 	 body int    true "app level"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
 // @Router 	/api/v1/metadata/app [post]
@@ -229,11 +229,11 @@ func AddApp(c *gin.Context) {
 // @Tags 	application
 // @Summary update application by id
 // @Accept	application/json
-// @Param	id 		 path int 	 true 	"app id"
+// @Param	id       path int 	 true 	"app id"
 // @Param	token 	 body string true 	"token"
 // @Param	app_name body string false 	"app name"
-// @Param	level 	 body int 	 false 	"app level"
-// @Param 	del_flag body int	 false	"delete flag"
+// @Param	level 	 body int    false  "app level"
+// @Param 	del_flag body int    false  "delete flag"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
 // @Router  /api/v1/metadata/app/:id [post]
@@ -334,7 +334,7 @@ func DeleteAppByID(c *gin.Context) {
 // @Tags 	application
 // @Summary add database map
 // @Accept	application/json
-// @Param	id 		path int    true "app id"
+// @Param	id      path int    true "app id"
 // @Param	token   body string true "token"
 // @Param	db_id   body int    true "db id"
 // @Produce application/json
@@ -392,7 +392,7 @@ func AppAddDB(c *gin.Context) {
 // @Tags 	application
 // @Summary delete database map
 // @Accept	application/json
-// @Param	id 	  path int true 	"app id"
+// @Param	id    path int true     "app id"
 // @Param	token body string true  "token"
 // @Param	db_id body int false 	"db id"
 // @Produce application/json
@@ -449,7 +449,7 @@ func AppDeleteDB(c *gin.Context) {
 // @Tags 	application
 // @Summary get users
 // @Accept	application/json
-// @Param	id 	  path int    true "app id"
+// @Param	id    path int    true "app id"
 // @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
@@ -489,7 +489,7 @@ func GetUsersByAppID(c *gin.Context) {
 // @Tags 	application
 // @Summary add user map
 // @Accept	application/json
-// @Param	id 		path int    true  "app id"
+// @Param	id      path int    true  "app id"
 // @Param	token 	body string true  "token"
 // @Param	user_id body int    false "user id"
 // @Produce application/json
@@ -547,9 +547,9 @@ func AppAddUser(c *gin.Context) {
 // @Tags 	application
 // @Summary delete user map
 // @Accept	application/json
-// @Param	id 		path int 	true "app id"
+// @Param	id      path int    true "app id"
 // @Param	token 	body string true "token"
-// @Param	user_id body int 	true "user id"
+// @Param	user_id body int    true "user id"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
 // @Router  /api/v1/metadata/app/delete-user/:id [post]
