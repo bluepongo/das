@@ -72,7 +72,7 @@ func GetUser(c *gin.Context) {
 // @Tags 	user
 // @Summary get user by id
 // @Accept	application/json
-// @Param	id 	  path int    true "user id"
+// @Param	id    path int    true "user id"
 // @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
@@ -398,7 +398,7 @@ func GetAppsByUserID(c *gin.Context) {
 // @Tags 	user
 // @Summary get dbs by id
 // @Accept	application/json
-// @Param	id 	  path int 	  true "user id"
+// @Param	id    path int    true "user id"
 // @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1,"db_name": "db2","cluster_id": 3,"cluster_type": 1,"env_id": 1,"del_flag": 0,"create_time": "2022-01-04T15:08:33.418288+08:00","last_update_time": "2022-01-25T16:17:26.284761+08:00"},}]}"
@@ -480,7 +480,7 @@ func GetMiddlewareClustersByUserID(c *gin.Context) {
 // @Tags 	user
 // @Summary get mysql clusters by id
 // @Accept	application/json
-// @Param	id 	  path int    true "user id"
+// @Param	id    path int    true "user id"
 // @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"mysql_clusters": [{"id": 1,"cluster_name": "mysql-cluster-pmm2","middleware_cluster_id": 0,"env_id": 1"monitor_system_id": 1,"del_flag": 0,"last_update_time": "2021-12-21T09:16:10.750725+08:00","create_time": "2021-09-02T09:02:22.346672+08:00",},]}"
@@ -562,15 +562,15 @@ func GetAllMySQLServersByUserID(c *gin.Context) {
 // @Tags 	user
 // @Summary add a new user
 // @Accept	application/json
-// @Param	token 		    body string true "token"
-// @Param	user_name 		body string true "user name"
+// @Param	token           body string true "token"
+// @Param	user_name       body string true "user name"
 // @Param	department_name body string true "department name"
-// @Param	employee_id 	body string true "employee id"
-// @Param	telephone 		body string true "user telephone"
-// @Param	role 			body int 	true "user role"
-// @Param	account_name 	body string true "account name"
-// @Param	email 			body string true "email"
-// @Param	mobile 			body string true "mobile"
+// @Param	employee_id     body string true "employee id"
+// @Param	telephone       body string true "user telephone"
+// @Param	role            body int    true "user role"
+// @Param	account_name    body string true "account name"
+// @Param	email           body string true "email"
+// @Param	mobile          body string true "mobile"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
 // @Router 	/api/v1/metadata/user [post]
@@ -642,17 +642,17 @@ func AddUser(c *gin.Context) {
 // @Tags 	user
 // @Summary update user by id
 // @Accept	application/json
-// @Param	id				path int	true	"user id"
-// @Param	token 			body string true    "token"
-// @Param	user_name 		body string true 	"user name"
-// @Param	department_name body string true 	"department name"
-// @Param	employee_id 	body string true 	"employee id"
-// @Param	telephone 		body string true 	"user telephone"
-// @Param	role 			body int 	true 	"user role"
-// @Param	account_name 	body string true 	"account name"
-// @Param	email 			body string true 	"email"
-// @Param	mobile 			body string true 	"mobile"
-// @Param 	del_flag 		body int	false	"delete flag"
+// @Param	id              path int    true    "user id"
+// @Param	token           body string true    "token"
+// @Param	user_name       body string true    "user name"
+// @Param	department_name body string true    "department name"
+// @Param	employee_id     body string true    "employee id"
+// @Param	telephone       body string true    "user telephone"
+// @Param	role            body int    true    "user role"
+// @Param	account_name    body string true    "account name"
+// @Param	email           body string true    "email"
+// @Param	mobile          body string true    "mobile"
+// @Param 	del_flag        body int    false   "delete flag"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
 // @Router 	/api/v1/metadata/user/update/:id [post]
@@ -716,7 +716,7 @@ func UpdateUserByID(c *gin.Context) {
 // @Tags 	user
 // @Summary delete user by id
 // @Accept	application/json
-// @Param	id 	  path int 	  true "user id"
+// @Param	id    path int    true "user id"
 // @Param	token body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
