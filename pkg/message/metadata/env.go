@@ -58,6 +58,6 @@ func initErrorEnvMessage() {
 	message.Messages[ErrMetadataGetEnvByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEnvByID, "metadata: get environment by id failed. id: %d")
 	message.Messages[ErrMetadataAddEnv] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataAddEnv, "metadata: add new environment failed. env_name: %s")
 	message.Messages[ErrMetadataUpdateEnv] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataUpdateEnv, "metadata: update environment failed. id: %d")
-	message.Messages[ErrMetadataGetEnvByName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEnvByName, "metadata: get environment by name failed. id: %d")
+	message.Messages[ErrMetadataGetEnvByName] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataGetEnvByName, "metadata: get environment by name failed. env_name: %s")
 	message.Messages[ErrMetadataDeleteEnvByID] = config.NewErrMessage(message.DefaultMessageHeader, ErrMetadataDeleteEnvByID, "metadata: delete environment by ID failed. id: %d")
 }

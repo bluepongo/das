@@ -10,7 +10,7 @@ func RegisterHealthcheck(group *gin.RouterGroup) {
 	healthcheckGroup := group.Group("/healthcheck")
 	{
 		healthcheckGroup.GET("/history", healthcheck.GetOperationHistoriesByLoginName)
-		healthcheckGroup.GET("/result/:operation_id", healthcheck.GetResultByOperationID)
+		healthcheckGroup.GET("/result", healthcheck.GetResultByOperationID)
 		healthcheckGroup.POST("/check", healthcheck.Check)
 		healthcheckGroup.POST("/check/host-info", healthcheck.CheckByHostInfo)
 		healthcheckGroup.POST("/review", healthcheck.ReviewAccuracy)

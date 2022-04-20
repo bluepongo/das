@@ -1,4 +1,4 @@
-### healthcheck.GetResultByOperationID
+### healthcheck.GetOperationHistoriesByLoginName
 GET http://{{baseURL}}/api/v1/healthcheck/history
 Content-Type: application/json
 
@@ -8,11 +8,12 @@ Content-Type: application/json
 }
 
 ### healthcheck.GetResultByOperationID
-GET http://{{baseURL}}/api/v1/healthcheck/result/{{result_id}}
+GET http://{{baseURL}}/api/v1/healthcheck/result
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "operation_id": "{{operation_id}}"
 }
 
 ### healthcheck.Check

@@ -43,11 +43,11 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.POST("/db/delete-user/:id", metadata.DBDeleteUser)
 		// env
 		metadataGroup.GET("/env", metadata.GetEnv)
-		metadataGroup.GET("/env/get/:id", metadata.GetEnvByID)
-		metadataGroup.GET("/env/env-name/:env_name", metadata.GetEnvByName)
+		metadataGroup.GET("/env/get", metadata.GetEnvByID)
+		metadataGroup.GET("/env/env-name", metadata.GetEnvByName)
 		metadataGroup.POST("/env", metadata.AddEnv)
-		metadataGroup.POST("/env/update/:id", metadata.UpdateEnvByID)
-		metadataGroup.POST("/env/delete/:id", metadata.DeleteEnvByID)
+		metadataGroup.POST("/env/update", metadata.UpdateEnvByID)
+		metadataGroup.POST("/env/delete", metadata.DeleteEnvByID)
 		// middleware cluster
 		metadataGroup.GET("/middleware-cluster", metadata.GetMiddlewareCluster)
 		metadataGroup.GET("/middleware-cluster/env/:env_id", metadata.GetMiddlewareClusterByEnv)

@@ -2,8 +2,8 @@ package metadata
 
 import (
 	"fmt"
-	"strconv"
 
+	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/metadata"
@@ -19,6 +19,7 @@ const (
 	envIDJSON      = "id"
 	envEnvNameJSON = "env_name"
 
+	envIDStruct      = "ID"
 	envDelFlagStruct = "DelFlag"
 	envEnvNameStruct = "EnvName"
 )
@@ -54,27 +55,27 @@ func GetEnv(c *gin.Context) {
 // @Tags	environment
 // @Summary get environment by id
 // @Accept	application/json
-// @Param	id 		path int 	true "env id"
 // @Param	token	body string true "token"
+// @Param	id 		body int 	true "env id"
 // @Produce application/json
 // @Success	200 {string} string "{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router	/api/v1/metadata/env/:id [get]
+// @Router	/api/v1/metadata/env [get]
 func GetEnvByID(c *gin.Context) {
-	// get param
-	idStr := c.Param(envIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := strconv.Atoi(idStr)
+	id, err := jsonparser.GetInt(data, envIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), envIDJSON)
 		return
 	}
 	// init service
 	s := metadata.NewEnvServiceWithDefault()
 	// get entity
-	err = s.GetByID(id)
+	err = s.GetByID(int(id))
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByID, err, id)
 		return
@@ -94,22 +95,27 @@ func GetEnvByID(c *gin.Context) {
 // @Tags 	environment
 // @Summary	get environment by Name
 // @Accept	application/json
-// @Param	env_name path string true "env name"
 // @Param	token	 body string true "token"
+// @Param	env_name body string true "env name"
 // @Produce application/json
 // @Success 200 {string} string "{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router	/api/v1/metadata/env/env-name/:env_name [get]
+// @Router	/api/v1/metadata/env/env-name [get]
 func GetEnvByName(c *gin.Context) {
-	// get params
-	envName := c.Param(envEnvNameJSON)
-	if envName == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envEnvNameJSON)
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		return
+	}
+	envName, err := jsonparser.GetString(data, envEnvNameJSON)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), envEnvNameJSON)
 		return
 	}
 	// init service
 	s := metadata.NewEnvServiceWithDefault()
 	// get entity
-	err := s.GetEnvByName(envName)
+	err = s.GetEnvByName(envName)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetEnvByName, err, envName)
 		return
@@ -136,7 +142,6 @@ func GetEnvByName(c *gin.Context) {
 // @Router	/api/v1/metadata/env [post]
 func AddEnv(c *gin.Context) {
 	var fields map[string]interface{}
-
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
@@ -177,26 +182,16 @@ func AddEnv(c *gin.Context) {
 // @Tags	environment
 // @Summary	update environment by id
 // @Accept	application/json
-// @Param	id		 path 	int		true	"env id"
 // @Param	token	 body 	string 	true 	"token"
+// @Param	id		 body 	int		true	"env id"
 // @Param 	env_name body 	string 	false	"env name"
 // @Param 	del_flag body 	int		false	"delete flag"
 // @Produce application/json
 // @Success	200 {string} string "{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router	/api/v1/metadata/env/update/:id [post]
+// @Router	/api/v1/metadata/env/update [post]
 func UpdateEnvByID(c *gin.Context) {
 	var fields map[string]interface{}
-
-	// get params
-	idStr := c.Param(envIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
+	// get data
 	data, err := c.GetRawData()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
@@ -206,6 +201,16 @@ func UpdateEnvByID(c *gin.Context) {
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.EnvInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
+		return
+	}
+	idInterface, idExists := fields[envIDStruct]
+	if !idExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDStruct)
+		return
+	}
+	id, ok := idInterface.(int)
+	if !ok {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDStruct)
 		return
 	}
 	_, envNameExists := fields[envEnvNameStruct]
@@ -238,29 +243,27 @@ func UpdateEnvByID(c *gin.Context) {
 // @Tags	environment
 // @Summary delete environment by id
 // @Accept	application/json
-// @Param	id 		 path 	int 	true 	"env id"
-// @Param	token	 body 	string 	true 	"token"
+// @Param	token   body 	string 	true 	"token"
+// @Param	id      body 	int 	true 	"env id"
 // @Produce application/json
 // @Success	200 {string} string "{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router	/api/v1/metadata/env/delete/:id [post]
+// @Router	/api/v1/metadata/env/delete [post]
 func DeleteEnvByID(c *gin.Context) {
-	var fields map[string]interface{}
-
-	// get params
-	idStr := c.Param(envIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := strconv.Atoi(idStr)
+	id, err := jsonparser.GetInt(data, envIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), envIDJSON)
 		return
 	}
 	// init service
 	s := metadata.NewEnvServiceWithDefault()
 	// update entities
-	err = s.Delete(id)
+	err = s.Delete(int(id))
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteEnvByID, err, id)
 		return
@@ -274,5 +277,5 @@ func DeleteEnvByID(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataDeleteEnvByID, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteEnvByID, fields[envEnvNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteEnvByID, id)
 }
