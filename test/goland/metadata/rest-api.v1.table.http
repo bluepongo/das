@@ -4,8 +4,8 @@ Content-Type: : application/json
 
 {
     "token": "{{token}}",
-    "db_id": 4,
-    "login_name": "yc_admin"
+    "db_id": {{db_id}},
+    "login_name": "{{login_name}}"
 }
 
 ### get table statistics by db id and table name
@@ -14,9 +14,9 @@ Content-Type: : application/json
 
 {
     "token": "{{token}}",
-    "db_id": 4,
-    "table_name": "test",
-    "login_name": "yc_admin"
+    "db_id": {{db_id}},
+    "table_name": "{{table_name}}",
+    "login_name": "{{login_name}}"
 }
 
 ### get table statistics by host info and db name and table name
@@ -25,11 +25,11 @@ Content-Type: : application/json
 
 {
     "token": "{{token}}",
-    "host_ip": "127.0.0.1",
-    "port_num": 3306,
-    "db_name": "das",
-    "table_name": "t_meta_mysql_cluster_info",
-    "login_name": "yc_admin"
+    "host_ip": "{{mysql_host_ip}}",
+    "port_num": {{mysql_port_num}},
+    "db_name": "{{db_name}}",
+    "table_name": "{{table_name}}",
+    "login_name": "{{login_name}}"
 }
 
 ### analyze table by db id and table name
@@ -38,9 +38,9 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "db_id": 4,
-    "table_name": "test",
-    "login_name": "yc_guest"
+    "db_id": {{db_id}},
+    "table_name": "{{table_name}}",
+    "login_name": "{{login_name}}"
 }
 
 ### analyze table by host info and db name and table name
@@ -49,9 +49,9 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "host_ip": "127.0.0.1",
-    "port_num": 3306,
-    "db_name": "yc",
-    "table_name": "test",
-    "login_name": "yc_admin"
+    "host_ip": "{{mysql_host_ip}}",
+    "port_num": {{mysql_port_num}},
+    "db_name": "{{db_name}}",
+    "table_name": "{{table_name}}",
+    "login_name": "{{login_name}}"
 }
