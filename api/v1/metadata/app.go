@@ -1,10 +1,9 @@
 package metadata
 
 import (
-	"encoding/json"
 	"fmt"
-	"strconv"
 
+	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/metadata"
@@ -21,7 +20,10 @@ const (
 	appAppNameJSON = "app_name"
 	appDBIDJSON    = "db_id"
 	appUserIDJSON  = "user_id"
+	appLevelJSON   = "level"
+	appDelFlagJSON = "del_flag"
 
+	appAppIDStruct   = "ID"
 	appAppNameStruct = "AppName"
 	appLevelStruct   = "Level"
 	appDelFlagStruct = "DelFlag"
@@ -60,26 +62,28 @@ func GetApp(c *gin.Context) {
 // @Tags 	application
 // @Summary get application by id
 // @Accept	application/json
-// @Param	id    path int 	  true "app id"
 // @Param	token body string true "token"
+// @Param	id    body int 	  true "app id"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
-// @Router  /api/v1/metadata/app/:id [get]
+// @Router  /api/v1/metadata/app/get [get]
 func GetAppByID(c *gin.Context) {
 	// get param
-	idStr := c.Param(appIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
-		return
-	}
-	id, err := strconv.Atoi(idStr)
+	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
+	appID, err := jsonparser.GetInt(data, appIDJSON)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appIDJSON)
+		return
+	}
+	id := int(appID)
 	// init service
 	s := metadata.NewAppServiceWithDefault()
 	// get entity
+
 	err = s.GetByID(id)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppByID, err, id)
@@ -100,22 +104,27 @@ func GetAppByID(c *gin.Context) {
 // @Tags 	application
 // @Summary get application by system name
 // @Accept	application/json
-// @Param	name  path string true "app name"
 // @Param	token body string true "token"
+// @Param	name  body string true "app name"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
-// @Router 	/api/v1/metadata/app/app-name/:name [get]
+// @Router 	/api/v1/metadata/app/app-name [get]
 func GetAppByName(c *gin.Context) {
-	// get params
-	appName := c.Param(appAppNameJSON)
-	if appName == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appAppNameJSON)
+	// get param
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		return
+	}
+	appName, err := jsonparser.GetString(data, appAppNameJSON)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appAppNameJSON)
 		return
 	}
 	// init service
 	s := metadata.NewAppServiceWithDefault()
 	// get entity
-	err := s.GetAppByName(appName)
+	err = s.GetAppByName(appName)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppByName, err, appName)
 		return
@@ -135,23 +144,24 @@ func GetAppByName(c *gin.Context) {
 // @Tags 	application
 // @Summary get dbs
 // @Accept	application/json
-// @Param	id    path int    true "app id"
 // @Param	token body string true "token"
+// @Param	id    body int    true "app id"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1,"db_name": "db2","cluster_id": 3,"cluster_type": 1,"env_id": 1,"del_flag": 0,"create_time": "2022-01-04T15:08:33.418288+08:00","last_update_time": "2022-01-25T16:17:26.284761+08:00"},}]}"
-// @Router 	/api/vi/metadata/app/db/:id [get]
+// @Router 	/api/vi/metadata/app/db [get]
 func GetDBsByAppID(c *gin.Context) {
 	// get param
-	idStr := c.Param(appIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
-		return
-	}
-	id, err := strconv.Atoi(idStr)
+	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
+	appID, err := jsonparser.GetInt(data, appIDJSON)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appIDJSON)
+		return
+	}
+	id := int(appID)
 	// init service
 	s := metadata.NewAppServiceWithDefault()
 	// get entity
@@ -184,7 +194,7 @@ func GetDBsByAppID(c *gin.Context) {
 func AddApp(c *gin.Context) {
 	var fields map[string]interface{}
 
-	// get data
+	// get param
 	data, err := c.GetRawData()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
@@ -198,12 +208,12 @@ func AddApp(c *gin.Context) {
 	}
 	_, ok := fields[appAppNameStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appAppNameStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, appAppNameJSON)
 		return
 	}
 	_, ok = fields[appLevelStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appLevelStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, appLevelJSON)
 		return
 	}
 	// init service
@@ -229,49 +239,59 @@ func AddApp(c *gin.Context) {
 // @Tags 	application
 // @Summary update application by id
 // @Accept	application/json
-// @Param	id       path int    true   "app id"
 // @Param	token    body string true   "token"
+// @Param	id       body int    true   "app id"
 // @Param	app_name body string false  "app name"
 // @Param	level    body int    false  "app level"
 // @Param 	del_flag body int    false  "delete flag"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
-// @Router  /api/v1/metadata/app/:id [post]
+// @Router  /api/v1/metadata/app [post]
 func UpdateAppByID(c *gin.Context) {
 	var fields map[string]interface{}
 
-	// get params
-	idStr := c.Param(appIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
-		return
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
+	// get param
 	data, err := c.GetRawData()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
+	// appID, err := jsonparser.GetInt(data, appIDJSON)
+	// if err != nil {
+	// 	resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appIDJSON)
+	// 	return
+	// }
+	// id := int(appID)
 	// unmarshal data
 	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.AppInfo{}, constant.DefaultJSONTag)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
+	idInterface, IDExists := fields[appAppIDStruct]
+
+	if !IDExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
+		return
+	}
+
+	id, ok := idInterface.(int)
+	if !ok {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
+		return
+	}
 	_, AppNameExists := fields[appAppNameStruct]
 	_, levelExists := fields[appLevelStruct]
 	_, delFlagExists := fields[appDelFlagStruct]
 	if !AppNameExists && !delFlagExists && !levelExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", appAppNameStruct, appDelFlagStruct))
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf(" %s ,%s and %s", appAppNameJSON, appLevelJSON, appDelFlagJSON))
 		return
 	}
+
 	// init service
 	s := metadata.NewAppServiceWithDefault()
 	// update entities
+
 	err = s.Update(id, fields)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataUpdateApp, err, id)
@@ -292,25 +312,26 @@ func UpdateAppByID(c *gin.Context) {
 // @Tags 	 application
 // @Summary  delete app by id
 // @Accept   application/json
-// @Param	id    path int    true "app id"
 // @Param	token body string true "token"
+// @Param	id    body int    true "app id"
 // @Produce  application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
-// @Router 	 /api/v1/metadata/app/delete/:id [post]
+// @Router 	 /api/v1/metadata/app/delete [post]
 func DeleteAppByID(c *gin.Context) {
 	var fields map[string]interface{}
 
-	// get params
-	idStr := c.Param(appIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
-		return
-	}
-	id, err := strconv.Atoi(idStr)
+	// get param
+	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
+	appID, err := jsonparser.GetInt(data, appIDJSON)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appIDJSON)
+		return
+	}
+	id := int(appID)
 	// init service
 	s := metadata.NewAppServiceWithDefault()
 	// update entities
@@ -334,41 +355,36 @@ func DeleteAppByID(c *gin.Context) {
 // @Tags 	application
 // @Summary add database map
 // @Accept	application/json
-// @Param	id      path int    true "app id"
 // @Param	token   body string true "token"
+// @Param	id      body int    true "app id"
 // @Param	db_id   body int    true "db id"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1,"db_name": "db2","cluster_id": 3,"cluster_type": 1,"env_id": 1,"del_flag": 0,"create_time": "2022-01-04T15:08:33.418288+08:00","last_update_time": "2022-01-25T16:17:26.284761+08:00"},}]}"
-// @Router 	/api/v1/metadata/app/add-db/:id [post]
+// @Router 	/api/v1/metadata/app/add-db [post]
 func AppAddDB(c *gin.Context) {
-	// get params
-	idStr := c.Param(appIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
-		return
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
+	// get param
 	data, err := c.GetRawData()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
+	appID, err := jsonparser.GetInt(data, appIDJSON)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appIDJSON)
+		return
+	}
+	id := int(appID)
 
-	dataMap := make(map[string]int)
-	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataAppAddDB, errors.Trace(err), id)
 		return
 	}
-	dbID, dbIDExists := dataMap[appDBIDJSON]
-	if !dbIDExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appDBIDJSON)
+	dbID64, err := jsonparser.GetInt(data, appDBIDJSON)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appDBIDJSON)
 		return
 	}
+	dbID := int(dbID64)
 	// init service
 	s := metadata.NewAppServiceWithDefault()
 	// update entities
@@ -392,40 +408,32 @@ func AppAddDB(c *gin.Context) {
 // @Tags 	application
 // @Summary delete database map
 // @Accept	application/json
-// @Param	id    path int true     "app id"
 // @Param	token body string true  "token"
+// @Param	id    body int true     "app id"
 // @Param	db_id body int false 	"db id"
 // @Produce application/json
 // @Success 200 {string} string "{"dbs": [{"id": 1,"db_name": "db2","cluster_id": 3,"cluster_type": 1,"env_id": 1,"del_flag": 0,"create_time": "2022-01-04T15:08:33.418288+08:00","last_update_time": "2022-01-25T16:17:26.284761+08:00"},}]}"
-// @Router  /api/v1/metadata/app/delete-db/:id [post]
+// @Router  /api/v1/metadata/app/delete-db [post]
 func AppDeleteDB(c *gin.Context) {
-	// get params
-	idStr := c.Param(appIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
-		return
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
+	// get param
 	data, err := c.GetRawData()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	dataMap := make(map[string]int)
-	err = json.Unmarshal(data, &dataMap)
+	appID, err := jsonparser.GetInt(data, appIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAppDeleteDB, errors.Trace(err), id)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appIDJSON)
 		return
 	}
-	dbID, dbIDExists := dataMap[appDBIDJSON]
-	if !dbIDExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appDBIDJSON)
+	id := int(appID)
+
+	dbID64, err := jsonparser.GetInt(data, appDBIDJSON)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appDBIDJSON)
 		return
 	}
+	dbID := int(dbID64)
 	// init service
 	s := metadata.NewAppServiceWithDefault()
 	// update entities
@@ -449,23 +457,24 @@ func AppDeleteDB(c *gin.Context) {
 // @Tags 	application
 // @Summary get users
 // @Accept	application/json
-// @Param	id    path int    true "app id"
 // @Param	token body string true "token"
+// @Param	id    body int    true "app id"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
-// @Router  /api/vi/metadata/app/user/:id [get]
+// @Router  /api/vi/metadata/app/user [get]
 func GetUsersByAppID(c *gin.Context) {
 	// get param
-	idStr := c.Param(appIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
-		return
-	}
-	id, err := strconv.Atoi(idStr)
+	data, err := c.GetRawData()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
+	appID, err := jsonparser.GetInt(data, appIDJSON)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appIDJSON)
+		return
+	}
+	id := int(appID)
 	// init service
 	s := metadata.NewAppServiceWithDefault()
 	// get entity
@@ -489,41 +498,33 @@ func GetUsersByAppID(c *gin.Context) {
 // @Tags 	application
 // @Summary add user map
 // @Accept	application/json
-// @Param	id      path int    true  "app id"
 // @Param	token 	body string true  "token"
+// @Param	id      body int    true  "app id"
 // @Param	user_id body int    false "user id"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
-// @Router  /api/v1/metadata/app/add-user/:id [post]
+// @Router  /api/v1/metadata/app/add-user [post]
 func AppAddUser(c *gin.Context) {
-	// get params
-	idStr := c.Param(appIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
-		return
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
+	// get param
 	data, err := c.GetRawData()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-
-	dataMap := make(map[string]int)
-	err = json.Unmarshal(data, &dataMap)
+	appID, err := jsonparser.GetInt(data, appIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAppAddUser, errors.Trace(err), id)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appIDJSON)
 		return
 	}
-	userID, userIDExists := dataMap[appUserIDJSON]
-	if !userIDExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appUserIDJSON)
+	id := int(appID)
+
+	userID64, err := jsonparser.GetInt(data, appUserIDJSON)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appUserIDJSON)
 		return
 	}
+	userID := int(userID64)
+
 	// init service
 	s := metadata.NewAppServiceWithDefault()
 	// update entities
@@ -547,40 +548,32 @@ func AppAddUser(c *gin.Context) {
 // @Tags 	application
 // @Summary delete user map
 // @Accept	application/json
-// @Param	id      path int    true "app id"
 // @Param	token 	body string true "token"
+// @Param	id      body int    true "app id"
 // @Param	user_id body int    true "user id"
 // @Produce application/json
 // @Success 200 {string} string "{"users": [{"id": 18,"employee_id": "21213434","account_name": "kf-Tom","mobile": "18088888888","role": 2,"user_name": "Tom","department_name": "kf","email": "test@test.com.cn","telephone": "02188888888","del_flag": 0,"create_time": "2022-03-07T15:56:32.277857+08:00","last_update_time": "2022-03-07T15:56:32.277857+08:00"}]}"
-// @Router  /api/v1/metadata/app/delete-user/:id [post]
+// @Router  /api/v1/metadata/app/delete-user [post]
 func AppDeleteUser(c *gin.Context) {
-	// get params
-	idStr := c.Param(appIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appIDJSON)
-		return
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
+	// get param
 	data, err := c.GetRawData()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	dataMap := make(map[string]int)
-	err = json.Unmarshal(data, &dataMap)
+	appID, err := jsonparser.GetInt(data, appIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAppDeleteUser, errors.Trace(err), id)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appIDJSON)
 		return
 	}
-	userID, userIDExists := dataMap[appUserIDJSON]
-	if !userIDExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, appUserIDJSON)
+	id := int(appID)
+
+	userID64, err := jsonparser.GetInt(data, appUserIDJSON)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), appUserIDJSON)
 		return
 	}
+	userID := int(userID64)
 	// init service
 	s := metadata.NewAppServiceWithDefault()
 	// update entities

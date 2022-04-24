@@ -10,36 +10,40 @@ Accept: application/json
 }
 
 ### metadata.GetAppByID
-GET http://{{baseURL}}/api/v1/metadata/app/get/1 
+GET http://{{baseURL}}/api/v1/metadata/app/get 
 Accept: application/json
 
 {
+    "id":1,
     "token": "{{token}}",
     "system_name": "1",
     "del_flag":0
 }
 
 ### metadata.GetAppByName
-GET http://{{baseURL}}/api/v1/metadata/app/app-name/1 
+GET http://{{baseURL}}/api/v1/metadata/app/app-name 
 Accept: application/json
 
 {
+    "app_name":"app2",
     "token": "{{token}}"
 }
 
 ### metadata.GetDBsByAppID
-GET http://{{baseURL}}/api/v1/metadata/app/db/1
+GET http://{{baseURL}}/api/v1/metadata/app/db
 Accept: application/json
 
 {
+    "id":1,
     "token": "{{token}}"
 }
 
 ### metadata.GetUsersByAppID
-GET http://{{baseURL}}/api/v1/metadata/app/user/1
+GET http://{{baseURL}}/api/v1/metadata/app/user
 Accept: application/json
 
 {
+    "id":1,
     "token": "{{token}}"
 }
 
@@ -49,62 +53,68 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "app_name": "tese",
+    "app_name": "10086",
     "level":1,
-    "owner_id":1,
-    "id": 1}
+    "owner_id":1
+}
 
 ### metadata.UpdateAppByID
-POST http://{{baseURL}}/api/v1/metadata/app/update/14
+POST http://{{baseURL}}/api/v1/metadata/app/update
 Content-Type: application/json
 
 {
+    "id":16,
     "token": "{{token}}",
-    "app_name": "tes13123",
+    "app_name": "10000",
     "level":1,
     "owner_id":1
 }
 
 ### metadata.DeleteAppByID
-POST http://{{baseURL}}/api/v1/metadata/app/delete/14 
+POST http://{{baseURL}}/api/v1/metadata/app/delete 
 
 {
+    "id":14,
     "token": "{{token}}"
 }
 
 ### metadata.AppAddDB
-POST http://{{baseURL}}/api/v1/metadata/app/add-db/1111
+POST http://{{baseURL}}/api/v1/metadata/app/add-db
 Content-Type: application/json
 
 {
+    "id":16,
     "token": "{{token}}",
-    "db_id":9
+    "db_id":1
 }
 
 ### metadata.AppAddUser
-POST http://{{baseURL}}/api/v1/metadata/app/add-user/3
+POST http://{{baseURL}}/api/v1/metadata/app/add-user
 Content-Type: application/json
 
 {
+    "id":16,
     "token": "{{token}}",
     "user_id":15
 }
 
 
 ### metadata.AppDeleteDB
-POST http://{{baseURL}}/api/v1/metadata/app/delete-db/1111
+POST http://{{baseURL}}/api/v1/metadata/app/delete-db
 Content-Type: application/json
 
 {
+    "id":16,
     "token": "{{token}}",
-    "db_id":9
+    "db_id":1
 }
 
 ### metadata.AppDeleteUser
-POST http://{{baseURL}}/api/v1/metadata/app/delete-user/3
+POST http://{{baseURL}}/api/v1/metadata/app/delete-user
 Content-Type: application/json
 
 {
+    "id":16,
     "token": "{{token}}",
     "user_id":15
 }
