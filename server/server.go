@@ -95,6 +95,7 @@ func (s *server) Stop() {
 	err := linux.RemovePidFile(s.pidFile)
 	if err != nil {
 		log.Errorf("%+v", message.NewMessage(message.ErrRemovePidFile, err, s.pidFile))
+		os.Exit(constant.DefaultAbnormalExitCode)
 	}
 
 	os.Exit(constant.DefaultNormalExitCode)
