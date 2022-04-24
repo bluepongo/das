@@ -258,7 +258,7 @@ var doc = `{
                 "tags": [
                     "healthcheck"
                 ],
-                "summary": "get result by operation id",
+                "summary": "get operation histories by login name",
                 "parameters": [
                     {
                         "description": "token",
@@ -289,7 +289,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/healthcheck/result/:operation_id": {
+        "/api/v1/healthcheck/result": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -303,19 +303,21 @@ var doc = `{
                 "summary": "get result by operation id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "operation id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "operation id",
+                        "name": "operation_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -392,6 +394,17 @@ var doc = `{
                     "application"
                 ],
                 "summary": "get all applications",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"apps\": [ {\"id\": 2,\"app_name\": \"app2\",\"level\": 2,\"del_flag\": 0,\"create_time\": \"2021-10-25T09:46:04.275796+08:00\",\"last_update_time\": \"2021-12-21T09:15:47.688546+08:00\"}]}",
@@ -413,6 +426,15 @@ var doc = `{
                 ],
                 "summary": "add a new application",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "app name",
                         "name": "app_name",
@@ -461,6 +483,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -490,6 +521,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "app name",
@@ -547,6 +587,15 @@ var doc = `{
                         "required": true
                     },
                     {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "db id",
                         "name": "db_id",
                         "in": "body",
@@ -587,6 +636,15 @@ var doc = `{
                         "required": true
                     },
                     {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "user id",
                         "name": "user_id",
                         "in": "body",
@@ -624,6 +682,15 @@ var doc = `{
                         "name": "name",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -655,6 +722,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "db id",
@@ -696,6 +772,15 @@ var doc = `{
                         "required": true
                     },
                     {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "user id",
                         "name": "user_id",
                         "in": "body",
@@ -724,21 +809,30 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "application"
+                    "middleware cluster"
                 ],
-                "summary": "delete app by id",
+                "summary": "delete middleware cluster by id",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "app id",
+                        "description": "middleware cluster id",
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"apps\": [ {\"id\": 2,\"app_name\": \"app2\",\"level\": 2,\"del_flag\": 0,\"create_time\": \"2021-10-25T09:46:04.275796+08:00\",\"last_update_time\": \"2021-12-21T09:15:47.688546+08:00\"}]}",
+                        "description": "middleware_clusters\":[{\"id\":65,\"cluster_name\":\"new_middleware_cluster\",\"env_id\":1,\"del_flag\":0,\"create_time\":\"2022-03-02T10:39:06.206145+08:00\",\"last_update_time\":\"2022-03-02T10:39:06.206145+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -758,6 +852,17 @@ var doc = `{
                     "database"
                 ],
                 "summary": "get all databases",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"dbs\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
@@ -779,6 +884,15 @@ var doc = `{
                 ],
                 "summary": "add a new database",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "db name",
                         "name": "db_name",
@@ -843,6 +957,15 @@ var doc = `{
                         "required": true
                     },
                     {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "app id",
                         "name": "app_id",
                         "in": "body",
@@ -878,6 +1001,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "user id",
@@ -918,6 +1050,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -949,6 +1090,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -980,6 +1130,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1011,6 +1170,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1039,6 +1207,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "app id",
@@ -1076,6 +1253,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "user id",
@@ -1116,6 +1302,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1147,6 +1342,15 @@ var doc = `{
                         "name": "env_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1178,6 +1382,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1220,6 +1433,15 @@ var doc = `{
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1251,6 +1473,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1301,6 +1532,15 @@ var doc = `{
                         "required": true,
                         "schema": {
                             "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
@@ -1353,6 +1593,15 @@ var doc = `{
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1384,6 +1633,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "db name",
@@ -1447,7 +1705,7 @@ var doc = `{
                 "tags": [
                     "environment"
                 ],
-                "summary": "get all environments",
+                "summary": "get environment by id",
                 "parameters": [
                     {
                         "description": "token",
@@ -1456,6 +1714,15 @@ var doc = `{
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "env id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1509,47 +1776,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/env/:id": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "environment"
-                ],
-                "summary": "get environment by id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "env id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"envs\": [{\"id\": 1, \"env_name\": \"online\", \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/metadata/env/delete/:id": {
+        "/api/v1/metadata/env/delete": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -1563,19 +1790,21 @@ var doc = `{
                 "summary": "delete environment by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "env id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "env id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1589,7 +1818,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/env/env-name/:env_name": {
+        "/api/v1/metadata/env/env-name": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -1603,15 +1832,17 @@ var doc = `{
                 "summary": "get environment by Name",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "env name",
-                        "name": "env_name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "env name",
+                        "name": "env_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -1629,7 +1860,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/env/update/:id": {
+        "/api/v1/metadata/env/update": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -1643,19 +1874,21 @@ var doc = `{
                 "summary": "update environment by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "env id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "env id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -1697,6 +1930,17 @@ var doc = `{
                     "middleware cluster"
                 ],
                 "summary": "get all middleware clusters",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "middleware_clusters\":[{\"id\":1,\"cluster_name\":\"middleware-cluster-1\",\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-11-09T18:06:57.917596+08:00\",\"last_update_time\":\"2021-11-18T15:39:52.927116+08:00\"}]}",
@@ -1718,6 +1962,15 @@ var doc = `{
                 ],
                 "summary": "add a new middleware cluster",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "middleware cluster name",
                         "name": "cluster_name",
@@ -1768,6 +2021,15 @@ var doc = `{
                         "required": true
                     },
                     {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "user id",
                         "name": "user_id",
                         "in": "body",
@@ -1806,6 +2068,15 @@ var doc = `{
                         "name": "cluster_name",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1837,6 +2108,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "user id",
@@ -1877,6 +2157,15 @@ var doc = `{
                         "name": "env_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1908,6 +2197,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1933,6 +2231,15 @@ var doc = `{
                 ],
                 "summary": "update middleware cluster by id",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "type": "integer",
                         "description": "middleware cluster id",
@@ -1987,6 +2294,17 @@ var doc = `{
                     "middleware server"
                 ],
                 "summary": "get all middleware servers",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "middleware_servers\":[{\"last_update_time\":\"2021-11-18T15:54:10.599097+08:00\",\"cluster_id\":1,\"server_name\":\"middleware-server-1\",\"port_num\":33061,\"del_flag\":0,\"create_time\":\"2021-11-17T14:47:10.521279+08:00\",\"id\":1,\"middleware_role\":1,\"host_ip\":\"192.168.10.219\"}]}",
@@ -2008,6 +2326,15 @@ var doc = `{
                 ],
                 "summary": "add a new middleware server",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "middleware cluster id",
                         "name": "cluster_id",
@@ -2083,6 +2410,15 @@ var doc = `{
                         "name": "cluster_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2114,6 +2450,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2145,6 +2490,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2170,6 +2524,15 @@ var doc = `{
                 ],
                 "summary": "get middleware server by host info",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "host ip",
                         "name": "host_ip",
@@ -2212,6 +2575,15 @@ var doc = `{
                 ],
                 "summary": "update middleware server by id",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "middleware cluster id",
                         "name": "cluster_id",
@@ -2284,6 +2656,17 @@ var doc = `{
                     "monitor system"
                 ],
                 "summary": "get all monitor systems",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"monitor_systems\": [{\"id\": 1, \"system_name\": \"pmm\", \"system_type\": 1, \"host_ip\": \"127.0.0.1\", \"port_num\": 3306, \"port_num_slow\": 3307, \"base_url\": \"http://127.0.0.1/prometheus/api/v1/\", \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
@@ -2305,6 +2688,15 @@ var doc = `{
                 ],
                 "summary": "add a new monitor system",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "system name",
                         "name": "system_name",
@@ -2398,6 +2790,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2429,6 +2830,15 @@ var doc = `{
                         "name": "env_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2460,6 +2870,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2502,6 +2921,15 @@ var doc = `{
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2533,6 +2961,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "system name",
@@ -2621,6 +3058,17 @@ var doc = `{
                     "mysql cluster"
                 ],
                 "summary": "get all mysql clusters",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"mysql_clusters\":[{\"middleware_cluster_id\":1,\"monitor_system_id\":1,\"env_id\":1,\"del_flag\":0,\"create_time\":\"2021-02-23T20:57:24.603009+08:00\",\"last_update_time\":\"2021-02-23T20:57:24.603009+08:00\",\"id\":1,\"cluster_name\":\"cluster_name_init\"}]}",
@@ -2642,6 +3090,15 @@ var doc = `{
                 ],
                 "summary": "add a new mysql cluster",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "mysql cluster name",
                         "name": "cluster_name",
@@ -2706,6 +3163,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2737,6 +3203,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "user id",
@@ -2777,6 +3252,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2808,6 +3292,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2839,6 +3332,15 @@ var doc = `{
                         "name": "name",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2870,6 +3372,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2901,6 +3412,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2932,6 +3452,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "user id",
@@ -2972,6 +3501,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -3003,6 +3541,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -3034,6 +3581,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -3065,6 +3621,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "mysql cluster name",
@@ -3136,6 +3701,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -3160,6 +3734,17 @@ var doc = `{
                     "mysql server"
                 ],
                 "summary": "get all mysql servers",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "{\"mysql_servers\":[{\"port_num\":3306,\"create_time\":\"2021-09-02T11:16:06.561525+08:00\",\"last_update_time\":\"2022-03-01T08:19:09.779365+08:00\",\"cluster_id\":1,\"server_name\":\"192-168-10-219\",\"service_name\":\"192-168-10-219:3306\",\"host_ip\":\"192.168.10.219\",\"id\":1,\"deployment_type\":1,\"version\":\"5.7\",\"del_flag\":0}]}",
@@ -3181,6 +3766,15 @@ var doc = `{
                 ],
                 "summary": "add a new mysql server",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "mysql cluster id",
                         "name": "cluster_id",
@@ -3259,6 +3853,15 @@ var doc = `{
                 "summary": "get mysql servers by host info",
                 "parameters": [
                     {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "type": "integer",
                         "description": "mysql server id",
                         "name": "id",
@@ -3293,6 +3896,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "mysql cluster id",
@@ -3372,6 +3984,15 @@ var doc = `{
                         "name": "cluster_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -3403,6 +4024,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -3441,6 +4071,15 @@ var doc = `{
                         "name": "port_num",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -3479,6 +4118,15 @@ var doc = `{
                         "name": "port_num",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -3510,6 +4158,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -3535,6 +4192,15 @@ var doc = `{
                 ],
                 "summary": "analyze table by db id and table name",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "db id",
                         "name": "db_id",
@@ -3586,6 +4252,15 @@ var doc = `{
                 ],
                 "summary": "analyze table by host info and db name and table name",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "host ip",
                         "name": "host_ip",
@@ -3656,6 +4331,15 @@ var doc = `{
                 "summary": "get tables by db id",
                 "parameters": [
                     {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "db id",
                         "name": "id",
                         "in": "body",
@@ -3697,6 +4381,15 @@ var doc = `{
                 ],
                 "summary": "get table statistics by db id and table name",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "db id",
                         "name": "db_id",
@@ -3748,6 +4441,15 @@ var doc = `{
                 ],
                 "summary": "get table statistics by host info and db name and table name",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "host ip",
                         "name": "host_ip",
@@ -3817,6 +4519,15 @@ var doc = `{
                 ],
                 "summary": "add a new user",
                 "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "description": "user name",
                         "name": "user_name",
@@ -3919,6 +4630,15 @@ var doc = `{
                         "name": "account_name",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -3950,6 +4670,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -3981,6 +4710,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -4012,6 +4750,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -4043,6 +4790,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -4074,6 +4830,15 @@ var doc = `{
                         "name": "email",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -4105,6 +4870,15 @@ var doc = `{
                         "name": "employee_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -4136,6 +4910,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -4167,6 +4950,15 @@ var doc = `{
                         "name": "login_name",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -4198,6 +4990,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -4229,6 +5030,15 @@ var doc = `{
                         "name": "mobile",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -4260,6 +5070,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -4291,6 +5110,15 @@ var doc = `{
                         "name": "telephone",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -4322,6 +5150,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "description": "user name",
@@ -4433,6 +5270,15 @@ var doc = `{
                         "name": "user_name",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -5008,6 +5854,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -5039,6 +5894,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -5070,6 +5934,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -5101,6 +5974,15 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
