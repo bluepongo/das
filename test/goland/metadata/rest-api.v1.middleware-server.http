@@ -12,7 +12,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "cluster_id": {{cluster_id}}
+    "cluster_id": {{middleware_cluster_id}}
 }
 
 ### get middleware server by id
