@@ -1,4 +1,3 @@
-### GetUser
 GET http://{{baseURL}}/api/v1/metadata/user
 Content-Type: application/json
 
@@ -7,59 +6,76 @@ Content-Type: application/json
 }
 
 ### GetUserByName
-GET http://{{baseURL}}/api/v1/metadata/user/user-name/zhangsan
+GET http://{{baseURL}}/api/v1/metadata/user/user-name
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "user_name":"{{user_name}}"
 }
 
 ### GetUserByID
-GET http://{{baseURL}}/api/v1/metadata/user/get/1
+GET http://{{baseURL}}/api/v1/metadata/user/get
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id":"{{user_id}}"
 }
 
 ### GetUserByEmployeeID
-GET http://{{baseURL}}/api/v1/metadata/user/employee-id/100001
+GET http://{{baseURL}}/api/v1/metadata/user/employee-id
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "employee_id":"{{employee_id}}"
 }
 
 ### GetUserByAccountName
-GET http://{{baseURL}}/api/v1/metadata/user/account-name/zs001
+GET http://{{baseURL}}/api/v1/metadata/user/account-name
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "account_name":"{{account_name}}"
+}
+
+### GetUserByAccountNameOrEmployeeID
+GET http://{{baseURL}}/api/v1/metadata/user/login-name
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    # "login_name":"{{account_name}}"
+    "login_name":"{{employee_id}}"
 }
 
 ### GetUserByEmail
-GET http://{{baseURL}}/api/v1/metadata/user/email/allinemailtest@163.com
+GET http://{{baseURL}}/api/v1/metadata/user/email
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "email":"{{email}}"
 }
 
 ### GetUserByTelephone
-GET http://{{baseURL}}/api/v1/metadata/user/telephone/01012345678
+GET http://{{baseURL}}/api/v1/metadata/user/telephone
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "telephone":"{{telephone}}"
 }
 
 ### GetUserByMobile
-GET http://{{baseURL}}/api/v1/metadata/user/mobile/13012345678
+GET http://{{baseURL}}/api/v1/metadata/user/mobile
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "mobile":"{{mobile}}"
 }
 
 ### AddUser
@@ -67,47 +83,87 @@ POST http://{{baseURL}}/api/v1/metadata/user
 Content-Type: application/json
 
 {
-  "token": "{{token}}",
-  "user_name": "test_new_user_name",
-  "department_name": "department_name",
-  "employee_id": "200001",
-  "account_name": "test_new_account_name",
-  "email": "test_new_account_name@163.com",
-  "telephone": "02112345678",
-  "mobile": "13112345678",
-  "role": 3
+  "token": "{{token}}", 
+  "department_name": "{{department_name}}",
+  "employee_id": "{{employee_id}}", 
+  "telephone": "{{telephone}}",
+  "role": "{{role}}",
+  "del_flag": "{{del_flag}}",
+  "user_name": "{{user_name}}",
+  "account_name": "{{account_name}}",
+  "email": "{{email}}",
+  "mobile": "{{mobile}}" 
 }
 
 ### UpdateUserByID
-POST http://{{baseURL}}/api/v1/metadata/user/update/1
+POST http://{{baseURL}}/api/v1/metadata/user/update
 Content-Type: application/json
 
 {
   "token": "{{token}}",
-  "user_name": "update_user_name",
-  "department_name": "update_department_name",
-  "employee_id": "update_employee_id",
-  "account_name": "update_account_name",
-  "email": "update_account_name@163.com"
-}
-
-### UpdateUserByID
-POST http://{{baseURL}}/api/v1/metadata/user/update/1
-Content-Type: application/json
-
-{
-  "token": "{{token}}",
-  "user_name": "zhangsan",
-  "department_name": "arch",
-  "employee_id": "100001",
-  "account_name": "zs001",
-  "email": "allinemailtest@163.com"
+  "id":"{{user_id}}",
+  "department_name": "{{department_name}}",
+  "employee_id": "{{employee_id}}", 
+  "telephone": "{{telephone}}",
+  "role": "{{role}}",
+  "del_flag": "{{del_flag}}",
+  "user_name": "{{user_name}}",
+  "account_name": "{{account_name}}",
+  "email": "{{email}}",
+  "mobile": "{{mobile}}" 
 }
 
 ### DeleteUserByID
-POST http://{{baseURL}}/api/v1/metadata/user/delete/13
+POST http://{{baseURL}}/api/v1/metadata/user/delete
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id":"{{user_id}}"
 }
+
+### get all apps by id
+GET http://{{baseURL}}/api/v1/metadata/user/app
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id":"{{user_id}}"
+}
+
+### get all dbs by id
+GET http://{{baseURL}}/api/v1/metadata/user/db
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id":"{{user_id}}"
+}
+
+### get all middlewareclusters by id
+GET http://{{baseURL}}/api/v1/metadata/user/middleware-cluster
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id":"{{user_id}}"
+}
+
+### get all mysqlclusters by id
+GET http://{{baseURL}}/api/v1/metadata/user/mysql-cluster
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id":"{{user_id}}"
+}
+
+### get all mysqlservers by id
+GET http://{{baseURL}}/api/v1/metadata/user/all-mysql-server
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id":"{{user_id}}"
+}
+

@@ -382,7 +382,7 @@ func (ur *UserRepo) GetAppsByUserID(userID int) ([]metadata.App, error) {
 // GetDBsByUserID gets dbs that this user owns
 func (ur *UserRepo) GetDBsByUserID(userID int) ([]metadata.DB, error) {
 	sql := `
-		select di.id, di.db_name, di.cluster_id, di.cluster_type, di.env_id, db.del_flag, di.create_time, di.last_update_time
+		select di.id, di.db_name, di.cluster_id, di.cluster_type, di.env_id, di.del_flag, di.create_time, di.last_update_time
 		from t_meta_db_info di
 			inner join t_meta_db_user_map dum on di.id = dum.db_id
 			inner join t_meta_user_info ui on ui.id = dum.user_id

@@ -1,5 +1,5 @@
 @baseURL = 127.0.0.1:6090
-
+@token = 
 ### GetUser
 GET http://{{baseURL}}/api/v1/metadata/user
 Accept: application/json
@@ -9,67 +9,76 @@ Accept: application/json
 }
 
 ### GetUserByName
-GET http://{{baseURL}}/api/v1/metadata/user/user-name/user_name
+GET http://{{baseURL}}/api/v1/metadata/user/user-name
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "user_name":"tester"
 }
 
 ### GetUserByID
-GET http://{{baseURL}}/api/v1/metadata/user/get/5
+GET http://{{baseURL}}/api/v1/metadata/user/get
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id":14
 }
 
 ### GetUserByEmployeeID
-GET http://{{baseURL}}/api/v1/metadata/user/employee-id/employee_id
+GET http://{{baseURL}}/api/v1/metadata/user/employee-id
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "employee_id":"employee_id2"
 }
 
 ### GetUserByAccountName
-GET http://{{baseURL}}/api/v1/metadata/user/account-name/account_name
+GET http://{{baseURL}}/api/v1/metadata/user/account-name
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "account_name":"account_name2"
 }
 
 ### GetUserByAccountNameOrEmployeeID
-GET http://{{baseURL}}/api/v1/metadata/user/login-name/login_name
+GET http://{{baseURL}}/api/v1/metadata/user/login-name
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    # "login_name":"testemployee_id"
+    "login_name":"testaccount_name"
 }
 
 ### GetUserByEmail
-GET http://{{baseURL}}/api/v1/metadata/user/email/email
+GET http://{{baseURL}}/api/v1/metadata/user/email
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "email":"test@email.com"
 }
 
 ### GetUserByTelephone
-GET http://{{baseURL}}/api/v1/metadata/user/telephone/telephone
+GET http://{{baseURL}}/api/v1/metadata/user/telephone
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "telephone":"telephone"
 }
 
 ### GetUserByMobile
-GET http://{{baseURL}}/api/v1/metadata/user/mobile/mobile
+GET http://{{baseURL}}/api/v1/metadata/user/mobile
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "mobile":"mobile"
 }
 
 ### AddUser
@@ -78,23 +87,24 @@ Content-Type: application/json
 
 {
   "token": "{{token}}", 
-  "department_name": "department_name",
-  "employee_id": "employee_id21", 
-  "telephone": "telephone",
+  "department_name": "testdepartment_name",
+  "employee_id": "testemployee_id", 
+  "telephone": "testtelephone",
   "role": 2,
   "del_flag": 0,
-  "user_name": "user_name21",
-  "account_name": "account_na1me2",
-  "email": "emai12l",
-  "mobile": "mobile" 
+  "user_name": "testuser_name",
+  "account_name": "testaccount_name",
+  "email": "testemail",
+  "mobile": "testmobile" 
 }
 
 ### UpdateUserByID
-POST http://{{baseURL}}/api/v1/metadata/user/update/3
+POST http://{{baseURL}}/api/v1/metadata/user/update
 Content-Type: application/json
 
 {
   "token": "{{token}}",
+  "id":17,
   "department_name": "department_name",
   "employee_id": "employee_id2", 
   "telephone": "telephone",
@@ -107,50 +117,56 @@ Content-Type: application/json
 }
 
 ### DeleteUserByID
-POST http://{{baseURL}}/api/v1/metadata/user/delete/1
+POST http://{{baseURL}}/api/v1/metadata/user/delete
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id":17
 }
 
 ### get all apps by id
-GET http://{{baseURL}}/api/v1/metadata/user/app/15
+GET http://{{baseURL}}/api/v1/metadata/user/app
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id":14
 }
 
 ### get all dbs by id
-GET http://{{baseURL}}/api/v1/metadata/user/db/1
+GET http://{{baseURL}}/api/v1/metadata/user/db
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id":1
 }
 
 ### get all middlewareclusters by id
-GET http://{{baseURL}}/api/v1/metadata/user/middleware-cluster/14
+GET http://{{baseURL}}/api/v1/metadata/user/middleware-cluster
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id":1
 }
 
 ### get all mysqlclusters by id
-GET http://{{baseURL}}/api/v1/metadata/user/mysql-cluster/14
+GET http://{{baseURL}}/api/v1/metadata/user/mysql-cluster
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id":1
 }
 
 ### get all mysqlservers by id
-GET http://{{baseURL}}/api/v1/metadata/user/all-mysql-server/1
+GET http://{{baseURL}}/api/v1/metadata/user/all-mysql-server
 Accept: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id":1
 }
 
