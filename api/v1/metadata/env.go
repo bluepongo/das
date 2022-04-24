@@ -18,10 +18,11 @@ import (
 const (
 	envIDJSON      = "id"
 	envEnvNameJSON = "env_name"
+	envDelFlagJSON = "del_flag"
 
 	envIDStruct      = "ID"
-	envDelFlagStruct = "DelFlag"
 	envEnvNameStruct = "EnvName"
+	envDelFlagStruct = "DelFlag"
 )
 
 // @Tags	environment
@@ -156,7 +157,7 @@ func AddEnv(c *gin.Context) {
 	}
 	_, ok := fields[envEnvNameStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envEnvNameStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envEnvNameJSON)
 		return
 	}
 	// init service
@@ -205,18 +206,18 @@ func UpdateEnvByID(c *gin.Context) {
 	}
 	idInterface, idExists := fields[envIDStruct]
 	if !idExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 		return
 	}
 	id, ok := idInterface.(int)
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, envIDJSON)
 		return
 	}
 	_, envNameExists := fields[envEnvNameStruct]
 	_, delFlagExists := fields[envDelFlagStruct]
 	if !envNameExists && !delFlagExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", envEnvNameStruct, envDelFlagStruct))
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", envEnvNameJSON, envDelFlagJSON))
 		return
 	}
 	// init service
