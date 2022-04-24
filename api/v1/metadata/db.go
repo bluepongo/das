@@ -549,7 +549,7 @@ func UpdateDBByID(c *gin.Context) {
 	}
 	id, ok := idInterface.(int)
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, dbIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, dbIDJSON)
 		return
 	}
 	_, dbNameExists := fields[dbDBNameStruct]

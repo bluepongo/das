@@ -289,7 +289,7 @@ func UpdateMonitorSystemByID(c *gin.Context) {
 	}
 	id, ok := idInterface.(int)
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, monitorSystemIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, monitorSystemIDJSON)
 		return
 	}
 	_, systemNameExists := fields[monitorSystemNameStruct]
