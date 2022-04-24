@@ -1,17 +1,10 @@
 @baseURL = localhost:6090
 @token = f3171bd9-beec-11ec-acc0-000c291d6734
 @cluster_id = 1
-@id = 2
+@server_id = 2
 @host_ip = 192.168.1.2
 @port_num = 3306
-@server_name = test
-@service_name = test
-@new_host_ip = 192.168.1.1
-@new_port_num = 3306
-@deployment_type = 1
-@update_id = 26
-@update_cluster_id = 97
-@del_flag = 0
+@update_server_id = 26
 
 ### get all mysql servers
 GET http://{{baseURL}}/api/v1/metadata/mysql-server
@@ -37,7 +30,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{id}}
+    "id": {{server_id}}
 }
 
 ### get mysql server by id
@@ -66,7 +59,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{id}}
+    "id": {{server_id}}
 }
 
 ### add new mysql server
@@ -76,11 +69,11 @@ Content-Type: application/json
 {
     "token": "{{token}}",
     "cluster_id": {{cluster_id}},
-    "server_name": "{{server_name}}",
-    "service_name": "{{service_name}}",
-    "host_ip": "{{new_host_ip}}",
-    "port_num": {{new_port_num}},
-    "deployment_type": {{deployment_type}}
+    "server_name": "test",
+    "service_name": "test",
+    "host_ip": "192.168.1.1.",
+    "port_num": "3306",
+    "deployment_type": 1
 }
 
 ### update mysql server by id
@@ -89,9 +82,9 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{update_id}},
-    "cluster_id": {{update_cluster_id}},
-    "del_flag": {{del_flag}}
+    "id": {{update_server_id}},
+    "cluster_id": {{cluster_id}},
+    "del_flag": 0
 }
 
 ### delete mysql server by id
@@ -100,5 +93,5 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{update_id}}
+    "id": {{update_server_id}}
 }
