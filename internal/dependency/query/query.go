@@ -77,8 +77,8 @@ type Service interface {
 	GetByMySQLServerID(mysqlServerID int) error
 	// GetByHostInfo gets the query slice by the mysql server host ip and port number
 	GetByHostInfo(hostIP string, portNum int) error
-	// GetByDBName gets the query slice by the db identity
-	GetByDBID(mysqlServerID, dbID int) error
+	// GetByDBID gets the query slice by the db identity
+	GetByDBID(dbID int) error
 	// GetBySQLID gets the query by the mysql server identity and the sql identity
 	GetBySQLID(mysqlServerID int, sqlID string) error
 	// Marshal marshals Service.Queries to json bytes
