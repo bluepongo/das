@@ -12,7 +12,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "env_id": "{{env_id}}"
+    "env_id": {{env_id}}
 }
 
 ### get middleware cluster by id
@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": "{{id}}"
+    "id": {{middleware_cluster_id}}
 }
 
 ### get middleware cluster by name
@@ -39,7 +39,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": "{{id}}"
+    "id": {{middleware_cluster_id}}
 }
 
 ### get user list by middleware cluster id
@@ -48,7 +48,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": "{{id}}"
+    "id": {{middleware_cluster_id}}
 }
 
 ### add new middleware cluster
@@ -67,7 +67,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": "{{id}}",
+    "id": {{middleware_cluster_id}},
     "cluster_name": "update_middleware_cluster"
 }
 
@@ -77,7 +77,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": "{{id}}"
+    "id": {{middleware_cluster_id}}
 }
 
 ### add a new map of middleware cluster and user in the middleware
@@ -86,7 +86,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": "{{id}}",
+    "id": {{middleware_cluster_id}},
     "user_id":1
 }
 
@@ -96,6 +96,6 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": "{{id}}",
+    "id": {{middleware_cluster_id}},
     "user_id":1
 }

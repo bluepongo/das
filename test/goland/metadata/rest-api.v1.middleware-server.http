@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": "{{id}}"
+    "id": {{middleware_server_id}}
 }
 
 ### get middleware server by host info
@@ -53,7 +53,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": "{{id}}",
+    "id": {{middleware_server_id}},
     "server_name": "update_middeware_server"
 }
 
@@ -63,5 +63,5 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": "{{id}}"
+    "id": {{middleware_server_id}}
 }
