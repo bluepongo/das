@@ -17,7 +17,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -61,7 +61,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -106,7 +106,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -158,7 +158,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -178,25 +178,26 @@ paths:
             completed successfully. engine: default, operation_id: 30","del_flag":0,"create_time":"2022-03-18T19:46:16.215941+08:00","last_update_time":"2022-03-18T19:46:17.450918+08:00"}]}'
           schema:
             type: string
-      summary: get result by operation id
+      summary: get operation histories by login name
       tags:
       - healthcheck
-  /api/v1/healthcheck/result/:operation_id:
+  /api/v1/healthcheck/result:
     get:
       consumes:
       - application/json
       parameters:
-      - description: operation id
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
         schema:
           type: string
+      - description: operation id
+        in: body
+        name: operation_id
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -214,7 +215,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -246,6 +247,13 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -262,6 +270,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: app name
         in: body
         name: app_name
@@ -296,6 +310,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -317,6 +337,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: app name
         in: body
         name: app_name
@@ -354,6 +380,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: db id
         in: body
         name: db_id
@@ -382,6 +414,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: user id
         in: body
         name: user_id
@@ -411,6 +449,12 @@ paths:
         name: name
         required: true
         type: string
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -433,6 +477,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: db id
         in: body
         name: db_id
@@ -460,6 +510,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: user id
         in: body
         name: user_id
@@ -485,27 +541,38 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: app id
+      - description: middleware cluster id
         in: path
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
         "200":
-          description: '{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag":
-            0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time":
-            "2021-12-21T09:15:47.688546+08:00"}]}'
+          description: middleware_clusters":[{"id":65,"cluster_name":"new_middleware_cluster","env_id":1,"del_flag":0,"create_time":"2022-03-02T10:39:06.206145+08:00","last_update_time":"2022-03-02T10:39:06.206145+08:00"}]}
           schema:
             type: string
-      summary: delete app by id
+      summary: delete middleware cluster by id
       tags:
-      - application
+      - middleware cluster
   /api/v1/metadata/db:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -522,6 +589,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: db name
         in: body
         name: db_name
@@ -565,6 +638,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: app id
         in: body
         name: app_id
@@ -589,6 +668,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: user id
         in: body
         name: user_id
@@ -615,6 +700,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -638,6 +729,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -661,6 +758,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -683,6 +786,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -704,6 +813,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: app id
         in: body
         name: app_id
@@ -728,6 +843,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: user id
         in: body
         name: user_id
@@ -754,6 +875,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -776,6 +903,12 @@ paths:
         name: env_id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -798,6 +931,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -827,6 +966,12 @@ paths:
         required: true
         schema:
           type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -849,6 +994,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -883,6 +1034,12 @@ paths:
         required: true
         schema:
           type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -918,6 +1075,12 @@ paths:
         required: true
         schema:
           type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -940,6 +1103,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: db name
         in: body
         name: db_name
@@ -982,12 +1151,18 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
         schema:
           type: string
+      - description: env id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -996,14 +1171,14 @@ paths:
             "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
           schema:
             type: string
-      summary: get all environments
+      summary: get environment by id
       tags:
       - environment
     post:
       consumes:
       - application/json
       parameters:
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -1026,49 +1201,23 @@ paths:
       summary: add a new environment
       tags:
       - environment
-  /api/v1/metadata/env/:id:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: env id
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
-        in: body
-        name: token
-        required: true
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"envs": [{"id": 1, "env_name": "online", "del_flag": 0, "create_time":
-            "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}'
-          schema:
-            type: string
-      summary: get environment by id
-      tags:
-      - environment
-  /api/v1/metadata/env/delete/:id:
+  /api/v1/metadata/env/delete:
     post:
       consumes:
       - application/json
       parameters:
-      - description: env id
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
         schema:
           type: string
+      - description: env id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -1080,19 +1229,20 @@ paths:
       summary: delete environment by id
       tags:
       - environment
-  /api/v1/metadata/env/env-name/:env_name:
+  /api/v1/metadata/env/env-name:
     get:
       consumes:
       - application/json
       parameters:
-      - description: env name
-        in: path
-        name: env_name
-        required: true
-        type: string
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
+        required: true
+        schema:
+          type: string
+      - description: env name
+        in: body
+        name: env_name
         required: true
         schema:
           type: string
@@ -1107,22 +1257,23 @@ paths:
       summary: get environment by Name
       tags:
       - environment
-  /api/v1/metadata/env/update/:id:
+  /api/v1/metadata/env/update:
     post:
       consumes:
       - application/json
       parameters:
-      - description: env id
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
         schema:
           type: string
+      - description: env id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
       - description: env name
         in: body
         name: env_name
@@ -1148,6 +1299,13 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1162,6 +1320,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: middleware cluster name
         in: body
         name: cluster_name
@@ -1194,6 +1358,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: user id
         in: body
         name: user_id
@@ -1220,6 +1390,12 @@ paths:
         name: cluster_name
         required: true
         type: string
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1240,6 +1416,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: user id
         in: body
         name: user_id
@@ -1266,6 +1448,12 @@ paths:
         name: env_id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1286,6 +1474,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1301,6 +1495,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: middleware cluster id
         in: path
         name: id
@@ -1335,6 +1535,13 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1349,6 +1556,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: middleware cluster id
         in: body
         name: cluster_id
@@ -1399,6 +1612,12 @@ paths:
         name: cluster_id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1419,6 +1638,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1439,6 +1664,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1454,6 +1685,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: host ip
         in: body
         name: host_ip
@@ -1481,6 +1718,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: middleware cluster id
         in: body
         name: cluster_id
@@ -1526,6 +1769,13 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1543,6 +1793,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: system name
         in: body
         name: system_name
@@ -1605,6 +1861,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1625,6 +1887,12 @@ paths:
         name: env_id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1648,6 +1916,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1678,6 +1952,12 @@ paths:
         required: true
         schema:
           type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1698,6 +1978,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: system name
         in: body
         name: system_name
@@ -1752,6 +2038,13 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1766,6 +2059,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: mysql cluster name
         in: body
         name: cluster_name
@@ -1808,6 +2107,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1828,6 +2133,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: user id
         in: body
         name: user_id
@@ -1854,6 +2165,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1874,6 +2191,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1894,6 +2217,12 @@ paths:
         name: name
         required: true
         type: string
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1914,6 +2243,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1934,6 +2269,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -1954,6 +2295,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: user id
         in: body
         name: user_id
@@ -1980,6 +2327,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2000,6 +2353,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2020,6 +2379,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2040,6 +2405,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: mysql cluster name
         in: body
         name: cluster_name
@@ -2085,6 +2456,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2099,6 +2476,13 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2113,6 +2497,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: mysql cluster id
         in: body
         name: cluster_id
@@ -2163,6 +2553,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: mysql server id
         in: path
         name: id
@@ -2187,6 +2583,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: mysql cluster id
         in: body
         name: cluster_id
@@ -2237,6 +2639,12 @@ paths:
         name: cluster_id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2257,6 +2665,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2282,6 +2696,12 @@ paths:
         name: port_num
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2307,6 +2727,12 @@ paths:
         name: port_num
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2327,6 +2753,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2342,6 +2774,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: db id
         in: body
         name: db_id
@@ -2376,6 +2814,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: host ip
         in: body
         name: host_ip
@@ -2422,6 +2866,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: db id
         in: body
         name: id
@@ -2449,6 +2899,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: db id
         in: body
         name: db_id
@@ -2509,6 +2965,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: host ip
         in: body
         name: host_ip
@@ -2581,6 +3043,12 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: user name
         in: body
         name: user_name
@@ -2653,6 +3121,12 @@ paths:
         name: account_name
         required: true
         type: string
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2677,6 +3151,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2697,6 +3177,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2719,6 +3205,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2741,6 +3233,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2765,6 +3263,12 @@ paths:
         name: email
         required: true
         type: string
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2789,6 +3293,12 @@ paths:
         name: employee_id
         required: true
         type: string
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2813,6 +3323,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2837,6 +3353,12 @@ paths:
         name: login_name
         required: true
         type: string
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2861,6 +3383,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2883,6 +3411,12 @@ paths:
         name: mobile
         required: true
         type: string
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2907,6 +3441,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2929,6 +3469,12 @@ paths:
         name: telephone
         required: true
         type: string
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -2953,6 +3499,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       - description: user name
         in: body
         name: user_name
@@ -3030,6 +3582,12 @@ paths:
         name: user_name
         required: true
         type: string
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -3054,7 +3612,7 @@ paths:
         name: sql_id
         required: true
         type: integer
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -3111,7 +3669,7 @@ paths:
         name: mysql_cluster_id
         required: true
         type: integer
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -3162,7 +3720,7 @@ paths:
         name: db_id
         required: true
         type: integer
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -3214,7 +3772,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -3277,7 +3835,7 @@ paths:
         name: mysql_server_id
         required: true
         type: integer
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -3323,7 +3881,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -3366,7 +3924,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -3394,7 +3952,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: f3171bd9-beec-11ec-acc0-000c291d6734
+      - description: token
         in: body
         name: token
         required: true
@@ -3426,6 +3984,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -3448,6 +4012,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -3472,6 +4042,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -3492,6 +4068,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
