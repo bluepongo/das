@@ -10,7 +10,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/user-name
 Accept: application/json
 
 {
-    "user_name":"tester",
+    "user_name":"{{user_name}}",
     "token": "{{token}}"
 }
 
@@ -19,7 +19,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/get
 Accept: application/json
 
 {
-    "id":14,
+    "id":"{{user_id}}",
     "token": "{{token}}"
 }
 
@@ -28,7 +28,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/employee-id
 Accept: application/json
 
 {
-    "employee_id":"employee_id2",
+    "employee_id":"{{employee_id}}",
     "token": "{{token}}"
 }
 
@@ -37,7 +37,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/account-name
 Accept: application/json
 
 {
-    "account_name":"account_name2",
+    "account_name":"{{account_name}}",
     "token": "{{token}}"
 }
 
@@ -46,8 +46,8 @@ GET http://{{baseURL}}/api/v1/metadata/user/login-name
 Accept: application/json
 
 {
-    # "login_name":"testemployee_id",
-    "login_name":"testaccount_name",
+    # "login_name":"{{account_name}}",
+    "login_name":"{{employee_id}}",
     "token": "{{token}}"
 }
 
@@ -56,7 +56,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/email
 Accept: application/json
 
 {
-    "email":"test@email.com",
+    "email":"{{email}}",
     "token": "{{token}}"
 }
 
@@ -65,7 +65,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/telephone
 Accept: application/json
 
 {
-    "telephone":"telephone",
+    "telephone":"{{telephone}}",
     "token": "{{token}}"
 }
 
@@ -74,7 +74,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/mobile
 Accept: application/json
 
 {
-    "mobile":"mobile",
+    "mobile":"{{mobile}}",
     "token": "{{token}}"
 }
 
@@ -84,15 +84,15 @@ Content-Type: application/json
 
 {
   "token": "{{token}}", 
-  "department_name": "testdepartment_name",
-  "employee_id": "testemployee_id", 
-  "telephone": "testtelephone",
-  "role": 2,
-  "del_flag": 0,
-  "user_name": "testuser_name",
-  "account_name": "testaccount_name",
-  "email": "testemail",
-  "mobile": "testmobile" 
+  "department_name": "{{department_name}}",
+  "employee_id": "{{employee_id}}", 
+  "telephone": "{{telephone}}",
+  "role": "{{role}}",
+  "del_flag": "{{del_flag}}",
+  "user_name": "{{user_name}}",
+  "account_name": "{{account_name}}",
+  "email": "{{email}}",
+  "mobile": "{{mobile}}" 
 }
 
 ### UpdateUserByID
@@ -100,17 +100,17 @@ POST http://{{baseURL}}/api/v1/metadata/user/update
 Content-Type: application/json
 
 {
-  "id":17,
+  "id":"{{user_id}}",
   "token": "{{token}}",
-  "department_name": "department_name",
-  "employee_id": "employee_id2", 
-  "telephone": "telephone",
-  "role": 2,
-  "del_flag": 0,
-  "user_name": "user_name2",
-  "account_name": "account_name2",
-  "email": "emai2l",
-  "mobile": "mobile" 
+  "department_name": "{{department_name}}",
+  "employee_id": "{{employee_id}}", 
+  "telephone": "{{telephone}}",
+  "role": "{{role}}",
+  "del_flag": "{{del_flag}}",
+  "user_name": "{{user_name}}",
+  "account_name": "{{account_name}}",
+  "email": "{{email}}",
+  "mobile": "{{mobile}}" 
 }
 
 ### DeleteUserByID
@@ -118,7 +118,7 @@ POST http://{{baseURL}}/api/v1/metadata/user/delete
 Content-Type: application/json
 
 {
-    "id":17,
+    "id":"{{user_id}}",
     "token": "{{token}}"
 }
 
@@ -127,7 +127,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/app
 Accept: application/json
 
 {
-    "id":14,
+    "id":"{{user_id}}",
     "token": "{{token}}"
 }
 
@@ -136,7 +136,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/db
 Accept: application/json
 
 {
-    "id":1,
+    "id":"{{user_id}}",
     "token": "{{token}}"
 }
 
@@ -145,7 +145,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/middleware-cluster
 Accept: application/json
 
 {
-    "id":1,
+    "id":"{{user_id}}",
     "token": "{{token}}"
 }
 
@@ -154,7 +154,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/mysql-cluster
 Accept: application/json
 
 {
-    "id":1,
+    "id":"{{user_id}}",
     "token": "{{token}}"
 }
 
@@ -163,7 +163,7 @@ GET http://{{baseURL}}/api/v1/metadata/user/all-mysql-server
 Accept: application/json
 
 {
-    "id":1,
+    "id":"{{user_id}}",
     "token": "{{token}}"
 }
 
