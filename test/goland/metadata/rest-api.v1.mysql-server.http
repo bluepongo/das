@@ -22,7 +22,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{id}}
+    "id": {{server_id}}
 }
 
 ### get mysql server by id
@@ -51,7 +51,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{id}}
+    "id": {{server_id}}
 }
 
 ### add new mysql server
@@ -61,11 +61,11 @@ Content-Type: application/json
 {
     "token": "{{token}}",
     "cluster_id": {{cluster_id}},
-    "server_name": "{{server_name}}",
-    "service_name": "{{service_name}}",
-    "host_ip": "{{new_host_ip}}",
-    "port_num": {{new_port_num}},
-    "deployment_type": {{deployment_type}}
+    "server_name": "test",
+    "service_name": "test",
+    "host_ip": "192.168.1.1.",
+    "port_num": "3306",
+    "deployment_type": 1
 }
 
 ### update mysql server by id
@@ -74,9 +74,9 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{update_id}},
-    "cluster_id": {{update_cluster_id}},
-    "del_flag": {{del_flag}}
+    "id": {{update_server_id}},
+    "cluster_id": {{cluster_id}},
+    "del_flag": 0
 }
 
 ### delete mysql server by id
@@ -85,5 +85,5 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{update_id}}
+    "id": {{update_server_id}}
 }

@@ -5,7 +5,6 @@
 @cluster_name = mysql-cluster-pmm1
 @user_id = 14
 @update_cluster_id = 3
-@env_id = 2
 
 ### get all mysql clusters
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster
