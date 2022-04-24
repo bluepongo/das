@@ -7,102 +7,114 @@ Content-Type: application/json
 }
 
 ### get mysql cluster by env_id
-GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/env/1
-Content-Type: application/json
-
-{
-    "token": "{{token}}"
-}
-
-### get mysql cluster by id
-GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/get/1
-Content-Type: application/json
-
-{
-    "token": "{{token}}"
-}
-
-### get mysql cluster by cluster_name
-GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/cluster-name/mysql-cluster-pmm1
-Content-Type: application/json
-
-{
-    "token": "{{token}}"
-}
-
-### get mysql_server of mysql cluster
-GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/mysql-server/1
-Content-Type: application/json
-
-{
-    "token": "{{token}}"
-}
-
-### get master mysql server of mysql cluster
-GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/master-server/1
-Content-Type: application/json
-
-{
-    "token": "{{token}}"
-}
-
-### get get dbs by id
-GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/db/1
-Content-Type: application/json
-
-{
-    "token": "{{token}}"
-}
-
-### get mysql cluster users
-GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/user/1
-Content-Type: application/json
-
-{
-    "token": "{{token}}"
-}
-
-### get app users
-GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/app-user/1
-Content-Type: application/json
-
-{
-    "token": "{{token}}"
-}
-
-### get db users
-GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/db-user/1
-Content-Type: application/json
-
-{
-    "token": "{{token}}"
-}
-
-### get all users
-GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/all-user/1
-Content-Type: application/json
-
-{
-    "token": "{{token}}"
-}
-
-### add user map
-POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/add-user/1
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/env
 Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "user_id": 14
+    "env_id": {{env_id}}
+}
+
+### get mysql cluster by id
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/get
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id" : {{mysql_cluster_id}}
+}
+
+### get mysql cluster by cluster_name
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/cluster-name
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "name": "{{mysql_cluster_name}}"
+}
+
+### get mysql_server of mysql cluster
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/mysql-server
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{mysql_cluster_id}}
+}
+
+### get master mysql server of mysql cluster
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/master-server
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{mysql_cluster_id}}
+}
+
+### get get dbs by id
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/db
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{mysql_cluster_id}}
+}
+
+### get mysql cluster users
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/user
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{mysql_cluster_id}}
+}
+
+### get app users
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/app-user
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{mysql_cluster_id}}
+}
+
+### get db users
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/db-user
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{mysql_cluster_id}}
+}
+
+### get all users
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/all-user
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{mysql_cluster_id}}
+}
+
+### add user map
+POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/add-user
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{mysql_cluster_id}},
+    "user_id": {{user_id}}
 }
 
 
 ### delete user map
-POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/delete-user/1
+POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/delete-user
 Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "user_id": 14
+    "id": {{mysql_cluster_id}},
+    "user_id": {{user_id}}
 }
 
 
@@ -113,24 +125,26 @@ Content-Type: application/json
 {
     "token": "{{token}}",
     "cluster_name": "api_test",
-    "env_id": 2
+    "env_id": {{env_id}}
 }
 
 
 ### update mysql cluster by id
-POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/update/3
+POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/update
 Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "cluster_name": "test",
+    "id": 3,
+    "cluster_name": "api_test_update",
     "del_flag": 0
 }
 
 ### delete mysql cluster by id
-POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/delete/3
+POST http://{{baseURL}}/api/v1/metadata/mysql-cluster/delete
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id": 3
 }
