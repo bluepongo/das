@@ -88,17 +88,17 @@ func (s *Service) GetByHostInfo(hostIP string, portNum int) error {
 	return s.Save(constant.DefaultRandomInt, mysqlServerID, constant.DefaultRandomInt, constant.DefaultRandomString)
 }
 
-// GetByDBID gets the query slice by the mysql server identity and the db identity
-func (s *Service) GetByDBID(mysqlServerID int, dbID int) error {
+// GetByDBID gets the query slice by the db identity
+func (s *Service) GetByDBID(dbID int) error {
 	var err error
 
 	querier := NewQuerierWithGlobal(s.GetConfig())
-	s.Queries, err = querier.GetByDBID(mysqlServerID, dbID)
+	s.Queries, err = querier.GetByDBID(dbID)
 	if err != nil {
 		return err
 	}
 
-	return s.Save(constant.DefaultRandomInt, mysqlServerID, dbID, constant.DefaultRandomString)
+	return s.Save(constant.DefaultRandomInt, constant.DefaultRandomInt, dbID, constant.DefaultRandomString)
 }
 
 // GetBySQLID gets the query by the mysql server identity and the sql identity

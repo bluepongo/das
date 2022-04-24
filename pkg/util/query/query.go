@@ -10,34 +10,39 @@ import (
 	"github.com/romberli/go-util/middleware/sql/parser"
 )
 
-type Range struct {
-	StartTime string `json:"start_time" bind:"required"`
-	EndTime   string `json:"end_time" bind:"required"`
-	Limit     int    `json:"limit" bind:"required"`
-	Offset    int    `json:"offset" bind:"required"`
+type MySQLClusterRange struct {
+	MySQLClusterID int    `json:"mysql_cluster_id" bind:"required"`
+	StartTime      string `json:"start_time" bind:"required"`
+	EndTime        string `json:"end_time" bind:"required"`
+	Limit          int    `json:"limit" bind:"required"`
+	Offset         int    `json:"offset" bind:"required"`
 }
 
-func (r *Range) GetStartTime() string {
-	return r.StartTime
+func (mcr *MySQLClusterRange) GetMySQLClusterID() int {
+	return mcr.MySQLClusterID
 }
 
-func (r *Range) GetEndTime() string {
-	return r.EndTime
+func (mcr *MySQLClusterRange) GetStartTime() string {
+	return mcr.StartTime
 }
 
-func (r *Range) GetLimit() int {
-	return r.Limit
+func (mcr *MySQLClusterRange) GetEndTime() string {
+	return mcr.EndTime
 }
 
-func (r *Range) GetOffset() int {
-	return r.Offset
+func (mcr *MySQLClusterRange) GetLimit() int {
+	return mcr.Limit
 }
 
-func (r *Range) GetConfig() (depquery.Config, error) {
-	return getConfig(r.GetStartTime(), r.GetEndTime(), r.GetLimit(), r.GetOffset())
+func (mcr *MySQLClusterRange) GetOffset() int {
+	return mcr.Offset
 }
 
-type ServerRange struct {
+func (mcr *MySQLClusterRange) GetConfig() (depquery.Config, error) {
+	return getConfig(mcr.GetStartTime(), mcr.GetEndTime(), mcr.GetLimit(), mcr.GetOffset())
+}
+
+type MySQLServerRange struct {
 	MySQLServerID int    `json:"mysql_server_id" bind:"required"`
 	StartTime     string `json:"start_time" bind:"required"`
 	EndTime       string `json:"end_time" bind:"required"`
@@ -45,28 +50,28 @@ type ServerRange struct {
 	Offset        int    `json:"offset" bind:"required"`
 }
 
-func (sr *ServerRange) GetMySQLServerID() int {
-	return sr.MySQLServerID
+func (msr *MySQLServerRange) GetMySQLServerID() int {
+	return msr.MySQLServerID
 }
 
-func (sr *ServerRange) GetStartTime() string {
-	return sr.StartTime
+func (msr *MySQLServerRange) GetStartTime() string {
+	return msr.StartTime
 }
 
-func (sr *ServerRange) GetEndTime() string {
-	return sr.EndTime
+func (msr *MySQLServerRange) GetEndTime() string {
+	return msr.EndTime
 }
 
-func (sr *ServerRange) GetLimit() int {
-	return sr.Limit
+func (msr *MySQLServerRange) GetLimit() int {
+	return msr.Limit
 }
 
-func (sr *ServerRange) GetOffset() int {
-	return sr.Offset
+func (msr *MySQLServerRange) GetOffset() int {
+	return msr.Offset
 }
 
-func (sr *ServerRange) GetConfig() (depquery.Config, error) {
-	return getConfig(sr.GetStartTime(), sr.GetEndTime(), sr.GetLimit(), sr.GetOffset())
+func (msr *MySQLServerRange) GetConfig() (depquery.Config, error) {
+	return getConfig(msr.GetStartTime(), msr.GetEndTime(), msr.GetLimit(), msr.GetOffset())
 }
 
 type HostInfoRange struct {
@@ -104,6 +109,75 @@ func (hir *HostInfoRange) GetOffset() int {
 
 func (hir *HostInfoRange) GetConfig() (depquery.Config, error) {
 	return getConfig(hir.GetStartTime(), hir.GetEndTime(), hir.GetLimit(), hir.GetOffset())
+}
+
+type DBRange struct {
+	DBID      int    `json:"db_id" bind:"required"`
+	StartTime string `json:"start_time" bind:"required"`
+	EndTime   string `json:"end_time" bind:"required"`
+	Limit     int    `json:"limit" bind:"required"`
+	Offset    int    `json:"offset" bind:"required"`
+}
+
+func (dr *DBRange) GetDBID() int {
+	return dr.DBID
+}
+
+func (dr *DBRange) GetStartTime() string {
+	return dr.StartTime
+}
+
+func (dr *DBRange) GetEndTime() string {
+	return dr.EndTime
+}
+
+func (dr *DBRange) GetLimit() int {
+	return dr.Limit
+}
+
+func (dr *DBRange) GetOffset() int {
+	return dr.Offset
+}
+
+func (dr *DBRange) GetConfig() (depquery.Config, error) {
+	return getConfig(dr.GetStartTime(), dr.GetEndTime(), dr.GetLimit(), dr.GetOffset())
+}
+
+type SQLIDRange struct {
+	MySQLServerID int    `json:"mysql_server_id" bind:"required"`
+	SQLID         string `json:"sql_id" bind:"required"`
+	StartTime     string `json:"start_time" bind:"required"`
+	EndTime       string `json:"end_time" bind:"required"`
+	Limit         int    `json:"limit" bind:"required"`
+	Offset        int    `json:"offset" bind:"required"`
+}
+
+func (sir *SQLIDRange) GetMySQLServerID() int {
+	return sir.MySQLServerID
+}
+
+func (sir *SQLIDRange) GetSQLID() string {
+	return sir.SQLID
+}
+
+func (sir *SQLIDRange) GetStartTime() string {
+	return sir.StartTime
+}
+
+func (sir *SQLIDRange) GetEndTime() string {
+	return sir.EndTime
+}
+
+func (sir *SQLIDRange) GetLimit() int {
+	return sir.Limit
+}
+
+func (sir *SQLIDRange) GetOffset() int {
+	return sir.Offset
+}
+
+func (sir *SQLIDRange) GetConfig() (depquery.Config, error) {
+	return getConfig(sir.GetStartTime(), sir.GetEndTime(), sir.GetLimit(), sir.GetOffset())
 }
 
 func getConfig(startTime, endTime string, limit, offset int) (depquery.Config, error) {

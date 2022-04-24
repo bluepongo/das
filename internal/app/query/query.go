@@ -158,7 +158,14 @@ func (q *Querier) GetByMySQLServerID(mysqlServerID int) ([]query.Query, error) {
 }
 
 // GetByDBID get queries by db id
-func (q *Querier) GetByDBID(mysqlServerID int, dbID int) ([]query.Query, error) {
+func (q *Querier) GetByDBID(dbID int) ([]query.Query, error) {
+	// init db server
+	dbService := metadata.NewDBServiceWithDefault()
+	err := dbService.GetByID(dbID)
+	if err != nil {
+		return nil, err
+	}
+	mysqlServerID := dbService.GetDBs()[constant.ZeroInt].GetClusterID()
 	// init monitor repos
 	monitorSystem, err := q.getMonitorSystemByMySQLServerID(mysqlServerID)
 	if err != nil {
