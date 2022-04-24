@@ -18,10 +18,12 @@ import (
 )
 
 const (
-	mysqlClusterIDJSON          = "id"
-	mysqlClusterEnvIDJSON       = "env_id"
-	mysqlClusterClusterNameJSON = "name"
-	mysqlClusterUserIDJSON      = "user_id"
+	mysqlClusterIDJSON                  = "id"
+	mysqlClusterEnvIDJSON               = "env_id"
+	mysqlClusterClusterNameJSON         = "name"
+	mysqlClusterMiddlewareClusterIDJSON = "middleware_cluster_id"
+	mysqlClusterMonitorSystemIDJSON     = "monitor_system_id"
+	mysqlClusterUserIDJSON              = "user_id"
 
 	mysqlClusterIDStruct                  = "ID"
 	mysqlClusterClusterNameStruct         = "ClusterName"
@@ -584,11 +586,11 @@ func AddMySQLCluster(c *gin.Context) {
 		return
 	}
 	if _, ok := fields[mysqlClusterClusterNameStruct]; !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterClusterNameStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterClusterNameJSON)
 		return
 	}
 	if _, ok := fields[mysqlClusterEnvIDStruct]; !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterEnvIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterEnvIDJSON)
 		return
 	}
 
@@ -647,18 +649,17 @@ func UpdateMySQLClusterByID(c *gin.Context) {
 	}
 	idInterface, idExists := fields[mysqlClusterIDStruct]
 	if !idExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterIDJSON)
 		return
 	}
 	id, ok := idInterface.(int)
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, mysqlClusterIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, mysqlClusterIDJSON)
 		return
 	}
 	_, clusterNameExists := fields[mysqlClusterClusterNameStruct]
 	_, middlewareClusterIDExists := fields[mysqlClusterMiddlewareClusterIDStruct]
 	_, monitorSystemIDExists := fields[mysqlClusterMonitorSystemIDStruct]
-	// _, ownerIDExists := fields[mysqlClusterUserIDStruct]
 	_, envIDExists := fields[mysqlClusterEnvIDStruct]
 	_, delFlagExists := fields[envDelFlagStruct]
 	if !clusterNameExists &&
@@ -670,12 +671,11 @@ func UpdateMySQLClusterByID(c *gin.Context) {
 		resp.ResponseNOK(
 			c, message.ErrFieldNotExists,
 			fmt.Sprintf("%s, %s, %s, %s and %s",
-				mysqlClusterClusterNameStruct,
-				mysqlClusterMiddlewareClusterIDStruct,
-				mysqlClusterMonitorSystemIDStruct,
-				// mysqlClusterOwnerIDStruct,
-				mysqlClusterEnvIDStruct,
-				envDelFlagStruct))
+				mysqlClusterClusterNameJSON,
+				mysqlClusterMiddlewareClusterIDJSON,
+				mysqlClusterMonitorSystemIDJSON,
+				mysqlClusterEnvIDJSON,
+				envDelFlagJSON))
 		return
 	}
 	// init service

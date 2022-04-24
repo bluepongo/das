@@ -17,10 +17,12 @@ import (
 )
 
 const (
-	mysqlServerIDJSON        = "id"
-	mysqlServerClusterIDJSON = "cluster_id"
-	mysqlServerHostIPJSON    = "host_ip"
-	mysqlServerPortNumJSON   = "port_num"
+	mysqlServerIDJSON             = "id"
+	mysqlServerClusterIDJSON      = "cluster_id"
+	mysqlServerServerNameJSON     = "server_name"
+	mysqlServerHostIPJSON         = "host_ip"
+	mysqlServerPortNumJSON        = "port_num"
+	mysqlServerDeploymentTypeJSON = "deployment_type"
 
 	mysqlServerIDStruct             = "ID"
 	mysqlServerClusterIDStruct      = "ClusterID"
@@ -307,11 +309,11 @@ func AddMySQLServer(c *gin.Context) {
 			c, message.ErrFieldNotExists,
 			fmt.Sprintf(
 				"%s and %s and %s and %s and %s",
-				mysqlServerClusterIDStruct,
-				mysqlServerServerNameStruct,
-				mysqlServerHostIPStruct,
-				mysqlServerPortNumStruct,
-				mysqlServerDeploymentTypeStruct))
+				mysqlServerClusterIDJSON,
+				mysqlServerServerNameJSON,
+				mysqlServerHostIPJSON,
+				mysqlServerPortNumJSON,
+				mysqlServerDeploymentTypeJSON))
 		return
 	}
 	// init service
@@ -376,12 +378,12 @@ func UpdateMySQLServerByID(c *gin.Context) {
 	}
 	idInterface, idExists := fields[mysqlServerIDStruct]
 	if !idExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlServerIDJSON)
 		return
 	}
 	id, ok := idInterface.(int)
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, mysqlServerIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, mysqlServerIDJSON)
 		return
 	}
 	_, clusterIDExists := fields[mysqlServerClusterIDStruct]
