@@ -30,9 +30,9 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "db_name": "new_db",
-    "cluster_id": 1,
-    "cluster_type": 1
+    "db_name": {{db_name}},
+    "cluster_id": {{mysql_cluster_id}},
+    "cluster_type": {{mysql_cluster_type}}
 }
 
 ### get database by db name and host info
@@ -41,9 +41,9 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "db_name": "pmm_test",
-    "host_ip": "192.168.10.219",
-    "port_num": 3306
+    "db_name": {{db_name}},
+    "host_ip": {{mysql_host_ip}},
+    "port_num": {{mysql_port_num}}
 }
 
 ### get databases by host info
@@ -52,8 +52,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "host_ip": "192.168.10.219",
-    "port_num": 3306
+    "host_ip": {{mysql_host_ip}},
+    "port_num": {{mysql_port_num}}
 }
 
 ### get all apps by id
@@ -107,10 +107,10 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "db_name": "new_db_4",
-    "cluster_id": 1,
-    "cluster_type": 1,
-    "env_id": 1
+    "db_name": {{db_name}},
+    "cluster_id": {{mysql_cluster_id}},
+    "cluster_type": {{mysql_cluster_type}},
+    "env_id": {{env_id}}
 }
 
 ### update database by id
@@ -120,8 +120,8 @@ Content-Type: application/json
 {
     "token": "{{token}}",
     "id": {{db_id}},
-    "db_name": "update_db",
-    "cluster_id": 1,
+    "db_name": "new_db",
+    "cluster_id": "192.168.10.219",
     "cluster_type": 1,
     "env_id": 1,
     "del_flag": 0
