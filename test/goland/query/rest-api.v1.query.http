@@ -1,9 +1,10 @@
 ### query.GetByMySQLClusterID
-GET http://{{baseURL}}/api/v1/query/cluster/{{mysql_cluster_id}}
+GET http://{{baseURL}}/api/v1/query/cluster
 Content-Type: application/json
 
 {
     "token": "{{token}}",
+    "mysql_cluster_id": {{mysql_cluster_id}},
     "start_time": "{{startTime}}",
     "end_time": "{{endTime}}",
     "limit": {{limit}},
@@ -11,11 +12,12 @@ Content-Type: application/json
 }
 
 ### query.GetByMySQLServerID
-GET http://{{baseURL}}/api/v1/query/server/{{mysql_server_id}}
+GET http://{{baseURL}}/api/v1/query/server
 Content-Type: application/json
 
 {
     "token": "{{token}}",
+    "mysql_server_id": {{mysql_server_id}},
     "start_time": "{{startTime}}",
     "end_time": "{{endTime}}",
     "limit": {{limit}},
@@ -37,12 +39,12 @@ Content-Type: application/json
 }
 
 ### query.GetByDBID
-GET http://{{baseURL}}/api/v1/query/db/{{db_id}}
+GET http://{{baseURL}}/api/v1/query/db
 Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "mysql_server_id": {{mysql_server_id}},
+    "db_id": {{db_id}},
     "start_time": "{{startTime}}",
     "end_time": "{{endTime}}",
     "limit": {{limit}},
@@ -50,12 +52,13 @@ Content-Type: application/json
 }
 
 ### query.GetByMySQLSQLID
-GET http://{{baseURL}}/api/v1/query/{{query_id}}
+GET http://{{baseURL}}/api/v1/query/sql
 Content-Type: application/json
 
 {
     "token": "{{token}}",
     "mysql_server_id": {{mysql_server_id}},
+    "sql_id": "{{sql_id}}",
     "start_time": "{{startTime}}",
     "end_time": "{{endTime}}",
     "limit": {{limit}},
