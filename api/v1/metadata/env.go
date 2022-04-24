@@ -210,7 +210,7 @@ func UpdateEnvByID(c *gin.Context) {
 	}
 	id, ok := idInterface.(int)
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, envIDStruct)
 		return
 	}
 	_, envNameExists := fields[envEnvNameStruct]

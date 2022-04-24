@@ -194,6 +194,7 @@ func AnalyzeTableByHostInfoAndDBNameAndTableName(c *gin.Context) {
 	err = ts.AnalyzeTableByHostInfoAndDBNameAndTableName(rd.GetHostIP(), rd.GetPortNum(), rd.GetDBName(), rd.GetTableName(), rd.GetLoginName())
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataAnalyzeTableByHostInfoAndDBNameAndTableName, err, rd.GetHostIP(), rd.GetPortNum(), rd.GetDBName(), rd.GetTableName(), rd.GetLoginName())
+		return
 	}
 	// response
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAnalyzeTableByHostInfoAndDBNameAndTableName).Error())
