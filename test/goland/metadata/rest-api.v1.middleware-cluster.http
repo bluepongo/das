@@ -7,43 +7,48 @@ Content-Type: application/json
 }
 
 ### get middleware cluster by env_id
-GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/env/1
+GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/env
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "env_id": "{{env_id}}"
 }
 
 ### get middleware cluster by id
-GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/get/1
+GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/get
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id": "{{id}}"
 }
 
 ### get middleware cluster by name
-GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/cluster-name/middleware-cluster-1
+GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/cluster-name
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "cluster_name": "{{cluster_name}}"
 }
 
 ### get middleware server list by cluster id
-GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/middleware-server/1
+GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/middleware-server
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id": "{{id}}"
 }
 
 ### get user list by middleware cluster id
-GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/user/1
+GET http://{{baseURL}}/api/v1/metadata/middleware-cluster/user
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id": "{{id}}"
 }
 
 ### add new middleware cluster
@@ -57,36 +62,40 @@ Content-Type: application/json
 }
 
 ### update middleware cluster by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/update/1
+POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/update
 Content-Type: application/json
 
 {
     "token": "{{token}}",
+    "id": "{{id}}",
     "cluster_name": "update_middleware_cluster"
 }
 
 ### delete middleware cluster by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/delete/65
-Content-Type: application/json
-
-{
-    "token": "{{token}}"
-}
-
-### add a new map of middleware cluster and user in the middleware
-POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/add-user/1
+POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/delete
 Content-Type: application/json
 
 {
     "token": "{{token}}",
+    "id": "{{id}}"
+}
+
+### add a new map of middleware cluster and user in the middleware
+POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/add-user
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": "{{id}}",
     "user_id":1
 }
 
 ### delete a map of middleware cluster and user in the middleware
-POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/delete-user/1
+POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/delete-user
 Content-Type: application/json
 
 {
     "token": "{{token}}",
+    "id": "{{id}}",
     "user_id":1
 }

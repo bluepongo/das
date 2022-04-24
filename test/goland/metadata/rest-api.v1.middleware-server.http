@@ -7,19 +7,21 @@ Content-Type: application/json
 }
 
 ### get middleware server by cluster id
-GET http://{{baseURL}}/api/v1/metadata/middleware-server/cluster-id/1
+GET http://{{baseURL}}/api/v1/metadata/middleware-server/cluster-id
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "cluster_id": "{{cluster_id}}"
 }
 
 ### get middleware server by id
-GET http://{{baseURL}}/api/v1/metadata/middleware-server/get/1
+GET http://{{baseURL}}/api/v1/metadata/middleware-server/get
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id": "{{id}}"
 }
 
 ### get middleware server by host info
@@ -46,18 +48,20 @@ Content-Type: application/json
 }
 
 ### update middleware-server by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-server/update/1
+POST http://{{baseURL}}/api/v1/metadata/middleware-server/update
 Content-Type: application/json
 
 {
     "token": "{{token}}",
+    "id": "{{id}}",
     "server_name": "update_middeware_server"
 }
 
 ### delete middleware-server by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-server/delete/42
+POST http://{{baseURL}}/api/v1/metadata/middleware-server/delete
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id": "{{id}}"
 }
