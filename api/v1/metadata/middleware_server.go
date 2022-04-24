@@ -16,8 +16,12 @@ import (
 )
 
 const (
-	middlewareServerIDJSON        = "id"
-	middlewareServerClusterIDJSON = "cluster_id"
+	middlewareServerIDJSON             = "id"
+	middlewareServerClusterIDJSON      = "cluster_id"
+	middlewareServerNameJSON           = "server_name"
+	middlewareServerMiddlewareRoleJSON = "middleware_role"
+	middlewareServerHostIPJSON         = "host_ip"
+	middlewareServerPortNumJSON        = "port_num"
 
 	middlewareServerIDStruct             = "ID"
 	middlewareServerClusterIDStruct      = "ClusterID"
@@ -201,27 +205,27 @@ func AddMiddlewareServer(c *gin.Context) {
 	}
 	_, ok := fields[middlewareServerClusterIDStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerClusterIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerClusterIDJSON)
 		return
 	}
 	_, ok = fields[middlewareServerNameStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerNameStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerNameJSON)
 		return
 	}
 	_, ok = fields[middlewareServerMiddlewareRoleStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerMiddlewareRoleStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerMiddlewareRoleJSON)
 		return
 	}
 	_, ok = fields[middlewareServerHostIPStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerHostIPStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerHostIPJSON)
 		return
 	}
 	_, ok = fields[middlewareServerPortNumStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerPortNumStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerPortNumJSON)
 		return
 	}
 	// init service
@@ -275,7 +279,7 @@ func UpdateMiddlewareServerByID(c *gin.Context) {
 	}
 	idInterface, idExists := fields[middlewareServerIDJSON]
 	if !idExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerIDJSON)
 		return
 	}
 	id, ok := idInterface.(int)
@@ -290,7 +294,7 @@ func UpdateMiddlewareServerByID(c *gin.Context) {
 	_, middlewareServerPortNumExists := fields[middlewareServerPortNumStruct]
 	_, delFlagExists := fields[envDelFlagStruct]
 	if !middlewareServerClusterIDExists && !middlewareServerNameExists && !middlewareServerMiddlewareRoleExists && !middlewareServerHostIPExists && !middlewareServerPortNumExists && !delFlagExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", middlewareServerNameStruct, envDelFlagStruct))
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", middlewareServerNameJSON, envDelFlagJSON))
 		return
 	}
 	// init service

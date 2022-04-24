@@ -283,12 +283,12 @@ func AddMiddlewareCluster(c *gin.Context) {
 	}
 	_, ok := fields[middlewareClusterClusterNameStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareClusterClusterNameStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareClusterClusterNameJSON)
 		return
 	}
 	_, ok = fields[middlewareClusterEnvIDStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareClusterEnvIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareClusterClusterNameJSON)
 		return
 	}
 	// init service
@@ -339,7 +339,7 @@ func UpdateMiddlewareClusterByID(c *gin.Context) {
 	}
 	idInterface, idExists := fields[middlewareClusterIDJSON]
 	if !idExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareClusterIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareClusterIDJSON)
 		return
 	}
 	id, ok := idInterface.(int)
@@ -351,7 +351,7 @@ func UpdateMiddlewareClusterByID(c *gin.Context) {
 	_, middlewareClusterEnvIDExists := fields[middlewareClusterEnvIDStruct]
 	_, delFlagExists := fields[envDelFlagStruct]
 	if !middlewareClusterNameExists && !middlewareClusterEnvIDExists && !delFlagExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s %s and %s", middlewareClusterClusterNameStruct, middlewareClusterEnvIDStruct, envDelFlagStruct))
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s %s and %s", middlewareClusterClusterNameJSON, middlewareClusterEnvIDJSON, envDelFlagJSON))
 		return
 	}
 	// init service
