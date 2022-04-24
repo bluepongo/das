@@ -104,8 +104,8 @@ func GetAppByID(c *gin.Context) {
 // @Tags 	application
 // @Summary get application by system name
 // @Accept	application/json
-// @Param	token body string true "token"
-// @Param	name  body string true "app name"
+// @Param	token     body string true "token"
+// @Param	app_name  body string true "app name"
 // @Produce application/json
 // @Success 200 {string} string "{"apps": [ {"id": 2,"app_name": "app2","level": 2,"del_flag": 0,"create_time": "2021-10-25T09:46:04.275796+08:00","last_update_time": "2021-12-21T09:15:47.688546+08:00"}]}"
 // @Router 	/api/v1/metadata/app/app-name [get]
