@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id" : {{cluster_id}}
+    "id" : {{mysql_cluster_id}}
 }
 
 ### get mysql cluster by cluster_name
@@ -30,7 +30,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "name": "{{cluster_name}}"
+    "name": "{{mysql_cluster_name}}"
 }
 
 ### get mysql_server of mysql cluster
@@ -39,7 +39,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{cluster_id}}
+    "id": {{mysql_cluster_id}}
 }
 
 ### get master mysql server of mysql cluster
@@ -48,7 +48,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{cluster_id}}
+    "id": {{mysql_cluster_id}}
 }
 
 ### get get dbs by id
@@ -57,7 +57,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{cluster_id}}
+    "id": {{mysql_cluster_id}}
 }
 
 ### get mysql cluster users
@@ -66,7 +66,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{cluster_id}}
+    "id": {{mysql_cluster_id}}
 }
 
 ### get app users
@@ -75,7 +75,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{cluster_id}}
+    "id": {{mysql_cluster_id}}
 }
 
 ### get db users
@@ -84,7 +84,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{cluster_id}}
+    "id": {{mysql_cluster_id}}
 }
 
 ### get all users
@@ -93,7 +93,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{cluster_id}}
+    "id": {{mysql_cluster_id}}
 }
 
 ### add user map
@@ -102,7 +102,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{cluster_id}},
+    "id": {{mysql_cluster_id}},
     "user_id": {{user_id}}
 }
 
@@ -113,7 +113,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{cluster_id}},
+    "id": {{mysql_cluster_id}},
     "user_id": {{user_id}}
 }
 
@@ -135,7 +135,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{update_cluster_id}},
+    "id": 3,
     "cluster_name": "api_test_update",
     "del_flag": 0
 }
@@ -146,5 +146,5 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{update_cluster_id}}
+    "id": 3
 }

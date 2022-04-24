@@ -12,8 +12,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "cluster_id": {{cluster_id}}
-}
+    "cluster_id": {{mysql_cluster_id}}
+} 
 
 
 ### get mysql server by id
@@ -22,7 +22,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{server_id}}
+    "id": {{mysql_server_id}}
 }
 
 ### get mysql server by id
@@ -31,8 +31,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "host_ip": "{{host_ip}}",
-    "port_num": {{port_num}}
+    "host_ip": "{{mysql_host_ip}}",
+    "port_num": {{mysql_port_num}}
 }
 
 ### judge if serve is master
@@ -41,8 +41,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "host_ip": "{{host_ip}}",
-    "port_num": {{port_num}}
+    "host_ip": "{{mysql_host_ip}}",
+    "port_num": {{mysql_port_num}}
 }
 
 ### get mysql cluster by mysql server id
@@ -51,7 +51,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{server_id}}
+    "id": {{mysql_server_id}}
 }
 
 ### add new mysql server
@@ -60,7 +60,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "cluster_id": {{cluster_id}},
+    "cluster_id": {{mysql_cluster_id}},
     "server_name": "test",
     "service_name": "test",
     "host_ip": "192.168.1.1.",
@@ -74,8 +74,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{update_server_id}},
-    "cluster_id": {{cluster_id}},
+    "id": 29,
+    "cluster_id": {{mysql_cluster_id}},
     "del_flag": 0
 }
 
@@ -85,5 +85,5 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{update_server_id}}
+    "id": 29
 }
