@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{id}}
+    "id": {{monitor_system_id}}
 }
 
 ### get all monitor systems by host-info
@@ -55,7 +55,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{id}},
+    "id": {{monitor_system_id}},
     "system_name": "update_monitor_system",
     "system_type":3,
     "host_ip": "192.168.10.220",
@@ -72,5 +72,5 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{id}}
+    "id": {{monitor_system_id}}
 }
