@@ -18,10 +18,11 @@ import (
 const (
 	envIDJSON      = "id"
 	envEnvNameJSON = "env_name"
+	envDelFlagJSON = "del_flag"
 
 	envIDStruct      = "ID"
-	envDelFlagStruct = "DelFlag"
 	envEnvNameStruct = "EnvName"
+	envDelFlagStruct = "DelFlag"
 )
 
 // @Tags	environment
@@ -156,7 +157,7 @@ func AddEnv(c *gin.Context) {
 	}
 	_, ok := fields[envEnvNameStruct]
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envEnvNameStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envEnvNameJSON)
 		return
 	}
 	// init service
@@ -164,7 +165,7 @@ func AddEnv(c *gin.Context) {
 	// insert into middleware
 	err = s.Create(fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddEnv, err, fields[envEnvNameStruct])
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddEnv, err, fields[envEnvNameJSON])
 		return
 	}
 	// marshal service
@@ -176,7 +177,7 @@ func AddEnv(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAddEnv, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddEnv, fields[envEnvNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddEnv, fields[envEnvNameJSON])
 }
 
 // @Tags	environment
@@ -205,7 +206,7 @@ func UpdateEnvByID(c *gin.Context) {
 	}
 	idInterface, idExists := fields[envIDStruct]
 	if !idExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, envIDJSON)
 		return
 	}
 	id, ok := idInterface.(int)
@@ -216,7 +217,7 @@ func UpdateEnvByID(c *gin.Context) {
 	_, envNameExists := fields[envEnvNameStruct]
 	_, delFlagExists := fields[envDelFlagStruct]
 	if !envNameExists && !delFlagExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", envEnvNameStruct, envDelFlagStruct))
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", envEnvNameJSON, envDelFlagJSON))
 		return
 	}
 	// init service
