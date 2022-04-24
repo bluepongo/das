@@ -87,7 +87,7 @@ Content-Type: application/json
 {
     "token": "{{token}}",
     "id": {{middleware_cluster_id}},
-    "user_id":1
+    "user_id": {{user_id}}
 }
 
 ### delete a map of middleware cluster and user in the middleware
@@ -97,5 +97,5 @@ Content-Type: application/json
 {
     "token": "{{token}}",
     "id": {{middleware_cluster_id}},
-    "user_id":1
+    "user_id": {{user_id}}
 }
