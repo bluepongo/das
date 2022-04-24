@@ -361,6 +361,7 @@ func AddMySQLServer(c *gin.Context) {
 // @Success	200 {string} string "{"mysql_servers":[{"deployment_type":1,"version":"","id":26,"server_name":"test","service_name":"test","port_num":3306,"del_flag":0,"create_time":"2022-03-02T01:26:32.107625+08:00","last_update_time":"2022-03-02T01:26:32.107625+08:00","cluster_id":97,"host_ip":"192.168.1.1"}]}"
 // @Router	/api/v1/metadata/mysql-server [post]
 func UpdateMySQLServerByID(c *gin.Context) {
+	var fields map[string]interface{}
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
@@ -368,7 +369,7 @@ func UpdateMySQLServerByID(c *gin.Context) {
 		return
 	}
 	// unmarshal data
-	fields, err := common.UnmarshalToMapWithStructTag(data, &metadata.MySQLServerInfo{}, constant.DefaultMiddlewareTag)
+	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.MySQLServerInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
