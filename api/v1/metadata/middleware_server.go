@@ -2,8 +2,7 @@ package metadata
 
 import (
 	"fmt"
-	"strconv"
-
+	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
 	"github.com/romberli/das/internal/app/metadata"
@@ -20,6 +19,7 @@ const (
 	middlewareServerIDJSON        = "id"
 	middlewareServerClusterIDJSON = "cluster_id"
 
+	middlewareServerIDStruct             = "ID"
 	middlewareServerClusterIDStruct      = "ClusterID"
 	middlewareServerNameStruct           = "ServerName"
 	middlewareServerMiddlewareRoleStruct = "MiddlewareRole"
@@ -58,27 +58,27 @@ func GetMiddlewareServer(c *gin.Context) {
 // @Tags     middleware server
 // @Summary	get middleware servers by cluster id
 // @Accept	application/json
-// @Param	cluster_id	path	int		true	"middleware cluster id"
 // @Param	token 		body 	string 	true 	"token"
+// @Param	cluster_id	body	int		true	"middleware cluster id"
 // @Produce	application/json
 // @Success 200 {string} string {"middleware_servers":[{"id":1,"cluster_id":1,"server_name":"middleware-server-1","host_ip":"192.168.10.219","port_num":33061,"del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","middleware_role":1}]}
-// @Router	/api/v1/metadata/middleware-server/cluster-id/:cluster_id [get]
+// @Router	/api/v1/metadata/middleware-server/cluster-id [get]
 func GetMiddlewareServerByClusterID(c *gin.Context) {
-	// get param
-	clusterIDStr := c.Param(middlewareServerClusterIDJSON)
-	if clusterIDStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerClusterIDJSON)
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	clusterID, err := strconv.Atoi(clusterIDStr)
+	clusterID, err := jsonparser.GetInt(data, middlewareServerClusterIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), middlewareServerClusterIDJSON)
 		return
 	}
 	// init service
 	s := metadata.NewMiddlewareServerServiceWithDefault()
 	// get entity
-	err = s.GetByClusterID(clusterID)
+	err = s.GetByClusterID(int(clusterID))
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareSeverByClusterID, err)
 		return
@@ -98,27 +98,27 @@ func GetMiddlewareServerByClusterID(c *gin.Context) {
 // @Tags	middleware server
 // @Summary	get middleware server by id
 // @Accept	application/json
-// @Param	id		path	int		true	"middleware server id"
 // @Param	token 	body 	string 	true 	"token"
+// @Param	id		body	int		true	"middleware server id"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_servers":[{"last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"server_name":"middleware-server-1","middleware_role":1,"port_num":33061,"cluster_id":1,"host_ip":"192.168.10.219","del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00"}]}
-// @Router	/api/v1/metadata/middleware-server/get/:id [get]
+// @Router	/api/v1/metadata/middleware-server/get [get]
 func GetMiddlewareServerByID(c *gin.Context) {
-	// get param
-	idStr := c.Param(middlewareServerIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerIDJSON)
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := strconv.Atoi(idStr)
+	id, err := jsonparser.GetInt(data, middlewareServerIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), middlewareServerIDJSON)
 		return
 	}
 	// init service
 	s := metadata.NewMiddlewareServerServiceWithDefault()
 	// get entity
-	err = s.GetByID(id)
+	err = s.GetByID(int(id))
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMiddlewareServerByID, err, id)
 		return
@@ -248,6 +248,7 @@ func AddMiddlewareServer(c *gin.Context) {
 // @Summary	update middleware server by id
 // @Accept	application/json
 // @Param	token 			body 	string 	true 	"token"
+// @Param	id 				body 	string 	true 	"middleware server id"
 // @Param	cluster_id		body	int		true	"middleware cluster id"
 // @Param	server_name		body	string	false	"middleware server name"
 // @Param	middleware_role	body	int		false	"middleware role"
@@ -256,29 +257,28 @@ func AddMiddlewareServer(c *gin.Context) {
 // @Param	del_flag		body	int		false	"delete flag"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_servers":[{"del_flag":0,"server_name":"update_middeware_server","host_ip":"192.168.10.219","port_num":33061,"middleware_role":1,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"cluster_id":1}]}
-// @Router	/api/v1/metadata/middleware-server/update/:id [post]
+// @Router	/api/v1/metadata/middleware-server/update [post]
 func UpdateMiddlewareServerByID(c *gin.Context) {
-	var fields map[string]interface{}
-
-	// get params
-	idStr := c.Param(middlewareServerIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerIDJSON)
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
+	// get data
 	data, err := c.GetRawData()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
 	// unmarshal data
-	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.MiddlewareServerInfo{}, constant.DefaultMiddlewareTag)
+	fields, err := common.UnmarshalToMapWithStructTag(data, &metadata.MiddlewareServerInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
+		return
+	}
+	idInterface, idExists := fields[middlewareServerIDStruct]
+	if !idExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerIDStruct)
+		return
+	}
+	id, ok := idInterface.(int)
+	if !ok {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, middlewareServerIDStruct)
 		return
 	}
 	_, middlewareServerClusterIDExists := fields[middlewareServerClusterIDStruct]
@@ -314,31 +314,29 @@ func UpdateMiddlewareServerByID(c *gin.Context) {
 // @Tags	middleware server
 // @Summary	delete middleware server by id
 // @Accept	application/json
-// @Param	id		path	int		true	"middleware server id"
 // @Param	token 	body 	string 	true 	"token"
+// @Param	id		body	int		true	"middleware server id"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_servers":[{"server_name":"new_middleware_server","host_ip":"192.168.10.219","port_num":33062,"create_time":"2022-03-02T10:18:28.021994+08:00","last_update_time":"2022-03-02T10:18:28.021994+08:00","id":42,"cluster_id":1,"middleware_role":1,"del_flag":0}]}
-// @Router	/api/v1/metadata/middleware-server/delete/:id [post]
+// @Router	/api/v1/metadata/middleware-server/delete [post]
 func DeleteMiddlewareServerByID(c *gin.Context) {
-	var fields map[string]interface{}
-
-	// get params
-	idStr := c.Param(middlewareServerIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerIDJSON)
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := strconv.Atoi(idStr)
+	id, err := jsonparser.GetInt(data, middlewareServerIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), middlewareServerIDJSON)
 		return
 	}
 	// init service
 	s := metadata.NewMiddlewareServerServiceWithDefault()
 	// update entities
-	err = s.Delete(id)
+	err = s.Delete(int(id))
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMiddlewareServer, err, fields[middlewareClusterClusterNameStruct])
+		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMiddlewareServer, err, id)
 		return
 	}
 	// marshal service
@@ -350,5 +348,5 @@ func DeleteMiddlewareServerByID(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataDeleteMiddlewareServer, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteMiddlewareServer, fields[middlewareClusterClusterNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataDeleteMiddlewareServer, id)
 }
