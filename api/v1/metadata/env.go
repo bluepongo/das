@@ -165,7 +165,7 @@ func AddEnv(c *gin.Context) {
 	// insert into middleware
 	err = s.Create(fields)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataAddEnv, err, fields[envEnvNameJSON])
+		resp.ResponseNOK(c, msgmeta.ErrMetadataAddEnv, err, fields[envEnvNameStruct])
 		return
 	}
 	// marshal service
@@ -177,7 +177,7 @@ func AddEnv(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAddEnv, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddEnv, fields[envEnvNameJSON])
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddEnv, fields[envEnvNameStruct])
 }
 
 // @Tags	environment
