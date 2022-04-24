@@ -2,8 +2,7 @@ package metadata
 
 import (
 	"fmt"
-	"strconv"
-
+	"github.com/buger/jsonparser"
 	"github.com/pingcap/errors"
 
 	"github.com/gin-gonic/gin"
@@ -18,9 +17,17 @@ import (
 )
 
 const (
-	monitorSystemIDJSON    = "id"
-	monitorSystemEnvIDJSON = "env_id"
+	monitorSystemIDJSON          = "id"
+	monitorSystemNameJSON        = "system_name"
+	monitorSystemTypeJSON        = "system_type"
+	monitorSystemHostIPJSON      = "host_ip"
+	monitorSystemPortNumJSON     = "port_num"
+	monitorSystemPortNumSlowJSON = "port_num_slow"
+	monitorSystemBaseUrlJSON     = "base_url"
+	monitorSystemEnvIDJSON       = "env_id"
+	monitorSystemDelFlagJSON     = "del_flag"
 
+	monitorSystemIDStruct          = "ID"
 	monitorSystemNameStruct        = "MonitorSystemName"
 	monitorSystemTypeStruct        = "MonitorSystemType"
 	monitorSystemHostIPStruct      = "MonitorSystemHostIP"
@@ -28,6 +35,7 @@ const (
 	monitorSystemPortNumSlowStruct = "MonitorSystemPortNumSlow"
 	monitorSystemBaseUrlStruct     = "BaseURL"
 	monitorSystemEnvIDStruct       = "EnvID"
+	monitorSystemDelFlagStruct     = "DelFlag"
 )
 
 // @Tags    monitor system
@@ -61,28 +69,27 @@ func GetMonitorSystem(c *gin.Context) {
 // @Tags    monitor system
 // @Summary get monitor system by env_id
 // @Accept	application/json
-// @Param	env_id path int    true "env id"
 // @Param	token  body string true "token"
+// @Param	env_id body int    true "env id"
 // @Produce application/json
 // @Success 200 {string} string "{"monitor_systems": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router  /api/v1/metadata/monitor-system/env/:env_id [get]
+// @Router  /api/v1/metadata/monitor-system/env [get]
 func GetMonitorSystemByEnv(c *gin.Context) {
-	// get param
-	envIDStr := c.Param(monitorSystemEnvIDJSON)
-	if envIDStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, monitorSystemEnvIDJSON)
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	envID, err := strconv.Atoi(envIDStr)
+	envID, err := jsonparser.GetInt(data, monitorSystemEnvIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), monitorSystemEnvIDJSON)
 		return
-
 	}
 	// init service
 	s := metadata.NewMonitorSystemServiceWithDefault()
 	// get entity
-	err = s.GetByEnv(envID)
+	err = s.GetByEnv(int(envID))
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMonitorSystemByEnv, err)
 		return
@@ -103,27 +110,27 @@ func GetMonitorSystemByEnv(c *gin.Context) {
 // @Tags    monitor system
 // @Summary get monitor system by id
 // @Accept	application/json
-// @Param	id    path int    true "monitor system id"
 // @Param	token body string true "token"
+// @Param	id    body int    true "monitor system id"
 // @Produce application/json
 // @Success 200 {string} string "{"monitor_systems": [{"id": 1, "system_name": "pmm", "system_type": 1, "host_ip": "127.0.0.1", "port_num": 3306, "port_num_slow": 3307, "base_url": "http://127.0.0.1/prometheus/api/v1/", "env_id": 1, "del_flag": 0, "create_time": "2021-01-22T09:59:21.379851+08:00", "last_update_time": "2021-01-22T09:59:21.379851+08:00"}]}"
-// @Router  /api/v1/metadata/monitor-system/get/:id [get]
+// @Router  /api/v1/metadata/monitor-system/get [get]
 func GetMonitorSystemByID(c *gin.Context) {
-	// get param
-	idStr := c.Param(monitorSystemIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, monitorSystemIDJSON)
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := strconv.Atoi(idStr)
+	id, err := jsonparser.GetInt(data, monitorSystemIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), monitorSystemIDJSON)
 		return
 	}
 	// init service
 	s := metadata.NewMonitorSystemServiceWithDefault()
 	// get entity
-	err = s.GetByID(id)
+	err = s.GetByID(int(id))
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMonitorSystemByID, err, id)
 		return
@@ -143,9 +150,9 @@ func GetMonitorSystemByID(c *gin.Context) {
 // @Tags    monitor system
 // @Summary get monitor system by host info
 // @Accept	application/json
+// @Param	token    body string true "token"
 // @Param	host_ip  body string true "host ip"
 // @Param 	port_num body int    true "port num"
-// @Param	token    body string true "token"
 // @Produce application/json
 // @Success 200 {string} string "{"monitor_systems": [{"port_num_slow":9000,"base_url":"/prometheus","create_time":"2021-09-02T09:06:30.736111+08:00","last_update_time":"2021-11-18T16:16:18.702104+08:00","host_ip":"192.168.10.219","port_num":80,"env_id":1,"del_flag":0,"id":1,"system_name":"pmm2","system_type":2},{"base_url":"/prometheus","env_id":1,"del_flag":0,"create_time":"2021-09-02T15:11:19.558733+08:00","id":2,"port_num":80,"port_num_slow":33061,"last_update_time":"2021-11-10T10:01:52.717786+08:00","system_name":"pmm1","system_type":1,"host_ip":"192.168.10.220"}]}"
 // @Router  /api/v1/metadata/monitor-system/host-info [get]
@@ -157,7 +164,6 @@ func GetMonitorSystemByHostInfo(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
-
 	// init service
 	s := metadata.NewMonitorSystemServiceWithDefault()
 	// get entity
@@ -216,8 +222,8 @@ func AddMonitorSystem(c *gin.Context) {
 	_, envIDExists := fields[monitorSystemEnvIDStruct]
 	if !systemNameExists || !systemTypeExists || !hostIPExists || !portNumExists || !portNumSlowExists || !baseUrlExists || !envIDExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s and %s and %s and %s and %s and %s",
-			monitorSystemNameStruct, monitorSystemTypeStruct, monitorSystemHostIPStruct, monitorSystemPortNumStruct, monitorSystemPortNumSlowStruct,
-			monitorSystemBaseUrlStruct, monitorSystemEnvIDStruct))
+			monitorSystemNameJSON, monitorSystemTypeJSON, monitorSystemHostIPJSON, monitorSystemPortNumJSON, monitorSystemPortNumSlowJSON,
+			monitorSystemBaseUrlJSON, monitorSystemEnvIDJSON))
 		return
 	}
 	// init service
@@ -248,8 +254,8 @@ func AddMonitorSystem(c *gin.Context) {
 // @Tags    monitor system
 // @Summary update monitor system by id
 // @Accept	application/json
-// @Param	id		      path int	  true	"monitor system id"
 // @Param	token         body string true "token"
+// @Param	id		      body int	  true	"monitor system id"
 // @Param	system_name	  body string false	"system name"
 // @Param 	system_type   body int    false	"system type"
 // @Param 	host_ip       body string false	"host ip"
@@ -260,21 +266,11 @@ func AddMonitorSystem(c *gin.Context) {
 // @Param 	del_flag      body int    false	"delete flag"
 // @Produce application/json
 // @Success 200 {string} string "{"monitor_systems": [{"system_name":"update_monitor_system","host_ip":"192.168.10.219","port_num_slow":9000,"env_id":1,"id":1,"system_type":2,"port_num":3300,"base_url":"/prometheus","del_flag":0,"create_time":"2021-09-02T09:06:30.736111+08:00","last_update_time":"2021-11-18T16:16:18.702104+08:00"}]}"
-// @Router  /api/v1/metadata/monitor-system/update/:id [post]
+// @Router  /api/v1/metadata/monitor-system/update [post]
 func UpdateMonitorSystemByID(c *gin.Context) {
 	var fields map[string]interface{}
 
-	// get params
-	idStr := c.Param(monitorSystemIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, monitorSystemIDJSON)
-		return
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
-		return
-	}
+	// get data
 	data, err := c.GetRawData()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
@@ -286,6 +282,16 @@ func UpdateMonitorSystemByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
+	idInterface, idExists := fields[monitorSystemIDStruct]
+	if !idExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, monitorSystemIDJSON)
+		return
+	}
+	id, ok := idInterface.(int)
+	if !ok {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, monitorSystemIDJSON)
+		return
+	}
 	_, systemNameExists := fields[monitorSystemNameStruct]
 	_, systemTypeExists := fields[monitorSystemTypeStruct]
 	_, hostIpExists := fields[monitorSystemHostIPStruct]
@@ -293,11 +299,11 @@ func UpdateMonitorSystemByID(c *gin.Context) {
 	_, portNumSlowExists := fields[monitorSystemPortNumSlowStruct]
 	_, baseUrlExists := fields[monitorSystemBaseUrlStruct]
 	_, envIdExists := fields[monitorSystemEnvIDStruct]
-	_, delFlagExists := fields[envDelFlagStruct]
+	_, delFlagExists := fields[monitorSystemDelFlagStruct]
 	if !systemNameExists && !systemTypeExists && !hostIpExists && !portNumExists && !portNumSlowExists && !baseUrlExists && !envIdExists && !delFlagExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s and %s and %s and %s and %s and %s and %s",
-			monitorSystemNameStruct, monitorSystemTypeStruct, monitorSystemHostIPStruct, monitorSystemPortNumStruct,
-			monitorSystemPortNumSlowStruct, monitorSystemBaseUrlStruct, monitorSystemEnvIDStruct, envDelFlagStruct))
+			monitorSystemNameJSON, monitorSystemTypeJSON, monitorSystemHostIPJSON, monitorSystemPortNumJSON,
+			monitorSystemPortNumSlowJSON, monitorSystemBaseUrlJSON, monitorSystemEnvIDJSON, monitorSystemDelFlagJSON))
 		return
 	}
 	// init service
@@ -323,27 +329,27 @@ func UpdateMonitorSystemByID(c *gin.Context) {
 // @Tags    monitor system
 // @Summary delete monitor system by id
 // @Accept	application/json
-// @Param	id    path int	  true "monitor system id"
 // @Param	token body string true "token"
+// @Param	id    body int	  true "monitor system id"
 // @Produce application/json
 // @Success 200 {string} string "{"monitor_systems": [{"id":40,"system_type":2,"port_num_slow":9000,"env_id":1,"create_time":"2022-03-02T12:06:38.622752+08:00","system_name":"new_monitor_system","host_ip":"192.168.10.219","port_num":8080,"base_url":"/prometheus","del_flag":0,"last_update_time":"2022-03-02T12:06:38.622752+08:00"}]}"
-// @Router  /api/v1/metadata/monitor-system/delete/:id [post]
+// @Router  /api/v1/metadata/monitor-system/delete [post]
 func DeleteMonitorSystemByID(c *gin.Context) {
-	// get params
-	idStr := c.Param(monitorSystemIDJSON)
-	if idStr == constant.EmptyString {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, monitorSystemIDJSON)
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := strconv.Atoi(idStr)
+	id, err := jsonparser.GetInt(data, monitorSystemIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrTypeConversion, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), monitorSystemIDJSON)
 		return
 	}
 	// init service
 	s := metadata.NewMonitorSystemServiceWithDefault()
 	// update entity
-	err = s.Delete(id)
+	err = s.Delete(int(id))
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataDeleteMonitorSystem, err, id)
 		return
