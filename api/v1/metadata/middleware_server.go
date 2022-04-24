@@ -259,6 +259,8 @@ func AddMiddlewareServer(c *gin.Context) {
 // @Success	200 {string} string {"middleware_servers":[{"del_flag":0,"server_name":"update_middeware_server","host_ip":"192.168.10.219","port_num":33061,"middleware_role":1,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"cluster_id":1}]}
 // @Router	/api/v1/metadata/middleware-server/update [post]
 func UpdateMiddlewareServerByID(c *gin.Context) {
+	var fields map[string]interface{}
+
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
@@ -266,19 +268,19 @@ func UpdateMiddlewareServerByID(c *gin.Context) {
 		return
 	}
 	// unmarshal data
-	fields, err := common.UnmarshalToMapWithStructTag(data, &metadata.MiddlewareServerInfo{}, constant.DefaultMiddlewareTag)
+	fields, err = common.UnmarshalToMapWithStructTag(data, &metadata.MiddlewareServerInfo{}, constant.DefaultMiddlewareTag)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	idInterface, idExists := fields[middlewareServerIDStruct]
+	idInterface, idExists := fields[middlewareServerIDJSON]
 	if !idExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerIDStruct)
 		return
 	}
 	id, ok := idInterface.(int)
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, middlewareServerIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, middlewareServerIDJSON)
 		return
 	}
 	_, middlewareServerClusterIDExists := fields[middlewareServerClusterIDStruct]

@@ -337,14 +337,14 @@ func UpdateMiddlewareClusterByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	idInterface, idExists := fields[middlewareClusterIDStruct]
+	idInterface, idExists := fields[middlewareClusterIDJSON]
 	if !idExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareClusterIDStruct)
 		return
 	}
 	id, ok := idInterface.(int)
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, middlewareClusterIDStruct)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, middlewareClusterIDJSON)
 		return
 	}
 	_, middlewareClusterNameExists := fields[middlewareClusterClusterNameStruct]
@@ -436,9 +436,9 @@ func MiddlewareClusterAddUser(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), middlewareClusterIDJSON)
 		return
 	}
-	userID, err := jsonparser.GetInt(data, middlewareClusterIDJSON)
+	userID, err := jsonparser.GetInt(data, userIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), middlewareClusterIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), userIDJSON)
 		return
 	}
 	// init service
