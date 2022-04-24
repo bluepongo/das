@@ -1,6 +1,9 @@
+@baseURL = 127.0.0.1:6090
+@token = 
+
 ### metadata.GetApp
 GET http://{{baseURL}}/api/v1/metadata/app 
-Content-Type: application/json
+Accept: application/json
 
 {
     "token": "{{token}}"
@@ -8,38 +11,38 @@ Content-Type: application/json
 
 ### metadata.GetAppByID
 GET http://{{baseURL}}/api/v1/metadata/app/get 
-Content-Type: application/json
+Accept: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}"
+    "id":1
 }
 
 ### metadata.GetAppByName
 GET http://{{baseURL}}/api/v1/metadata/app/app-name 
-Content-Type: application/json
+Accept: application/json
 
 {
     "token": "{{token}}",
-    "app_name":"{{app_name}}"
+    "app_name":"app2"
 }
 
 ### metadata.GetDBsByAppID
 GET http://{{baseURL}}/api/v1/metadata/app/db
-Content-Type: application/json
+Accept: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}"
+    "id":1
 }
 
 ### metadata.GetUsersByAppID
 GET http://{{baseURL}}/api/v1/metadata/app/user
-Content-Type: application/json
+Accept: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}"
+    "id":1
 }
 
 ### metadata.AddApp
@@ -48,9 +51,9 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "app_name": "{{app_name}}",
-    "level":"{{level}}",
-    "owner_id":"{{owner_id}}"
+    "app_name": "10086",
+    "level":1,
+    "owner_id":1
 }
 
 ### metadata.UpdateAppByID
@@ -59,10 +62,10 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}",
-    "app_name": "{{app_name}}",
-    "level":"{{level}}",
-    "owner_id":":{{owner_id}}"
+    "id":16,
+    "app_name": "10000",
+    "level":1,
+    "owner_id":1
 }
 
 ### metadata.DeleteAppByID
@@ -70,7 +73,7 @@ POST http://{{baseURL}}/api/v1/metadata/app/delete
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}"
+    "id":14
 }
 
 ### metadata.AppAddDB
@@ -79,8 +82,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}",
-    "db_id":"{{db_id}}"
+    "id":16,
+    "db_id":1
 }
 
 ### metadata.AppAddUser
@@ -89,8 +92,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}",
-    "user_id":"{{user_id}}"
+    "id":16,
+    "user_id":15
 }
 
 
@@ -100,8 +103,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}",
-    "db_id":"{{db_id}}"
+    "id":16,
+    "db_id":1
 }
 
 ### metadata.AppDeleteUser
@@ -110,6 +113,6 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}",
-    "user_id":"{{user_id}}"
+    "id":16,
+    "user_id":15
 }
