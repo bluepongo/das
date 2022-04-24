@@ -38,3 +38,5 @@ das.yaml
 target
 todo.md
 *.yamlbk
+*rest-api.v1.app.local.http
+*rest-api.v1.user.local.http

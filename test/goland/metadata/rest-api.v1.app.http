@@ -1,6 +1,6 @@
 ### metadata.GetApp
 GET http://{{baseURL}}/api/v1/metadata/app 
-Accept: application/json
+Content-Type: application/json
 
 {
     "token": "{{token}}"
@@ -8,38 +8,38 @@ Accept: application/json
 
 ### metadata.GetAppByID
 GET http://{{baseURL}}/api/v1/metadata/app/get 
-Accept: application/json
+Content-Type: application/json
 
 {
-    "id":"{{app_id}}",
     "token": "{{token}}",
+    "id":"{{app_id}}"
 }
 
 ### metadata.GetAppByName
 GET http://{{baseURL}}/api/v1/metadata/app/app-name 
-Accept: application/json
+Content-Type: application/json
 
 {
-    "app_name":"{{app_name}}",
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "app_name":"{{app_name}}"
 }
 
 ### metadata.GetDBsByAppID
 GET http://{{baseURL}}/api/v1/metadata/app/db
-Accept: application/json
+Content-Type: application/json
 
 {
-    "id":"{{app_id}}",
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id":"{{app_id}}"
 }
 
 ### metadata.GetUsersByAppID
 GET http://{{baseURL}}/api/v1/metadata/app/user
-Accept: application/json
+Content-Type: application/json
 
 {
-    "id":"{{app_id}}",
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id":"{{app_id}}"
 }
 
 ### metadata.AddApp
@@ -58,8 +58,8 @@ POST http://{{baseURL}}/api/v1/metadata/app/update
 Content-Type: application/json
 
 {
-    "id":"{{app_id}}",
     "token": "{{token}}",
+    "id":"{{app_id}}",
     "app_name": "{{app_name}}",
     "level":"{{level}}",
     "owner_id":":{{owner_id}}"
@@ -69,8 +69,8 @@ Content-Type: application/json
 POST http://{{baseURL}}/api/v1/metadata/app/delete 
 
 {
-    "id":"{{app_id}}",
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id":"{{app_id}}"
 }
 
 ### metadata.AppAddDB
@@ -78,8 +78,8 @@ POST http://{{baseURL}}/api/v1/metadata/app/add-db
 Content-Type: application/json
 
 {
-    "id":"{{app_id}}",
     "token": "{{token}}",
+    "id":"{{app_id}}",
     "db_id":"{{db_id}}"
 }
 
@@ -88,8 +88,8 @@ POST http://{{baseURL}}/api/v1/metadata/app/add-user
 Content-Type: application/json
 
 {
-    "id":"{{app_id}}",
     "token": "{{token}}",
+    "id":"{{app_id}}",
     "user_id":"{{user_id}}"
 }
 
@@ -99,8 +99,8 @@ POST http://{{baseURL}}/api/v1/metadata/app/delete-db
 Content-Type: application/json
 
 {
-    "id":"{{app_id}}",
     "token": "{{token}}",
+    "id":"{{app_id}}",
     "db_id":"{{db_id}}"
 }
 
@@ -109,7 +109,7 @@ POST http://{{baseURL}}/api/v1/metadata/app/delete-user
 Content-Type: application/json
 
 {
-    "id":"{{app_id}}",
     "token": "{{token}}",
+    "id":"{{app_id}}",
     "user_id":"{{user_id}}"
 }
