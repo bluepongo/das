@@ -12,7 +12,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}"
+    "id":{{app_id}}
 }
 
 ### metadata.GetAppByName
@@ -30,7 +30,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}"
+    "id":{{app_id}}
 }
 
 ### metadata.GetUsersByAppID
@@ -39,7 +39,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}"
+    "id":{{app_id}}
 }
 
 ### metadata.AddApp
@@ -49,8 +49,7 @@ Content-Type: application/json
 {
     "token": "{{token}}",
     "app_name": "{{app_name}}",
-    "level":"{{level}}",
-    "owner_id":"{{owner_id}}"
+    "level":{{level}}
 }
 
 ### metadata.UpdateAppByID
@@ -59,10 +58,9 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}",
+    "id":{{app_id}},
     "app_name": "{{app_name}}",
-    "level":"{{level}}",
-    "owner_id":":{{owner_id}}"
+    "level":{{level}}
 }
 
 ### metadata.DeleteAppByID
@@ -70,7 +68,7 @@ POST http://{{baseURL}}/api/v1/metadata/app/delete
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}"
+    "id":{{app_id}}
 }
 
 ### metadata.AppAddDB
@@ -79,8 +77,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}",
-    "db_id":"{{db_id}}"
+    "id":{{app_id}},
+    "db_id":{{db_id}}
 }
 
 ### metadata.AppAddUser
@@ -89,8 +87,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}",
-    "user_id":"{{user_id}}"
+    "id":{{app_id}},
+    "user_id":{{user_id}}
 }
 
 
@@ -100,8 +98,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}",
-    "db_id":"{{db_id}}"
+    "id":{{app_id}},
+    "db_id":{{db_id}}
 }
 
 ### metadata.AppDeleteUser
@@ -110,6 +108,6 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{app_id}}",
-    "user_id":"{{user_id}}"
+    "id":{{app_id}},
+    "user_id":{{user_id}}
 }

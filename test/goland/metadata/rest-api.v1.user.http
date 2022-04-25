@@ -20,7 +20,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{user_id}}"
+    "id":{{user_id}}
 }
 
 ### GetUserByEmployeeID
@@ -87,8 +87,8 @@ Content-Type: application/json
   "department_name": "{{department_name}}",
   "employee_id": "{{employee_id}}", 
   "telephone": "{{telephone}}",
-  "role": "{{role}}",
-  "del_flag": "{{del_flag}}",
+  "role": {{role}},
+  "del_flag": {{del_flag}},
   "user_name": "{{user_name}}",
   "account_name": "{{account_name}}",
   "email": "{{email}}",
@@ -101,12 +101,12 @@ Content-Type: application/json
 
 {
   "token": "{{token}}",
-  "id":"{{user_id}}",
+  "id":{{user_id}},
   "department_name": "{{department_name}}",
   "employee_id": "{{employee_id}}", 
   "telephone": "{{telephone}}",
-  "role": "{{role}}",
-  "del_flag": "{{del_flag}}",
+  "role": {{role}},
+  "del_flag": {{del_flag}},
   "user_name": "{{user_name}}",
   "account_name": "{{account_name}}",
   "email": "{{email}}",
@@ -119,7 +119,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{user_id}}"
+    "id":{{user_id}}
 }
 
 ### get all apps by id
@@ -128,7 +128,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{user_id}}"
+    "id":{{user_id}}
 }
 
 ### get all dbs by id
@@ -137,7 +137,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{user_id}}"
+    "id":{{user_id}}
 }
 
 ### get all middlewareclusters by id
@@ -146,7 +146,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{user_id}}"
+    "id":{{user_id}}
 }
 
 ### get all mysqlclusters by id
@@ -155,7 +155,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{user_id}}"
+    "id":{{user_id}}
 }
 
 ### get all mysqlservers by id
@@ -164,6 +164,6 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":"{{user_id}}"
+    "id":{{user_id}}
 }
 
