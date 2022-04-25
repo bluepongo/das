@@ -30,7 +30,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "host_ip": {{monitor_system_host_ip}},
+    "host_ip": "{{monitor_system_host_ip}}",
     "port_num": {{monitor_system_port_num}}
 }
 

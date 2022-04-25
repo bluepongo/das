@@ -30,7 +30,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "db_name": {{db_name}},
+    "db_name": "{{db_name}}",
     "cluster_id": {{mysql_cluster_id}},
     "cluster_type": {{mysql_cluster_type}}
 }
@@ -41,8 +41,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "db_name": {{db_name}},
-    "host_ip": {{mysql_host_ip}},
+    "db_name": "{{db_name}}",
+    "host_ip": "{{mysql_host_ip}}",
     "port_num": {{mysql_port_num}}
 }
 
@@ -52,7 +52,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "host_ip": {{mysql_host_ip}},
+    "host_ip": "{{mysql_host_ip}}",
     "port_num": {{mysql_port_num}}
 }
 
@@ -107,7 +107,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "db_name": {{db_name}},
+    "db_name": "{{db_name}}",
     "cluster_id": {{mysql_cluster_id}},
     "cluster_type": {{mysql_cluster_type}},
     "env_id": {{env_id}}
@@ -121,7 +121,7 @@ Content-Type: application/json
     "token": "{{token}}",
     "id": {{db_id}},
     "db_name": "new_db",
-    "cluster_id": "192.168.10.219",
+    "cluster_id": 1,
     "cluster_type": 1,
     "env_id": 1,
     "del_flag": 0
