@@ -59,7 +59,7 @@ func TestQuerier_GetByMySQLServerID(t *testing.T) {
 func TestQuerier_GetByDBID(t *testing.T) {
 	asst := assert.New(t)
 
-	queries, err := testQuerier.GetByDBID(testMySQLServerID, testDBID)
+	queries, err := testQuerier.GetByDBID(testDBID)
 	asst.Nil(err, common.CombineMessageWithError("test GetByDBID() failed", err))
 	asst.GreaterOrEqual(len(queries), constant.ZeroInt, "test GetByDBID() failed")
 }
