@@ -1,6 +1,5 @@
 @baseURL = 127.0.0.1:6090
 @token = 
-
 ### metadata.GetApp
 GET http://{{baseURL}}/api/v1/metadata/app 
 Accept: application/json
@@ -52,8 +51,7 @@ Content-Type: application/json
 {
     "token": "{{token}}",
     "app_name": "10086",
-    "level":1,
-    "owner_id":1
+    "level":1
 }
 
 ### metadata.UpdateAppByID
@@ -64,8 +62,7 @@ Content-Type: application/json
     "token": "{{token}}",
     "id":16,
     "app_name": "10000",
-    "level":1,
-    "owner_id":1
+    "level":1
 }
 
 ### metadata.DeleteAppByID
