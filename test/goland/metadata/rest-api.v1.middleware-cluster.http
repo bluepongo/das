@@ -30,7 +30,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "cluster_name": "{{cluster_name}}"
+    "cluster_name": "{{middleware_cluster_name}}"
 }
 
 ### get middleware server list by cluster id
@@ -58,7 +58,7 @@ Content-Type: application/json
 {
     "token": "{{token}}",
     "cluster_name": "new_middleware_cluster",
-    "env_id": 1
+    "env_id": {{env_id}}
 }
 
 ### update middleware cluster by id
@@ -67,17 +67,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{middleware_cluster_id}},
+    "id": {{new_middleware_cluster_id}},
     "cluster_name": "update_middleware_cluster"
-}
-
-### delete middleware cluster by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/delete
-Content-Type: application/json
-
-{
-    "token": "{{token}}",
-    "id": {{middleware_cluster_id}}
 }
 
 ### add a new map of middleware cluster and user in the middleware
@@ -86,7 +77,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{middleware_cluster_id}},
+    "id": {{new_middleware_cluster_id}},
     "user_id": {{user_id}}
 }
 
@@ -96,6 +87,15 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{middleware_cluster_id}},
+    "id": {{new_middleware_cluster_id}},
     "user_id": {{user_id}}
+}
+
+### delete middleware cluster by id
+POST http://{{baseURL}}/api/v1/metadata/middleware-cluster/delete
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{new_middleware_cluster_id}}
 }

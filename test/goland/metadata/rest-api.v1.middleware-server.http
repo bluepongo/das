@@ -30,8 +30,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "host_ip": "192.168.10.219",
-    "port_num": 33061
+    "host_ip": "{{middleware_host_ip}}",
+    "port_num": {{middleware_port_num}}
 }
 
 ### add new middleware server
@@ -43,7 +43,7 @@ Content-Type: application/json
     "cluster_id": 1,
     "server_name": "new_middleware_server",
     "middleware_role": 1,
-    "host_ip": "192.168.10.219",
+    "host_ip": "192.168.137.11",
     "port_num": 33062
 }
 
@@ -53,7 +53,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{middleware_server_id}},
+    "id": {{new_middleware_server_id}},
     "server_name": "update_middeware_server"
 }
 
@@ -63,5 +63,5 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{middleware_server_id}}
+    "id": {{new_middleware_server_id}}
 }

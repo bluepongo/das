@@ -107,7 +107,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "db_name": "{{db_name}}",
+    "id": {{new_db_id}},
+    "db_name": "{{new_db_name}}",
     "cluster_id": {{mysql_cluster_id}},
     "cluster_type": {{mysql_cluster_type}},
     "env_id": {{env_id}}
@@ -119,21 +120,12 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{db_id}},
+    "id": {{new_db_id}},
     "db_name": "new_db",
     "cluster_id": 1,
     "cluster_type": 1,
     "env_id": 1,
     "del_flag": 0
-}
-
-### delete database by id
-POST http://{{baseURL}}/api/v1/metadata/db/delete
-Content-Type: application/json
-
-{
-    "token": "{{token}}",
-    "id": {{db_id}}
 }
 
 ### add new app by id
@@ -142,8 +134,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{db_id}},
-    "app_id": 3
+    "id": {{new_db_id}},
+    "app_id": {{app_id}}
 }
 
 ### delete app by id
@@ -152,8 +144,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{db_id}},
-    "app_id": 3
+    "id": {{new_db_id}},
+    "app_id": {{app_id}}
 }
 
 ### add new user by id
@@ -162,8 +154,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{db_id}},
-    "user_id": 3
+    "id": {{new_db_id}},
+    "user_id": {{user_id}}
 }
 
 ### delete user by id
@@ -172,6 +164,15 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{db_id}},
-    "user_id": 3
+    "id": {{new_db_id}},
+    "user_id": {{user_id}}
+}
+
+### delete database by id
+POST http://{{baseURL}}/api/v1/metadata/db/delete
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{new_db_id}}
 }
