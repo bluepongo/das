@@ -65,7 +65,7 @@ func TestService_GetByHostInfo(t *testing.T) {
 func TestService_GetByDBID(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testService.GetByDBID(testMySQLServerID, testDBID)
+	err := testService.GetByDBID(testDBID)
 	asst.Nil(err, common.CombineMessageWithError("test GetByDBID() failed", err))
 }
 

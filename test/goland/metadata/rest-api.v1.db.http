@@ -7,19 +7,21 @@ Content-Type: application/json
 }
 
 ### get all databases by env_id
-GET http://{{baseURL}}/api/v1/metadata/db/env/1
+GET http://{{baseURL}}/api/v1/metadata/db/env
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "env_id": {{env_id}}
 }
 
 ### get database by id
-GET http://{{baseURL}}/api/v1/metadata/db/get/1
+GET http://{{baseURL}}/api/v1/metadata/db/get
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id": {{db_id}}
 }
 
 ### get database by db name and cluster info
@@ -27,10 +29,10 @@ GET http://{{baseURL}}/api/v1/metadata/db/name-and-cluster-info
 Content-Type: application/json
 
 {
-    "db_name": "new_db",
-    "cluster_id": 1,
-    "cluster_type": 1,
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "db_name": "{{db_name}}",
+    "cluster_id": {{mysql_cluster_id}},
+    "cluster_type": {{mysql_cluster_type}}
 }
 
 ### get database by db name and host info
@@ -38,59 +40,65 @@ GET http://{{baseURL}}/api/v1/metadata/db/name-and-host-info
 Content-Type: application/json
 
 {
-    "db_name": "pmm_test",
-    "host_ip": "192.168.10.219",
-    "port_num": 3306,
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "db_name": "{{db_name}}",
+    "host_ip": "{{mysql_host_ip}}",
+    "port_num": {{mysql_port_num}}
 }
 
 ### get databases by host info
 GET http://{{baseURL}}/api/v1/metadata/db/host-info
 Content-Type: application/json
 
-{   "host_ip": "192.168.10.219",
-    "port_num": 3306,
-    "token": "{{token}}"
+{
+    "token": "{{token}}",
+    "host_ip": "{{mysql_host_ip}}",
+    "port_num": {{mysql_port_num}}
 }
 
 ### get all apps by id
-GET http://{{baseURL}}/api/v1/metadata/db/app/1
+GET http://{{baseURL}}/api/v1/metadata/db/app
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id": {{db_id}}
 }
 
 ### get mysql cluster by id
-GET http://{{baseURL}}/api/v1/metadata/db/mysql-cluster/1
+GET http://{{baseURL}}/api/v1/metadata/db/mysql-cluster
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id": {{db_id}}
 }
 
 ### get app user by id
-GET http://{{baseURL}}/api/v1/metadata/db/app-user/1
+GET http://{{baseURL}}/api/v1/metadata/db/app-user
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id": {{db_id}}
 }
 
 ### get db user by id
-GET http://{{baseURL}}/api/v1/metadata/db/db-user/1
+GET http://{{baseURL}}/api/v1/metadata/db/db-user
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id": {{db_id}}
 }
 
 ### get all user by id
-GET http://{{baseURL}}/api/v1/metadata/db/all-user/1
+GET http://{{baseURL}}/api/v1/metadata/db/all-user
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "token": "{{token}}",
+    "id": {{db_id}}
 }
 
 ### add new database
@@ -99,61 +107,71 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "db_name": "new_db_4",
-    "cluster_id": 1,
-    "cluster_type": 1,
-    "env_id": 1
+    "db_name": "{{db_name}}",
+    "cluster_id": {{mysql_cluster_id}},
+    "cluster_type": {{mysql_cluster_type}},
+    "env_id": {{env_id}}
 }
 
 ### update database by id
-POST http://{{baseURL}}/api/v1/metadata/db/update/229
+POST http://{{baseURL}}/api/v1/metadata/db/update
 Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "db_name": "update_db"
+    "id": {{db_id}},
+    "db_name": "new_db",
+    "cluster_id": 1,
+    "cluster_type": 1,
+    "env_id": 1,
+    "del_flag": 0
 }
 
 ### delete database by id
-POST http://{{baseURL}}/api/v1/metadata/db/delete/229
-Content-Type: application/json
-
-{
-    "token": "{{token}}"
-}
-
-### add new app by id
-POST http://{{baseURL}}/api/v1/metadata/db/add-app/1
+POST http://{{baseURL}}/api/v1/metadata/db/delete
 Content-Type: application/json
 
 {
     "token": "{{token}}",
+    "id": {{db_id}}
+}
+
+### add new app by id
+POST http://{{baseURL}}/api/v1/metadata/db/add-app
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{db_id}},
     "app_id": 3
 }
 
 ### delete app by id
-POST http://{{baseURL}}/api/v1/metadata/db/delete-app/1
+POST http://{{baseURL}}/api/v1/metadata/db/delete-app
 Content-Type: application/json
 
 {
     "token": "{{token}}",
+    "id": {{db_id}},
     "app_id": 3
 }
 
 ### add new user by id
-POST http://{{baseURL}}/api/v1/metadata/db/add-user/1
+POST http://{{baseURL}}/api/v1/metadata/db/add-user
 Content-Type: application/json
 
 {
     "token": "{{token}}",
+    "id": {{db_id}},
     "user_id": 3
 }
 
 ### delete user by id
-POST http://{{baseURL}}/api/v1/metadata/db/delete-user/1
+POST http://{{baseURL}}/api/v1/metadata/db/delete-user
 Content-Type: application/json
 
 {
     "token": "{{token}}",
+    "id": {{db_id}},
     "user_id": 3
 }

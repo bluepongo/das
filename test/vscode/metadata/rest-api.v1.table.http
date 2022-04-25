@@ -1,5 +1,11 @@
 @baseURL = localhost:6090
 @token = f3171bd9-beec-11ec-acc0-000c291d6734
+@db_id = 4
+@login_name = yc_admin
+@table_name = test
+@mysql_host_ip = 127.0.0.1
+@mysql_port_num = 3306
+@db_name = yc
 
 ### get tables by db id
 GET http://{{baseURL}}/api/v1/metadata/table/db
@@ -7,8 +13,8 @@ Content-Type: : application/json
 
 {
     "token": "{{token}}",
-    "db_id": 4,
-    "login_name": "yc_admin"
+    "db_id": {{db_id}},
+    "login_name": "{{login_name}}"
 }
 
 ### get table statistics by db id and table name
@@ -17,9 +23,9 @@ Content-Type: : application/json
 
 {
     "token": "{{token}}",
-    "db_id": 4,
-    "table_name": "test",
-    "login_name": "yc_admin"
+    "db_id": {{db_id}},
+    "table_name": "{{table_name}}",
+    "login_name": "{{login_name}}"
 }
 
 ### get table statistics by host info and db name and table name
@@ -28,11 +34,11 @@ Content-Type: : application/json
 
 {
     "token": "{{token}}",
-    "host_ip": "127.0.0.1",
-    "port_num": 3306,
-    "db_name": "das",
-    "table_name": "t_meta_mysql_cluster_info",
-    "login_name": "yc_admin"
+    "host_ip": "{{mysql_host_ip}}",
+    "port_num": {{mysql_port_num}},
+    "db_name": "{{db_name}}",
+    "table_name": "{{table_name}}",
+    "login_name": "{{login_name}}"
 }
 
 ### analyze table by db id and table name
@@ -41,20 +47,20 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "db_id": 4,
-    "table_name": "test",
-    "login_name": "yc_guest"
+    "db_id": {{db_id}},
+    "table_name": "{{table_name}}",
+    "login_name": "{{login_name}}"
 }
 
 ### analyze table by host info and db name and table name
-POST http://{{baseURL}}/api/v1/metadata/table/analyze/host-info
+POST http://{{baseURL}}/api/v1/metadata/table/analyze/host-info-db
 Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "host_ip": "127.0.0.1",
-    "port_num": 3306,
-    "db_name": "yc",
-    "table_name": "test",
-    "login_name": "yc_admin"
+    "host_ip": "{{mysql_host_ip}}",
+    "port_num": {{mysql_port_num}},
+    "db_name": "{{db_name}}",
+    "table_name": "{{table_name}}",
+    "login_name": "{{login_name}}"
 }
