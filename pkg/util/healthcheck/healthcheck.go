@@ -60,3 +60,16 @@ func (cbhi *CheckByHostInfo) GetStep() string {
 func (cbhi *CheckByHostInfo) GetLoginName() string {
 	return cbhi.LoginName
 }
+
+type ReviewAccuracy struct {
+	OperationID int `json:"operation_id" binding:"required"`
+	Review      int `json:"review" binding:"required"`
+}
+
+func (ra *ReviewAccuracy) GetOperationID() int {
+	return ra.OperationID
+}
+
+func (ra *ReviewAccuracy) GetReview() int {
+	return ra.Review
+}

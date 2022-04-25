@@ -248,36 +248,22 @@ func CheckByHostInfo(c *gin.Context) {
 // @Router /api/v1/healthcheck/review [post]
 func ReviewAccuracy(c *gin.Context) {
 	// get data
-	data, err := c.GetRawData()
+	var rd *utilhealth.ReviewAccuracy
+	// bind json
+	err := c.ShouldBindJSON(&rd)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
-		return
-	}
-	dataMap := make(map[string]int)
-	err = json.Unmarshal(data, &dataMap)
-	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckCheck, errors.Trace(err))
-		return
-	}
-	operationID, operationIDExists := dataMap[operationIDJSON]
-	if !operationIDExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, operationIDJSON)
-		return
-	}
-	review, reviewExists := dataMap[reviewJSON]
-	if !reviewExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, reviewJSON)
+		resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
 		return
 	}
 	// init service
 	s := healthcheck.NewServiceWithDefault()
 	// review accuracy
-	err = s.ReviewAccuracy(operationID, review)
+	err = s.ReviewAccuracy(rd.GetOperationID(), rd.GetReview())
 	if err != nil {
-		resp.ResponseNOK(c, msghealth.ErrHealthcheckReviewAccuracy, err, operationID)
+		resp.ResponseNOK(c, msghealth.ErrHealthcheckReviewAccuracy, err, rd.GetOperationID())
 		return
 	}
 
 	log.Debug(message.NewMessage(msghealth.DebugHealthcheckReviewAccuracy, reviewAccuracyRespMessage).Error())
-	resp.ResponseOK(c, fmt.Sprintf(reviewAccuracyRespMessage, operationID), msghealth.InfoHealthcheckReviewAccuracy, operationID)
+	resp.ResponseOK(c, fmt.Sprintf(reviewAccuracyRespMessage, rd.GetOperationID()), msghealth.InfoHealthcheckReviewAccuracy, rd.GetOperationID())
 }

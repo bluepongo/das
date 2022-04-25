@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"fmt"
+
 	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
@@ -19,12 +20,14 @@ const (
 	middlewareClusterClusterNameJSON = "cluster_name"
 	middlewareClusterEnvIDJSON       = "env_id"
 	middlewareClusterUserIDJSON      = "user_id"
+	middlewareClusterDelFlagJSON     = "del_flag"
 
 	middlewareClusterIDStruct                = "ID"
 	middlewareClusterClusterNameStruct       = "ClusterName"
 	middlewareClusterEnvIDStruct             = "EnvID"
 	middlewareClusterMiddlewareServersStruct = "MiddlewareServers"
 	middlewareClusterUsersStruct             = "Users"
+	middlewareClusterDelFlagStruct           = "DelFlag"
 )
 
 // @Tags	middleware cluster
@@ -337,7 +340,7 @@ func UpdateMiddlewareClusterByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	idInterface, idExists := fields[middlewareClusterIDJSON]
+	idInterface, idExists := fields[middlewareClusterIDStruct]
 	if !idExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareClusterIDJSON)
 		return
@@ -349,9 +352,9 @@ func UpdateMiddlewareClusterByID(c *gin.Context) {
 	}
 	_, middlewareClusterNameExists := fields[middlewareClusterClusterNameStruct]
 	_, middlewareClusterEnvIDExists := fields[middlewareClusterEnvIDStruct]
-	_, delFlagExists := fields[envDelFlagStruct]
-	if !middlewareClusterNameExists && !middlewareClusterEnvIDExists && !delFlagExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s %s and %s", middlewareClusterClusterNameJSON, middlewareClusterEnvIDJSON, envDelFlagJSON))
+	_, middlewareClusterDelFlagExists := fields[middlewareClusterDelFlagStruct]
+	if !middlewareClusterNameExists && !middlewareClusterEnvIDExists && !middlewareClusterDelFlagExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s %s and %s", middlewareClusterClusterNameJSON, middlewareClusterEnvIDJSON, middlewareClusterDelFlagJSON))
 		return
 	}
 	// init service
@@ -436,9 +439,9 @@ func MiddlewareClusterAddUser(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), middlewareClusterIDJSON)
 		return
 	}
-	userID, err := jsonparser.GetInt(data, userIDJSON)
+	userID, err := jsonparser.GetInt(data, middlewareClusterUserIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), userIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), middlewareClusterUserIDJSON)
 		return
 	}
 	// init service
@@ -482,9 +485,9 @@ func MiddlewareClusterDeleteUser(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), middlewareClusterIDJSON)
 		return
 	}
-	userID, err := jsonparser.GetInt(data, middlewareClusterIDJSON)
+	userID, err := jsonparser.GetInt(data, middlewareClusterUserIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), middlewareClusterIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), middlewareClusterUserIDJSON)
 		return
 	}
 	// init service

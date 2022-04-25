@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"fmt"
+
 	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
@@ -253,14 +254,14 @@ func AddMiddlewareServer(c *gin.Context) {
 // @Accept	application/json
 // @Param	token 			body 	string 	true 	"token"
 // @Param	id 				body 	string 	true 	"middleware server id"
-// @Param	cluster_id		body	int		true	"middleware cluster id"
+// @Param	cluster_id		body	int		false	"middleware cluster id"
 // @Param	server_name		body	string	false	"middleware server name"
 // @Param	middleware_role	body	int		false	"middleware role"
 // @Param	host_ip			body	string	false	"host ip"
 // @Param	port_num		body	int		false	"port number"
 // @Param	del_flag		body	int		false	"delete flag"
 // @Produce	application/json
-// @Success	200 {string} string {"middleware_servers":[{"del_flag":0,"server_name":"update_middeware_server","host_ip":"192.168.10.219","port_num":33061,"middleware_role":1,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"cluster_id":1}]}
+// @Success	200 {string} string {"middleware_servers":[{"del_flag":0,"server_name":"update_middleware_server","host_ip":"192.168.10.219","port_num":33061,"middleware_role":1,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"cluster_id":1}]}
 // @Router	/api/v1/metadata/middleware-server/update [post]
 func UpdateMiddlewareServerByID(c *gin.Context) {
 	var fields map[string]interface{}
@@ -277,7 +278,7 @@ func UpdateMiddlewareServerByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	idInterface, idExists := fields[middlewareServerIDJSON]
+	idInterface, idExists := fields[middlewareServerIDStruct]
 	if !idExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, middlewareServerIDJSON)
 		return
@@ -292,9 +293,18 @@ func UpdateMiddlewareServerByID(c *gin.Context) {
 	_, middlewareServerMiddlewareRoleExists := fields[middlewareServerMiddlewareRoleStruct]
 	_, middlewareServerHostIPExists := fields[middlewareServerHostIPStruct]
 	_, middlewareServerPortNumExists := fields[middlewareServerPortNumStruct]
-	_, delFlagExists := fields[envDelFlagStruct]
-	if !middlewareServerClusterIDExists && !middlewareServerNameExists && !middlewareServerMiddlewareRoleExists && !middlewareServerHostIPExists && !middlewareServerPortNumExists && !delFlagExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s", middlewareServerNameJSON, envDelFlagJSON))
+	_, middlewareServerDelFlagExists := fields[middlewareClusterDelFlagStruct]
+	if !middlewareServerClusterIDExists && !middlewareServerNameExists && !middlewareServerMiddlewareRoleExists && !middlewareServerHostIPExists && !middlewareServerPortNumExists && !middlewareServerDelFlagExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists,
+			fmt.Sprintf("%s, %s, %s, %s, %s and %s",
+				middlewareServerClusterIDJSON,
+				middlewareServerNameJSON,
+				middlewareServerMiddlewareRoleJSON,
+				middlewareServerHostIPJSON,
+				middlewareServerPortNumJSON,
+				monitorSystemDelFlagJSON,
+			),
+		)
 		return
 	}
 	// init service
