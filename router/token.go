@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
@@ -18,7 +19,8 @@ import (
 )
 
 const (
-	tokenTokenJSON = "token"
+	tokenTokenJSON   = "token"
+	tokenSwaggerPath = "/swagger"
 )
 
 type TokenAuth struct {
@@ -77,6 +79,11 @@ func (ta *TokenAuth) GetTokens() ([]string, error) {
 
 func (ta *TokenAuth) GetHandlerFunc(tokens []string) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if strings.HasPrefix(c.Request.URL.Path, tokenSwaggerPath) {
+			// do not check token for swagger
+			return
+		}
+
 		var fields map[string]interface{}
 		// get data
 		data, err := c.GetRawData()
