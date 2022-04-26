@@ -424,7 +424,7 @@ var doc = `{
                 "tags": [
                     "application"
                 ],
-                "summary": "add a new application",
+                "summary": "update application by id",
                 "parameters": [
                     {
                         "description": "token",
@@ -436,99 +436,12 @@ var doc = `{
                         }
                     },
                     {
-                        "description": "app name",
-                        "name": "app_name",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "app level",
-                        "name": "level",
+                        "description": "app id",
+                        "name": "id",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"apps\": [ {\"id\": 2,\"app_name\": \"app2\",\"level\": 2,\"del_flag\": 0,\"create_time\": \"2021-10-25T09:46:04.275796+08:00\",\"last_update_time\": \"2021-12-21T09:15:47.688546+08:00\"}]}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/metadata/app/:id": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "application"
-                ],
-                "summary": "get application by id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "app id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"apps\": [ {\"id\": 2,\"app_name\": \"app2\",\"level\": 2,\"del_flag\": 0,\"create_time\": \"2021-10-25T09:46:04.275796+08:00\",\"last_update_time\": \"2021-12-21T09:15:47.688546+08:00\"}]}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "application"
-                ],
-                "summary": "update application by id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "app id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
                         }
                     },
                     {
@@ -566,7 +479,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/app/add-db/:id": {
+        "/api/v1/metadata/app/add-db": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -580,19 +493,21 @@ var doc = `{
                 "summary": "add database map",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "app id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "app id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -615,7 +530,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/app/add-user/:id": {
+        "/api/v1/metadata/app/add-user": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -629,19 +544,21 @@ var doc = `{
                 "summary": "add user map",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "app id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "app id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -663,7 +580,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/app/app-name/:name": {
+        "/api/v1/metadata/app/app-name": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -677,15 +594,17 @@ var doc = `{
                 "summary": "get application by system name",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "app name",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "app name",
+                        "name": "app_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -703,7 +622,49 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/app/delete-db/:id": {
+        "/api/v1/metadata/app/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "application"
+                ],
+                "summary": "delete app by id",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "app id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"apps\": [ {\"id\": 2,\"app_name\": \"app2\",\"level\": 2,\"del_flag\": 0,\"create_time\": \"2021-10-25T09:46:04.275796+08:00\",\"last_update_time\": \"2021-12-21T09:15:47.688546+08:00\"}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/app/delete-db": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -717,19 +678,21 @@ var doc = `{
                 "summary": "delete database map",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "app id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "app id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -751,7 +714,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/app/delete-user/:id": {
+        "/api/v1/metadata/app/delete-user": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -765,19 +728,21 @@ var doc = `{
                 "summary": "delete user map",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "app id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "app id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -800,8 +765,8 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/app/delete/:id": {
-            "post": {
+        "/api/v1/metadata/app/get": {
+            "get": {
                 "consumes": [
                     "application/json"
                 ],
@@ -809,17 +774,10 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "middleware cluster"
+                    "application"
                 ],
-                "summary": "delete middleware cluster by id",
+                "summary": "get application by id",
                 "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "middleware cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "description": "token",
                         "name": "token",
@@ -828,11 +786,20 @@ var doc = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "description": "app id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "middleware_clusters\":[{\"id\":65,\"cluster_name\":\"new_middleware_cluster\",\"env_id\":1,\"del_flag\":0,\"create_time\":\"2022-03-02T10:39:06.206145+08:00\",\"last_update_time\":\"2022-03-02T10:39:06.206145+08:00\"}]}",
+                        "description": "{\"apps\": [ {\"id\": 2,\"app_name\": \"app2\",\"level\": 2,\"del_flag\": 0,\"create_time\": \"2021-10-25T09:46:04.275796+08:00\",\"last_update_time\": \"2021-12-21T09:15:47.688546+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -939,7 +906,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/db/add-app/:id": {
+        "/api/v1/metadata/db/add-app": {
             "post": {
                 "produces": [
                     "application/json"
@@ -950,19 +917,21 @@ var doc = `{
                 "summary": "add application map",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "db id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "db id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -985,7 +954,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/db/add-user/:id": {
+        "/api/v1/metadata/db/add-user": {
             "post": {
                 "produces": [
                     "application/json"
@@ -996,19 +965,21 @@ var doc = `{
                 "summary": "add user map",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "db id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "db id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -1031,7 +1002,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/db/all-user/:id": {
+        "/api/v1/metadata/db/all-user": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -1045,19 +1016,21 @@ var doc = `{
                 "summary": "get all users",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "db id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "db id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1071,47 +1044,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/db/app-user/:id": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "database"
-                ],
-                "summary": "get app users",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "db id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"users\": [{\"department_name\": \"dn\",\"account_name\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/metadata/db/app/:id": {
+        "/api/v1/metadata/db/app": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -1125,19 +1058,21 @@ var doc = `{
                 "summary": "get apps by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "db id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "db id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1151,7 +1086,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/db/db-user/:id": {
+        "/api/v1/metadata/db/app-user": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -1162,15 +1097,8 @@ var doc = `{
                 "tags": [
                     "database"
                 ],
-                "summary": "get db users",
+                "summary": "get app users",
                 "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "db id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "description": "token",
                         "name": "token",
@@ -1178,6 +1106,15 @@ var doc = `{
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "db id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1191,7 +1128,91 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/db/delete-app/:id": {
+        "/api/v1/metadata/db/db-user": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "database"
+                ],
+                "summary": "get db users",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "db id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"users\": [{\"department_name\": \"dn\",\"account_name\": \"da\", \"mobile\": \"m\", \"del_flag\": 0,\"last_update_time\": \"2021-01-21T13:00:00+08:00\",\"user_name\": \"un\",\"create_time\": \"2021-01-21T13:00:00+08:00\",\"employee_id\": 1,\"email\": \"e\",\"telephone\": \"t\",\"role\": 1, \"id\": 1}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/db/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "database"
+                ],
+                "summary": "delete database by id",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "db id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"dbs\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/db/delete-app": {
             "post": {
                 "produces": [
                     "application/json"
@@ -1202,19 +1223,21 @@ var doc = `{
                 "summary": "delete application map",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "db id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "db id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -1283,47 +1306,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/db/delete/:id": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "database"
-                ],
-                "summary": "delete database by id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "db id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"dbs\": [{\"id\": 1, \"db_name\": \"db1\", \"cluster_id\": 1, \"cluster_type\": 1, \"env_id\": 1, \"del_flag\": 0, \"create_time\": \"2021-01-22T09:59:21.379851+08:00\", \"last_update_time\": \"2021-01-22T09:59:21.379851+08:00\"}]}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/metadata/db/env/:env_id": {
+        "/api/v1/metadata/db/env": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -1337,19 +1320,21 @@ var doc = `{
                 "summary": "get database by env_id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "env id",
-                        "name": "env_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "env id",
+                        "name": "env_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1363,7 +1348,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/db/get/:id": {
+        "/api/v1/metadata/db/get": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -1377,19 +1362,21 @@ var doc = `{
                 "summary": "get database by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "db id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "db id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1417,6 +1404,15 @@ var doc = `{
                 "summary": "get databases by host info",
                 "parameters": [
                     {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "host_ip",
                         "name": "host_ip",
                         "in": "body",
@@ -1433,15 +1429,6 @@ var doc = `{
                         "schema": {
                             "type": "integer"
                         }
-                    },
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 ],
                 "responses": {
@@ -1454,7 +1441,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/db/mysql-cluster/:id": {
+        "/api/v1/metadata/db/mysql-cluster": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -1468,19 +1455,21 @@ var doc = `{
                 "summary": "get mysql cluster by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "db id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "db id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1508,6 +1497,15 @@ var doc = `{
                 "summary": "get database by db name and cluster info",
                 "parameters": [
                     {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "db name",
                         "name": "db_name",
                         "in": "body",
@@ -1532,15 +1530,6 @@ var doc = `{
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
                         }
                     }
                 ],
@@ -1568,6 +1557,15 @@ var doc = `{
                 "summary": "get database by db name and host info",
                 "parameters": [
                     {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "db name",
                         "name": "db_name",
                         "in": "body",
@@ -1593,15 +1591,6 @@ var doc = `{
                         "schema": {
                             "type": "integer"
                         }
-                    },
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 ],
                 "responses": {
@@ -1614,7 +1603,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/db/update/:id": {
+        "/api/v1/metadata/db/update": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -1628,19 +1617,21 @@ var doc = `{
                 "summary": "update database by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "db id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "db id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -2000,7 +1991,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/middleware-cluster/add-user/:id": {
+        "/api/v1/metadata/middleware-cluster/add-user": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -2014,19 +2005,21 @@ var doc = `{
                 "summary": "add user map",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "middleware cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "middleware cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -2049,7 +2042,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/middleware-cluster/cluster-name/:cluster_name": {
+        "/api/v1/metadata/middleware-cluster/cluster-name": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -2063,15 +2056,17 @@ var doc = `{
                 "summary": "get middleware cluster by name",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "middleware cluster name",
-                        "name": "cluster_name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "middleware cluster name",
+                        "name": "cluster_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -2089,7 +2084,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/middleware-cluster/delete-user/:id": {
+        "/api/v1/metadata/middleware-cluster/delete-user": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -2103,19 +2098,21 @@ var doc = `{
                 "summary": "delete user map",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "middleware cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "middleware cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -2138,7 +2135,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/middleware-cluster/env/:env_id": {
+        "/api/v1/metadata/middleware-cluster/env": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -2152,19 +2149,21 @@ var doc = `{
                 "summary": "get middleware cluster by env_id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "env id",
-                        "name": "env_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "env id",
+                        "name": "env_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2178,7 +2177,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/middleware-cluster/get/:id": {
+        "/api/v1/metadata/middleware-cluster/get": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -2192,19 +2191,21 @@ var doc = `{
                 "summary": "get middleware cluster by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "middleware cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "middleware cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2218,7 +2219,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/middleware-cluster/update/:id": {
+        "/api/v1/metadata/middleware-cluster/update": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -2241,11 +2242,13 @@ var doc = `{
                         }
                     },
                     {
-                        "type": "integer",
                         "description": "middleware cluster id",
                         "name": "id",
-                        "in": "path",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     },
                     {
                         "description": "middleware cluster name",
@@ -2391,7 +2394,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/middleware-server/cluster-id/:cluster_id": {
+        "/api/v1/metadata/middleware-server/cluster-id": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -2405,19 +2408,21 @@ var doc = `{
                 "summary": "get middleware servers by cluster id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "middleware cluster id",
-                        "name": "cluster_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "middleware cluster id",
+                        "name": "cluster_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2431,7 +2436,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/middleware-server/delete/:id": {
+        "/api/v1/metadata/middleware-server/delete": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -2445,19 +2450,21 @@ var doc = `{
                 "summary": "delete middleware server by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "middleware server id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "middleware server id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2471,7 +2478,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/middleware-server/get/:id": {
+        "/api/v1/metadata/middleware-server/get": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -2485,19 +2492,21 @@ var doc = `{
                 "summary": "get middleware server by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "middleware server id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "middleware server id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2562,7 +2571,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/middleware-server/update/:id": {
+        "/api/v1/metadata/middleware-server/update": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -2585,10 +2594,18 @@ var doc = `{
                         }
                     },
                     {
+                        "description": "middleware server id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "middleware cluster id",
                         "name": "cluster_id",
                         "in": "body",
-                        "required": true,
                         "schema": {
                             "type": "integer"
                         }
@@ -2636,7 +2653,7 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "middleware_servers\":[{\"del_flag\":0,\"server_name\":\"update_middeware_server\",\"host_ip\":\"192.168.10.219\",\"port_num\":33061,\"middleware_role\":1,\"create_time\":\"2021-11-17T14:47:10.521279+08:00\",\"last_update_time\":\"2021-11-18T15:54:10.599097+08:00\",\"id\":1,\"cluster_id\":1}]}",
+                        "description": "middleware_servers\":[{\"del_flag\":0,\"server_name\":\"update_middleware_server\",\"host_ip\":\"192.168.10.219\",\"port_num\":33061,\"middleware_role\":1,\"create_time\":\"2021-11-17T14:47:10.521279+08:00\",\"last_update_time\":\"2021-11-18T15:54:10.599097+08:00\",\"id\":1,\"cluster_id\":1}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -2771,7 +2788,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/monitor-system/delete/:id": {
+        "/api/v1/metadata/monitor-system/delete": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -2785,19 +2802,21 @@ var doc = `{
                 "summary": "delete monitor system by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "monitor system id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "monitor system id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2811,7 +2830,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/monitor-system/env/:env_id": {
+        "/api/v1/metadata/monitor-system/env": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -2825,19 +2844,21 @@ var doc = `{
                 "summary": "get monitor system by env_id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "env id",
-                        "name": "env_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "env id",
+                        "name": "env_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2851,7 +2872,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/monitor-system/get/:id": {
+        "/api/v1/metadata/monitor-system/get": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -2865,19 +2886,21 @@ var doc = `{
                 "summary": "get monitor system by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "monitor system id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "monitor system id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2905,6 +2928,15 @@ var doc = `{
                 "summary": "get monitor system by host info",
                 "parameters": [
                     {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "host ip",
                         "name": "host_ip",
                         "in": "body",
@@ -2921,15 +2953,6 @@ var doc = `{
                         "schema": {
                             "type": "integer"
                         }
-                    },
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 ],
                 "responses": {
@@ -2942,7 +2965,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/monitor-system/update/:id": {
+        "/api/v1/metadata/monitor-system/update": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -2956,19 +2979,21 @@ var doc = `{
                 "summary": "update monitor system by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "monitor system id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "monitor system id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -3144,47 +3169,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/:id": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "mysql cluster"
-                ],
-                "summary": "get mysql cluster by id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"mysql_clusters\":[{\"del_flag\":0,\"create_time\":\"2021-02-23T20:57:24.603009+08:00\",\"id\":1,\"monitor_system_id\":1,\"env_id\":1,\"last_update_time\":\"2021-02-23T20:57:24.603009+08:00\",\"cluster_name\":\"cluster_name_init\",\"middleware_cluster_id\":1}]}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/metadata/mysql-cluster/add-user/:id": {
+        "/api/v1/metadata/mysql-cluster/add-user": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -3198,19 +3183,21 @@ var doc = `{
                 "summary": "add user map",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -3233,7 +3220,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/all-user/:id": {
+        "/api/v1/metadata/mysql-cluster/all-user": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -3247,19 +3234,21 @@ var doc = `{
                 "summary": "get all users",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -3273,7 +3262,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/app-user/:id": {
+        "/api/v1/metadata/mysql-cluster/app-user": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -3287,19 +3276,21 @@ var doc = `{
                 "summary": "get app users",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -3313,7 +3304,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/cluster-name/:name": {
+        "/api/v1/metadata/mysql-cluster/cluster-name": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -3327,15 +3318,17 @@ var doc = `{
                 "summary": "get mysql cluster by name",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "mysql cluster name",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster name",
+                        "name": "name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -3353,47 +3346,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/db-user/:id": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "mysql cluster"
-                ],
-                "summary": "get db users",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"users\":[{\"id\":1,\"employee_id\":\"100001\",\"account_name\":\"zs001\",\"last_update_time\":\"2021-11-22T13:46:20.430926+08:00\",\"mobile\":\"13012345678\",\"role\":3,\"del_flag\":0,\"user_name\":\"zhangsan\",\"department_name\":\"arch\",\"email\":\"allinemailtest@163.com\",\"telephone\":\"01012345678\",\"create_time\":\"2021-10-25T09:21:50.364327+08:00\"}]}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/metadata/mysql-cluster/db/:id": {
+        "/api/v1/metadata/mysql-cluster/db": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -3407,19 +3360,21 @@ var doc = `{
                 "summary": "get dbs by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -3433,7 +3388,91 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/delete-user/:id": {
+        "/api/v1/metadata/mysql-cluster/db-user": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mysql cluster"
+                ],
+                "summary": "get db users",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"users\":[{\"id\":1,\"employee_id\":\"100001\",\"account_name\":\"zs001\",\"last_update_time\":\"2021-11-22T13:46:20.430926+08:00\",\"mobile\":\"13012345678\",\"role\":3,\"del_flag\":0,\"user_name\":\"zhangsan\",\"department_name\":\"arch\",\"email\":\"allinemailtest@163.com\",\"telephone\":\"01012345678\",\"create_time\":\"2021-10-25T09:21:50.364327+08:00\"}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/mysql-cluster/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mysql cluster"
+                ],
+                "summary": "update mysql cluster by id",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"mysql_clusters\":[{\"cluster_name\":\"test\",\"env_id\":1,\"del_flag\":0,\"create_time\":\"2022-03-01T08:30:43.428343+08:00\",\"last_update_time\":\"2022-03-01T08:32:25.715563+08:00\",\"id\":3,\"middleware_cluster_id\":0,\"monitor_system_id\":0}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/mysql-cluster/delete-user": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -3447,19 +3486,21 @@ var doc = `{
                 "summary": "delete user map",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -3482,8 +3523,8 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/delete/:id": {
-            "post": {
+        "/api/v1/metadata/mysql-cluster/env": {
+            "get": {
                 "consumes": [
                     "application/json"
                 ],
@@ -3493,15 +3534,8 @@ var doc = `{
                 "tags": [
                     "mysql cluster"
                 ],
-                "summary": "update mysql cluster by id",
+                "summary": "get mysql cluster by env id",
                 "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "description": "token",
                         "name": "token",
@@ -3510,11 +3544,20 @@ var doc = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "description": "env id",
+                        "name": "env_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"mysql_clusters\":[{\"cluster_name\":\"test\",\"env_id\":1,\"del_flag\":0,\"create_time\":\"2022-03-01T08:30:43.428343+08:00\",\"last_update_time\":\"2022-03-01T08:32:25.715563+08:00\",\"id\":3,\"middleware_cluster_id\":0,\"monitor_system_id\":0}]}",
+                        "description": "{\"mysql_clusters\":[{\"del_flag\":0,\"create_time\":\"2021-02-23T20:57:24.603009+08:00\",\"id\":1,\"monitor_system_id\":1,\"env_id\":1,\"last_update_time\":\"2021-02-23T20:57:24.603009+08:00\",\"cluster_name\":\"cluster_name_init\",\"middleware_cluster_id\":1}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -3522,7 +3565,49 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/master-server/:id": {
+        "/api/v1/metadata/mysql-cluster/get": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mysql cluster"
+                ],
+                "summary": "get mysql cluster by id",
+                "parameters": [
+                    {
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"mysql_clusters\":[{\"del_flag\":0,\"create_time\":\"2021-02-23T20:57:24.603009+08:00\",\"id\":1,\"monitor_system_id\":1,\"env_id\":1,\"last_update_time\":\"2021-02-23T20:57:24.603009+08:00\",\"cluster_name\":\"cluster_name_init\",\"middleware_cluster_id\":1}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/metadata/mysql-cluster/master-server": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -3536,19 +3621,21 @@ var doc = `{
                 "summary": "get master servers by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -3562,7 +3649,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/mysql-server/:id": {
+        "/api/v1/metadata/mysql-cluster/mysql-server": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -3576,19 +3663,21 @@ var doc = `{
                 "summary": "get mysql servers by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -3602,7 +3691,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/update/:id": {
+        "/api/v1/metadata/mysql-cluster/update": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -3616,19 +3705,21 @@ var doc = `{
                 "summary": "update mysql cluster by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -3682,7 +3773,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-cluster/user/:id": {
+        "/api/v1/metadata/mysql-cluster/user": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -3696,19 +3787,21 @@ var doc = `{
                 "summary": "get mysql cluster users",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -3733,123 +3826,6 @@ var doc = `{
                 "tags": [
                     "mysql server"
                 ],
-                "summary": "get all mysql servers",
-                "parameters": [
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"mysql_servers\":[{\"port_num\":3306,\"create_time\":\"2021-09-02T11:16:06.561525+08:00\",\"last_update_time\":\"2022-03-01T08:19:09.779365+08:00\",\"cluster_id\":1,\"server_name\":\"192-168-10-219\",\"service_name\":\"192-168-10-219:3306\",\"host_ip\":\"192.168.10.219\",\"id\":1,\"deployment_type\":1,\"version\":\"5.7\",\"del_flag\":0}]}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "mysql server"
-                ],
-                "summary": "add a new mysql server",
-                "parameters": [
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "mysql cluster id",
-                        "name": "cluster_id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "mysql server name",
-                        "name": "server_name",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "mysql server service name",
-                        "name": "service_name",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "mysql server host ip",
-                        "name": "host_ip",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "mysql server port num",
-                        "name": "port_num",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "mysql deployment type",
-                        "name": "deployment_type",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"mysql_servers\":[{\"deployment_type\":1,\"version\":\"\",\"id\":26,\"server_name\":\"test\",\"service_name\":\"test\",\"port_num\":3306,\"del_flag\":0,\"create_time\":\"2022-03-02T01:26:32.107625+08:00\",\"last_update_time\":\"2022-03-02T01:26:32.107625+08:00\",\"cluster_id\":97,\"host_ip\":\"192.168.1.1\"}]}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/metadata/mysql-server/:id": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "mysql server"
-                ],
                 "summary": "get mysql servers by host info",
                 "parameters": [
                     {
@@ -3862,11 +3838,13 @@ var doc = `{
                         }
                     },
                     {
-                        "type": "integer",
                         "description": "mysql server id",
                         "name": "id",
-                        "in": "path",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -3891,19 +3869,21 @@ var doc = `{
                 "summary": "update mysql server by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql server id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql server id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -3965,7 +3945,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-server/cluster-id/:cluster_id": {
+        "/api/v1/metadata/mysql-server/cluster-id": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -3979,19 +3959,21 @@ var doc = `{
                 "summary": "get mysql servers by cluster id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "cluster_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "cluster_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -4005,7 +3987,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-server/get/:id": {
+        "/api/v1/metadata/mysql-server/get": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -4019,19 +4001,21 @@ var doc = `{
                 "summary": "get mysql server by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql server id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql server id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -4059,26 +4043,30 @@ var doc = `{
                 "summary": "get mysql servers by host info",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "host ip",
-                        "name": "host_ip",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "host port number",
-                        "name": "port_num",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "host ip",
+                        "name": "host_ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "host port number",
+                        "name": "port_num",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -4106,26 +4094,30 @@ var doc = `{
                 "summary": "check if mysql server is a master node",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "host ip",
-                        "name": "host_ip",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "host port number",
-                        "name": "port_num",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "host ip",
+                        "name": "host_ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "host port number",
+                        "name": "port_num",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -4139,7 +4131,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/mysql-server/mysql-cluster/:id": {
+        "/api/v1/metadata/mysql-server/mysql-cluster": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -4153,19 +4145,21 @@ var doc = `{
                 "summary": "get mysql cluster by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql server id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql server id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -4611,7 +4605,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/account-name/:account_name": {
+        "/api/v1/metadata/user/account-name": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -4625,15 +4619,17 @@ var doc = `{
                 "summary": "get user by account name",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "account name",
-                        "name": "account_name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "account name",
+                        "name": "account_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -4651,7 +4647,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/all-mysql-server/:id": {
+        "/api/v1/metadata/user/all-mysql-server": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -4665,19 +4661,21 @@ var doc = `{
                 "summary": "get all mysql servers by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "user id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "user id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -4691,7 +4689,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/app/:id": {
+        "/api/v1/metadata/user/app": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -4705,19 +4703,21 @@ var doc = `{
                 "summary": "get apps by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "user id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "user id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -4731,7 +4731,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/db/:id": {
+        "/api/v1/metadata/user/db": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -4745,19 +4745,21 @@ var doc = `{
                 "summary": "get dbs by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "user id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "user id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -4771,7 +4773,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/delete/:id": {
+        "/api/v1/metadata/user/delete": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -4785,19 +4787,21 @@ var doc = `{
                 "summary": "delete user by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "user id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "user id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -4811,7 +4815,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/email/:email": {
+        "/api/v1/metadata/user/email": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -4825,15 +4829,17 @@ var doc = `{
                 "summary": "get user by email",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "email",
-                        "name": "email",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "email",
+                        "name": "email",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -4851,7 +4857,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/employee-id/:employee_id": {
+        "/api/v1/metadata/user/employee-id": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -4865,15 +4871,17 @@ var doc = `{
                 "summary": "get user by employee id",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "employee id",
-                        "name": "employee_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "employee id",
+                        "name": "employee_id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -4891,7 +4899,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/get/:id": {
+        "/api/v1/metadata/user/get": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -4905,19 +4913,21 @@ var doc = `{
                 "summary": "get user by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "user id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "user id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -4931,7 +4941,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/login-name/:login_name": {
+        "/api/v1/metadata/user/login-name": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -4945,15 +4955,17 @@ var doc = `{
                 "summary": "get user by loginName",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "login name",
-                        "name": "login_name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "login name",
+                        "name": "login_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -4971,7 +4983,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/middleware-cluster/:id": {
+        "/api/v1/metadata/user/middleware-cluster": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -4985,19 +4997,21 @@ var doc = `{
                 "summary": "get middleware clusters by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "user id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "user id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -5025,15 +5039,17 @@ var doc = `{
                 "summary": "get user by mobile",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "mobile",
-                        "name": "mobile",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mobile",
+                        "name": "mobile",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -5051,7 +5067,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/mysql-cluster/:id": {
+        "/api/v1/metadata/user/mysql-cluster": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -5065,19 +5081,21 @@ var doc = `{
                 "summary": "get mysql clusters by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "user id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "user id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -5091,7 +5109,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/telephone/:telephone": {
+        "/api/v1/metadata/user/telephone": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -5105,15 +5123,17 @@ var doc = `{
                 "summary": "get user by telephone",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "telephone",
-                        "name": "telephone",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "telephone",
+                        "name": "telephone",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -5131,7 +5151,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/update/:id": {
+        "/api/v1/metadata/user/update": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -5145,19 +5165,21 @@ var doc = `{
                 "summary": "update user by id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "user id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "user id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -5251,7 +5273,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/metadata/user/user-name/:user_name": {
+        "/api/v1/metadata/user/user-name": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -5265,15 +5287,17 @@ var doc = `{
                 "summary": "get user by name",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "user name",
-                        "name": "user_name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "user name",
+                        "name": "user_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -5291,92 +5315,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/query/:sql_id": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "query"
-                ],
-                "summary": "get slow query by query id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "sql id",
-                        "name": "sql_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "mysql server id",
-                        "name": "mysql_server_id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "start time",
-                        "name": "start_time",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "end time",
-                        "name": "end_time",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "limit",
-                        "name": "limit",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "offset",
-                        "name": "offset",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"queries\":[{\"sql_id\":\"F9A57DD5A41825CA\",\"fingerprint\":\"select sleep(?)\",\"example\":\"select sleep(3)\",\"db_name\":\"\",\"exec_count\":1,\"total_exec_time\":3,\"avg_exec_time\":3,\"rows_examined_max\":0}]}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/query/cluster/:mysql_cluster_id": {
+        "/api/v1/query/cluster": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -5390,19 +5329,21 @@ var doc = `{
                 "summary": "get slow queries by mysql server id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "mysql cluster id",
-                        "name": "mysql_cluster_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql cluster id",
+                        "name": "mysql_cluster_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -5452,7 +5393,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/query/db/:db_id": {
+        "/api/v1/query/db": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -5466,13 +5407,6 @@ var doc = `{
                 "summary": "get slow queries by db id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "db id",
-                        "name": "db_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
@@ -5482,8 +5416,8 @@ var doc = `{
                         }
                     },
                     {
-                        "description": "mysql server id",
-                        "name": "mysql_server_id",
+                        "description": "db id",
+                        "name": "db_id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -5624,7 +5558,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/query/server/:mysql_server_id": {
+        "/api/v1/query/server": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -5638,15 +5572,104 @@ var doc = `{
                 "summary": "get slow queries by mysql server id",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "description": "token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "mysql server id",
                         "name": "mysql_server_id",
-                        "in": "path",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     },
+                    {
+                        "description": "start time",
+                        "name": "start_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "end time",
+                        "name": "end_time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"queries\":[{\"sql_id\":\"F9A57DD5A41825CA\",\"fingerprint\":\"select sleep(?)\",\"example\":\"select sleep(3)\",\"db_name\":\"\",\"exec_count\":1,\"total_exec_time\":3,\"avg_exec_time\":3,\"rows_examined_max\":0}]}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/query/sql": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "query"
+                ],
+                "summary": "get slow query by query id",
+                "parameters": [
                     {
                         "description": "token",
                         "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "mysql server id",
+                        "name": "mysql_server_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "sql id",
+                        "name": "sql_id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -5835,7 +5858,7 @@ var doc = `{
                 }
             }
         },
-        "/api/vi/metadata/app/db/:id": {
+        "/api/vi/metadata/app/db": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -5849,19 +5872,21 @@ var doc = `{
                 "summary": "get dbs",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "app id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "app id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -5875,7 +5900,7 @@ var doc = `{
                 }
             }
         },
-        "/api/vi/metadata/app/user/:id": {
+        "/api/vi/metadata/app/user": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -5889,19 +5914,21 @@ var doc = `{
                 "summary": "get users",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "app id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "app id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -5915,7 +5942,7 @@ var doc = `{
                 }
             }
         },
-        "/api/vi/metadata/middleware-cluster/users/:id": {
+        "/api/vi/metadata/middleware-cluster/users": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -5929,19 +5956,21 @@ var doc = `{
                 "summary": "get middleware servers by cluster id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "middleware cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "middleware cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -5955,7 +5984,7 @@ var doc = `{
                 }
             }
         },
-        "/api/vi/metadata/middleware-server/:id": {
+        "/api/vi/metadata/middleware-server": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -5969,19 +5998,21 @@ var doc = `{
                 "summary": "get middleware servers by cluster id",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "middleware cluster id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "token",
                         "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "description": "middleware cluster id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
