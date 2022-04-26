@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"fmt"
+
 	"github.com/buger/jsonparser"
 	"github.com/pingcap/errors"
 
@@ -18,8 +19,8 @@ import (
 
 const (
 	monitorSystemIDJSON          = "id"
-	monitorSystemNameJSON        = "system_name"
-	monitorSystemTypeJSON        = "system_type"
+	monitorSystemSystemNameJSON  = "system_name"
+	monitorSystemSystemTypeJSON  = "system_type"
 	monitorSystemHostIPJSON      = "host_ip"
 	monitorSystemPortNumJSON     = "port_num"
 	monitorSystemPortNumSlowJSON = "port_num_slow"
@@ -28,11 +29,11 @@ const (
 	monitorSystemDelFlagJSON     = "del_flag"
 
 	monitorSystemIDStruct          = "ID"
-	monitorSystemNameStruct        = "MonitorSystemName"
-	monitorSystemTypeStruct        = "MonitorSystemType"
-	monitorSystemHostIPStruct      = "MonitorSystemHostIP"
-	monitorSystemPortNumStruct     = "MonitorSystemPortNum"
-	monitorSystemPortNumSlowStruct = "MonitorSystemPortNumSlow"
+	monitorSystemSystemNameStruct  = "SystemName"
+	monitorSystemSystemTypeStruct  = "SystemType"
+	monitorSystemHostIPStruct      = "HostIP"
+	monitorSystemPortNumStruct     = "PortNum"
+	monitorSystemPortNumSlowStruct = "PortNumSlow"
 	monitorSystemBaseUrlStruct     = "BaseURL"
 	monitorSystemEnvIDStruct       = "EnvID"
 	monitorSystemDelFlagStruct     = "DelFlag"
@@ -213,8 +214,8 @@ func AddMonitorSystem(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	_, systemNameExists := fields[monitorSystemNameStruct]
-	_, systemTypeExists := fields[monitorSystemTypeStruct]
+	_, systemNameExists := fields[monitorSystemSystemNameStruct]
+	_, systemTypeExists := fields[monitorSystemSystemTypeStruct]
 	_, hostIPExists := fields[monitorSystemHostIPStruct]
 	_, portNumExists := fields[monitorSystemPortNumStruct]
 	_, portNumSlowExists := fields[monitorSystemPortNumSlowStruct]
@@ -222,7 +223,7 @@ func AddMonitorSystem(c *gin.Context) {
 	_, envIDExists := fields[monitorSystemEnvIDStruct]
 	if !systemNameExists || !systemTypeExists || !hostIPExists || !portNumExists || !portNumSlowExists || !baseUrlExists || !envIDExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s and %s and %s and %s and %s and %s",
-			monitorSystemNameJSON, monitorSystemTypeJSON, monitorSystemHostIPJSON, monitorSystemPortNumJSON, monitorSystemPortNumSlowJSON,
+			monitorSystemSystemNameJSON, monitorSystemSystemTypeJSON, monitorSystemHostIPJSON, monitorSystemPortNumJSON, monitorSystemPortNumSlowJSON,
 			monitorSystemBaseUrlJSON, monitorSystemEnvIDJSON))
 		return
 	}
@@ -232,7 +233,7 @@ func AddMonitorSystem(c *gin.Context) {
 	err = s.Create(fields)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataAddMonitorSystem, err,
-			fields[monitorSystemNameStruct], fields[monitorSystemTypeStruct], fields[monitorSystemHostIPStruct],
+			fields[monitorSystemSystemNameStruct], fields[monitorSystemSystemTypeStruct], fields[monitorSystemHostIPStruct],
 			fields[monitorSystemPortNumStruct], fields[monitorSystemPortNumSlowStruct], fields[monitorSystemBaseUrlStruct],
 			fields[monitorSystemEnvIDStruct])
 		return
@@ -246,7 +247,7 @@ func AddMonitorSystem(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAddMonitorSystem, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddMonitorSystem, fields[monitorSystemNameStruct], fields[monitorSystemTypeStruct],
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddMonitorSystem, fields[monitorSystemSystemNameStruct], fields[monitorSystemSystemTypeStruct],
 		fields[monitorSystemHostIPStruct], fields[monitorSystemPortNumStruct], fields[monitorSystemPortNumSlowStruct],
 		fields[monitorSystemBaseUrlStruct], fields[monitorSystemEnvIDStruct])
 }
@@ -292,8 +293,8 @@ func UpdateMonitorSystemByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, monitorSystemIDJSON)
 		return
 	}
-	_, systemNameExists := fields[monitorSystemNameStruct]
-	_, systemTypeExists := fields[monitorSystemTypeStruct]
+	_, systemNameExists := fields[monitorSystemSystemNameStruct]
+	_, systemTypeExists := fields[monitorSystemSystemTypeStruct]
 	_, hostIpExists := fields[monitorSystemHostIPStruct]
 	_, portNumExists := fields[monitorSystemPortNumStruct]
 	_, portNumSlowExists := fields[monitorSystemPortNumSlowStruct]
@@ -302,7 +303,7 @@ func UpdateMonitorSystemByID(c *gin.Context) {
 	_, delFlagExists := fields[monitorSystemDelFlagStruct]
 	if !systemNameExists && !systemTypeExists && !hostIpExists && !portNumExists && !portNumSlowExists && !baseUrlExists && !envIdExists && !delFlagExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, fmt.Sprintf("%s and %s and %s and %s and %s and %s and %s and %s",
-			monitorSystemNameJSON, monitorSystemTypeJSON, monitorSystemHostIPJSON, monitorSystemPortNumJSON,
+			monitorSystemSystemNameJSON, monitorSystemSystemTypeJSON, monitorSystemHostIPJSON, monitorSystemPortNumJSON,
 			monitorSystemPortNumSlowJSON, monitorSystemBaseUrlJSON, monitorSystemEnvIDJSON, monitorSystemDelFlagJSON))
 		return
 	}

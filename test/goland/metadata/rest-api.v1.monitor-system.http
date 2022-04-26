@@ -42,7 +42,7 @@ Content-Type: application/json
     "token": "{{token}}",
     "system_name": "new_monitor_system",
     "system_type":2,
-    "host_ip": "192.168.10.219",
+    "host_ip": "192.168.137.11",
     "port_num": 8080,
     "port_num_slow": 9000,
     "base_url": "/prometheus",
@@ -55,12 +55,12 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{monitor_system_id}},
+    "id": {{new_monitor_system_id}},
     "system_name": "update_monitor_system",
     "system_type":3,
-    "host_ip": "192.168.10.220",
-    "port_num": 3301,
-    "port_num_slow": 9090,
+    "host_ip": "192.168.137.11",
+    "port_num": 8081,
+    "port_num_slow": 9001,
     "base_url": "/prometheus",
     "env_id": 1,
     "del_flag": 0
@@ -72,5 +72,5 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": {{monitor_system_id}}
+    "id": {{new_monitor_system_id}}
 }

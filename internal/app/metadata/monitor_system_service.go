@@ -82,14 +82,14 @@ func (mss *MonitorSystemService) GetByHostInfo(hostIP string, portNum int) error
 // Create creates an new monitor system in the middleware
 func (mss *MonitorSystemService) Create(fields map[string]interface{}) error {
 	// generate new map
-	_, monitorSystemNameExists := fields[monitorSystemSystemNameStruct]
+	_, systemNameExists := fields[monitorSystemSystemNameStruct]
 	_, systemTypeExists := fields[monitorSystemSystemTypeStruct]
 	_, hostIPExists := fields[monitorSystemHostIPStruct]
 	_, portNumExists := fields[monitorSystemPortNumStruct]
 	_, portNumSlowExists := fields[monitorSystemPortNumSlowStruct]
 	_, baseUrlExists := fields[monitorSystemBaseUrlStruct]
 	_, envIDExists := fields[monitorSystemEnvIDStruct]
-	if !monitorSystemNameExists || !systemTypeExists || !hostIPExists || !portNumExists || !portNumSlowExists || !baseUrlExists || !envIDExists {
+	if !systemNameExists || !systemTypeExists || !hostIPExists || !portNumExists || !portNumSlowExists || !baseUrlExists || !envIDExists {
 		return message.NewMessage(message.ErrFieldNotExists, fmt.Sprintf("%s and %s and %s and %s and %s and %s and %s",
 			monitorSystemSystemNameStruct, monitorSystemSystemTypeStruct, monitorSystemHostIPStruct, monitorSystemPortNumStruct,
 			monitorSystemPortNumSlowStruct, monitorSystemBaseUrlStruct, monitorSystemEnvIDStruct))

@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	monitorSystemSystemNameStruct  = "MonitorSystemName"
-	monitorSystemSystemTypeStruct  = "MonitorSystemType"
-	monitorSystemHostIPStruct      = "MonitorSystemHostIP"
-	monitorSystemPortNumStruct     = "MonitorSystemPortNum"
-	monitorSystemPortNumSlowStruct = "MonitorSystemPortNumSlow"
+	monitorSystemSystemNameStruct  = "SystemName"
+	monitorSystemSystemTypeStruct  = "SystemType"
+	monitorSystemHostIPStruct      = "HostIP"
+	monitorSystemPortNumStruct     = "PortNum"
+	monitorSystemPortNumSlowStruct = "PortNumSlow"
 	monitorSystemBaseUrlStruct     = "BaseURL"
 	monitorSystemEnvIDStruct       = "EnvID"
 	monitorSystemDelFlagStruct     = "DelFlag"
@@ -23,17 +23,17 @@ var _ metadata.MonitorSystem = (*MonitorSystemInfo)(nil)
 
 type MonitorSystemInfo struct {
 	metadata.MonitorSystemRepo
-	ID                       int       `middleware:"id" json:"id"`
-	MonitorSystemName        string    `middleware:"system_name" json:"system_name"`
-	MonitorSystemType        int       `middleware:"system_type" json:"system_type"`
-	MonitorSystemHostIP      string    `middleware:"host_ip" json:"host_ip"`
-	MonitorSystemPortNum     int       `middleware:"port_num" json:"port_num"`
-	MonitorSystemPortNumSlow int       `middleware:"port_num_slow" json:"port_num_slow"`
-	BaseURL                  string    `middleware:"base_url" json:"base_url"`
-	EnvID                    int       `middleware:"env_id" json:"env_id"`
-	DelFlag                  int       `middleware:"del_flag" json:"del_flag"`
-	CreateTime               time.Time `middleware:"create_time" json:"create_time"`
-	LastUpdateTime           time.Time `middleware:"last_update_time" json:"last_update_time"`
+	ID             int       `middleware:"id" json:"id"`
+	SystemName     string    `middleware:"system_name" json:"system_name"`
+	SystemType     int       `middleware:"system_type" json:"system_type"`
+	HostIP         string    `middleware:"host_ip" json:"host_ip"`
+	PortNum        int       `middleware:"port_num" json:"port_num"`
+	PortNumSlow    int       `middleware:"port_num_slow" json:"port_num_slow"`
+	BaseURL        string    `middleware:"base_url" json:"base_url"`
+	EnvID          int       `middleware:"env_id" json:"env_id"`
+	DelFlag        int       `middleware:"del_flag" json:"del_flag"`
+	CreateTime     time.Time `middleware:"create_time" json:"create_time"`
+	LastUpdateTime time.Time `middleware:"last_update_time" json:"last_update_time"`
 }
 
 // NewMonitorSystemInfo returns a new *MonitorSystemInfo
@@ -57,12 +57,12 @@ func NewMonitorSystemInfo(repo *MonitorSystemRepo, id int, systemName string, sy
 }
 
 // NewMonitorSystemInfoWithGlobal NewMonitorSystemInfo returns a new MonitorSystemInfo with default MonitorSystemRepo
-func NewMonitorSystemInfoWithGlobal(id int, monitorSystemName string, systemType int, hostIP string, portNum int,
+func NewMonitorSystemInfoWithGlobal(id int, systemName string, systemType int, hostIP string, portNum int,
 	portNumSlow int, baseURL string, envID int, delFlag int, createTime time.Time, lastUpdateTime time.Time) *MonitorSystemInfo {
 	return &MonitorSystemInfo{
 		NewMonitorSystemRepoWithGlobal(),
 		id,
-		monitorSystemName,
+		systemName,
 		systemType,
 		hostIP,
 		portNum,
@@ -81,17 +81,17 @@ func NewEmptyMonitorSystemInfoWithGlobal() *MonitorSystemInfo {
 }
 
 // NewMonitorSystemInfoWithDefault returns a new *MonitorSystemInfo with default MonitorSystemRepo
-func NewMonitorSystemInfoWithDefault(monitorSystemName string, systemType int, hostIP string, portNum int,
+func NewMonitorSystemInfoWithDefault(systemName string, systemType int, hostIP string, portNum int,
 	portNumSlow int, baseURL string, envID int) *MonitorSystemInfo {
 	return &MonitorSystemInfo{
-		MonitorSystemRepo:        NewMonitorSystemRepoWithGlobal(),
-		MonitorSystemName:        monitorSystemName,
-		MonitorSystemType:        systemType,
-		MonitorSystemHostIP:      hostIP,
-		MonitorSystemPortNum:     portNum,
-		MonitorSystemPortNumSlow: portNumSlow,
-		BaseURL:                  baseURL,
-		EnvID:                    envID,
+		MonitorSystemRepo: NewMonitorSystemRepoWithGlobal(),
+		SystemName:        systemName,
+		SystemType:        systemType,
+		HostIP:            hostIP,
+		PortNum:           portNum,
+		PortNumSlow:       portNumSlow,
+		BaseURL:           baseURL,
+		EnvID:             envID,
 	}
 }
 
@@ -113,27 +113,27 @@ func (msi *MonitorSystemInfo) Identity() int {
 
 // GetSystemName returns the monitor system name
 func (msi *MonitorSystemInfo) GetSystemName() string {
-	return msi.MonitorSystemName
+	return msi.SystemName
 }
 
 // GetSystemType returns the monitor system type
 func (msi *MonitorSystemInfo) GetSystemType() int {
-	return msi.MonitorSystemType
+	return msi.SystemType
 }
 
 // GetHostIP returns the monitor system hostIP
 func (msi *MonitorSystemInfo) GetHostIP() string {
-	return msi.MonitorSystemHostIP
+	return msi.HostIP
 }
 
 // GetPortNum returns the monitor system portNum
 func (msi *MonitorSystemInfo) GetPortNum() int {
-	return msi.MonitorSystemPortNum
+	return msi.PortNum
 }
 
 // GetPortNumSlow returns the monitor system portNumSlow
 func (msi *MonitorSystemInfo) GetPortNumSlow() int {
-	return msi.MonitorSystemPortNumSlow
+	return msi.PortNumSlow
 }
 
 // GetBaseURL returns the monitor system baseUrl

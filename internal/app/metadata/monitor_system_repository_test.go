@@ -85,9 +85,9 @@ func TestMonitorSystemRepo_Transaction(t *testing.T) {
 	sql = `select system_name from t_meta_monitor_system_info where system_name = ?`
 	result, err := tx.Execute(sql, testMonitorSystemNewSystemName)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
-	monitorSystemName, err := result.GetString(constant.ZeroInt, constant.ZeroInt)
+	systemName, err := result.GetString(constant.ZeroInt, constant.ZeroInt)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
-	if monitorSystemName != testMonitorSystemNewSystemName {
+	if systemName != testMonitorSystemNewSystemName {
 		asst.Fail("test Transaction() failed")
 	}
 	err = tx.Rollback()

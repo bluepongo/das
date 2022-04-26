@@ -301,7 +301,7 @@ func (q *Querier) getMonitorRepo(monitorSystem depmeta.MonitorSystem) (query.Mon
 		}
 		monitorRepo = NewClickHouseRepo(q.getConfig(), clickhouseConn)
 	default:
-		return nil, message.NewMessage(msgquery.ErrQueryMonitorSystemType, monitorSystem.GetSystemType())
+		return nil, message.NewMessage(msgquery.ErrQueryMonitorSystemSystemType, monitorSystem.GetSystemType())
 	}
 
 	return monitorRepo, nil
