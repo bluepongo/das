@@ -11,7 +11,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "user_name":"{{user_name}}"
+    "user_name": "{{user_name}}"
 }
 
 ### GetUserByID
@@ -20,7 +20,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id":{{user_id}}
+    "id": {{user_id}}
 }
 
 ### GetUserByEmployeeID
@@ -29,7 +29,7 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "employee_id":"{{employee_id}}"
+    "employee_id": "{{employee_id}}"
 }
 
 ### GetUserByAccountName
@@ -47,7 +47,6 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    # "login_name":"{{account_name}}"
     "login_name":"{{employee_id}}"
 }
 
@@ -76,50 +75,6 @@ Content-Type: application/json
 {
     "token": "{{token}}",
     "mobile":"{{mobile}}"
-}
-
-### AddUser
-POST http://{{baseURL}}/api/v1/metadata/user
-Content-Type: application/json
-
-{
-  "token": "{{token}}", 
-  "department_name": "{{department_name}}",
-  "employee_id": "{{employee_id}}", 
-  "telephone": "{{telephone}}",
-  "role": {{role}},
-  "del_flag": {{del_flag}},
-  "user_name": "{{user_name}}",
-  "account_name": "{{account_name}}",
-  "email": "{{email}}",
-  "mobile": "{{mobile}}" 
-}
-
-### UpdateUserByID
-POST http://{{baseURL}}/api/v1/metadata/user/update
-Content-Type: application/json
-
-{
-  "token": "{{token}}",
-  "id":{{user_id}},
-  "department_name": "{{department_name}}",
-  "employee_id": "{{employee_id}}", 
-  "telephone": "{{telephone}}",
-  "role": {{role}},
-  "del_flag": {{del_flag}},
-  "user_name": "{{user_name}}",
-  "account_name": "{{account_name}}",
-  "email": "{{email}}",
-  "mobile": "{{mobile}}" 
-}
-
-### DeleteUserByID
-POST http://{{baseURL}}/api/v1/metadata/user/delete
-Content-Type: application/json
-
-{
-    "token": "{{token}}",
-    "id":{{user_id}}
 }
 
 ### get all apps by id
@@ -166,4 +121,44 @@ Content-Type: application/json
     "token": "{{token}}",
     "id":{{user_id}}
 }
+
+### AddUser
+POST http://{{baseURL}}/api/v1/metadata/user
+Content-Type: application/json
+
+{
+  "token": "{{token}}", 
+  "department_name": "{{department_name}}",
+  "employee_id": "10000002",
+  "telephone": "02112345678",
+  "role": {{role}},
+  "user_name": "lisi",
+  "account_name": "lis",
+  "email": "lisi@gmail.com",
+  "mobile": "13112345678"
+}
+
+### UpdateUserByID
+POST http://{{baseURL}}/api/v1/metadata/user/update
+Content-Type: application/json
+
+{
+  "token": "{{token}}",
+  "id":{{new_user_id}},
+  "department_name": "{{department_name}}",
+  "employee_id": "10000003",
+  "telephone": "01112345678",
+  "user_name": "{{user_name}}"
+}
+
+### DeleteUserByID
+POST http://{{baseURL}}/api/v1/metadata/user/delete
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id":{{new_user_id}}
+}
+
+
 

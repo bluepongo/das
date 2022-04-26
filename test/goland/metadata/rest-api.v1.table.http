@@ -44,7 +44,7 @@ Content-Type: application/json
 }
 
 ### analyze table by host info and db name and table name
-POST http://{{baseURL}}/api/v1/metadata/table/analyze/host-info
+POST http://{{baseURL}}/api/v1/metadata/table/analyze/host-info-db
 Content-Type: application/json
 
 {

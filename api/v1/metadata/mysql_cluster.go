@@ -498,7 +498,7 @@ func MySQLClusterAddUser(c *gin.Context) {
 	// update entities
 	err = s.AddUser(int(id), int(userID))
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataMySQLClusterAddUser, err, id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataMySQLClusterAddUser, err, id, userID)
 		return
 	}
 	// marshal service
@@ -585,11 +585,13 @@ func AddMySQLCluster(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	if _, ok := fields[mysqlClusterClusterNameStruct]; !ok {
+	_, clusterNameExists := fields[mysqlClusterClusterNameStruct]
+	if !clusterNameExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterClusterNameJSON)
 		return
 	}
-	if _, ok := fields[mysqlClusterEnvIDStruct]; !ok {
+	_, envIDExists := fields[mysqlClusterEnvIDStruct]
+	if !envIDExists {
 		resp.ResponseNOK(c, message.ErrFieldNotExists, mysqlClusterEnvIDJSON)
 		return
 	}
@@ -665,7 +667,6 @@ func UpdateMySQLClusterByID(c *gin.Context) {
 	if !clusterNameExists &&
 		!middlewareClusterIDExists &&
 		!monitorSystemIDExists &&
-		// !ownerIDExists &&
 		!envIDExists &&
 		!delFlagExists {
 		resp.ResponseNOK(

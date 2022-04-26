@@ -35,7 +35,7 @@ Content-Type: application/json
     "port_num": {{mysql_port_num}}
 }
 
-### judge if serve is master
+### check if serve is master
 GET http://{{baseURL}}/api/v1/metadata/mysql-server/is-master/host-info
 Content-Type: application/json
 
@@ -61,10 +61,10 @@ Content-Type: application/json
 {
     "token": "{{token}}",
     "cluster_id": {{mysql_cluster_id}},
-    "server_name": "test",
+    "server_name": "new_mysql_server",
     "service_name": "test",
-    "host_ip": "192.168.1.1.",
-    "port_num": "3306",
+    "host_ip": "192.168.137.12",
+    "port_num": 3306,
     "deployment_type": 1
 }
 
@@ -74,8 +74,8 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": 29,
-    "cluster_id": {{mysql_cluster_id}},
+    "id": {{new_mysql_server_id}},
+    "cluster_id": {{new_mysql_cluster_id}},
     "del_flag": 0
 }
 
@@ -85,5 +85,5 @@ Content-Type: application/json
 
 {
     "token": "{{token}}",
-    "id": 29
+    "id": {{new_mysql_server_id}}
 }

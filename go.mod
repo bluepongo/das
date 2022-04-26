@@ -17,7 +17,7 @@ require (
 	github.com/jinzhu/now v1.1.2
 	github.com/pingcap/errors v0.11.5-0.20211224045212-9687c2b0f87c
 	github.com/romberli/go-multierror v1.1.2-0.20220118054508-60f25a547317
-	github.com/romberli/go-util v0.3.16-0.20220420091455-0573eac76d8c
+	github.com/romberli/go-util v0.3.16-0.20220425103556-86f323d29741
 	github.com/romberli/log v1.0.22
 	github.com/spf13/cast v1.4.1
 	github.com/spf13/cobra v1.2.1
