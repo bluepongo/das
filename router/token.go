@@ -2,10 +2,10 @@ package router
 
 import (
 	"bytes"
-	"encoding/json"
 	"io/ioutil"
 	"strings"
 
+	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/gin"
 	"github.com/pingcap/errors"
 	"github.com/romberli/das/global"
@@ -83,8 +83,6 @@ func (ta *TokenAuth) GetHandlerFunc(tokens []string) gin.HandlerFunc {
 			// do not check token for swagger
 			return
 		}
-
-		var fields map[string]interface{}
 		// get data
 		data, err := c.GetRawData()
 		if err != nil {
@@ -94,17 +92,10 @@ func (ta *TokenAuth) GetHandlerFunc(tokens []string) gin.HandlerFunc {
 		}
 		// set body back so that body can be read later in the router
 		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
-		// unmarshal data
-		err = json.Unmarshal(data, &fields)
+
+		token, err := jsonparser.GetString(data, tokenTokenJSON)
 		if err != nil {
-			resp.ResponseNOK(c, message.ErrUnmarshalRawData, errors.Trace(err))
-			c.Abort()
-			return
-		}
-		// check if http dody has token field
-		token, ok := fields[tokenTokenJSON].(string)
-		if !ok || token == constant.EmptyString {
-			resp.ResponseNOK(c, message.ErrFieldNotExists, tokenTokenJSON)
+			resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, tokenTokenJSON)
 			c.Abort()
 			return
 		}
