@@ -77,10 +77,10 @@ func SendEmail(c *gin.Context) {
 	s := alert.NewServiceWithDefault(config)
 	err = s.SendEmail(toAddrs, ccAddrs, subject, content)
 	if err != nil {
-		resp.ResponseNOK(c, msgalert.ErrServiceSendEmail, err, toAddrs, ccAddrs, subject, content)
+		resp.ResponseNOK(c, msgalert.ErrServiceSendEmail, err, config, toAddrs, ccAddrs, subject)
 		return
 	}
 
-	log.Debug(message.NewMessage(msgalert.DebugServiceSendEmail, toAddrs, ccAddrs, subject, content).Error())
-	resp.ResponseOK(c, sendEmailRespMessage, msgalert.InfoServiceSendEmail, toAddrs, ccAddrs, subject)
+	log.Debug(message.NewMessage(msgalert.DebugServiceSendEmail, config, toAddrs, ccAddrs, subject, content).Error())
+	resp.ResponseOK(c, sendEmailRespMessage, msgalert.InfoServiceSendEmail, config, toAddrs, ccAddrs, subject)
 }

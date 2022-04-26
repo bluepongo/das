@@ -31,11 +31,11 @@ func initServiceDebugMessage() {
 func initServiceInfoMessage() {
 	message.Messages[InfoServiceSendEmail] = config.NewErrMessage(
 		message.DefaultMessageHeader, InfoServiceSendEmail,
-		"sending email completed. to addresses: %s, cc addresses: %s, subject: %s.")
+		"sending email completed. config: %s, to addresses: %s, cc addresses: %s, subject: %s.")
 }
 
 func initServiceErrorMessage() {
 	message.Messages[ErrServiceSendEmail] = config.NewErrMessage(
 		message.DefaultMessageHeader, ErrServiceSendEmail,
-		"got error when sending email. config: %s, to addresses: %s, cc addresses: %s, subject: %s, content: %s.\n%s")
+		"got error when sending email. config: %s, to addresses: %s, cc addresses: %s, subject: %s.\n%s")
 }
