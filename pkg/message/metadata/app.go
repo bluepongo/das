@@ -14,48 +14,48 @@ func init() {
 
 const (
 	// debug
-	DebugMetadataGetAppAll       = 100101
-	DebugMetadataGetAppByID      = 100102
-	DebugMetadataGetAppByName    = 100103
-	DebugMetadataGetDBIDList     = 100104
-	DebugMetadataAddApp          = 100105
-	DebugMetadataUpdateApp       = 100106
-	DebugMetadataDeleteApp       = 100107
-	DebugMetadataAppAddDB        = 100108
-	DebugMetadataAppDeleteDB     = 100109
-	DebugMetadataGetDBsByAppID   = 100110
-	DebugMetadataGetUsersByAppID = 100111
-	DebugMetadataAppAddUser      = 100112
-	DebugMetadataAppDeleteUser   = 100113
+	DebugMetadataGetAppAll       = 101001
+	DebugMetadataGetAppByID      = 101002
+	DebugMetadataGetAppByName    = 101003
+	DebugMetadataGetDBIDList     = 101004
+	DebugMetadataAddApp          = 101005
+	DebugMetadataUpdateApp       = 101006
+	DebugMetadataDeleteApp       = 101007
+	DebugMetadataAppAddDB        = 101008
+	DebugMetadataAppDeleteDB     = 101009
+	DebugMetadataGetDBsByAppID   = 101010
+	DebugMetadataGetUsersByAppID = 101011
+	DebugMetadataAppAddUser      = 101012
+	DebugMetadataAppDeleteUser   = 101013
 	// info
-	InfoMetadataGetAppAll       = 200101
-	InfoMetadataGetAppByID      = 200102
-	InfoMetadataGetAppByName    = 200103
-	InfoMetadataGetDBIDList     = 200104
-	InfoMetadataAddApp          = 200105
-	InfoMetadataUpdateApp       = 200106
-	InfoMetadataDeleteApp       = 200107
-	InfoMetadataAppAddDB        = 200108
-	InfoMetadataAppDeleteDB     = 200109
-	InfoMetadataGetDBsByAppID   = 200110
-	InfoMetadataGetUsersByAppID = 200111
-	InfoMetadataAppAddUser      = 200112
-	InfoMetadataAppDeleteUser   = 200113
+	InfoMetadataGetAppAll       = 201001
+	InfoMetadataGetAppByID      = 201002
+	InfoMetadataGetAppByName    = 201003
+	InfoMetadataGetDBIDList     = 201004
+	InfoMetadataAddApp          = 201005
+	InfoMetadataUpdateApp       = 201006
+	InfoMetadataDeleteApp       = 201007
+	InfoMetadataAppAddDB        = 201008
+	InfoMetadataAppDeleteDB     = 201009
+	InfoMetadataGetDBsByAppID   = 201010
+	InfoMetadataGetUsersByAppID = 201011
+	InfoMetadataAppAddUser      = 201012
+	InfoMetadataAppDeleteUser   = 201013
 
 	// error
-	ErrMetadataGetAppAll       = 400101
-	ErrMetadataGetAppByID      = 400102
-	ErrMetadataGetAppByName    = 400103
-	ErrMetadataGetDBIDList     = 400104
-	ErrMetadataAddApp          = 400105
-	ErrMetadataUpdateApp       = 400106
-	ErrMetadataDeleteApp       = 400107
-	ErrMetadataAppAddDB        = 400108
-	ErrMetadataAppDeleteDB     = 400109
-	ErrMetadataGetDBsByAppID   = 400110
-	ErrMetadataGetUsersByAppID = 400111
-	ErrMetadataAppAddUser      = 400112
-	ErrMetadataAppDeleteUser   = 400113
+	ErrMetadataGetAppAll       = 401001
+	ErrMetadataGetAppByID      = 401002
+	ErrMetadataGetAppByName    = 401003
+	ErrMetadataGetDBIDList     = 401004
+	ErrMetadataAddApp          = 401005
+	ErrMetadataUpdateApp       = 401006
+	ErrMetadataDeleteApp       = 401007
+	ErrMetadataAppAddDB        = 401008
+	ErrMetadataAppDeleteDB     = 401009
+	ErrMetadataGetDBsByAppID   = 401010
+	ErrMetadataGetUsersByAppID = 401011
+	ErrMetadataAppAddUser      = 401012
+	ErrMetadataAppDeleteUser   = 401013
 )
 
 func initDebugAppMessage() {

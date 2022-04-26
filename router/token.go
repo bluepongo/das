@@ -20,6 +20,7 @@ import (
 
 const (
 	tokenTokenJSON   = "token"
+	tokenHealthPath  = "/api/v1/health"
 	tokenSwaggerPath = "/swagger"
 )
 
@@ -79,7 +80,8 @@ func (ta *TokenAuth) GetTokens() ([]string, error) {
 
 func (ta *TokenAuth) GetHandlerFunc(tokens []string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if strings.HasPrefix(c.Request.URL.Path, tokenSwaggerPath) {
+		if strings.HasPrefix(c.Request.URL.Path, tokenHealthPath) ||
+			strings.HasPrefix(c.Request.URL.Path, tokenSwaggerPath) {
 			// do not check token for swagger
 			return
 		}

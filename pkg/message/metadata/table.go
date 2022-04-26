@@ -14,24 +14,24 @@ func init() {
 // Message Code for metadata-table
 const (
 	// debug
-	DebugMetadataGetTablesByDBID                              = 100901
-	DebugMetadataGetStatisticsByDBIDAndTableName              = 100902
-	DebugMetadataGetStatisticsByHostInfoAndDBNameAndTableName = 100903
-	DebugMetadataAnalyzeTableByDBIDAndTableName               = 100904
-	DebugMetadataAnalyzeTableByHostInfoAndDBNameAndTableName  = 100905
+	DebugMetadataGetTablesByDBID                              = 101801
+	DebugMetadataGetStatisticsByDBIDAndTableName              = 101802
+	DebugMetadataGetStatisticsByHostInfoAndDBNameAndTableName = 101803
+	DebugMetadataAnalyzeTableByDBIDAndTableName               = 101804
+	DebugMetadataAnalyzeTableByHostInfoAndDBNameAndTableName  = 101805
 	// info
-	InfoMetadataGetTablesByDBID                              = 200901
-	InfoMetadataGetStatisticsByDBIDAndTableName              = 200902
-	InfoMetadataGetStatisticsByHostInfoAndDBNameAndTableName = 200903
-	InfoMetadataAnalyzeTableByDBIDAndTableName               = 200904
-	InfoMetadataAnalyzeTableByHostInfoAndDBNameAndTableName  = 200905
+	InfoMetadataGetTablesByDBID                              = 201801
+	InfoMetadataGetStatisticsByDBIDAndTableName              = 201802
+	InfoMetadataGetStatisticsByHostInfoAndDBNameAndTableName = 201803
+	InfoMetadataAnalyzeTableByDBIDAndTableName               = 201804
+	InfoMetadataAnalyzeTableByHostInfoAndDBNameAndTableName  = 201805
 	// error
-	ErrMetadataGetTablesByDBID                              = 400901
-	ErrMetadataGetStatisticsByDBIDAndTableName              = 400902
-	ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName = 400903
-	ErrMetadataAnalyzeTableByDBIDAndTableName               = 400904
-	ErrMetadataAnalyzeTableByHostInfoAndDBNameAndTableName  = 400905
-	ErrMetadataTableCreateApplicationMySQLConn              = 400906
+	ErrMetadataGetTablesByDBID                              = 401801
+	ErrMetadataGetStatisticsByDBIDAndTableName              = 401802
+	ErrMetadataGetStatisticsByHostInfoAndDBNameAndTableName = 401803
+	ErrMetadataAnalyzeTableByDBIDAndTableName               = 401804
+	ErrMetadataAnalyzeTableByHostInfoAndDBNameAndTableName  = 401805
+	ErrMetadataTableCreateApplicationMySQLConn              = 401806
 )
 
 func initDebugTableMessage() {

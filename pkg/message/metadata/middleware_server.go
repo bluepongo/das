@@ -13,30 +13,30 @@ func init() {
 
 const (
 	// debug
-	DebugMetadataGetMiddlewareServerAll        = 100501
-	DebugMetadataGetMiddlewareSeverByClusterID = 100502
-	DebugMetadataGetMiddlewareServerByID       = 100503
-	DebugMetadataGetMiddlewareServerByHostInfo = 100504
-	DebugMetadataAddMiddlewareServer           = 100505
-	DebugMetadataUpdateMiddlewareServer        = 100506
-	DebugMetadataDeleteMiddlewareServer        = 100507
+	DebugMetadataGetMiddlewareServerAll        = 101401
+	DebugMetadataGetMiddlewareSeverByClusterID = 101402
+	DebugMetadataGetMiddlewareServerByID       = 101403
+	DebugMetadataGetMiddlewareServerByHostInfo = 101404
+	DebugMetadataAddMiddlewareServer           = 101405
+	DebugMetadataUpdateMiddlewareServer        = 101406
+	DebugMetadataDeleteMiddlewareServer        = 101407
 
 	// info
-	InfoMetadataGetMiddlewareServerAll        = 200501
-	InfoMetadataGetMiddlewareSeverByClusterID = 200502
-	InfoMetadataGetMiddlewareServerByID       = 200503
-	InfoMetadataGetMiddlewareServerByHostInfo = 200504
-	InfoMetadataAddMiddlewareServer           = 200505
-	InfoMetadataUpdateMiddlewareServer        = 200506
-	InfoMetadataDeleteMiddlewareServer        = 200507
+	InfoMetadataGetMiddlewareServerAll        = 201401
+	InfoMetadataGetMiddlewareSeverByClusterID = 201402
+	InfoMetadataGetMiddlewareServerByID       = 201403
+	InfoMetadataGetMiddlewareServerByHostInfo = 201404
+	InfoMetadataAddMiddlewareServer           = 201405
+	InfoMetadataUpdateMiddlewareServer        = 201406
+	InfoMetadataDeleteMiddlewareServer        = 201407
 	// error
-	ErrMetadataGetMiddlewareServerAll        = 400501
-	ErrMetadataGetMiddlewareSeverByClusterID = 400502
-	ErrMetadataGetMiddlewareServerByID       = 400503
-	ErrMetadataGetMiddlewareServerByHostInfo = 400504
-	ErrMetadataAddMiddlewareServer           = 400505
-	ErrMetadataUpdateMiddlewareServer        = 400506
-	ErrMetadataDeleteMiddlewareServer        = 400507
+	ErrMetadataGetMiddlewareServerAll        = 401401
+	ErrMetadataGetMiddlewareSeverByClusterID = 401402
+	ErrMetadataGetMiddlewareServerByID       = 401403
+	ErrMetadataGetMiddlewareServerByHostInfo = 401404
+	ErrMetadataAddMiddlewareServer           = 401405
+	ErrMetadataUpdateMiddlewareServer        = 401406
+	ErrMetadataDeleteMiddlewareServer        = 401407
 )
 
 func initDebugMiddlewareServerMessage() {

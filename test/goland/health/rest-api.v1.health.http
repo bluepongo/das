@@ -1,0 +1,3 @@
+### health.Ping
+GET http://{{baseURL}}/api/v1/health/ping
+Content-Type: application/json

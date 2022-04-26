@@ -13,26 +13,26 @@ func init() {
 
 const (
 	// debug
-	DebugMetadataGetEnvAll     = 100301
-	DebugMetadataGetEnvByID    = 100302
-	DebugMetadataAddEnv        = 100303
-	DebugMetadataUpdateEnv     = 100304
-	DebugMetadataGetEnvByName  = 100305
-	DebugMetadataDeleteEnvByID = 100306
+	DebugMetadataGetEnvAll     = 101201
+	DebugMetadataGetEnvByID    = 101202
+	DebugMetadataAddEnv        = 101203
+	DebugMetadataUpdateEnv     = 101204
+	DebugMetadataGetEnvByName  = 101205
+	DebugMetadataDeleteEnvByID = 101206
 	// info
-	InfoMetadataGetEnvAll     = 200301
-	InfoMetadataGetEnvByID    = 200302
-	InfoMetadataAddEnv        = 200303
-	InfoMetadataUpdateEnv     = 200304
-	InfoMetadataGetEnvByName  = 200305
-	InfoMetadataDeleteEnvByID = 200306
+	InfoMetadataGetEnvAll     = 201201
+	InfoMetadataGetEnvByID    = 201202
+	InfoMetadataAddEnv        = 201203
+	InfoMetadataUpdateEnv     = 201204
+	InfoMetadataGetEnvByName  = 201205
+	InfoMetadataDeleteEnvByID = 201206
 	// error
-	ErrMetadataGetEnvAll     = 400301
-	ErrMetadataGetEnvByID    = 400302
-	ErrMetadataAddEnv        = 400303
-	ErrMetadataUpdateEnv     = 400304
-	ErrMetadataGetEnvByName  = 400305
-	ErrMetadataDeleteEnvByID = 400306
+	ErrMetadataGetEnvAll     = 401201
+	ErrMetadataGetEnvByID    = 401202
+	ErrMetadataAddEnv        = 401203
+	ErrMetadataUpdateEnv     = 401204
+	ErrMetadataGetEnvByName  = 401205
+	ErrMetadataDeleteEnvByID = 401206
 )
 
 func initDebugEnvMessage() {

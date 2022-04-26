@@ -15,35 +15,35 @@ func init() {
 // Message code
 const (
 	// debug
-	DebugMetadataGetMySQLServerAll         = 100801
-	DebugMetadataGetMySQLServerByClusterID = 100802
-	DebugMetadataGetMySQLServerByID        = 100803
-	DebugMetadataGetMySQLServerByHostInfo  = 100804
-	DebugMetadataIsMaster                  = 100805
-	DebugMetadataGetMySQLClusterByServerID = 100806
-	DebugMetadataAddMySQLServer            = 100807
-	DebugMetadataUpdateMySQLServer         = 100808
-	DebugMetadataDeleteMySQLServer         = 100809
+	DebugMetadataGetMySQLServerAll         = 101701
+	DebugMetadataGetMySQLServerByClusterID = 101702
+	DebugMetadataGetMySQLServerByID        = 101703
+	DebugMetadataGetMySQLServerByHostInfo  = 101704
+	DebugMetadataIsMaster                  = 101705
+	DebugMetadataGetMySQLClusterByServerID = 101706
+	DebugMetadataAddMySQLServer            = 101707
+	DebugMetadataUpdateMySQLServer         = 101708
+	DebugMetadataDeleteMySQLServer         = 101709
 	// info
-	InfoMetadataGetMySQLServerAll         = 200801
-	InfoMetadataGetMySQLServerByClusterID = 200802
-	InfoMetadataGetMySQLServerByID        = 200803
-	InfoMetadataGetMySQLServerByHostInfo  = 200804
-	InfoMetadataIsMaster                  = 200805
-	InfoMetadataGetMySQLClusterByServerID = 200806
-	InfoMetadataAddMySQLServer            = 200807
-	InfoMetadataUpdateMySQLServer         = 200808
-	InfoMetadataDeleteMySQLServer         = 200809
+	InfoMetadataGetMySQLServerAll         = 201701
+	InfoMetadataGetMySQLServerByClusterID = 201702
+	InfoMetadataGetMySQLServerByID        = 201703
+	InfoMetadataGetMySQLServerByHostInfo  = 201704
+	InfoMetadataIsMaster                  = 201705
+	InfoMetadataGetMySQLClusterByServerID = 201706
+	InfoMetadataAddMySQLServer            = 201707
+	InfoMetadataUpdateMySQLServer         = 201708
+	InfoMetadataDeleteMySQLServer         = 201709
 	// error
-	ErrMetadataGetMySQLServerAll         = 400801
-	ErrMetadataGetMySQLServerByClusterID = 400802
-	ErrMetadataGetMySQLServerByID        = 400803
-	ErrMetadataGetMySQLServerByHostInfo  = 400804
-	ErrMetadataIsMaster                  = 400805
-	ErrMetadataGetMySQLClusterByServerID = 400806
-	ErrMetadataAddMySQLServer            = 400807
-	ErrMetadataUpdateMySQLServer         = 400808
-	ErrMetadataDeleteMySQLServer         = 400809
+	ErrMetadataGetMySQLServerAll         = 401701
+	ErrMetadataGetMySQLServerByClusterID = 401702
+	ErrMetadataGetMySQLServerByID        = 401703
+	ErrMetadataGetMySQLServerByHostInfo  = 401704
+	ErrMetadataIsMaster                  = 401705
+	ErrMetadataGetMySQLClusterByServerID = 401706
+	ErrMetadataAddMySQLServer            = 401707
+	ErrMetadataUpdateMySQLServer         = 401708
+	ErrMetadataDeleteMySQLServer         = 401709
 )
 
 func initDebugMySQLServerMessage() {

@@ -14,29 +14,29 @@ func init() {
 
 const (
 	// debug
-	DebugMetadataGetMonitorSystemAll        = 100601
-	DebugMetadataGetMonitorSystemByEnv      = 100602
-	DebugMetadataGetMonitorSystemByID       = 100603
-	DebugMetadataGetMonitorSystemByHostInfo = 100604
-	DebugMetadataAddMonitorSystem           = 100605
-	DebugMetadataUpdateMonitorSystem        = 100606
-	DebugMetadataDeleteMonitorSystem        = 100607
+	DebugMetadataGetMonitorSystemAll        = 101501
+	DebugMetadataGetMonitorSystemByEnv      = 101502
+	DebugMetadataGetMonitorSystemByID       = 101503
+	DebugMetadataGetMonitorSystemByHostInfo = 101504
+	DebugMetadataAddMonitorSystem           = 101505
+	DebugMetadataUpdateMonitorSystem        = 101506
+	DebugMetadataDeleteMonitorSystem        = 101507
 	// info
-	InfoMetadataGetMonitorSystemAll        = 200601
-	InfoMetadataGetMonitorSystemByEnv      = 200602
-	InfoMetadataGetMonitorSystemByID       = 200603
-	InfoMetadataGetMonitorSystemByHostInfo = 200604
-	InfoMetadataAddMonitorSystem           = 200605
-	InfoMetadataUpdateMonitorSystem        = 200606
-	InfoMetadataDeleteMonitorSystem        = 200607
+	InfoMetadataGetMonitorSystemAll        = 201501
+	InfoMetadataGetMonitorSystemByEnv      = 201502
+	InfoMetadataGetMonitorSystemByID       = 201503
+	InfoMetadataGetMonitorSystemByHostInfo = 201504
+	InfoMetadataAddMonitorSystem           = 201505
+	InfoMetadataUpdateMonitorSystem        = 201506
+	InfoMetadataDeleteMonitorSystem        = 201507
 	// error
-	ErrMetadataGetMonitorSystemAll        = 400601
-	ErrMetadataGetMonitorSystemByEnv      = 400602
-	ErrMetadataGetMonitorSystemByID       = 400603
-	ErrMetadataGetMonitorSystemByHostInfo = 400604
-	ErrMetadataAddMonitorSystem           = 400605
-	ErrMetadataUpdateMonitorSystem        = 400606
-	ErrMetadataDeleteMonitorSystem        = 400607
+	ErrMetadataGetMonitorSystemAll        = 401501
+	ErrMetadataGetMonitorSystemByEnv      = 401502
+	ErrMetadataGetMonitorSystemByID       = 401503
+	ErrMetadataGetMonitorSystemByHostInfo = 401504
+	ErrMetadataAddMonitorSystem           = 401505
+	ErrMetadataUpdateMonitorSystem        = 401506
+	ErrMetadataDeleteMonitorSystem        = 401507
 )
 
 func initDebugMonitorSystemMessage() {

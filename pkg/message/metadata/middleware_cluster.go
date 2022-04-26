@@ -14,41 +14,41 @@ func init() {
 
 const (
 	// debug
-	DebugMetadataGetMiddlewareClusterAll       = 100401
-	DebugMetadataGetMiddlewareClusterByEnv     = 100402
-	DebugMetadataGetMiddlewareClusterByID      = 100403
-	DebugMetadataGetMiddlewareClusterByName    = 100404
-	DebugMetadataGetMiddlewareServers          = 100405
-	DebugMetadataAddMiddlewareCluster          = 100406
-	DebugMetadataUpdateMiddlewareCluster       = 100407
-	DebugMetadataDeleteMiddlewareCluster       = 100408
-	DebugMetadataGetUsersByMiddlewareClusterID = 100409
-	DebugMetadataMiddlewareClusterAddUser      = 100410
-	DebugMetadataMiddlewareClusterDeleteUser   = 100411
+	DebugMetadataGetMiddlewareClusterAll       = 101301
+	DebugMetadataGetMiddlewareClusterByEnv     = 101302
+	DebugMetadataGetMiddlewareClusterByID      = 101303
+	DebugMetadataGetMiddlewareClusterByName    = 101304
+	DebugMetadataGetMiddlewareServers          = 101305
+	DebugMetadataAddMiddlewareCluster          = 101306
+	DebugMetadataUpdateMiddlewareCluster       = 101307
+	DebugMetadataDeleteMiddlewareCluster       = 101308
+	DebugMetadataGetUsersByMiddlewareClusterID = 101309
+	DebugMetadataMiddlewareClusterAddUser      = 101310
+	DebugMetadataMiddlewareClusterDeleteUser   = 101311
 	// info
-	InfoMetadataGetMiddlewareClusterAll       = 200401
-	InfoMetadataGetMiddlewareClusterByEnv     = 200402
-	InfoMetadataGetMiddlewareClusterByID      = 200403
-	InfoMetadataGetMiddlewareClusterByName    = 200404
-	InfoMetadataGetMiddlewareServers          = 200405
-	InfoMetadataAddMiddlewareCluster          = 200406
-	InfoMetadataUpdateMiddlewareCluster       = 200407
-	InfoMetadataDeleteMiddlewareCluster       = 200408
-	InfoMetadataGetUsersByMiddlewareClusterID = 200409
-	InfoMetadataMiddlewareClusterAddUser      = 200410
-	InfoMetadataMiddlewareClusterDeleteUser   = 200411
+	InfoMetadataGetMiddlewareClusterAll       = 201301
+	InfoMetadataGetMiddlewareClusterByEnv     = 201302
+	InfoMetadataGetMiddlewareClusterByID      = 201303
+	InfoMetadataGetMiddlewareClusterByName    = 201304
+	InfoMetadataGetMiddlewareServers          = 201305
+	InfoMetadataAddMiddlewareCluster          = 201306
+	InfoMetadataUpdateMiddlewareCluster       = 201307
+	InfoMetadataDeleteMiddlewareCluster       = 201308
+	InfoMetadataGetUsersByMiddlewareClusterID = 201309
+	InfoMetadataMiddlewareClusterAddUser      = 201310
+	InfoMetadataMiddlewareClusterDeleteUser   = 201311
 	// error
-	ErrMetadataGetMiddlewareClusterAll       = 400401
-	ErrMetadataGetMiddlewareClusterByEnv     = 400402
-	ErrMetadataGetMiddlewareClusterByID      = 400403
-	ErrMetadataGetMiddlewareClusterByName    = 400404
-	ErrMetadataGetMiddlewareServers          = 400405
-	ErrMetadataAddMiddlewareCluster          = 400406
-	ErrMetadataUpdateMiddlewareCluster       = 400407
-	ErrMetadataDeleteMiddlewareCluster       = 400408
-	ErrMetadataGetUsersByMiddlewareClusterID = 400409
-	ErrMetadataMiddlewareClusterAddUser      = 400410
-	ErrMetadataMiddlewareClusterDeleteUser   = 400411
+	ErrMetadataGetMiddlewareClusterAll       = 401301
+	ErrMetadataGetMiddlewareClusterByEnv     = 401302
+	ErrMetadataGetMiddlewareClusterByID      = 401303
+	ErrMetadataGetMiddlewareClusterByName    = 401304
+	ErrMetadataGetMiddlewareServers          = 401305
+	ErrMetadataAddMiddlewareCluster          = 401306
+	ErrMetadataUpdateMiddlewareCluster       = 401307
+	ErrMetadataDeleteMiddlewareCluster       = 401308
+	ErrMetadataGetUsersByMiddlewareClusterID = 401309
+	ErrMetadataMiddlewareClusterAddUser      = 401310
+	ErrMetadataMiddlewareClusterDeleteUser   = 401311
 )
 
 func initDebugMiddlewareClusterMessage() {
