@@ -35,6 +35,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+const startCommand = "start"
+
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
@@ -77,13 +79,17 @@ var startCmd = &cobra.Command{
 		daemon := viper.GetBool(config.DaemonKey)
 		if daemon {
 			// set daemon to false
+			var daemonExists bool
 			args = os.Args[1:]
 			for i, arg := range os.Args[1:] {
 				if config.TrimSpaceOfArg(arg) == config.DaemonArgTrue {
+					daemonExists = true
 					args[i] = config.DaemonArgFalse
 				}
 			}
-
+			if !daemonExists {
+				args = append([]string{startCommand, config.DaemonArgFalse}, args[1:]...)
+			}
 			// start server with new process
 			startCommand := exec.Command(os.Args[constant.ZeroInt], args...)
 			err = startCommand.Start()
