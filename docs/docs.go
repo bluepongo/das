@@ -100,6 +100,28 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/health/ping": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "ping",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": {\"ping\": \"pong\"}}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/healthcheck/check": {
             "post": {
                 "consumes": [
