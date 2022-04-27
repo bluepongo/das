@@ -31,7 +31,7 @@ go build -o das main.go
 
 Start
 ```
-./das start --daemon=true --config=./config/das.yaml
+./das start --config=./config/das.yaml
 ```
 
 Swagger
