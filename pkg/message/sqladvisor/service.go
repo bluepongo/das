@@ -16,12 +16,12 @@ const (
 	// debug
 
 	// info
-	InfoSQLAdvisorGetFingerprint = 204001
-	InfoSQLAdvisorGetSQLID       = 204002
-	InfoSQLAdvisorAdvice         = 204003
+	InfoSQLAdvisorGetFingerprint = 205001
+	InfoSQLAdvisorGetSQLID       = 205002
+	InfoSQLAdvisorAdvice         = 205003
 
 	// error
-	ErrSQLAdvisorAdvice = 404001
+	ErrSQLAdvisorAdvice = 405001
 )
 
 func initServiceDebugMessage() {

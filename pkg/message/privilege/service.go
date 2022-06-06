@@ -18,9 +18,9 @@ const (
 	// info
 
 	// error
-	ErrPrivilegeNotEnoughPrivilegeByMySQLServerID = 406001
-	ErrPrivilegeNotEnoughPrivilegeByHostInfo      = 406002
-	ErrPrivilegeNotEnoughPrivilegeByDBID          = 406003
+	ErrPrivilegeNotEnoughPrivilegeByMySQLServerID = 407001
+	ErrPrivilegeNotEnoughPrivilegeByHostInfo      = 407002
+	ErrPrivilegeNotEnoughPrivilegeByDBID          = 407003
 )
 
 func initServiceDebugMessage() {

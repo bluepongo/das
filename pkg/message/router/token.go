@@ -17,8 +17,8 @@ const (
 	// info
 
 	// error
-	ErrRouterGetHandlerFunc = 407001
-	ErrRouterValidateToken  = 407002
+	ErrRouterGetHandlerFunc = 408001
+	ErrRouterValidateToken  = 408002
 )
 
 func initRouterDebugMessage() {

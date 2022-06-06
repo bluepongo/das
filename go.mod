@@ -19,10 +19,10 @@ require (
 	github.com/romberli/go-multierror v1.1.2-0.20220118054508-60f25a547317
 	github.com/romberli/go-util v0.3.16-0.20220425103556-86f323d29741
 	github.com/romberli/log v1.0.22
-	github.com/spf13/cast v1.4.1
+	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.2.1
-	github.com/spf13/viper v1.9.0
-	github.com/stretchr/testify v1.7.0
+	github.com/spf13/viper v1.12.0
+	github.com/stretchr/testify v1.7.1
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0

@@ -13,28 +13,28 @@ func init() {
 
 const (
 	// debug
-	DebugQueryGetByMySQLClusterID = 103001
-	DebugQueryGetByMySQLServerID  = 103002
-	DebugQueryGetByHostInfo       = 103003
-	DebugQueryGetByDBID           = 103004
-	DebugQueryGetBySQLID          = 103005
+	DebugQueryGetByMySQLClusterID = 104001
+	DebugQueryGetByMySQLServerID  = 104002
+	DebugQueryGetByHostInfo       = 104003
+	DebugQueryGetByDBID           = 104004
+	DebugQueryGetBySQLID          = 104005
 	// info
-	InfoQueryGetByMySQLClusterID = 203001
-	InfoQueryGetByMySQLServerID  = 203002
-	InfoQueryGetByHostInfo       = 203003
-	InfoQueryGetByDBID           = 203004
-	InfoQueryGetBySQLID          = 203005
+	InfoQueryGetByMySQLClusterID = 204001
+	InfoQueryGetByMySQLServerID  = 204002
+	InfoQueryGetByHostInfo       = 204003
+	InfoQueryGetByDBID           = 204004
+	InfoQueryGetBySQLID          = 204005
 	// error
-	ErrQueryGetByMySQLClusterID               = 403001
-	ErrQueryGetByMySQLServerID                = 403002
-	ErrQueryGetByHostInfo                     = 403003
-	ErrQueryGetByDBID                         = 403004
-	ErrQueryGetBySQLID                        = 403005
-	ErrQueryConfigNotValid                    = 403006
-	ErrQueryMonitorSystemSystemType           = 403007
-	ErrQueryCloseMonitorRepo                  = 403008
-	ErrQueryCreateMonitorMysqlConnection      = 403009
-	ErrQueryCreateMonitorClickhouseConnection = 403010
+	ErrQueryGetByMySQLClusterID               = 404001
+	ErrQueryGetByMySQLServerID                = 404002
+	ErrQueryGetByHostInfo                     = 404003
+	ErrQueryGetByDBID                         = 404004
+	ErrQueryGetBySQLID                        = 404005
+	ErrQueryConfigNotValid                    = 404006
+	ErrQueryMonitorSystemSystemType           = 404007
+	ErrQueryCloseMonitorRepo                  = 404008
+	ErrQueryCreateMonitorMysqlConnection      = 404009
+	ErrQueryCreateMonitorClickhouseConnection = 404010
 )
 
 func initQueryDebugMessage() {

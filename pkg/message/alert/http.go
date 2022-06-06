@@ -17,7 +17,7 @@ const (
 	// info
 
 	// error
-	ErrHTTTPSenderCallAlertAPI = 405001
+	ErrHTTTPSenderCallAlertAPI = 406001
 )
 
 func initHTTTPSenderDebugMessage() {

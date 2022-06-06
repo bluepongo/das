@@ -22,12 +22,13 @@ message code is a 6-digit number, use `ABCDEF` to present each digit
 | 01  | metadata    | 7   | mysql server       |
 | 01  | metadata    | 8   | table              |
 | 01  | metadata    | 9   | user               |
-| 02  | healthcheck | 0   | default engine     |
-| 02  | healthcheck | 1   | service            |
-| 03  | query       | 0   | query              |
-| 04  | sqladvisor  | 0   | service            |
-| 05  | alert       | 0   | http               |
-| 05  | alert       | 1   | service            |
-| 06  | privilege   | 0   | service            |
-| 07  | router      | 0   | token              |
-| 08  | health      | 0   | health             |
+| 02  | metadata    | 0   | resource group     |
+| 03  | healthcheck | 0   | default engine     |
+| 03  | healthcheck | 1   | service            |
+| 04  | query       | 0   | query              |
+| 05  | sqladvisor  | 0   | service            |
+| 06  | alert       | 0   | http               |
+| 06  | alert       | 1   | service            |
+| 07  | privilege   | 0   | service            |
+| 08  | router      | 0   | token              |
+| 09  | health      | 0   | health             |

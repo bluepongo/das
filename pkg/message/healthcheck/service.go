@@ -13,31 +13,31 @@ func init() {
 
 const (
 	// debug
-	DebugHealthcheckGetOperationHistoriesByLoginName = 102101
-	DebugHealthcheckGetResultByOperationID           = 102102
-	DebugHealthcheckCheck                            = 102103
-	DebugHealthcheckCheckByHostInfo                  = 102103
-	DebugHealthcheckReviewAccuracy                   = 102104
+	DebugHealthcheckGetOperationHistoriesByLoginName = 103101
+	DebugHealthcheckGetResultByOperationID           = 103102
+	DebugHealthcheckCheck                            = 103103
+	DebugHealthcheckCheckByHostInfo                  = 103103
+	DebugHealthcheckReviewAccuracy                   = 103104
 	// info
-	InfoHealthcheckGetOperationHistoriesByLoginName = 202101
-	InfoHealthcheckGetResultByOperationID           = 202102
-	InfoHealthcheckCheck                            = 202103
-	InfoHealthcheckCheckByHostInfo                  = 202103
-	InfoHealthcheckReviewAccuracy                   = 202104
+	InfoHealthcheckGetOperationHistoriesByLoginName = 203101
+	InfoHealthcheckGetResultByOperationID           = 203102
+	InfoHealthcheckCheck                            = 203103
+	InfoHealthcheckCheckByHostInfo                  = 203103
+	InfoHealthcheckReviewAccuracy                   = 203104
 	// error
-	ErrHealthcheckCheckRange                        = 402101
-	ErrHealthcheckStartTime                         = 402102
-	ErrHealthcheckDefaultEngineRun                  = 402103
-	ErrHealthcheckGetOperationHistoriesByLoginName  = 402104
-	ErrHealthcheckGetResultByOperationID            = 402105
-	ErrHealthcheckCheck                             = 402106
-	ErrHealthcheckCheckByHostInfo                   = 402107
-	ErrHealthcheckReviewAccuracy                    = 402108
-	ErrHealthcheckCloseConnection                   = 402109
-	ErrHealthcheckCreateApplicationMySQLConnection  = 402110
-	ErrHealthcheckCreateMonitorMySQLConnection      = 402111
-	ErrHealthcheckCreateMonitorClickhouseConnection = 402112
-	ErrHealthcheckCreateMonitorPrometheusConnection = 402113
+	ErrHealthcheckCheckRange                        = 403101
+	ErrHealthcheckStartTime                         = 403102
+	ErrHealthcheckDefaultEngineRun                  = 403103
+	ErrHealthcheckGetOperationHistoriesByLoginName  = 403104
+	ErrHealthcheckGetResultByOperationID            = 403105
+	ErrHealthcheckCheck                             = 403106
+	ErrHealthcheckCheckByHostInfo                   = 403107
+	ErrHealthcheckReviewAccuracy                    = 403108
+	ErrHealthcheckCloseConnection                   = 403109
+	ErrHealthcheckCreateApplicationMySQLConnection  = 403110
+	ErrHealthcheckCreateMonitorMySQLConnection      = 403111
+	ErrHealthcheckCreateMonitorClickhouseConnection = 403112
+	ErrHealthcheckCreateMonitorPrometheusConnection = 403113
 )
 
 func initServiceDebugMessage() {

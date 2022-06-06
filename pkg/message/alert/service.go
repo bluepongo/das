@@ -13,13 +13,13 @@ func init() {
 
 const (
 	// debug
-	DebugServiceSendEmail = 105101
+	DebugServiceSendEmail = 106101
 
 	// info
-	InfoServiceSendEmail = 205101
+	InfoServiceSendEmail = 206101
 
 	// error
-	ErrServiceSendEmail = 405101
+	ErrServiceSendEmail = 406101
 )
 
 func initServiceDebugMessage() {
