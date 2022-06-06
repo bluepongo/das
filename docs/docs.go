@@ -653,9 +653,9 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "application"
+                    "middleware cluster"
                 ],
-                "summary": "delete app by id",
+                "summary": "delete middleware cluster by id",
                 "parameters": [
                     {
                         "description": "token",
@@ -667,7 +667,7 @@ var doc = `{
                         }
                     },
                     {
-                        "description": "app id",
+                        "description": "middleware cluster id",
                         "name": "id",
                         "in": "body",
                         "required": true,
@@ -678,7 +678,7 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"apps\": [ {\"id\": 2,\"app_name\": \"app2\",\"level\": 2,\"del_flag\": 0,\"create_time\": \"2021-10-25T09:46:04.275796+08:00\",\"last_update_time\": \"2021-12-21T09:15:47.688546+08:00\"}]}",
+                        "description": "middleware_clusters\":[{\"id\":65,\"cluster_name\":\"new_middleware_cluster\",\"env_id\":1,\"del_flag\":0,\"create_time\":\"2022-03-02T10:39:06.206145+08:00\",\"last_update_time\":\"2022-03-02T10:39:06.206145+08:00\"}]}",
                         "schema": {
                             "type": "string"
                         }
@@ -5788,7 +5788,7 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "[ {  \"ID\": \"B95017DB61875675\",  \"Fingerprint\": \"select * from t_meta_db_info where create_time\u003c?\",  \"Score\": 85,  \"Sample\": \"select * from t_meta_db_info where create_time\u003c'2021-01-01'\",  \"Explain\": null,  \"HeuristicRules\": [    {      \"Item\": \"COL.001\",      \"Severity\": \"L1\",      \"Summary\": \"不建议使用 SELECT * 类型查询\",      \"Content\": \"当表结构变更时，使用 * 通配符选择所有列将导致查询的含义和行为会发生更改，可能导致查询返回更多的数据。\",      \"Case\": \"select * from tbl where id=1\",      \"Position\": 0    }  ],  \"IndexRules\": [    {      \"Item\": \"IDX.001\",      \"Severity\": \"L2\",      \"Summary\": \"为das库的t_meta_db_info表添加索引\",      \"Content\": \"为列create_time添加索引; 由于未开启数据采样，各列在索引中的顺序需要自行调整。\",      \"Case\": \"ALTER TABLE ` + "`" + `das` + "`" + `.` + "`" + `t_meta_db_info` + "`" + ` add index ` + "`" + `idx_create_time` + "`" + ` (` + "`" + `create_time` + "`" + `) ; \",      \"Position\": 0    }  ],  \"Tables\": [    \"` + "`" + `soar` + "`" + `.` + "`" + `t_meta_db_info` + "`" + `\"  ]} ]",
+                        "description": "[{\"ID\": \"B95017DB61875675\", \"Fingerprint\": \"select * from t_meta_db_info where create_time\u003c?\", \"Score\": 85, \"Sample\": \"select * from t_meta_db_info where create_time\u003c'2021-01-01'\", \"Explain\": null, \"HeuristicRules\": [{\"Item\": \"COL.001\", \"Severity\": \"L1\", \"Summary\": \"不建议使用 SELECT * 类型查询\", \"Content\": \"当表结构变更时，使用 * 通配符选择所有列将导致查询的含义和行为会发生更改，可能导致查询返回更多的数据。\", \"Case\": \"select * from tbl where id=1\", \"Position\": 0}], \"IndexRules\": [{\"Item\": \"IDX.001\", \"Severity\": \"L2\", \"Summary\": \"为das库的t_meta_db_info表添加索引\", \"Content\": \"为列create_time添加索引; 由于未开启数据采样，各列在索引中的顺序需要自行调整。\", \"Case\": \"ALTER TABLE ` + "`" + `das` + "`" + `.` + "`" + `t_meta_db_info` + "`" + ` add index ` + "`" + `idx_create_time` + "`" + ` (` + "`" + `create_time` + "`" + `) ; \", \"Position\": 0}], \"Tables\": [\"` + "`" + `soar` + "`" + `.` + "`" + `t_meta_db_info` + "`" + `\"]}]",
                         "schema": {
                             "type": "string"
                         }
