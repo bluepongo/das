@@ -51,6 +51,8 @@ const (
 	httpHostIPJSON              = "host_ip"
 	httpEventIDJSON             = "event_id"
 	httpAlertTimeJSON           = "alert_time"
+
+	defaultCloudMySQLServer = 4
 )
 
 var (
@@ -409,7 +411,11 @@ func (de *DefaultEngine) checkDBConfig() error {
 	if dbConfigScoreDeduction > dbConfigConfig.GetMaxScoreDeductionHigh() {
 		dbConfigScoreDeduction = dbConfigConfig.GetMaxScoreDeductionHigh()
 	}
-	de.result.DBConfigScore = int(defaultMaxScore - dbConfigScoreDeduction)
+
+	if de.GetOperationInfo().GetMySQLServer().GetDeploymentType() != defaultCloudMySQLServer {
+		// normally, users can not modify the db config of cloud mysql server, therefore, only deduct non cloud mysql server
+		de.result.DBConfigScore = int(defaultMaxScore - dbConfigScoreDeduction)
+	}
 	if de.result.DBConfigScore < constant.ZeroInt {
 		de.result.DBConfigScore = constant.ZeroInt
 	}
