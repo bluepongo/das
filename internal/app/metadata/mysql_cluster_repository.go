@@ -136,7 +136,7 @@ func (mcr *MySQLClusterRepo) GetByID(id int) (metadata.MySQLCluster, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterInfo.GetByID(): data does not exists, id: %d", id))
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterRepo.GetByID(): data does not exists, id: %d", id))
 	case 1:
 		mysqlClusterInfo := NewEmptyMySQLClusterInfoWithGlobal()
 		// map to struct
@@ -147,7 +147,7 @@ func (mcr *MySQLClusterRepo) GetByID(id int) (metadata.MySQLCluster, error) {
 
 		return mysqlClusterInfo, nil
 	default:
-		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterInfo.GetByID(): duplicate key exists, id: %d", id))
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterRepo.GetByID(): duplicate key exists, id: %d", id))
 	}
 }
 
@@ -165,7 +165,7 @@ func (mcr *MySQLClusterRepo) GetByName(clusterName string) (metadata.MySQLCluste
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterInfo.GetByID(): data does not exists, clusterName: %s", clusterName))
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterRepo.GetByName(): data does not exists, clusterName: %s", clusterName))
 	case 1:
 		mysqlClusterInfo := NewEmptyMySQLClusterInfoWithGlobal()
 		// map to struct
@@ -176,7 +176,7 @@ func (mcr *MySQLClusterRepo) GetByName(clusterName string) (metadata.MySQLCluste
 
 		return mysqlClusterInfo, nil
 	default:
-		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterInfo.GetByID(): duplicate key exists, clusterName: %s", clusterName))
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterRepo.GetByName(): duplicate key exists, clusterName: %s", clusterName))
 	}
 }
 

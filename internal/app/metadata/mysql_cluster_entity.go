@@ -14,7 +14,6 @@ const (
 	mysqlClusterClusterNameStruct         = "ClusterName"
 	mysqlCLusterMiddlewareClusterIDStruct = "MiddlewareClusterID"
 	mysqlClusterMonitorSystemIDStruct     = "MonitorSystemID"
-	mysqlClusterUserIDStruct              = "UserID"
 	mysqlClusterEnvIDStruct               = "EnvID"
 	mysqlClusterDelFlagStruct             = "DelFlag"
 )
