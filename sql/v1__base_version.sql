@@ -212,9 +212,9 @@ CREATE TABLE `t_meta_app_user_map` (
   `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
   `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
   `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
-PRIMARY KEY (`id`),
-UNIQUE KEY `idx01_app_id_user_id` (`app_id`, `user_id`),
-KEY `idx02_user_id` (`user_id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx01_app_id_user_id` (`app_id`, `user_id`),
+  KEY `idx02_user_id` (`user_id`)
 ) ENGINE = Innodb DEFAULT CHARSET = utf8mb4 COMMENT = '应用系统-用户映射表';
 
 CREATE TABLE `t_alert_operation_info` (
@@ -354,7 +354,7 @@ CREATE TABLE `t_query_operation_info` (
   `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记: 0-未删除, 1-已删除',
   `create_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
   `last_update_time` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '最后更新时间',
-PRIMARY KEY (`id`),
+  PRIMARY KEY (`id`),
   KEY `idx01_mysql_cluster_id` (`mysql_cluster_id`),
   KEY `idx02_mysql_server_id` (`mysql_server_id`),
   KEY `idx03_db_id` (`db_id`),
