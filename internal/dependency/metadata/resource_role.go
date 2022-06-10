@@ -26,8 +26,6 @@ type ResourceRole interface {
 	GetResourceGroup() (ResourceGroup, error)
 	// GetUsers gets the users of this resource role
 	GetUsers() ([]User, error)
-	// GetDASAdminUsers gets the das admin users of this resource group
-	GetDASAdminUsers() ([]User, error)
 	// Set sets the resource group with given fields, key is the field name and value is the relevant value of the key
 	Set(fields map[string]interface{}) error
 	// Delete sets DelFlag to 1
@@ -60,8 +58,6 @@ type ResourceRoleRepo interface {
 	GetResourceGroup(id int) (ResourceGroup, error)
 	// GetUsersByID gets the users with given resource group id from the middleware
 	GetUsersByID(id int) ([]User, error)
-	// GetDASAdminUsers gets the das admin users with given resource group id from the middleware
-	GetDASAdminUsers(id int) ([]User, error)
 	// Create creates a mysql server in the middleware
 	Create(rr ResourceRole) (ResourceRole, error)
 	// Update updates the mysql server in the middleware
@@ -92,8 +88,6 @@ type ResourceRoleService interface {
 	GetResourceGroupByID(id int) (ResourceGroup, error)
 	// GetUsersByID gets the users with given resource role id
 	GetUsersByID(id int) ([]User, error)
-	// GetDASAdminUsers gets the das admin users with given resource role id
-	GetDASAdminUsers(id int) ([]User, error)
 	// GetUsersByRoleUUID gets the users with given resource role uuid
 	GetUsersByRoleUUID(id int) ([]User, error)
 	// Create creates a mysql server in the mysql
