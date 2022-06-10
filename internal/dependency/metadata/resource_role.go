@@ -53,7 +53,7 @@ type ResourceRoleRepo interface {
 	// GetID gets the identity with given resource role id from the middleware
 	GetID(groupUUID string) (int, error)
 	// GetByRoleUUID gets the resource role with given resource role id from the middleware
-	GetByRoleUUID(groupUUID string) (ResourceRole, error)
+	GetByRoleUUID(roleUUID string) (ResourceRole, error)
 	// GetResourceGroup gets the resource group which this role belongs to with given resource role id from the middleware
 	GetResourceGroup(id int) (ResourceGroup, error)
 	// GetUsersByID gets the users with given resource group id from the middleware
@@ -89,7 +89,7 @@ type ResourceRoleService interface {
 	// GetUsersByID gets the users with given resource role id
 	GetUsersByID(id int) ([]User, error)
 	// GetUsersByRoleUUID gets the users with given resource role uuid
-	GetUsersByRoleUUID(id int) ([]User, error)
+	GetUsersByRoleUUID(uuid string) ([]User, error)
 	// Create creates a mysql server in the mysql
 	Create(fields map[string]interface{}) error
 	// Update gets a mysql server of the given id from the mysql,
