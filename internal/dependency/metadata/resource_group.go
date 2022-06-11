@@ -99,23 +99,23 @@ type ResourceGroupService interface {
 	// GetByID gets the resource group of the given id
 	GetByID(id int) error
 	// GetByGroupUUID gets the resource group by group uuid
-	GetByGroupUUID(groupUUID string) (ResourceGroup, error)
+	GetByGroupUUID(groupUUID string) error
 	// GetResourceRolesByID get all resource roles with given resource id
-	GetResourceRolesByID(id int) ([]ResourceRole, error)
+	GetResourceRolesByID(id int) error
 	// GetMySQLClusters gets the mysql clusters with given resource group id
-	GetMySQLClustersByID(id int) ([]MySQLCluster, error)
+	GetMySQLClustersByID(id int) error
 	// GetMySQLServers gets the mysql servers with given resource group id
-	GetMySQLServersByID(id int) ([]MySQLServer, error)
+	GetMySQLServersByID(id int) error
 	// GetUsersByID gets the users with given resource group id
-	GetUsersByID(id int) ([]User, error)
+	GetUsersByID(id int) error
 	// GetDASAdminUsersByID gets the das admin users with given resource group id
-	GetDASAdminUsersByID(id int) ([]User, error)
+	GetDASAdminUsersByID(id int) error
 	// GetMySQLClusters gets the mysql clusters with given resource group uuid
-	GetMySQLClustersByGroupUUID(groupUUID string) ([]MySQLCluster, error)
+	GetMySQLClustersByGroupUUID(groupUUID string) error
 	// GetMySQLServers gets the mysql servers with given resource group uuid
-	GetMySQLServersByGroupUUID(groupUUID string) ([]MySQLServer, error)
+	GetMySQLServersByGroupUUID(groupUUID string) error
 	// GetUsersByGroupUUID gets the users with given resource group uuid
-	GetUsersByGroupUUID(id int) ([]User, error)
+	GetUsersByGroupUUID(id int) error
 	// Create creates a mysql server in the mysql
 	Create(fields map[string]interface{}) error
 	// Update gets a mysql server of the given id from the mysql,

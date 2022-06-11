@@ -83,13 +83,13 @@ type ResourceRoleService interface {
 	// GetByID gets the resource role of the given id
 	GetByID(id int) error
 	// GetByRoleUUID gets the resource role by role uuid
-	GetByRoleUUID(groupUUID string) (ResourceRole, error)
+	GetByRoleUUID(groupUUID string) error
 	// GetResourceGroupByID gets the resource group with given resource role id
-	GetResourceGroupByID(id int) (ResourceGroup, error)
+	GetResourceGroupByID(id int) error
 	// GetUsersByID gets the users with given resource role id
-	GetUsersByID(id int) ([]User, error)
+	GetUsersByID(id int) error
 	// GetUsersByRoleUUID gets the users with given resource role uuid
-	GetUsersByRoleUUID(uuid string) ([]User, error)
+	GetUsersByRoleUUID(id int) error
 	// Create creates a mysql server in the mysql
 	Create(fields map[string]interface{}) error
 	// Update gets a mysql server of the given id from the mysql,
