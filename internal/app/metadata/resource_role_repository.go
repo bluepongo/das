@@ -53,9 +53,8 @@ func (rrr *ResourceRoleRepo) Transaction() (middleware.Transaction, error) {
 // GetAll gets all resource groups from the middleware
 func (rrr *ResourceRoleRepo) GetAll() ([]metadata.ResourceRole, error) {
 	sql := `
-		select id, cluster_name, middleware_cluster_id, monitor_system_id, 
-			env_id, del_flag, create_time, last_update_time
-		from t_meta_mysql_cluster_info
+		select id, role_uuid, role_name, resource_group_id, del_flag, create_time, last_update_time
+		from t_meta_resource_role_info
 		where del_flag = 0
 		order by id;
 	`
@@ -87,9 +86,8 @@ func (rrr *ResourceRoleRepo) GetAll() ([]metadata.ResourceRole, error) {
 // GetByID gets the resource role by the identity from the middleware
 func (rrr *ResourceRoleRepo) GetByID(id int) (metadata.ResourceRole, error) {
 	sql := `
-		select id, cluster_name, middleware_cluster_id, monitor_system_id, 
-			env_id, del_flag, create_time, last_update_time
-		from t_meta_mysql_cluster_info
+		select id, role_uuid, role_name, resource_group_id, del_flag, create_time, last_update_time
+		from t_meta_resource_role_info
 		where del_flag = 0
 		and id = ?;
 	`
@@ -117,10 +115,10 @@ func (rrr *ResourceRoleRepo) GetByID(id int) (metadata.ResourceRole, error) {
 }
 
 // GetID gets the identity with given resource role id from the middleware
-func (rrr *ResourceRoleRepo) GetID(clusterName string) (int, error) {
-	sql := `select id from t_meta_mysql_cluster_info where del_flag = 0 and cluster_name = ?;`
+func (rrr *ResourceRoleRepo) GetID(roleUUID string) (int, error) {
+	sql := `select id from t_meta_resource_role_info where del_flag = 0 and role_uuid = ?;`
 	log.Debugf("metadata ResourceRoleRepo.GetID() select sql: %s", sql)
-	result, err := rrr.Execute(sql, clusterName)
+	result, err := rrr.Execute(sql, roleUUID)
 	if err != nil {
 		return constant.ZeroInt, err
 	}
@@ -129,20 +127,21 @@ func (rrr *ResourceRoleRepo) GetID(clusterName string) (int, error) {
 }
 
 // GetByRoleUUID gets the resource role with given resource role id from the middleware
-func (rrr *ResourceRoleRepo) GetByRoleUUID(clusterName string) (metadata.ResourceRole, error) {
+func (rrr *ResourceRoleRepo) GetByRoleUUID(roleUUID string) (metadata.ResourceRole, error) {
 	sql := `
-		select id, cluster_name, middleware_cluster_id, monitor_system_id, 
-			env_id, del_flag, create_time, last_update_time
-		from t_meta_mysql_cluster_info where del_flag = 0 and cluster_name = ?;
+		select id, role_uuid, role_name, resource_group_id, del_flag, create_time, last_update_time
+		from t_meta_resource_role_info
+		where del_flag = 0 
+		and role_uuid = ?;
 	`
 	log.Debugf("metadata ResourceRoleRepo.GetByName() select sql: %s", sql)
-	result, err := rrr.Execute(sql, clusterName)
+	result, err := rrr.Execute(sql, roleUUID)
 	if err != nil {
 		return nil, err
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.Trace(fmt.Errorf("metadata ResourceRoleRepo.GetByName(): data does not exists, clusterName: %s", clusterName))
+		return nil, errors.Trace(fmt.Errorf("metadata ResourceRoleRepo.GetByName(): data does not exists, roleUUID: %s", roleUUID))
 	case 1:
 		resourceRoleInfo := NewEmptyResourceRoleInfoWithGlobal()
 		// map to struct
@@ -153,13 +152,27 @@ func (rrr *ResourceRoleRepo) GetByRoleUUID(clusterName string) (metadata.Resourc
 
 		return resourceRoleInfo, nil
 	default:
-		return nil, errors.Trace(fmt.Errorf("metadata ResourceRoleRepo.GetByName(): duplicate key exists, clusterName: %s", clusterName))
+		return nil, errors.Trace(fmt.Errorf("metadata ResourceRoleRepo.GetByName(): duplicate key exists, roleUUID: %s", roleUUID))
 	}
 }
 
 // GetResourceGroup gets the resource group which this role belongs to with given resource role id from the middleware
 func (rrr *ResourceRoleRepo) GetResourceGroup(id int) (metadata.ResourceGroup, error) {
-	// TODO:
+	// TODO: select group info by group id from role
+	sql := `
+		select id, group_uuid, group_name, del_flag, create_time, last_update_time
+		from t_meta_resource_group_info as group
+				 inner join t_meta_resource_role_info as role
+							on group.id = role.resource_group_id
+		where role.id = ?
+	`
+
+	log.Debugf("metadata ResourceRoleRepo.GetResourceGroup() select sql: %s", sql)
+	result, err := rrr.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
 	return nil, nil
 }
 
@@ -179,14 +192,14 @@ func (rrr *ResourceRoleRepo) GetUsersByID(id int) ([]metadata.User, error) {
 						user.create_time,
 						user.last_update_time
 		from t_meta_user_info as user
-				 inner join t_meta_mysql_cluster_user_map as cum
-							on user.id = cum.user_id
-				 inner join t_meta_mysql_cluster_info as cluster
-							on cluster.id = cum.mysql_cluster_id
+				 inner join t_meta_resource_role_user_map as rum
+							on user.id = rum.user_id
+				 inner join t_meta_resource_role_info as role
+							on role.id = rum.resource_role_id
 		where user.del_flag = 0
-		  and cum.del_flag = 0
-		  and cluster.del_flag = 0
-		  and cluster.id = ?;
+		  and rum.del_flag = 0
+		  and role.del_flag = 0
+		  and role.id = ?;
 	`
 	log.Debugf("metadata ResourceRoleRepo.GetUsersByID() sql: \n%s\nplaceholders: %d", sql, id)
 
@@ -211,9 +224,8 @@ func (rrr *ResourceRoleRepo) GetUsersByID(id int) ([]metadata.User, error) {
 // Create creates data with given entity in the middleware
 func (rrr *ResourceRoleRepo) Create(resourceRole metadata.ResourceRole) (metadata.ResourceRole, error) {
 	sql := `
-		insert into t_meta_mysql_cluster_info(cluster_name,middleware_cluster_id,
-			 monitor_system_id, env_id) 
-		values(?,?,?,?);`
+		insert into t_meta_resource_role_info(role_uuid, role_name, resource_group_id) 
+		values(?,?,?);`
 	log.Debugf("metadata ResourceRoleRepo.Create() insert sql: %s", sql)
 	// execute
 	_, err := rrr.Execute(sql,
@@ -223,7 +235,7 @@ func (rrr *ResourceRoleRepo) Create(resourceRole metadata.ResourceRole) (metadat
 	if err != nil {
 		return nil, err
 	}
-	// get cluster id
+	// get role id
 	id, err := rrr.GetID(resourceRole.GetRoleUUID())
 	if err != nil {
 		return nil, err
@@ -235,8 +247,8 @@ func (rrr *ResourceRoleRepo) Create(resourceRole metadata.ResourceRole) (metadat
 // Update updates data with given entity in the middleware
 func (rrr *ResourceRoleRepo) Update(entity metadata.ResourceRole) error {
 	sql := `
-		update t_meta_mysql_cluster_info set cluster_name = ?, middleware_cluster_id = ?, 
-			monitor_system_id = ?, env_id = ?, del_flag = ? 
+		update t_meta_resource_role_info set role_uuid = ?, role_name = ?, 
+			resource_group_id = ?, del_flag = ? 
 		where id = ?;`
 	log.Debugf("metadata ResourceRoleRepo.Update() update sql: %s", sql)
 	resourceRoleInfo := entity.(*ResourceRoleInfo)
@@ -252,8 +264,9 @@ func (rrr *ResourceRoleRepo) Update(entity metadata.ResourceRole) error {
 // Delete deletes data in the middleware, it is recommended to use soft deletion,
 // therefore use update instead of delete
 func (rrr *ResourceRoleRepo) Delete(id int) error {
-	sql := `delete from t_meta_mysql_cluster_info where id = ?;`
-	log.Debugf("metadata ResourceRoleRepo.Delete() delete sql(t_meta_mysql_cluster_info): %s", sql)
+	// FIXME: soft delete?
+	sql := `delete from t_meta_resource_role_info where id = ?;`
+	log.Debugf("metadata ResourceRoleRepo.Delete() delete sql(t_meta_resource_role_info): %s", sql)
 
 	_, err := rrr.Execute(sql, id)
 	return err
@@ -261,12 +274,37 @@ func (rrr *ResourceRoleRepo) Delete(id int) error {
 
 // AddUser adds a map of the resource role and user from the middleware
 func (rrr *ResourceRoleRepo) AddUser(roleID int, userID int) error {
-	// TODO:
-	return nil
+	userRepo := NewUserRepoWithGlobal()
+
+	_, err := userRepo.GetByID(userID)
+	if err != nil {
+		return err
+	}
+	_, err = rrr.GetByID(roleID)
+	if err != nil {
+		return err
+	}
+	sql := `insert into t_meta_resource_role_user_map(resource_role_id, user_id) values(?, ?);`
+	log.Debugf("metadata MySQLClusterRepo.AddUser() insert sql: %s", sql)
+	_, err = rrr.Execute(sql, roleID, userID)
+
+	return err
 }
 
 // DeleteUser deletes the map of the resource role and user from the middleware
 func (rrr *ResourceRoleRepo) DeleteUser(roleID int, userID int) error {
-	// TODO:
-	return nil
+	userRepo := NewUserRepoWithGlobal()
+	_, err := userRepo.GetByID(userID)
+	if err != nil {
+		return err
+	}
+	_, err = rrr.GetByID(roleID)
+	if err != nil {
+		return err
+	}
+	sql := `delete from t_meta_resource_role_user_map where resource_role_id = ? and user_id = ?;`
+	log.Debugf("metadata AppRepo.DeleteUser() delete sql: %s", sql)
+	_, err = rrr.Execute(sql, roleID, userID)
+
+	return err
 }
