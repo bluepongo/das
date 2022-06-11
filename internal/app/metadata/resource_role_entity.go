@@ -8,6 +8,12 @@ import (
 	"github.com/romberli/go-util/constant"
 )
 
+const (
+	resourceRoleRoleUUIDStruct    = "RoleUUID"
+	resourceRoleRoleNameStruct    = "RoleName"
+	resourceRoleRoleGroupIDStruct = "RoleGroupID"
+)
+
 var _ metadata.ResourceRole = (*ResourceRoleInfo)(nil)
 
 // ResourceRoleInfo is the entity interface
@@ -48,7 +54,6 @@ func NewResourceRoleInfoWithGlobal(
 	roleUUID string,
 	roleName string,
 	resourceGroupID int,
-	envID int,
 	delFlag int,
 	createTime, lastUpdateTime time.Time) *ResourceRoleInfo {
 	return &ResourceRoleInfo{

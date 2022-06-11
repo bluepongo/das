@@ -16,7 +16,8 @@ var _ metadata.ResourceRoleService = (*ResourceRoleService)(nil)
 // ResourceRoleService implements Service interface
 type ResourceRoleService struct {
 	ResourceRoleRepo metadata.ResourceRoleRepo
-	ResourceRoles    []metadata.ResourceRole `json:"mysql_clusters"`
+	ResourceRoles    []metadata.ResourceRole `json:"resource_roles"`
+	ResourceGroup    metadata.ResourceGroup  `json:"resource_group"`
 	Users            []metadata.User         `json:"users"`
 }
 
@@ -25,8 +26,7 @@ func NewResourceRoleService(repo metadata.ResourceRoleRepo) *ResourceRoleService
 	return &ResourceRoleService{
 		repo,
 		[]metadata.ResourceRole{},
-		[]metadata.MySQLServer{},
-		[]metadata.DB{},
+		nil,
 		[]metadata.User{},
 	}
 }
@@ -74,23 +74,28 @@ func (rrs *ResourceRoleService) GetByID(id int) error {
 }
 
 // GetByRoleUUID gets the resource role by role uuid
-func (rrs *ResourceRoleService) GetByRoleUUID(groupUUID string) (metadata.ResourceRole, error) {
+func (rrs *ResourceRoleService) GetByRoleUUID(groupUUID string) error {
 	resourceRole, err := rrs.ResourceRoleRepo.GetByRoleUUID(groupUUID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return resourceRole, nil
+	rrs.ResourceRoles = nil
+	rrs.ResourceRoles = append(rrs.ResourceRoles, resourceRole)
+
+	return nil
 }
 
 // GetResourceGroupByID gets the resource group with given resource role id
-func (rrs *ResourceRoleService) GetResourceGroupByID(id int) (metadata.ResourceGroup, error) {
-	resourceGroup, err := rrs.ResourceRoleRepo.GetResourceGroup(id)
+func (rrs *ResourceRoleService) GetResourceGroupByID(id int) error {
+	var err error
+
+	rrs.ResourceGroup, err = rrs.ResourceRoleRepo.GetResourceGroup(id)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return resourceGroup, nil
+	return nil
 }
 
 // GetUsersByID gets the users with given resource role id
@@ -103,33 +108,33 @@ func (rrs *ResourceRoleService) GetUsersByID(id int) error {
 }
 
 // GetUsersByRoleUUID gets the users with given resource role uuid
-func (rrs *ResourceRoleService) GetUsersByRoleUUID(roleUUID string) ([]metadata.User, error) {
+func (rrs *ResourceRoleService) GetUsersByRoleUUID(roleUUID string) error {
 	id, err := rrs.ResourceRoleRepo.GetID(roleUUID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	rrs.Users, err = rrs.ResourceRoleRepo.GetUsersByID(id)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return
+	return nil
 }
 
 // Create creates a new mysql cluster entity and insert it into the middleware
 func (rrs *ResourceRoleService) Create(fields map[string]interface{}) error {
 	// generate new map
-	_, clusterNameExists := fields[resourceRoleClusterNameStruct]
-	_, envIDExists := fields[resourceRoleEnvIDStruct]
+	_, roleUUIDExists := fields[resourceRoleRoleUUIDStruct]
+	_, roleResourceGroupIDExists := fields[resourceRoleRoleGroupIDStruct]
 
-	if !clusterNameExists || !envIDExists {
+	if !roleUUIDExists || !roleResourceGroupIDExists {
 		return message.NewMessage(
 			message.ErrFieldNotExists,
 			fmt.Sprintf(
 				"%s and %s",
-				resourceRoleClusterNameStruct,
-				resourceRoleEnvIDStruct))
+				resourceRoleRoleUUIDStruct,
+				resourceRoleRoleGroupIDStruct))
 	}
 
 	// create a new entity
