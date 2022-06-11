@@ -12,6 +12,7 @@ const (
 	resourceRoleRoleUUIDStruct    = "RoleUUID"
 	resourceRoleRoleNameStruct    = "RoleName"
 	resourceRoleRoleGroupIDStruct = "RoleGroupID"
+	resourceRoleDelFlagStruct     = "DelFlag"
 )
 
 var _ metadata.ResourceRole = (*ResourceRoleInfo)(nil)

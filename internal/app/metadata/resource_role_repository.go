@@ -158,7 +158,6 @@ func (rrr *ResourceRoleRepo) GetByRoleUUID(roleUUID string) (metadata.ResourceRo
 
 // GetResourceGroup gets the resource group which this role belongs to with given resource role id from the middleware
 func (rrr *ResourceRoleRepo) GetResourceGroup(id int) (metadata.ResourceGroup, error) {
-	// TODO: select group info by group id from role
 	sql := `
 		select id, group_uuid, group_name, del_flag, create_time, last_update_time
 		from t_meta_resource_group_info as group
@@ -172,8 +171,13 @@ func (rrr *ResourceRoleRepo) GetResourceGroup(id int) (metadata.ResourceGroup, e
 	if err != nil {
 		return nil, err
 	}
+	resourceGroupInfo := NewEmptyResourceGroupInfoWithGlobal()
+	err = result.MapToStructByRowIndex(resourceGroupInfo, constant.ZeroInt, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, nil
+	return resourceGroupInfo, nil
 }
 
 // GetUsersByID gets the users of the given id from the middleware
@@ -264,7 +268,6 @@ func (rrr *ResourceRoleRepo) Update(entity metadata.ResourceRole) error {
 // Delete deletes data in the middleware, it is recommended to use soft deletion,
 // therefore use update instead of delete
 func (rrr *ResourceRoleRepo) Delete(id int) error {
-	// FIXME: soft delete?
 	sql := `delete from t_meta_resource_role_info where id = ?;`
 	log.Debugf("metadata ResourceRoleRepo.Delete() delete sql(t_meta_resource_role_info): %s", sql)
 
@@ -285,7 +288,7 @@ func (rrr *ResourceRoleRepo) AddUser(roleID int, userID int) error {
 		return err
 	}
 	sql := `insert into t_meta_resource_role_user_map(resource_role_id, user_id) values(?, ?);`
-	log.Debugf("metadata MySQLClusterRepo.AddUser() insert sql: %s", sql)
+	log.Debugf("metadata ResourceRoleRepo.AddUser() insert sql: %s", sql)
 	_, err = rrr.Execute(sql, roleID, userID)
 
 	return err
