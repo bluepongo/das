@@ -51,7 +51,7 @@ func (rrs *ResourceRoleService) GetUsers() []metadata.User {
 	return rrs.Users
 }
 
-// GetAll gets all mysql cluster entities from the middleware
+// GetAll gets all resource roles
 func (rrs *ResourceRoleService) GetAll() error {
 	var err error
 
@@ -60,7 +60,7 @@ func (rrs *ResourceRoleService) GetAll() error {
 	return err
 }
 
-// GetByID gets a mysql cluster entity that contains the given id from the middleware
+// GetByID gets the resource role of the given id
 func (rrs *ResourceRoleService) GetByID(id int) error {
 	resourceRole, err := rrs.ResourceRoleRepo.GetByID(id)
 	if err != nil {
@@ -122,7 +122,7 @@ func (rrs *ResourceRoleService) GetUsersByRoleUUID(roleUUID string) error {
 	return nil
 }
 
-// Create creates a new mysql cluster entity and insert it into the middleware
+// Create creates a resource role in resource group
 func (rrs *ResourceRoleService) Create(fields map[string]interface{}) error {
 	// generate new map
 	_, roleUUIDExists := fields[resourceRoleRoleUUIDStruct]
@@ -154,8 +154,8 @@ func (rrs *ResourceRoleService) Create(fields map[string]interface{}) error {
 	return nil
 }
 
-// Update gets an mysql cluster entity that contains the given id from the middleware,
-// and then update its fields that was specified in fields argument,
+// Update gets a resource role of the given id from the middleware,
+// and then updates its fields that was specified in fields argument,
 // key is the filed name and value is the new field value,
 // it saves the changes to the middleware
 func (rrs *ResourceRoleService) Update(id int, fields map[string]interface{}) error {
@@ -171,7 +171,7 @@ func (rrs *ResourceRoleService) Update(id int, fields map[string]interface{}) er
 	return rrs.ResourceRoleRepo.Update(rrs.ResourceRoles[constant.ZeroInt])
 }
 
-// Delete deletes the mysql cluster entity that contains the given id in the middleware
+// Delete deletes the resource role of given id
 func (rrs *ResourceRoleService) Delete(id int) error {
 	err := rrs.GetByID(id)
 	if err != nil {
@@ -181,7 +181,7 @@ func (rrs *ResourceRoleService) Delete(id int) error {
 	return rrs.ResourceRoleRepo.Delete(id)
 }
 
-// AddUser adds a new map of mysql cluster and user in the middleware
+// AddUser adds a map of the resource role and user
 func (rrs *ResourceRoleService) AddUser(resourceRoleID, userID int) error {
 	if err := rrs.ResourceRoleRepo.AddUser(resourceRoleID, userID); err != nil {
 		return err
@@ -190,7 +190,7 @@ func (rrs *ResourceRoleService) AddUser(resourceRoleID, userID int) error {
 	return rrs.GetUsersByID(resourceRoleID)
 }
 
-// DeleteUser deletes the map of mysql cluster and user in the middleware
+// DeleteUser deletes the map of the resource role and user
 func (rrs *ResourceRoleService) DeleteUser(resourceRoleID, userID int) error {
 	err := rrs.ResourceRoleRepo.DeleteUser(resourceRoleID, userID)
 	if err != nil {
@@ -200,12 +200,12 @@ func (rrs *ResourceRoleService) DeleteUser(resourceRoleID, userID int) error {
 	return rrs.GetUsersByID(resourceRoleID)
 }
 
-// Marshal marshals service.Envs
+// Marshal marshals ResourceRoleService.ResourceRoles to json bytes
 func (rrs *ResourceRoleService) Marshal() ([]byte, error) {
 	return rrs.MarshalWithFields(resourceRoleResourceRolesStruct)
 }
 
-// MarshalWithFields marshals service.Envs with given fields
+// MarshalWithFields marshals only specified fields of the ResourceRoleService to json bytes
 func (rrs *ResourceRoleService) MarshalWithFields(fields ...string) ([]byte, error) {
 	return common.MarshalStructWithFields(rrs, fields...)
 }

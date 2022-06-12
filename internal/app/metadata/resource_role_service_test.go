@@ -38,7 +38,7 @@ func TestResourceRoleService_GetResourceRoles(t *testing.T) {
 
 	err := testResourceRoleService.GetAll()
 	asst.Nil(err, common.CombineMessageWithError("test GetMySQLServers() failed", err))
-	asst.Equal(2, len(testResourceRoleService.GetResourceRoles()), "test GetMySQLServers() failed")
+	asst.Equal(1, len(testResourceRoleService.GetResourceRoles()), "test GetMySQLServers() failed")
 }
 
 func TestResourceRoleService_GetResourceGroup(t *testing.T) {
@@ -46,21 +46,21 @@ func TestResourceRoleService_GetResourceGroup(t *testing.T) {
 
 	err := testResourceRoleService.GetAll()
 	asst.Nil(err, common.CombineMessageWithError("test GetMySQLServers() failed", err))
-	asst.Equal(2, len(testResourceRoleService.GetResourceRoles()), "test GetMySQLServers() failed")
+	asst.Equal(1, len(testResourceRoleService.GetResourceRoles()), "test GetMySQLServers() failed")
 }
 func TestResourceRoleService_GetUsers(t *testing.T) {
 	asst := assert.New(t)
 
 	err := testResourceRoleService.GetAll()
 	asst.Nil(err, common.CombineMessageWithError("test GetMySQLServers() failed", err))
-	asst.Equal(2, len(testResourceRoleService.GetResourceRoles()), "test GetMySQLServers() failed")
+	asst.Equal(1, len(testResourceRoleService.GetResourceRoles()), "test GetMySQLServers() failed")
 }
 func TestResourceRoleService_GetAll(t *testing.T) {
 	asst := assert.New(t)
 
 	err := testResourceRoleService.GetAll()
 	asst.Nil(err, common.CombineMessageWithError("test GetAll() failed", err))
-	asst.Equal(2, len(testResourceRoleService.GetResourceRoles()), "test GetAll() failed")
+	asst.Equal(1, len(testResourceRoleService.GetResourceRoles()), "test GetAll() failed")
 }
 
 func TestResourceRoleService_GetByID(t *testing.T) {

@@ -18,7 +18,18 @@ import (
 )
 
 const (
-	resourceRoleRoleUUIDJSON = "role_uuid"
+	resourceRoleIDJSON              = "id"
+	resourceRoleRoleUUIDJSON        = "role_uuid"
+	resourceRoleResourceGroupIDJSON = "resource_group_id"
+	resourceRoleUserIDJSON          = "user_id"
+	resourceRoleDelFlagJSON         = "del_flag"
+
+	resourceRoleUUIDStruct            = "RoleUUID"
+	resourceRoleResourceGroupIDStruct = "ResourceGroupID"
+
+	resourceRoleIDStruct            = "ID"
+	resourceRoleResourceGroupStruct = "ResourceGroup"
+	resourceRoleUsersStruct         = "Users"
 )
 
 // @Tags mysql cluster
@@ -65,9 +76,9 @@ func GetResourceRoleByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := jsonparser.GetInt(data, ResourceRoleIDJSON)
+	id, err := jsonparser.GetInt(data, resourceRoleIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), resourceRoleIDJSON)
 		return
 	}
 	// init service
@@ -126,8 +137,8 @@ func GetResourceRoleByUUID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetResourceRoleByName, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetResourceRoleByName, RoleUUID)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetResourceRoleByUUID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetResourceRoleByUUID, roleUUID)
 }
 
 // @Tags	mysql cluster
@@ -145,21 +156,21 @@ func GetResourceGroupByResourceRoleID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := jsonparser.GetInt(data, ResourceRoleIDJSON)
+	id, err := jsonparser.GetInt(data, resourceRoleIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), resourceRoleIDJSON)
 		return
 	}
 	// init service
 	s := metadata.NewResourceRoleServiceWithDefault()
 	// get entity
-	err = s.GetMySQLServersByID(int(id))
+	err = s.GetResourceGroupByID(int(id))
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLServers, id, err)
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(ResourceRoleMySQLServersStruct)
+	jsonBytes, err := s.MarshalWithFields(resourceRoleResourceGroupStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
@@ -186,9 +197,9 @@ func GetUsersByResourceRoleID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := jsonparser.GetInt(data, ResourceRoleIDJSON)
+	id, err := jsonparser.GetInt(data, resourceRoleIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), resourceRoleIDJSON)
 		return
 	}
 	// init service
@@ -200,7 +211,7 @@ func GetUsersByResourceRoleID(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(ResourceRoleUsersStruct)
+	jsonBytes, err := s.MarshalWithFields(resourceRoleUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
@@ -226,21 +237,21 @@ func GetUsersByResourceRoleUUID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := jsonparser.GetInt(data, ResourceRoleIDJSON)
+	roleUUID, err := jsonparser.GetString(data, resourceRoleRoleUUIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), resourceRoleIDJSON)
 		return
 	}
 	// init service
 	s := metadata.NewResourceRoleServiceWithDefault()
 	// get entity
-	err = s.GetAppUsersByID(int(id))
+	err = s.GetUsersByRoleUUID(roleUUID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppUsers, err, id)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppUsers, err, roleUUID)
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(ResourceRoleUsersStruct)
+	jsonBytes, err := s.MarshalWithFields(resourceRoleUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
@@ -248,7 +259,7 @@ func GetUsersByResourceRoleUUID(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppUsers, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsers, id)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsers, roleUUID)
 }
 
 // @Tags	mysql cluster
@@ -267,14 +278,14 @@ func ResourceRoleAddUser(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := jsonparser.GetInt(data, ResourceRoleIDJSON)
+	id, err := jsonparser.GetInt(data, resourceRoleIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), resourceRoleIDJSON)
 		return
 	}
-	userID, err := jsonparser.GetInt(data, ResourceRoleUserIDJSON)
+	userID, err := jsonparser.GetInt(data, resourceRoleUserIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleUserIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), resourceRoleUserIDJSON)
 		return
 	}
 	// init service
@@ -286,7 +297,7 @@ func ResourceRoleAddUser(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(ResourceRoleUsersStruct)
+	jsonBytes, err := s.MarshalWithFields(resourceRoleUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
 		return
@@ -313,14 +324,14 @@ func ResourceRoleDeleteUser(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := jsonparser.GetInt(data, ResourceRoleIDJSON)
+	id, err := jsonparser.GetInt(data, resourceRoleIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), resourceRoleIDJSON)
 		return
 	}
-	userID, err := jsonparser.GetInt(data, ResourceRoleUserIDJSON)
+	userID, err := jsonparser.GetInt(data, resourceRoleUserIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleUserIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), resourceRoleUserIDJSON)
 		return
 	}
 	// init service
@@ -332,7 +343,7 @@ func ResourceRoleDeleteUser(c *gin.Context) {
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(ResourceRoleUsersStruct)
+	jsonBytes, err := s.MarshalWithFields(resourceRoleUsersStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
@@ -369,14 +380,14 @@ func AddResourceRole(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	_, clusterNameExists := fields[ResourceRoleClusterNameStruct]
-	if !clusterNameExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, ResourceRoleClusterNameJSON)
+	_, roleUUIDExists := fields[resourceRoleUUIDStruct]
+	if !roleUUIDExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, resourceRoleRoleUUIDJSON)
 		return
 	}
-	_, envIDExists := fields[ResourceRoleEnvIDStruct]
-	if !envIDExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, ResourceRoleEnvIDJSON)
+	_, resourceGroupIDExists := fields[resourceRoleResourceGroupIDStruct]
+	if !resourceGroupIDExists {
+		resp.ResponseNOK(c, message.ErrFieldNotExists, resourceRoleResourceGroupIDJSON)
 		return
 	}
 
@@ -386,8 +397,8 @@ func AddResourceRole(c *gin.Context) {
 	err = s.Create(fields)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataAddResourceRole,
-			fields[ResourceRoleClusterNameStruct],
-			fields[ResourceRoleEnvIDStruct],
+			fields[resourceRoleUUIDStruct],
+			fields[resourceRoleResourceGroupIDStruct],
 			err)
 		return
 	}
@@ -401,8 +412,8 @@ func AddResourceRole(c *gin.Context) {
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataAddResourceRole, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataAddResourceRole,
-		fields[ResourceRoleClusterNameStruct],
-		fields[ResourceRoleEnvIDStruct],
+		fields[resourceRoleUUIDStruct],
+		fields[resourceRoleResourceGroupIDStruct],
 	)
 }
 
@@ -433,34 +444,28 @@ func UpdateResourceRoleByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrUnmarshalRawData, err)
 		return
 	}
-	idInterface, idExists := fields[ResourceRoleIDStruct]
+	idInterface, idExists := fields[resourceRoleIDStruct]
 	if !idExists {
-		resp.ResponseNOK(c, message.ErrFieldNotExists, ResourceRoleIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExists, resourceRoleIDJSON)
 		return
 	}
 	id, ok := idInterface.(int)
 	if !ok {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, ResourceRoleIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, resourceRoleIDJSON)
 		return
 	}
-	_, clusterNameExists := fields[ResourceRoleClusterNameStruct]
-	_, middlewareClusterIDExists := fields[ResourceRoleMiddlewareClusterIDStruct]
-	_, monitorSystemIDExists := fields[ResourceRoleMonitorSystemIDStruct]
-	_, envIDExists := fields[ResourceRoleEnvIDStruct]
+	_, roleUUIDExists := fields[resourceRoleUUIDStruct]
+	_, roleResourceGroupIDExists := fields[resourceRoleResourceGroupIDStruct]
 	_, delFlagExists := fields[envDelFlagStruct]
-	if !clusterNameExists &&
-		!middlewareClusterIDExists &&
-		!monitorSystemIDExists &&
-		!envIDExists &&
+	if !roleUUIDExists &&
+		!roleResourceGroupIDExists &&
 		!delFlagExists {
 		resp.ResponseNOK(
 			c, message.ErrFieldNotExists,
-			fmt.Sprintf("%s, %s, %s, %s and %s",
-				ResourceRoleClusterNameJSON,
-				ResourceRoleMiddlewareClusterIDJSON,
-				ResourceRoleMonitorSystemIDJSON,
-				ResourceRoleEnvIDJSON,
-				envDelFlagJSON))
+			fmt.Sprintf("%s, %s and %s",
+				resourceRoleRoleUUIDJSON,
+				resourceRoleResourceGroupIDJSON,
+				resourceRoleDelFlagJSON))
 		return
 	}
 	// init service
@@ -480,7 +485,7 @@ func UpdateResourceRoleByID(c *gin.Context) {
 	// resp
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataUpdateResourceRole, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.DebugMetadataUpdateResourceRole, fields[ResourceRoleClusterNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.DebugMetadataUpdateResourceRole, fields[resourceRoleUUIDStruct])
 }
 
 // @Tags	mysql cluster
@@ -498,9 +503,9 @@ func DeleteResourceRoleByID(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	id, err := jsonparser.GetInt(data, ResourceRoleIDJSON)
+	id, err := jsonparser.GetInt(data, resourceRoleIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleIDJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), resourceRoleIDJSON)
 		return
 	}
 	// init service

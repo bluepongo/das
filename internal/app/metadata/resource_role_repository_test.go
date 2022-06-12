@@ -9,12 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	testResourceRoleNewRoleUUID    = "test_new_role_uuid"
-	testResourceRoleUpdateRoleUUID = "test_update_role_uuid"
-	testResourceRoleUserID         = 1
-)
-
 var testResourceRoleRepo *ResourceRoleRepo
 
 func init() {
@@ -106,7 +100,7 @@ func TestResourceRoleRepo_GetAll(t *testing.T) {
 
 	entities, err := testResourceRoleRepo.GetAll()
 	asst.Nil(err, common.CombineMessageWithError("test GetAll() failed", err))
-	asst.Equal(2, len(entities), "test GetAll() failed")
+	asst.Equal(1, len(entities), "test GetAll() failed")
 }
 
 func TestResourceRoleRepo_GetByID(t *testing.T) {
@@ -120,7 +114,7 @@ func TestResourceRoleRepo_GetByID(t *testing.T) {
 func TestResourceRoleRepo_GetID(t *testing.T) {
 	asst := assert.New(t)
 
-	id, err := testResourceRoleRepo.GetID(testResourceRoleRoleName)
+	id, err := testResourceRoleRepo.GetID(testResourceRoleRoleUUID)
 	asst.Nil(err, common.CombineMessageWithError("test GetID() failed", err))
 	asst.Equal(1, id, "test GetID() failed")
 }

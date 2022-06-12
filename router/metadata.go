@@ -6,6 +6,7 @@ import (
 	"github.com/romberli/das/api/v1/metadata"
 )
 
+// RegisterMetadata api to gin router
 func RegisterMetadata(group *gin.RouterGroup) {
 	metadataGroup := group.Group("/metadata")
 	{
@@ -129,16 +130,16 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.POST("/table/analyze/host-info-db", metadata.AnalyzeTableByHostInfoAndDBNameAndTableName)
 
 		// resource role
-		metadataGroup.GET("/resource_role", metadata.GetResourceRole)
-		metadataGroup.GET("/resource_role/get", metadata.GetResourceRoleByID)
-		metadataGroup.GET("/resource_role/role-uuid", metadata.GetResourceRoleByUUID)
-		metadataGroup.GET("/resource_role/resource-group", metadata.GetResourceGroupByResourceRoleID)
-		metadataGroup.GET("/resource_role/user", metadata.GetUsersByResourceRoleID)
-		metadataGroup.GET("/resource_role/user/role-uuid", metadata.GetUsersByResourceRoleUUID)
-		metadataGroup.POST("/resource_role/add-user", metadata.ResourceRoleAddUser)
-		metadataGroup.POST("/resource_role/delete-user", metadata.ResourceRoleDeleteUser)
-		metadataGroup.POST("/resource_role", metadata.AddResourceRole)
-		metadataGroup.POST("/resource_role/update", metadata.UpdateResourceRoleByID)
-		metadataGroup.POST("/resource_role/delete", metadata.DeleteResourceRoleByID)
+		metadataGroup.GET("/resource-role", metadata.GetResourceRole)
+		metadataGroup.GET("/resource-role/get", metadata.GetResourceRoleByID)
+		metadataGroup.GET("/resource-role/role-uuid", metadata.GetResourceRoleByUUID)
+		metadataGroup.GET("/resource-role/resource-group", metadata.GetResourceGroupByResourceRoleID)
+		metadataGroup.GET("/resource-role/user", metadata.GetUsersByResourceRoleID)
+		metadataGroup.GET("/resource-role/user/role-uuid", metadata.GetUsersByResourceRoleUUID)
+		metadataGroup.POST("/resource-role/add-user", metadata.ResourceRoleAddUser)
+		metadataGroup.POST("/resource-role/delete-user", metadata.ResourceRoleDeleteUser)
+		metadataGroup.POST("/resource-role", metadata.AddResourceRole)
+		metadataGroup.POST("/resource-role/update", metadata.UpdateResourceRoleByID)
+		metadataGroup.POST("/resource-role/delete", metadata.DeleteResourceRoleByID)
 	}
 }

@@ -12,14 +12,17 @@ import (
 
 const (
 	testResourceRoleID                   = 1
-	testResourceRoleRoleName             = "role"
-	testResourceRoleRoleUUID             = "role"
+	testResourceRoleRoleName             = "test_role"
+	testResourceRoleRoleUUID             = "test_role_uuid"
 	testResourceRoleResourceGroupID      = 1
 	testResourceRoleDelFlag              = 0
 	testResourceRoleCreateTimeString     = "2021-01-21 10:00:00.000000"
 	testResourceRoleLastUpdateTimeString = "2021-01-21 13:00:00.000000"
 
-	testResourceRoleNewUserID = 100
+	testResourceRoleUserID         = 14
+	testResourceRoleNewUserID      = 18
+	testResourceRoleNewRoleUUID    = "test_new_role_uuid"
+	testResourceRoleUpdateRoleUUID = "test_update_role_uuid"
 )
 
 var testResourceRoleInfo *ResourceRoleInfo
@@ -92,7 +95,7 @@ func TestResourceRoleInfo_GetUsers(t *testing.T) {
 
 	users, err := testResourceRoleInfo.GetUsers()
 	asst.Nil(err, common.CombineMessageWithError("test GetUsers() failed", err))
-	asst.Equal(1, users[constant.ZeroInt].Identity(), "test GetUsers() failed", err)
+	asst.Equal(14, users[constant.ZeroInt].Identity(), "test GetUsers() failed", err)
 }
 
 func TestResourceRoleInfo_Set(t *testing.T) {

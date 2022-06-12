@@ -90,14 +90,14 @@ type ResourceRoleService interface {
 	GetUsersByID(id int) error
 	// GetUsersByRoleUUID gets the users with given resource role uuid
 	GetUsersByRoleUUID(roleUUID string) error
-	// Create creates a mysql server in the mysql
+	// Create creates a resource role in resource group
 	Create(fields map[string]interface{}) error
-	// Update gets a mysql server of the given id from the mysql,
+	// Update gets a resource role of the given id from the middleware,
 	// and then updates its fields that was specified in fields argument,
 	// key is the filed name and value is the new field value,
-	// it saves the changes to the mysql
+	// it saves the changes to the middleware
 	Update(id int, fields map[string]interface{}) error
-	// Delete deletes the mysql server of given id
+	// Delete deletes the resource role of given id
 	Delete(id int) error
 	// AddUser adds a map of the resource role and user
 	AddUser(roleID int, userID int) error
