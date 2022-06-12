@@ -6,6 +6,7 @@ import (
 	"github.com/romberli/das/api/v1/metadata"
 )
 
+// RegisterMetadata api to gin router
 func RegisterMetadata(group *gin.RouterGroup) {
 	metadataGroup := group.Group("/metadata")
 	{
@@ -128,6 +129,18 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.POST("/resource-group/delete-mysql-cluster", metadata.ResourceGroupDeleteMySQLCluster)
 		metadataGroup.POST("/resource-group/add-middleware-cluster", metadata.ResourceGroupAddMiddlewareCluster)
 		metadataGroup.POST("/resource-group/delete-middleware-cluster", metadata.ResourceGroupDeleteMiddlewareCluster)
+    // resource role
+		metadataGroup.GET("/resource-role", metadata.GetResourceRole)
+		metadataGroup.GET("/resource-role/get", metadata.GetResourceRoleByID)
+		metadataGroup.GET("/resource-role/role-uuid", metadata.GetResourceRoleByUUID)
+		metadataGroup.GET("/resource-role/resource-group", metadata.GetResourceGroupByResourceRoleID)
+		metadataGroup.GET("/resource-role/user", metadata.GetUsersByResourceRoleID)
+		metadataGroup.GET("/resource-role/user/role-uuid", metadata.GetUsersByResourceRoleUUID)
+		metadataGroup.POST("/resource-role/add-user", metadata.ResourceRoleAddUser)
+		metadataGroup.POST("/resource-role/delete-user", metadata.ResourceRoleDeleteUser)
+		metadataGroup.POST("/resource-role", metadata.AddResourceRole)
+		metadataGroup.POST("/resource-role/update", metadata.UpdateResourceRoleByID)
+		metadataGroup.POST("/resource-role/delete", metadata.DeleteResourceRoleByID)
 		// table
 		metadataGroup.GET("/table/db", metadata.GetTablesByDBID)
 		metadataGroup.GET("/table/statistic/db", metadata.GetStatisticsByDBIDAndTableName)

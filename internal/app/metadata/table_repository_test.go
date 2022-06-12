@@ -34,7 +34,7 @@ func testTableInitViper() {
 	viper.Set(config.DBApplicationMySQLPassKey, config.DefaultDBApplicationMySQLPass)
 }
 func testInitTableRepo() *TableRepo {
-	conn, err := mysql.NewConn(testDASMySQLAddr, constant.EmptyString, viper.GetString(config.DBApplicationMySQLUserKey), viper.GetString(config.DBApplicationMySQLPassKey))
+	conn, err := mysql.NewConn(testDASMySQLAddr, constant.EmptyString, "root", "123")
 	if err != nil {
 		log.Error(common.CombineMessageWithError("testInitTableRepo() failed", err))
 		os.Exit(constant.DefaultAbnormalExitCode)
