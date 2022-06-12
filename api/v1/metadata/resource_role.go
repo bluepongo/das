@@ -17,7 +17,9 @@ import (
 	"github.com/romberli/das/pkg/resp"
 )
 
-const ()
+const (
+	resourceRoleRoleUUIDJSON = "role_uuid"
+)
 
 // @Tags mysql cluster
 // @Summary	get all mysql clusters
@@ -46,46 +48,6 @@ func GetResourceRole(c *gin.Context) {
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetResourceRoleAll, jsonBytes).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetResourceRoleAll)
-}
-
-// @Tags	mysql cluster
-// @Summary	get mysql cluster by env id
-// @Accept	application/json
-// @Param	token	body string	true "token"
-// @Param	env_id		body int	true "env id"
-// @Produce	application/json
-// @Success	200 {string} string "{"mysql_clusters":[{"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
-// @Router	/api/v1/metadata/mysql-cluster/env [get]
-func GetResourceRoleByEnv(c *gin.Context) {
-	// get data
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
-		return
-	}
-	envID, err := jsonparser.GetInt(data, ResourceRoleEnvIDJSON)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleEnvIDJSON)
-		return
-	}
-	// init service
-	s := metadata.NewResourceRoleServiceWithDefault()
-	// get entity
-	err = s.GetByEnv(int(envID))
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetResourceRoleByEnv, err, envID)
-		return
-	}
-	// marshal service
-	jsonBytes, err := s.Marshal()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err)
-		return
-	}
-	// response
-	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetResourceRoleByEnv, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetResourceRoleByEnv, envID)
 }
 
 // @Tags	mysql cluster
@@ -129,31 +91,31 @@ func GetResourceRoleByID(c *gin.Context) {
 }
 
 // @Tags mysql cluster
-// @Summary get mysql cluster by name
+// @Summary get mysql cluster by uuid
 // @Accept	application/json
 // @Param	token	body string	true "token"
 // @Param	name	body string	true "mysql cluster name"
 // @Produce  application/json
 // @Success 200 {string} string "{"mysql_clusters":[{"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
 // @Router /api/v1/metadata/mysql-cluster/cluster-name [get]
-func GetResourceRoleByName(c *gin.Context) {
+func GetResourceRoleByUUID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
 		return
 	}
-	clusterName, err := jsonparser.GetString(data, ResourceRoleClusterNameJSON)
+	roleUUID, err := jsonparser.GetString(data, resourceRoleRoleUUIDJSON)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleClusterNameJSON)
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), resourceRoleRoleUUIDJSON)
 		return
 	}
 	// init service
 	s := metadata.NewResourceRoleServiceWithDefault()
 	// get entity
-	err = s.GetByName(clusterName)
+	err = s.GetByRoleUUID(roleUUID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetResourceRoleByName, err, clusterName)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetResourceRoleByUUID, err, roleUUID)
 		return
 	}
 	// marshal service
@@ -165,7 +127,7 @@ func GetResourceRoleByName(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetResourceRoleByName, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetResourceRoleByName, clusterName)
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetResourceRoleByName, RoleUUID)
 }
 
 // @Tags	mysql cluster
@@ -176,7 +138,7 @@ func GetResourceRoleByName(c *gin.Context) {
 // @Produce	application/json
 // @Success	200 {string} string "{"mysql_servers":[{"id":1,"server_name":"192-168-10-219","service_name":"192-168-10-219:3306","deployment_type":1,"last_update_time":"2021-12-21T09:16:20.184065+08:00","cluster_id":1,"host_ip":"192.168.10.219","port_num":3306,"version":"5.7","del_flag":0,"create_time":"2021-09-02T11:16:06.561525+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/mysql-server [get]
-func GetMySQLServersByID(c *gin.Context) {
+func GetResourceGroupByResourceRoleID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
@@ -207,87 +169,6 @@ func GetMySQLServersByID(c *gin.Context) {
 
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLServers, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServers, id)
-}
-
-// @Tags	mysql cluster
-// @Summary	get master servers by id
-// @Accept	application/json
-// @Param	token	body string	true "token"
-// @Param	id		body int	true "mysql cluster id"
-// @Produce	application/json
-// @Success	200 {string} string "{"mysql_server":{"id":1,"server_name":"192-168-10-219","service_name":"192-168-10-219:3306","deployment_type":1,"last_update_time":"2021-12-21T09:16:20.184065+08:00","cluster_id":1,"host_ip":"192.168.10.219","port_num":3306,"version":"5.7","del_flag":0,"create_time":"2021-09-02T11:16:06.561525+08:00"}}"
-// @Router	/api/v1/metadata/mysql-cluster/master-server [get]
-func GetMasterServersByID(c *gin.Context) {
-	// get data
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
-		return
-	}
-	id, err := jsonparser.GetInt(data, ResourceRoleIDJSON)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleIDJSON)
-		return
-	}
-	// init service
-	s := metadata.NewResourceRoleServiceWithDefault()
-	// get entity
-	err = s.GetMasterServersByID(int(id))
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMasterServers, id, err)
-		return
-	}
-	// marshal service
-	jsonBytes, err := s.MarshalWithFields(ResourceRoleMySQLServersStruct)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err)
-		return
-	}
-	// response
-	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMasterServers, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMasterServers, id)
-}
-
-// @Tags	mysql cluster
-// @Summary	get dbs by id
-// @Accept	application/json
-// @Param	token	body string	true "token"
-// @Param	id		body int	true "mysql cluster id"
-// @Produce	application/json
-// @Success	200 {string} string "{"dbs":[{"cluster_type":1,"del_flag":0,"last_update_time":"2021-12-29T14:11:06.500863+08:00","id":2,"db_name":"das","cluster_id":1,"env_id":1,"create_time":"2021-09-02T15:14:40.782387+08:00"}]}"
-// @Router	/api/v1/metadata/mysql-cluster/db [get]
-func GetDBsByResourceRoleID(c *gin.Context) {
-	// get data
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
-		return
-	}
-	id, err := jsonparser.GetInt(data, ResourceRoleIDJSON)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleIDJSON)
-		return
-	}
-	// init service
-	s := metadata.NewResourceRoleServiceWithDefault()
-	// get entity
-	err = s.GetDBsByID(int(id))
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBs, id, err)
-		return
-	}
-	// marshal service
-	jsonBytes, err := s.MarshalWithFields(ResourceRoleDBsStruct)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err)
-		return
-	}
-	// response
-	jsonStr := string(jsonBytes)
-
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBs, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBs, id)
 }
 
 // @Tags	mysql cluster
@@ -338,7 +219,7 @@ func GetUsersByResourceRoleID(c *gin.Context) {
 // @Produce	application/json
 // @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","account_name":"zs001","last_update_time":"2021-11-22T13:46:20.430926+08:00","mobile":"13012345678","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","email":"allinemailtest@163.com","telephone":"01012345678","create_time":"2021-10-25T09:21:50.364327+08:00"}]}"
 // @Router	/api/v1/metadata/mysql-cluster/app-user [get]
-func GetAppUsersByResourceRoleID(c *gin.Context) {
+func GetUsersByResourceRoleUUID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
 	if err != nil {
@@ -368,86 +249,6 @@ func GetAppUsersByResourceRoleID(c *gin.Context) {
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppUsers, jsonStr).Error())
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsers, id)
-}
-
-// @Tags	mysql cluster
-// @Summary	get db users
-// @Accept	application/json
-// @Param	token	body string	true "token"
-// @Param	id		body int	true "mysql cluster id"
-// @Produce	application/json
-// @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","account_name":"zs001","last_update_time":"2021-11-22T13:46:20.430926+08:00","mobile":"13012345678","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","email":"allinemailtest@163.com","telephone":"01012345678","create_time":"2021-10-25T09:21:50.364327+08:00"}]}"
-// @Router	/api/v1/metadata/mysql-cluster/db-user [get]
-func GetDBUsersByResourceRoleID(c *gin.Context) {
-	// get data
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
-		return
-	}
-	id, err := jsonparser.GetInt(data, ResourceRoleIDJSON)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleIDJSON)
-		return
-	}
-	// init service
-	s := metadata.NewResourceRoleServiceWithDefault()
-	// get entity
-	err = s.GetDBUsersByID(int(id))
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDBUsers, err, id)
-		return
-	}
-	// marshal service
-	jsonBytes, err := s.MarshalWithFields(ResourceRoleUsersStruct)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err)
-		return
-	}
-	// response
-	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetDBUsers, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetDBUsers, id)
-}
-
-// @Tags	mysql cluster
-// @Summary	get all users
-// @Accept	application/json
-// @Param	token	body string	true "token"
-// @Param	id		body int	true "mysql cluster id"
-// @Produce	application/json
-// @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","account_name":"zs001","last_update_time":"2021-11-22T13:46:20.430926+08:00","mobile":"13012345678","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","email":"allinemailtest@163.com","telephone":"01012345678","create_time":"2021-10-25T09:21:50.364327+08:00"}]}"
-// @Router	/api/v1/metadata/mysql-cluster/all-user [get]
-func GetAllUsersByResourceRoleID(c *gin.Context) {
-	// get data
-	data, err := c.GetRawData()
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
-		return
-	}
-	id, err := jsonparser.GetInt(data, ResourceRoleIDJSON)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), ResourceRoleIDJSON)
-		return
-	}
-	// init service
-	s := metadata.NewResourceRoleServiceWithDefault()
-	// get entity
-	err = s.GetAllUsersByID(int(id))
-	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAllUsers, err, id)
-		return
-	}
-	// marshal service
-	jsonBytes, err := s.MarshalWithFields(ResourceRoleUsersStruct)
-	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, err)
-		return
-	}
-	// response
-	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAllUsers, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAllUsers, id)
 }
 
 // @Tags	mysql cluster
