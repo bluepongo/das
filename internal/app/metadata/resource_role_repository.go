@@ -64,20 +64,12 @@ func (rrr *ResourceRoleRepo) GetAll() ([]metadata.ResourceRole, error) {
 	if err != nil {
 		return nil, err
 	}
-	// init []*ResourceRoleInfo
-	resourceRoleInfoList := make([]*ResourceRoleInfo, result.RowNumber())
-	for i := range resourceRoleInfoList {
-		resourceRoleInfoList[i] = NewEmptyResourceRoleInfoWithGlobal()
-	}
-	// map to struct
-	err = result.MapToStructSlice(resourceRoleInfoList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
 	// init []metadata.ResourceRole
 	resourceRoleList := make([]metadata.ResourceRole, result.RowNumber())
-	for i := range resourceRoleList {
-		resourceRoleList[i] = resourceRoleInfoList[i]
+	// map to struct
+	err = result.MapToStructSlice(resourceRoleList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
 	}
 
 	return resourceRoleList, nil
