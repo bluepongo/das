@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	resourceRoleRoleUUIDStruct    = "RoleUUID"
-	resourceRoleRoleNameStruct    = "RoleName"
-	resourceRoleRoleGroupIDStruct = "RoleGroupID"
-	resourceRoleDelFlagStruct     = "DelFlag"
+	resourceRoleRoleUUIDStruct        = "RoleUUID"
+	resourceRoleRoleNameStruct        = "RoleName"
+	resourceRoleResourceGroupIDStruct = "ResourceGroupID"
+	resourceRoleDelFlagStruct         = "DelFlag"
 )
 
 var _ metadata.ResourceRole = (*ResourceRoleInfo)(nil)
@@ -76,11 +76,11 @@ func NewEmptyResourceRoleInfoWithGlobal() *ResourceRoleInfo {
 
 // NewResourceRoleInfoWithDefault returns a new ResourceRoleInfo with default ResourceRoleRepo
 func NewResourceRoleInfoWithDefault(
-	roleName string,
+	roleUUID string,
 	resourceGroupID int) *ResourceRoleInfo {
 	return &ResourceRoleInfo{
 		ResourceRoleRepo: NewResourceRoleRepoWithGlobal(),
-		RoleName:         roleName,
+		RoleUUID:         roleUUID,
 		ResourceGroupID:  resourceGroupID,
 	}
 }

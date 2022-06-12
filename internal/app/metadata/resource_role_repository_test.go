@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	testResourceRoleNewRoleName    = "test_new_role_name"
-	testResourceRoleUpdateRoleName = "test_update_role_name"
+	testResourceRoleNewRoleUUID    = "test_new_role_uuid"
+	testResourceRoleUpdateRoleUUID = "test_update_role_uuid"
 	testResourceRoleUserID         = 1
 )
 
@@ -24,7 +24,7 @@ func init() {
 
 func testCreateResourceRole() (metadata.ResourceRole, error) {
 	resourceRoleInfo := NewResourceRoleInfoWithDefault(
-		testResourceRoleNewRoleName,
+		testResourceRoleNewRoleUUID,
 		testResourceRoleResourceGroupID)
 	entity, err := testResourceRoleRepo.Create(resourceRoleInfo)
 	if err != nil {
@@ -64,9 +64,9 @@ func TestResourceRoleRepo_Transaction(t *testing.T) {
 	asst := assert.New(t)
 
 	sql := `
-	insert into t_meta_mysql_cluster_info(
-		cluster_name, middleware_cluster_id, monitor_system_id, env_id)
-	values(?,?,?,?);`
+	insert into t_meta_resource_role_info(
+		role_uuid, role_name, resource_group_id)
+	values(?,?,?);`
 
 	tx, err := testResourceRoleRepo.Transaction()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
@@ -74,20 +74,18 @@ func TestResourceRoleRepo_Transaction(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	_, err = tx.Execute(
 		sql,
-		testResourceRoleNewRoleName,
-		testResourceRoleMiddlewareClusterID,
-		testResourceRoleMonitorSystemID,
-		testResourceRoleOwnerID,
-		testResourceRoleEnvID,
+		testResourceRoleNewRoleUUID,
+		testResourceRoleRoleName,
+		testResourceRoleResourceGroupID,
 	)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	// check if inserted
-	sql = `select cluster_name from t_meta_mysql_cluster_info where cluster_name=?`
-	result, err := tx.Execute(sql, testResourceRoleNewRoleName)
+	sql = `select role_uuid from t_meta_resource_role_info where role_uuid=?`
+	result, err := tx.Execute(sql, testResourceRoleNewRoleUUID)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
-	resourceRoleName, err := result.GetString(constant.ZeroInt, constant.ZeroInt)
+	resourceRoleUUID, err := result.GetString(constant.ZeroInt, constant.ZeroInt)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
-	if resourceRoleName != testResourceRoleNewRoleName {
+	if resourceRoleUUID != testResourceRoleNewRoleUUID {
 		asst.Fail("test Transaction() failed")
 	}
 	err = tx.Rollback()
@@ -96,7 +94,7 @@ func TestResourceRoleRepo_Transaction(t *testing.T) {
 	entities, err := testResourceRoleRepo.GetAll()
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	for _, entity := range entities {
-		if entity.GetRoleName() == testResourceRoleNewRoleName {
+		if entity.GetRoleUUID() == testResourceRoleNewRoleUUID {
 			asst.Fail("test Transaction() failed")
 			break
 		}
@@ -131,16 +129,16 @@ func TestResourceRoleRepo_GetByRoleUUID(t *testing.T) {
 	asst := assert.New(t)
 
 	entity, err := testResourceRoleRepo.GetByRoleUUID(testResourceRoleRoleUUID)
-	asst.Nil(err, common.CombineMessageWithError("test GetByName() failed", err))
-	asst.Equal(testResourceRoleRoleName, entity.GetRoleName(), "test GetByName() failed")
+	asst.Nil(err, common.CombineMessageWithError("test GetByRoleUUID() failed", err))
+	asst.Equal(testResourceRoleRoleUUID, entity.GetRoleUUID(), "test GetByRoleUUID() failed")
 }
 
 func TestResourceRoleRepo_GetResourceGroupByID(t *testing.T) {
 	asst := assert.New(t)
 
-	users, err := testResourceRoleRepo.GetUsersByID(testResourceRoleID)
-	asst.Nil(err, common.CombineMessageWithError("test GetUsersByID() failed", err))
-	asst.Equal(1, len(users), "test GetUsersByID() failed")
+	resourceGroup, err := testResourceRoleRepo.GetResourceGroup(testResourceRoleID)
+	asst.Nil(err, common.CombineMessageWithError("test GetResourceGroup() failed", err))
+	asst.Equal(1, resourceGroup.Identity(), "test GetResourceGroup() failed")
 }
 
 func TestResourceRoleRepo_GetUsersByID(t *testing.T) {
@@ -196,13 +194,13 @@ func TestResourceRoleRepo_Update(t *testing.T) {
 
 	entity, err := testCreateResourceRole()
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
-	err = entity.Set(map[string]interface{}{resourceRoleRoleNameStruct: testResourceRoleUpdateRoleName})
+	err = entity.Set(map[string]interface{}{resourceRoleRoleUUIDStruct: testResourceRoleUpdateRoleUUID})
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
 	err = testResourceRoleRepo.Update(entity)
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
 	entity, err = testResourceRoleRepo.GetByID(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))
-	asst.Equal(testResourceRoleUpdateRoleName, entity.GetRoleName(), "test Update() failed")
+	asst.Equal(testResourceRoleUpdateRoleUUID, entity.GetRoleUUID(), "test Update() failed")
 	// delete
 	err = testResourceRoleRepo.Delete(entity.Identity())
 	asst.Nil(err, common.CombineMessageWithError("test Update() failed", err))

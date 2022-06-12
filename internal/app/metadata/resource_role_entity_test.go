@@ -98,9 +98,9 @@ func TestResourceRoleInfo_GetUsers(t *testing.T) {
 func TestResourceRoleInfo_Set(t *testing.T) {
 	asst := assert.New(t)
 
-	err := testResourceRoleInfo.Set(map[string]interface{}{resourceRoleRoleNameStruct: testResourceRoleUpdateRoleName})
+	err := testResourceRoleInfo.Set(map[string]interface{}{resourceRoleRoleNameStruct: testResourceRoleUpdateRoleUUID})
 	asst.Nil(err, common.CombineMessageWithError("test Set() failed", err))
-	asst.Equal(testResourceRoleUpdateRoleName, testResourceRoleInfo.GetRoleName(), "test Set() failed")
+	asst.Equal(testResourceRoleUpdateRoleUUID, testResourceRoleInfo.GetRoleName(), "test Set() failed")
 	err = testResourceRoleInfo.Set(map[string]interface{}{resourceRoleRoleNameStruct: testResourceRoleRoleName})
 	asst.Nil(err, common.CombineMessageWithError("test Set() failed", err))
 	asst.Equal(testResourceRoleRoleName, testResourceRoleInfo.GetRoleName(), "test Set() failed")

@@ -126,7 +126,7 @@ func (rrs *ResourceRoleService) GetUsersByRoleUUID(roleUUID string) error {
 func (rrs *ResourceRoleService) Create(fields map[string]interface{}) error {
 	// generate new map
 	_, roleUUIDExists := fields[resourceRoleRoleUUIDStruct]
-	_, roleResourceGroupIDExists := fields[resourceRoleRoleGroupIDStruct]
+	_, roleResourceGroupIDExists := fields[resourceRoleResourceGroupIDStruct]
 
 	if !roleUUIDExists || !roleResourceGroupIDExists {
 		return message.NewMessage(
@@ -134,7 +134,7 @@ func (rrs *ResourceRoleService) Create(fields map[string]interface{}) error {
 			fmt.Sprintf(
 				"%s and %s",
 				resourceRoleRoleUUIDStruct,
-				resourceRoleRoleGroupIDStruct))
+				resourceRoleResourceGroupIDStruct))
 	}
 
 	// create a new entity
