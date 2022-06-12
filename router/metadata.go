@@ -127,5 +127,18 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.GET("/table/statistic/host-info-db", metadata.GetStatisticsByHostInfoAndDBNameAndTableName)
 		metadataGroup.POST("/table/analyze/db", metadata.AnalyzeTableByDBIDAndTableName)
 		metadataGroup.POST("/table/analyze/host-info-db", metadata.AnalyzeTableByHostInfoAndDBNameAndTableName)
+
+		// resource role
+		metadataGroup.GET("/resource_role", metadata.GetResourceRole)
+		metadataGroup.GET("/resource_role/get", metadata.GetResourceRoleByID)
+		metadataGroup.GET("/resource_role/role-uuid", metadata.GetResourceRoleByUUID)
+		metadataGroup.GET("/resource_role/resource-group", metadata.GetResourceGroupByResourceRoleID)
+		metadataGroup.GET("/resource_role/user", metadata.GetUsersByResourceRoleID)
+		metadataGroup.GET("/resource_role/user/role-uuid", metadata.GetUsersByResourceRoleUUID)
+		metadataGroup.POST("/resource_role/add-user", metadata.ResourceRoleAddUser)
+		metadataGroup.POST("/resource_role/delete-user", metadata.ResourceRoleDeleteUser)
+		metadataGroup.POST("/resource_role", metadata.AddResourceRole)
+		metadataGroup.POST("/resource_role/update", metadata.UpdateResourceRoleByID)
+		metadataGroup.POST("/resource_role/delete", metadata.DeleteResourceRoleByID)
 	}
 }
