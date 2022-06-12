@@ -23,6 +23,7 @@ message code is a 6-digit number, use `ABCDEF` to present each digit
 | 01  | metadata    | 8   | table              |
 | 01  | metadata    | 9   | user               |
 | 02  | metadata    | 0   | resource group     |
+| 02  | metadata    | 1   | resource role      |
 | 03  | healthcheck | 0   | default engine     |
 | 03  | healthcheck | 1   | service            |
 | 04  | query       | 0   | query              |
