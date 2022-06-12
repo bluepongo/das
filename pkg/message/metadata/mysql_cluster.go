@@ -71,71 +71,71 @@ func initDebugMySQLClusterMessage() {
 	message.Messages[DebugMetadataGetMySQLClusterAll] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLClusterAll,
-		"metadata: get all mysql clusters message: %s")
+		"metadata: get all mysql clusters. message: %s")
 	message.Messages[DebugMetadataGetMySQLClusterByEnv] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLClusterByEnv,
-		"metadata: get mysql cluster by env message: %s")
+		"metadata: get mysql cluster by env. message: %s")
 	message.Messages[DebugMetadataGetMySQLClusterByID] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLClusterByID,
-		"metadata: get mysql cluster by id message: %s")
+		"metadata: get mysql cluster by id. message: %s")
 	message.Messages[DebugMetadataGetMySQLClusterByName] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLClusterByName,
-		"metadata: get mysql cluster by name message: %s")
+		"metadata: get mysql cluster by name. message: %s")
 	message.Messages[DebugMetadataGetMySQLServers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetMySQLServers,
-		"metadata: get mysql servers from mysql cluster message: %s")
+		"metadata: get mysql servers from mysql cluster. message: %s")
 	message.Messages[DebugMetadataGetMasterServers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetMasterServers,
-		"metadata: get master servers from mysql cluster message: %s")
+		"metadata: get master servers from mysql cluster. message: %s")
 	message.Messages[DebugMetadataGetDBs] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetDBs,
-		"metadata: get databases from mysql cluster message: %s")
+		"metadata: get databases from mysql cluster. message: %s")
 	message.Messages[DebugMetadataGetUsers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetUsers,
-		"metadata: get users from mysql cluster message: %s")
+		"metadata: get users from mysql cluster. message: %s")
 	message.Messages[DebugMetadataMySQLClusterAddUser] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataMySQLClusterAddUser,
-		"metadata: add new user for mysql cluster message: %s")
+		"metadata: add new user for mysql cluster. message: %s")
 	message.Messages[DebugMetadataMySQLClusterDeleteUser] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataMySQLClusterDeleteUser,
-		"metadata: delete users for mysql cluster message: %s")
+		"metadata: delete users for mysql cluster. message: %s")
 	message.Messages[DebugMetadataGetUsers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetUsers,
-		"metadata: get users from mysql cluster message: %s")
+		"metadata: get users from mysql cluster. message: %s")
 	message.Messages[DebugMetadataGetAppUsers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetAppUsers,
-		"metadata: get app users from mysql cluster message: %s")
+		"metadata: get app users from mysql cluster. message: %s")
 	message.Messages[DebugMetadataGetDBUsers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetDBUsers,
-		"metadata: get database users from mysql cluster message: %s")
+		"metadata: get database users from mysql cluster. message: %s")
 	message.Messages[DebugMetadataGetAllUsers] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataGetAllUsers,
-		"metadata: get all users from mysql cluster message: %s")
+		"metadata: get all users from mysql cluster. message: %s")
 	message.Messages[DebugMetadataAddMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataAddMySQLCluster,
-		"metadata: add new mysql cluster message: %s")
+		"metadata: add new mysql cluster. message: %s")
 	message.Messages[DebugMetadataUpdateMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataUpdateMySQLCluster,
-		"metadata: update mysql cluster message: %s")
+		"metadata: update mysql cluster. message: %s")
 	message.Messages[DebugMetadataDeleteMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		DebugMetadataDeleteMySQLCluster,
-		"metadata: delete mysql cluster message: %s")
+		"metadata: delete mysql cluster. message: %s")
 }
 
 func initInfoMySQLClusterMessage() {
@@ -146,11 +146,11 @@ func initInfoMySQLClusterMessage() {
 	message.Messages[InfoMetadataGetMySQLClusterByEnv] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		InfoMetadataGetMySQLClusterByEnv,
-		"metadata: get mysql cluster by env completed. env_id: %s")
+		"metadata: get mysql cluster by env completed. env_id: %d")
 	message.Messages[InfoMetadataGetMySQLClusterByID] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		InfoMetadataGetMySQLClusterByID,
-		"metadata: get mysql cluster by id completed. id: %s")
+		"metadata: get mysql cluster by id completed. id: %d")
 	message.Messages[InfoMetadataGetMySQLClusterByName] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		InfoMetadataGetMySQLClusterByName,
@@ -194,15 +194,15 @@ func initInfoMySQLClusterMessage() {
 	message.Messages[InfoMetadataAddMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		InfoMetadataAddMySQLCluster,
-		"metadata: add new mysql cluster completed. cluster_name: %s, env_id: %s")
+		"metadata: add new mysql cluster completed. cluster_name: %s, env_id: %d")
 	message.Messages[InfoMetadataUpdateMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		InfoMetadataUpdateMySQLCluster,
-		"metadata: update mysql cluster completed. id: %s")
+		"metadata: update mysql cluster completed. id: %d")
 	message.Messages[InfoMetadataDeleteMySQLCluster] = config.NewErrMessage(
 		message.DefaultMessageHeader,
 		InfoMetadataDeleteMySQLCluster,
-		"metadata: delete mysql cluster completed. id: %s")
+		"metadata: delete mysql cluster completed. id: %d")
 }
 
 func initErrorMySQLClusterMessage() {

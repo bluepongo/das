@@ -58,7 +58,6 @@ func GetMySQLCluster(c *gin.Context) {
 		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
-	fmt.Println("ok")
 	// response
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLClusterAll, jsonBytes).Error())
@@ -504,7 +503,7 @@ func MySQLClusterAddUser(c *gin.Context) {
 	// marshal service
 	jsonBytes, err := s.MarshalWithFields(mysqlClusterUsersStruct)
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response
@@ -696,7 +695,7 @@ func UpdateMySQLClusterByID(c *gin.Context) {
 	// resp
 	jsonStr := string(jsonBytes)
 	log.Debug(message.NewMessage(msgmeta.DebugMetadataUpdateMySQLCluster, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.DebugMetadataUpdateMySQLCluster, fields[mysqlClusterClusterNameStruct])
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataUpdateMySQLCluster, id)
 }
 
 // @Tags	mysql cluster
@@ -731,7 +730,7 @@ func DeleteMySQLClusterByID(c *gin.Context) {
 	// marshal service
 	jsonBytes, err := s.Marshal()
 	if err != nil {
-		resp.ResponseNOK(c, message.ErrMarshalData, errors.Trace(err))
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return
 	}
 	// response

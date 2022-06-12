@@ -175,7 +175,7 @@ func (ur *UserRepo) GetByEmployeeID(employeeID string) (metadata.User, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.Errorf("metadata UserInfo.GetByEmployeeID(): data does not exists, id: %s", employeeID)
+		return nil, errors.Errorf("metadata UserInfo.GetByEmployeeID(): data does not exists, employee_id: %s", employeeID)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -186,7 +186,7 @@ func (ur *UserRepo) GetByEmployeeID(employeeID string) (metadata.User, error) {
 
 		return userInfo, nil
 	default:
-		return nil, errors.Errorf("metadata UserInfo.GetByEmployeeID(): duplicate key exists, id: %s", employeeID)
+		return nil, errors.Errorf("metadata UserInfo.GetByEmployeeID(): duplicate key exists, employee_id: %s", employeeID)
 	}
 }
 
@@ -206,7 +206,7 @@ func (ur *UserRepo) GetByAccountName(accountName string) (metadata.User, error) 
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.Errorf("metadata UserInfo.GetByAccountName(): data does not exists, id: %s", accountName)
+		return nil, errors.Errorf("metadata UserInfo.GetByAccountName(): data does not exists, account_name: %s", accountName)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -217,7 +217,7 @@ func (ur *UserRepo) GetByAccountName(accountName string) (metadata.User, error) 
 
 		return userInfo, nil
 	default:
-		return nil, errors.Errorf("metadata UserInfo.GetByAccountName(): duplicate key exists, id: %s", accountName)
+		return nil, errors.Errorf("metadata UserInfo.GetByAccountName(): duplicate key exists, account_name: %s", accountName)
 	}
 }
 
@@ -237,7 +237,7 @@ func (ur *UserRepo) GetByEmail(email string) (metadata.User, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.Errorf("metadata UserInfo.GetByEmail(): data does not exists, id: %s", email)
+		return nil, errors.Errorf("metadata UserInfo.GetByEmail(): data does not exists, email: %s", email)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -248,7 +248,7 @@ func (ur *UserRepo) GetByEmail(email string) (metadata.User, error) {
 
 		return userInfo, nil
 	default:
-		return nil, errors.Errorf("metadata UserInfo.GetByEmail(): duplicate key exists, id: %s", email)
+		return nil, errors.Errorf("metadata UserInfo.GetByEmail(): duplicate key exists, email: %s", email)
 	}
 }
 
@@ -268,7 +268,7 @@ func (ur *UserRepo) GetByTelephone(telephone string) (metadata.User, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.Errorf("metadata UserInfo.GetByTelephone(): data does not exists, id: %s", telephone)
+		return nil, errors.Errorf("metadata UserInfo.GetByTelephone(): data does not exists, telephone: %s", telephone)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -279,7 +279,7 @@ func (ur *UserRepo) GetByTelephone(telephone string) (metadata.User, error) {
 
 		return userInfo, nil
 	default:
-		return nil, errors.Errorf("metadata UserInfo.GetByTelephone(): duplicate key exists, id: %s", telephone)
+		return nil, errors.Errorf("metadata UserInfo.GetByTelephone(): duplicate key exists, telephone: %s", telephone)
 	}
 }
 
@@ -299,7 +299,7 @@ func (ur *UserRepo) GetByMobile(mobile string) (metadata.User, error) {
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.Errorf("metadata UserInfo.GetByMobile(): data does not exists, id: %s", mobile)
+		return nil, errors.Errorf("metadata UserInfo.GetByMobile(): data does not exists, mobile: %s", mobile)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -310,7 +310,7 @@ func (ur *UserRepo) GetByMobile(mobile string) (metadata.User, error) {
 
 		return userInfo, nil
 	default:
-		return nil, errors.Errorf("metadata UserInfo.GetByMobile(): duplicate key exists, id: %s", mobile)
+		return nil, errors.Errorf("metadata UserInfo.GetByMobile(): duplicate key exists, mobile: %s", mobile)
 	}
 }
 
@@ -330,7 +330,7 @@ func (ur *UserRepo) GetByAccountNameOrEmployeeID(loginName string) (metadata.Use
 	}
 	switch result.RowNumber() {
 	case 0:
-		return nil, errors.Errorf("metadata UserInfo.GetByAccountNameOrEmployeeID(): data does not exists, login name: %s", loginName)
+		return nil, errors.Errorf("metadata UserInfo.GetByAccountNameOrEmployeeID(): data does not exists, login_name: %s", loginName)
 	case 1:
 		userInfo := NewEmptyUserInfoWithGlobal()
 		// map to struct
@@ -341,7 +341,7 @@ func (ur *UserRepo) GetByAccountNameOrEmployeeID(loginName string) (metadata.Use
 
 		return userInfo, nil
 	default:
-		return nil, errors.Errorf("metadata UserInfo.GetByAccountNameOrEmployeeID(): duplicate key exists, login name: %s", loginName)
+		return nil, errors.Errorf("metadata UserInfo.GetByAccountNameOrEmployeeID(): duplicate key exists, login_name: %s", loginName)
 	}
 }
 
