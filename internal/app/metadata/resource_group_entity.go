@@ -67,8 +67,8 @@ func NewEmptyResourceGroupInfoWithGlobal() *ResourceGroupInfo {
 	return &ResourceGroupInfo{ResourceGroupRepo: NewResourceGroupRepoWithGlobal()}
 }
 
-// NewGroupResourceInfoWithDefault returns a new *ResourceGroupInfo with default ResourceGroupRepo
-func NewGroupResourceInfoWithDefault(groupUUID string, groupName string) *ResourceGroupInfo {
+// NewResourceGroupInfoWithDefault returns a new *ResourceGroupInfo with default ResourceGroupRepo
+func NewResourceGroupInfoWithDefault(groupUUID string, groupName string) *ResourceGroupInfo {
 	return &ResourceGroupInfo{
 		ResourceGroupRepo: NewResourceGroupRepoWithGlobal(),
 		GroupUUID:         groupUUID,
@@ -123,7 +123,7 @@ func (rgi *ResourceGroupInfo) GetLastUpdateTime() time.Time {
 
 // GetResourceRoles get all resource roles of this resource group
 func (rgi *ResourceGroupInfo) GetResourceRoles() ([]metadata.ResourceRole, error) {
-	return rgi.GetResourceGroupRepo().GetResourceRoles(rgi.Identity())
+	return rgi.GetResourceGroupRepo().GetResourceRolesByID(rgi.Identity())
 }
 
 // GetMySQLClusters gets the mysql clusters of this resource group

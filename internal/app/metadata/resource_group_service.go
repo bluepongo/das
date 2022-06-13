@@ -117,7 +117,7 @@ func (rgs *ResourceGroupService) GetByGroupUUID(groupUUID string) error {
 func (rgs *ResourceGroupService) GetResourceRolesByID(id int) error {
 	var err error
 
-	rgs.ResourceRoles, err = rgs.ResourceGroupRepo.GetResourceRoles(id)
+	rgs.ResourceRoles, err = rgs.ResourceGroupRepo.GetResourceRolesByID(id)
 
 	return err
 }

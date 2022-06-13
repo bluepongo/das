@@ -66,8 +66,8 @@ type ResourceGroupRepo interface {
 	GetByGroupUUID(groupUUID string) (ResourceGroup, error)
 	// GetID gets the identity with given resource group id from the middleware
 	GetID(groupUUID string) (int, error)
-	// GetResourceRoles get all resource roles with given resource group id from the middleware
-	GetResourceRoles(id int) ([]ResourceRole, error)
+	// GetResourceRolesByID get all resource roles with given resource group id from the middleware
+	GetResourceRolesByID(id int) ([]ResourceRole, error)
 	// GetMySQLClustersByID gets the mysql cluster with given resource group id from the middleware
 	GetMySQLClustersByID(id int) ([]MySQLCluster, error)
 	// GetMySQLServersByID gets the mysql servers with given resource group uuid from the middleware

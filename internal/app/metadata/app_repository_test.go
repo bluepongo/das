@@ -14,10 +14,10 @@ import (
 )
 
 const (
-	testDASMySQLAddr = "localhost:3306"
+	testDASMySQLAddr = "192.168.137.11:3306"
 	testDASMySQLName = "das"
 	testDASMySQLUser = "root"
-	testDASMySQLPass = "123"
+	testDASMySQLPass = "root"
 
 	testAppNewAppName    = "test_new_app_name"
 	testAppUpdateAppName = "test_update_app_name"

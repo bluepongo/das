@@ -11,7 +11,7 @@ import (
 	"github.com/romberli/log"
 )
 
-const defaultDASAdminRoleName = "das-admin"
+const defaultDASAdminRoleName = "das_admin"
 
 var _ metadata.ResourceGroupRepo = (*ResourceGroupRepo)(nil)
 
@@ -153,8 +153,8 @@ func (rgr *ResourceGroupRepo) GetID(groupUUID string) (int, error) {
 	return result.GetInt(constant.ZeroInt, constant.ZeroInt)
 }
 
-// GetResourceRoles get all resource roles with given resource group id from the middleware
-func (rgr *ResourceGroupRepo) GetResourceRoles(id int) ([]metadata.ResourceRole, error) {
+// GetResourceRolesByID get all resource roles with given resource group id from the middleware
+func (rgr *ResourceGroupRepo) GetResourceRolesByID(id int) ([]metadata.ResourceRole, error) {
 	sql := `
         select rri.id,
 			   rri.role_uuid,
@@ -352,18 +352,18 @@ func (rgr *ResourceGroupRepo) GetMiddlewareServersByID(id int) ([]metadata.Middl
 // GetUsersByID gets the users of the given id from the middleware
 func (rgr *ResourceGroupRepo) GetUsersByID(id int) ([]metadata.User, error) {
 	sql := `
-		select ui.id,
-			   ui.user_name,
-			   ui.department_name,
-			   ui.employee_id,
-			   ui.account_name,
-			   ui.email,
-			   ui.telephone,
-			   ui.mobile,
-			   ui.role,
-			   ui.del_flag,
-			   ui.create_time,
-			   ui.last_update_time
+		select distinct ui.id,
+						ui.user_name,
+						ui.department_name,
+						ui.employee_id,
+						ui.account_name,
+						ui.email,
+						ui.telephone,
+						ui.mobile,
+						ui.role,
+						ui.del_flag,
+						ui.create_time,
+						ui.last_update_time
 		from t_meta_resource_group_info rgi
 			inner join t_meta_resource_role_info rri on rgi.id = rri.resource_group_id
 			inner join t_meta_resource_role_user_map rrum on rri.id = rrum.resource_role_id
@@ -397,18 +397,18 @@ func (rgr *ResourceGroupRepo) GetUsersByID(id int) ([]metadata.User, error) {
 // GetUsersByID gets the users of the given id from the middleware
 func (rgr *ResourceGroupRepo) GetDASAdminUsersByID(id int) ([]metadata.User, error) {
 	sql := `
-		select ui.id,
-			   ui.user_name,
-			   ui.department_name,
-			   ui.employee_id,
-			   ui.account_name,
-			   ui.email,
-			   ui.telephone,
-			   ui.mobile,
-			   ui.role,
-			   ui.del_flag,
-			   ui.create_time,
-			   ui.last_update_time
+		select distinct ui.id,
+						ui.user_name,
+						ui.department_name,
+						ui.employee_id,
+						ui.account_name,
+						ui.email,
+						ui.telephone,
+						ui.mobile,
+						ui.role,
+						ui.del_flag,
+						ui.create_time,
+						ui.last_update_time
 		from t_meta_resource_group_info rgi
 			inner join t_meta_resource_role_info rri on rgi.id = rri.resource_group_id
 			inner join t_meta_resource_role_user_map rrum on rri.id = rrum.resource_role_id
@@ -420,7 +420,7 @@ func (rgr *ResourceGroupRepo) GetDASAdminUsersByID(id int) ([]metadata.User, err
 		  and rgi.id = ?
 		  and rri.role_name = ?;
     `
-	log.Debugf("metadata ResourceGroupRepo.GetUsersByID() sql: \n%s\nplaceholders: %d, %s", sql, id, defaultDASAdminRoleName)
+	log.Debugf("metadata ResourceGroupRepo.GetDASAdminUsersByID() sql: \n%s\nplaceholders: %d, %s", sql, id, defaultDASAdminRoleName)
 
 	result, err := rgr.Execute(sql, id, defaultDASAdminRoleName)
 	if err != nil {
@@ -462,14 +462,16 @@ func (rgr *ResourceGroupRepo) Update(rg metadata.ResourceGroup) error {
 		rg.GetGroupUUID(),
 		rg.GetGroupName(),
 		rg.GetDelFlag(),
+		rg.Identity(),
 	)
+
 	return err
 }
 
 // Delete deletes data in the middleware, it will also delete concerning map data
 func (rgr *ResourceGroupRepo) Delete(id int) error {
 	// delete concerning resource roles
-	resourceRoles, err := rgr.GetResourceRoles(id)
+	resourceRoles, err := rgr.GetResourceRolesByID(id)
 	if err != nil {
 		return err
 	}
