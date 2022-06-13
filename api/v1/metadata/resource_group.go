@@ -690,7 +690,7 @@ func GetDASAdminUsersByGroupUUID(c *gin.Context) {
 	s := metadata.NewResourceGroupServiceWithDefault()
 
 	// get entity
-	err = s.GetDASAdminUsersByUUID(groupUUID)
+	err = s.GetDASAdminUsersByGroupUUID(groupUUID)
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetDASAdminUsersByGroupUUID, err, groupUUID)
 		return

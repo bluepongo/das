@@ -11,7 +11,7 @@ import (
 	"github.com/romberli/log"
 )
 
-const defaultDASAdminRoleName = "das_admin"
+const defaultDASAdminRoleName = "das-admin"
 
 var _ metadata.ResourceGroupRepo = (*ResourceGroupRepo)(nil)
 

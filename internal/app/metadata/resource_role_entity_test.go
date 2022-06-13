@@ -38,7 +38,7 @@ func testInitNewResourceRoleInfo() *ResourceRoleInfo {
 
 	createTime, _ := now.Parse(testResourceRoleCreateTimeString)
 	lastUpdateTime, _ := now.Parse(testResourceRoleLastUpdateTimeString)
-	ResourceRoleInfo := NewResourceRoleInfoWithGlobal(
+	resourceRoleInfo := NewResourceRoleInfoWithGlobal(
 		testResourceRoleID,
 		testResourceRoleRoleUUID,
 		testResourceRoleRoleName,
@@ -48,7 +48,7 @@ func testInitNewResourceRoleInfo() *ResourceRoleInfo {
 		lastUpdateTime,
 	)
 
-	return ResourceRoleInfo
+	return resourceRoleInfo
 }
 
 func TestResourceRoleEntityAll(t *testing.T) {

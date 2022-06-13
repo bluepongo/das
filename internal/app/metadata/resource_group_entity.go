@@ -11,6 +11,7 @@ import (
 const (
 	resourceGroupGroupUUIDStruct = "GroupUUID"
 	resourceGroupGroupNameStruct = "GroupName"
+	resourceGroupDelFlagStruct   = "DelFlag"
 )
 
 var _ metadata.ResourceGroup = (*ResourceGroupInfo)(nil)

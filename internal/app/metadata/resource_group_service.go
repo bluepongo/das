@@ -236,8 +236,8 @@ func (rgs *ResourceGroupService) GetUsersByGroupUUID(groupUUID string) error {
 	return rgs.GetUsersByID(resourceGroup.Identity())
 }
 
-// GetDASAdminUsersByUUID gets the das admin users with given resource group uuid
-func (rgs *ResourceGroupService) GetDASAdminUsersByUUID(groupUUID string) error {
+// GetDASAdminUsersByGroupUUID gets the das admin users with given resource group uuid
+func (rgs *ResourceGroupService) GetDASAdminUsersByGroupUUID(groupUUID string) error {
 	resourceGroup, err := rgs.ResourceGroupRepo.GetByGroupUUID(groupUUID)
 	if err != nil {
 		return err

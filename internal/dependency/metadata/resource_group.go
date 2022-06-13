@@ -144,8 +144,8 @@ type ResourceGroupService interface {
 	GetMiddlewareServersByGroupUUID(groupUUID string) error
 	// GetUsersByGroupUUID gets the users with given resource group uuid
 	GetUsersByGroupUUID(groupUUID string) error
-	// GetDASAdminUsersByUUID gets the das admin users with given resource group uuid
-	GetDASAdminUsersByUUID(groupUUID string) error
+	// GetDASAdminUsersByGroupUUID gets the das admin users with given resource group uuid
+	GetDASAdminUsersByGroupUUID(groupUUID string) error
 	// Create creates a mysql server in the mysql
 	Create(fields map[string]interface{}) error
 	// Update gets a mysql server of the given id from the mysql,

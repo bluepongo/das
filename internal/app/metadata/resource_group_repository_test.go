@@ -10,10 +10,7 @@ import (
 )
 
 const (
-	testResourceGroupID              = 1
-	testResourceGroupUUID            = "5c6c6d73-eac2-11ec-8183-001c42d502a6"
-	testResourceGroupName            = "resource_group_01"
-	testResourceGroupGroupUUID       = "9b22fd82-e96c-11ec-8183-001c42d502a6"
+	testResourceGroupNewGroupUUID    = "bd067241-eafc-11ec-8183-001c42d502a6"
 	testResourceGroupNewGroupName    = "test_new_resource_group"
 	testResourceGroupUpdateGroupName = "test_update_resource_group"
 )
@@ -27,7 +24,7 @@ func init() {
 
 func testCreateResourceGroup() (metadata.ResourceGroup, error) {
 	resourceGroup := NewResourceGroupInfoWithDefault(
-		testResourceGroupGroupUUID,
+		testResourceGroupNewGroupUUID,
 		testResourceGroupNewGroupName,
 	)
 
@@ -83,13 +80,13 @@ func TestResourceGroupRepo_Transaction(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	_, err = tx.Execute(
 		sql,
-		testResourceGroupGroupUUID,
+		testResourceGroupNewGroupUUID,
 		testResourceGroupNewGroupName,
 	)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	// check if inserted
 	sql = `select group_name from t_meta_resource_group_info where group_uuid=?`
-	result, err := tx.Execute(sql, testResourceGroupGroupUUID)
+	result, err := tx.Execute(sql, testResourceGroupNewGroupUUID)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
 	groupName, err := result.GetString(constant.ZeroInt, constant.ZeroInt)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
@@ -122,21 +119,21 @@ func TestResourceGroupRepo_GetByID(t *testing.T) {
 
 	entity, err := testResourceGroupRepo.GetByID(testResourceGroupID)
 	asst.Nil(err, common.CombineMessageWithError("test GetByID() failed", err))
-	asst.Equal(testResourceGroupName, entity.GetGroupName(), "test GetByGroupUUID() failed")
+	asst.Equal(testResourceGroupGroupName, entity.GetGroupName(), "test GetByGroupUUID() failed")
 }
 
 func TestResourceGroupRepo_GetByGroupUUID(t *testing.T) {
 	asst := assert.New(t)
 
-	entity, err := testResourceGroupRepo.GetByGroupUUID(testResourceGroupUUID)
+	entity, err := testResourceGroupRepo.GetByGroupUUID(testResourceGroupGroupUUID)
 	asst.Nil(err, common.CombineMessageWithError("test GetByGroupUUID() failed", err))
-	asst.Equal(testResourceGroupName, entity.GetGroupName(), "test GetByGroupUUID() failed")
+	asst.Equal(testResourceGroupGroupName, entity.GetGroupName(), "test GetByGroupUUID() failed")
 }
 
 func TestResourceGroupRepo_GetID(t *testing.T) {
 	asst := assert.New(t)
 
-	id, err := testResourceGroupRepo.GetID(testResourceGroupUUID)
+	id, err := testResourceGroupRepo.GetID(testResourceGroupGroupUUID)
 	asst.Nil(err, common.CombineMessageWithError("test GetID() failed", err))
 	asst.Equal(testResourceGroupID, id, "test GetID() failed")
 }
