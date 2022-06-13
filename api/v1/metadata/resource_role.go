@@ -32,13 +32,13 @@ const (
 	resourceRoleUsersStruct         = "Users"
 )
 
-// @Tags mysql cluster
-// @Summary	get all mysql clusters
+// @Tags resource role
+// @Summary	get all resource roles
 // @Accept	application/json
 // @Produce	application/json
 // @Param	token	body string	true "token"
-// @Success	200 {string} string "{"mysql_clusters":[{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"}]}"
-// @Router	/api/v1/metadata/mysql-cluster [get]
+// @Success	200 {string} string "{"resource_roles":[{"del_flag":0,"create_time":"2022-06-12T09:03:23.298572+08:00","last_update_time":"2022-06-12T09:21:36.667854+08:00","id":1,"role_uuid":"test_role_uuid","role_name":"test_role","resource_group_id":1}]}"
+// @Router	/api/v1/metadata/resource-role [get]
 func GetResourceRole(c *gin.Context) {
 	// init service
 	s := metadata.NewResourceRoleServiceWithDefault()
@@ -61,14 +61,14 @@ func GetResourceRole(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetResourceRoleAll)
 }
 
-// @Tags	mysql cluster
-// @Summary	get mysql cluster by id
+// @Tags	resource role
+// @Summary	get resource role by id
 // @Accept	application/json
 // @Param	token	body string	true "token"
-// @Param	id		body int	true "mysql cluster id"
+// @Param	id		body int	true "resource role id"
 // @Produce	application/json
-// @Success	200 {string} string "{"mysql_clusters":[{"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
-// @Router	/api/v1/metadata/mysql-cluster/get [get]
+// @Success	200 {string} string "{"resource_roles":[{"id":1,"role_uuid":"test_role_uuid","role_name":"test_role","resource_group_id":1,"del_flag":0,"create_time":"2022-06-12T09:03:23.298572+08:00","last_update_time":"2022-06-12T09:21:36.667854+08:00"}]}"
+// @Router	/api/v1/metadata/resource-role/get [get]
 func GetResourceRoleByID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -101,14 +101,14 @@ func GetResourceRoleByID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetResourceRoleByID, id)
 }
 
-// @Tags mysql cluster
-// @Summary get mysql cluster by uuid
+// @Tags resource role
+// @Summary get resource role by uuid
 // @Accept	application/json
-// @Param	token	body string	true "token"
-// @Param	name	body string	true "mysql cluster name"
+// @Param	token		body string	true "token"
+// @Param	role_uuid	body string	true "resource role uuid"
 // @Produce  application/json
-// @Success 200 {string} string "{"mysql_clusters":[{"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","id":1,"monitor_system_id":1,"env_id":1,"last_update_time":"2021-02-23T20:57:24.603009+08:00","cluster_name":"cluster_name_init","middleware_cluster_id":1}]}"
-// @Router /api/v1/metadata/mysql-cluster/cluster-name [get]
+// @Success 200 {string} string "{"resource_roles":[{"id":1,"role_uuid":"test_role_uuid","role_name":"test_role","resource_group_id":1,"del_flag":0,"create_time":"2022-06-12T09:03:23.298572+08:00","last_update_time":"2022-06-12T09:21:36.667854+08:00"}]}"
+// @Router /api/v1/metadata/resource-role/role-uuid [get]
 func GetResourceRoleByUUID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -141,14 +141,14 @@ func GetResourceRoleByUUID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetResourceRoleByUUID, roleUUID)
 }
 
-// @Tags	mysql cluster
-// @Summary	get mysql servers by id
+// @Tags	resource role
+// @Summary	get resource group by resource role id
 // @Accept	application/json
 // @Param	token	body string	true "token"
-// @Param	id		body int	true "mysql cluster id"
+// @Param	id		body int	true "resource role id"
 // @Produce	application/json
-// @Success	200 {string} string "{"mysql_servers":[{"id":1,"server_name":"192-168-10-219","service_name":"192-168-10-219:3306","deployment_type":1,"last_update_time":"2021-12-21T09:16:20.184065+08:00","cluster_id":1,"host_ip":"192.168.10.219","port_num":3306,"version":"5.7","del_flag":0,"create_time":"2021-09-02T11:16:06.561525+08:00"}]}"
-// @Router	/api/v1/metadata/mysql-cluster/mysql-server [get]
+// @Success	200 {string} string "{"resource_group":{"id":1,"group_uuid":"uuid","group_name":"test","del_flag":0,"create_time":"2022-06-12T09:02:39.376944+08:00","last_update_time":"2022-06-12T09:02:39.376944+08:00"}}"
+// @Router	/api/v1/metadata/resource-role/resource-group [get]
 func GetResourceGroupByResourceRoleID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -182,14 +182,14 @@ func GetResourceGroupByResourceRoleID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServers, id)
 }
 
-// @Tags	mysql cluster
-// @Summary	get mysql cluster users
+// @Tags	resource role
+// @Summary	get resource role users
 // @Accept	application/json
 // @Param	token	body string	true "token"
-// @Param	id		body int	true "mysql cluster id"
+// @Param	id		body int	true "resource role id"
 // @Produce	application/json
-// @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","account_name":"zs001","last_update_time":"2021-11-22T13:46:20.430926+08:00","mobile":"13012345678","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","email":"allinemailtest@163.com","telephone":"01012345678","create_time":"2021-10-25T09:21:50.364327+08:00"}]}"
-// @Router	/api/v1/metadata/mysql-cluster/user [get]
+// @Success	200 {string} string "{"users":[{"id":14,"mobile":"","role":3,"del_flag":0,"user_name":"tester","department_name":"","employee_id":"","account_name":"test","email":"929059501@qq.com","telephone":"","create_time":"2021-12-06T18:08:03.736262+08:00","last_update_time":"2021-12-06T18:08:03.736262+08:00"}]}"
+// @Router	/api/v1/metadata/resource-role/user [get]
 func GetUsersByResourceRoleID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -222,14 +222,14 @@ func GetUsersByResourceRoleID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsers, id)
 }
 
-// @Tags	mysql cluster
-// @Summary	get app users
+// @Tags	resource role
+// @Summary	get resource role users by resource role uuid
 // @Accept	application/json
-// @Param	token	body string	true "token"
-// @Param	id		body int	true "mysql cluster id"
+// @Param	token		body string	true "token"
+// @Param	role_uuid	body int	true "resource role uuid"
 // @Produce	application/json
-// @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","account_name":"zs001","last_update_time":"2021-11-22T13:46:20.430926+08:00","mobile":"13012345678","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","email":"allinemailtest@163.com","telephone":"01012345678","create_time":"2021-10-25T09:21:50.364327+08:00"}]}"
-// @Router	/api/v1/metadata/mysql-cluster/app-user [get]
+// @Success	200 {string} string "{"users":[{"account_name":"test","email":"929059501@qq.com","telephone":"","mobile":"","role":3,"user_name":"tester","employee_id":"","del_flag":0,"create_time":"2021-12-06T18:08:03.736262+08:00","id":14,"department_name":"","last_update_time":"2021-12-06T18:08:03.736262+08:00"}]}"
+// @Router	/api/v1/metadata/resource-role/user/role-uuid [get]
 func GetUsersByResourceRoleUUID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -262,15 +262,15 @@ func GetUsersByResourceRoleUUID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsers, roleUUID)
 }
 
-// @Tags	mysql cluster
+// @Tags	resource role
 // @Summary	add user map
 // @Accept	application/json
 // @Param	token	body string	true "token"
-// @Param	id		body int	true "mysql cluster id"
+// @Param	id		body int	true "resource role id"
 // @Param	user_id	body int	true "user id"
 // @Produce	application/json
-// @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","email":"allinemailtest@163.com","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","account_name":"zs001","telephone":"01012345678","mobile":"13012345678","create_time":"2021-10-25T09:21:50.364327+08:00","last_update_time":"2021-11-22T13:46:20.430926+08:00"}}"
-// @Router	/api/v1/metadata/mysql-cluster/add-user [post]
+// @Success	200 {string} string "{"users":[{"account_name":"test","email":"929059501@qq.com","telephone":"","mobile":"","role":3,"id":14,"department_name":"","employee_id":"","del_flag":0,"create_time":"2021-12-06T18:08:03.736262+08:00","last_update_time":"2021-12-06T18:08:03.736262+08:00","user_name":"tester"}]}"
+// @Router	/api/v1/metadata/resource-role/add-user [post]
 func ResourceRoleAddUser(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -308,15 +308,15 @@ func ResourceRoleAddUser(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataResourceRoleAddUser, id, userID)
 }
 
-// @Tags	mysql cluster
+// @Tags	resource role
 // @Summary	delete user map
 // @Accept	application/json
 // @Param	token	body string	true "token"
-// @Param	id		body int	true "mysql cluster id"
+// @Param	id		body int	true "resource role id"
 // @Param	user_id	body int	true "user id"
 // @Produce	application/json
-// @Success	200 {string} string "{"users":[{"id":1,"employee_id":"100001","email":"allinemailtest@163.com","role":3,"del_flag":0,"user_name":"zhangsan","department_name":"arch","account_name":"zs001","telephone":"01012345678","mobile":"13012345678","create_time":"2021-10-25T09:21:50.364327+08:00","last_update_time":"2021-11-22T13:46:20.430926+08:00"}]}"
-// @Router	/api/v1/metadata/mysql-cluster/delete-user [post]
+// @Success	200 {string} string "{"users":[]}"
+// @Router	/api/v1/metadata/resource-role/delete-user [post]
 func ResourceRoleDeleteUser(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -354,17 +354,16 @@ func ResourceRoleDeleteUser(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataResourceRoleDeleteUser, id, userID)
 }
 
-// @Tags	mysql cluster
-// @Summary	add a new mysql cluster
+// @Tags	resource role
+// @Summary	add a new resource role
 // @Accept	application/json
-// @Param	token					body string	true "token"
-// @Param	cluster_name			body string	true  "mysql cluster name"
-// @Param	middleware_cluster_id	body int	false "middleware cluster id"
-// @Param	monitor_system_id		body int	false "monitor system id"
-// @Param	env_id					body string	true  "env id"
+// @Param	token				body string	true  "token"
+// @Param	role_name			body string	false "resource role name"
+// @Param	role_uuid			body int	true  "resource role uuid"
+// @Param	resource_group_id	body int	true  "resource group id"
 // @Produce	application/json
-// @Success	200 {string} string "{"mysql_clusters":[{"id":3,"cluster_name":"api_test","monitor_system_id":0,"env_id":1,"create_time":"2022-03-01T08:30:43.428343+08:00","middleware_cluster_id":0,"del_flag":0,"last_update_time":"2022-03-01T08:30:43.428343+08:00"}]}"
-// @Router	/api/v1/metadata/mysql-cluster [post]
+// @Success	200 {string} string "{"resource_roles":[{"id":2,"role_uuid":"new_test_role_uuid","role_name":"new_test_role","resource_group_id":1,"del_flag":0,"create_time":"2022-06-13T01:08:21.739904+08:00","last_update_time":"2022-06-13T01:08:21.739904+08:00"}]}"
+// @Router	/api/v1/metadata/resource-role [post]
 func AddResourceRole(c *gin.Context) {
 	var fields map[string]interface{}
 
@@ -417,19 +416,18 @@ func AddResourceRole(c *gin.Context) {
 	)
 }
 
-// @Tags	mysql cluster
-// @Summary	update mysql cluster by id
+// @Tags	resource role
+// @Summary	update resource role by id
 // @Accept	application/json
-// @Param	token					body string	true  "token"
-// @Param	id						body int	true  "mysql cluster id"
-// @Param	cluster_name			body string	false "mysql cluster name"
-// @Param	middleware_cluster_id	body int	false "middleware cluster id"
-// @Param	monitor_system_id		body int	false "monitor system id"
-// @Param	env_id					body string	false "env id"
-// @Param	del_flag				body int	false "delete flag"
+// @Param	token				body string	true  "token"
+// @Param	id					body int	true  "resource role id"
+// @Param	role_name			body string	false "resource role name"
+// @Param	role_uuid			body int	false "resource role uuid"
+// @Param	resource_group_id	body int	false "resource group id"
+// @Param	del_flag			body int	false "delete flag"
 // @Produce	application/json
-// @Success	200 {string} string "{"mysql_clusters":[{"middleware_cluster_id":0,"monitor_system_id":0,"last_update_time":"2022-03-01T08:30:43.428343+08:00","id":3,"cluster_name":"test","env_id":1,"del_flag":0,"create_time":"2022-03-01T08:30:43.428343+08:00"}]}"
-// @Router	/api/v1/metadata/mysql-cluster/update [post]
+// @Success	200 {string} string "{"resource_roles":[{"resource_group_id":1,"del_flag":0,"create_time":"2022-06-13T01:08:21.739904+08:00","last_update_time":"2022-06-13T01:08:21.739904+08:00","id":2,"role_uuid":"update_test_role_id","role_name":"update_test_role"}]}}"
+// @Router	/api/v1/metadata/resource-role/update [post]
 func UpdateResourceRoleByID(c *gin.Context) {
 	var fields map[string]interface{}
 	// get data
@@ -488,14 +486,14 @@ func UpdateResourceRoleByID(c *gin.Context) {
 	resp.ResponseOK(c, jsonStr, msgmeta.DebugMetadataUpdateResourceRole, fields[resourceRoleUUIDStruct])
 }
 
-// @Tags	mysql cluster
-// @Summary	update mysql cluster by id
+// @Tags	resource role
+// @Summary	delete resource role by id
 // @Accept	application/json
 // @Param	token	body string	true "token"
-// @Param	id		body int	true "mysql cluster id"
+// @Param	id		body int	true "resource role id"
 // @Produce	application/json
-// @Success	200 {string} string "{"mysql_clusters":[{"cluster_name":"test","env_id":1,"del_flag":0,"create_time":"2022-03-01T08:30:43.428343+08:00","last_update_time":"2022-03-01T08:32:25.715563+08:00","id":3,"middleware_cluster_id":0,"monitor_system_id":0}]}"
-// @Router	/api/v1/metadata/mysql-cluster/delete [post]
+// @Success	200 {string} string "{"resource_roles":[{"role_name":"update_test_role","resource_group_id":1,"del_flag":0,"create_time":"2022-06-13T01:08:21.739904+08:00","last_update_time":"2022-06-13T01:10:42.472215+08:00","id":2,"role_uuid":"update_test_role_id"}]}"
+// @Router	/api/v1/metadata/resource-role/delete [post]
 func DeleteResourceRoleByID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
