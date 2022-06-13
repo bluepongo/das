@@ -26,7 +26,7 @@ Content-Type: application/json
 
 
 ### get master mysql server of resource role
-GET http://{{baseURL}}/api/v1/metadata/resource-role/resource_group
+GET http://{{baseURL}}/api/v1/metadata/resource-role/resource-group
 Content-Type: application/json
 
 {
