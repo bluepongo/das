@@ -40,7 +40,7 @@ const (
 // @Accept	application/json
 // @Param	token body string true "token"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group [get]
 func GetResourceGroup(c *gin.Context) {
 	// init service
@@ -69,7 +69,7 @@ func GetResourceGroup(c *gin.Context) {
 // @Param	token 	body 	string 	true 	"token"
 // @Param	id		body	int		true	"resource group id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/get [get]
 func GetResourceGroupByID(c *gin.Context) {
 	// get data
@@ -109,7 +109,7 @@ func GetResourceGroupByID(c *gin.Context) {
 // @Param	token 	    body 	string 	true 	"token"
 // @Param	group_uuid	body	int		true	"resource group uuid"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/group-uuid [get]
 func GetResourceGroupByGroupUUID(c *gin.Context) {
 	// get data
@@ -149,7 +149,7 @@ func GetResourceGroupByGroupUUID(c *gin.Context) {
 // @Param	token 	body 	string 	true 	"token"
 // @Param	id		body	string	true	"resource group id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"resource_roles":[{"id":2,"role_uuid":"c319e33a-eac3-11ec-8183-001c42d502a6","role_name":"das-admin","resource_group_id":1,"del_flag":0,"create_time":"2022-06-13T10:53:56.439107+08:00","last_update_time":"2022-06-13T17:27:09.037353+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/resource-role/id [get]
 func GetResourceRolesByGroupID(c *gin.Context) {
 	// get data
@@ -229,7 +229,7 @@ func GetMySQLClustersByGroupID(c *gin.Context) {
 // @Param	token 	body 	string 	true 	"token"
 // @Param	id		body	string	true	"resource group id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"mysql_servers":[{"id":1,"server_name":"192-168-137-11","host_ip":"192.168.137.11","deployment_type":1,"version":"8.0.29","del_flag":0,"cluster_id":1,"create_time":"2021-09-02T11:16:06.561525+08:00","service_name":"192-168-137-11-mysql","port_num":3306,"last_update_time":"2022-06-13T16:22:59.178465+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/mysql-server/id [get]
 func GetMySQLServersByGroupID(c *gin.Context) {
 	// get data
@@ -269,7 +269,7 @@ func GetMySQLServersByGroupID(c *gin.Context) {
 // @Param	token 	body 	string 	true 	"token"
 // @Param	id		body	string	true	"resource group id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"middleware_clusters":[{"id":1,"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/middleware-cluster/id [get]
 func GetMiddlewareClustersByGroupID(c *gin.Context) {
 	// get data
@@ -309,7 +309,7 @@ func GetMiddlewareClustersByGroupID(c *gin.Context) {
 // @Param	token 	body 	string 	true 	"token"
 // @Param	id		body	string	true	"resource group id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"middleware_servers":[{"id":1,"middleware_role":1,"host_ip":"192.168.137.11","port_num":33061,"del_flag":0,"last_update_time":"2022-04-25T14:50:59.847396+08:00","create_time":"2022-04-25T14:32:41.275617+08:00","cluster_id":1,"server_name":"middleware-server-1"}]}"
 // @Router	/api/v1/metadata/resource-group/middleware-server/id [get]
 func GetMiddlewareServersByGroupID(c *gin.Context) {
 	// get data
@@ -431,7 +431,7 @@ func GetDASAdminUsersByGroupID(c *gin.Context) {
 // @Param	token 		body 	string 	true	"token"
 // @Param	group_uuid	body	string	true	"resource group uuid"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/resource-role/group-uuid [get]
 func GetResourceRolesByGroupUUID(c *gin.Context) {
 	// get data
@@ -511,7 +511,7 @@ func GetMySQLClustersByGroupUUID(c *gin.Context) {
 // @Param	token 		body 	string 	true 	"token"
 // @Param	group_uuid	body	string	true	"resource group uuid"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"mysql_servers":[{"id":1,"server_name":"192-168-137-11","host_ip":"192.168.137.11","deployment_type":1,"version":"8.0.29","del_flag":0,"cluster_id":1,"create_time":"2021-09-02T11:16:06.561525+08:00","service_name":"192-168-137-11-mysql","port_num":3306,"last_update_time":"2022-06-13T16:22:59.178465+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/mysql-server/group-uuid [get]
 func GetMySQLServersByGroupUUID(c *gin.Context) {
 	// get data
@@ -551,7 +551,7 @@ func GetMySQLServersByGroupUUID(c *gin.Context) {
 // @Param	token 		body 	string 	true 	"token"
 // @Param	group_uuid	body	string	true	"resource group uuid"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"middleware_clusters":[{"id":1,"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/middleware-cluster/group-uuid [get]
 func GetMiddlewareClustersByGroupUUID(c *gin.Context) {
 	// get data
@@ -591,7 +591,7 @@ func GetMiddlewareClustersByGroupUUID(c *gin.Context) {
 // @Param	token 		body 	string 	true 	"token"
 // @Param	group_uuid	body	string	true	"resource group uuid"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"middleware_clusters":[{"id":1,"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/middleware-server/group-uuid [get]
 func GetMiddlewareServersByGroupUUID(c *gin.Context) {
 	// get data
@@ -714,7 +714,7 @@ func GetDASAdminUsersByGroupUUID(c *gin.Context) {
 // @Param	group_uuid	body	string	true	"resource group uuid"
 // @Param	group_name	body	string  true 	"resource group name"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group [post]
 func AddResourceGroup(c *gin.Context) {
 	var fields map[string]interface{}
@@ -770,7 +770,7 @@ func AddResourceGroup(c *gin.Context) {
 // @Param	group_name	body	string	false	"resource group name"
 // @Param	del_flag	body	int		false	"delete flag"
 // @Produce	application/json
-// @Success	200 {string} string {"middleware_clusters":[{"last_update_time":"2021-11-18T15:39:52.927116+08:00","id":1,"cluster_name":"update_middleware_cluster","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00"}]}
+// @Success	200 {string} string "{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/update [post]
 func UpdateResourceGroupByID(c *gin.Context) {
 	var fields map[string]interface{}
@@ -830,7 +830,7 @@ func UpdateResourceGroupByID(c *gin.Context) {
 // @Param	token 	body	string 	true 	"token"
 // @Param	id		body	int		true	"resource group id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/delete [post]
 func DeleteResourceGroupByID(c *gin.Context) {
 	// get data
@@ -871,7 +871,7 @@ func DeleteResourceGroupByID(c *gin.Context) {
 // @Param	id					body	int		true	"resource group id"
 // @Param	mysql_cluster_id	body	int		true	"mysql cluster id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"mysql_clusters":[{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"}]}"
 // @Router	/api/v1/metadata/resource-group/add-mysql-cluster [post]
 func ResourceGroupAddMySQLCluster(c *gin.Context) {
 	// get data
@@ -918,7 +918,7 @@ func ResourceGroupAddMySQLCluster(c *gin.Context) {
 // @Param	id					body	int		true	"resource group id"
 // @Param	mysql_cluster_id	body	int		true	"mysql cluster id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"mysql_clusters":[{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"}]}"
 // @Router	/api/v1/metadata/resource-group/delete-mysql-cluster [post]
 func ResourceGroupDeleteMySQLCluster(c *gin.Context) {
 	// get data
@@ -964,7 +964,7 @@ func ResourceGroupDeleteMySQLCluster(c *gin.Context) {
 // @Param	id						body	int		true	"resource group id"
 // @Param	middleware_cluster_id	body	int		true	"middleware cluster id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"middleware_clusters":[{"id":1,"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/add-middleware-cluster [post]
 func ResourceGroupAddMiddlewareCluster(c *gin.Context) {
 	// get data
@@ -1011,7 +1011,7 @@ func ResourceGroupAddMiddlewareCluster(c *gin.Context) {
 // @Param	id						body	int		true	"resource group id"
 // @Param	middleware_cluster_id	body	int		true	"middleware cluster id"
 // @Produce	application/json
-// @Success	200 {string} string ""
+// @Success	200 {string} string "{"middleware_clusters":[{"id":1,"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00"}]}"
 // @Router	/api/v1/metadata/resource-group/delete-middleware-cluster [post]
 func ResourceGroupDeleteMiddlewareCluster(c *gin.Context) {
 	// get data

@@ -40,6 +40,8 @@ func TestResourceGroupService_All(t *testing.T) {
 	TestResourceGroupService_DeleteMySQLCluster(t)
 	TestResourceGroupService_AddMiddlewareCluster(t)
 	TestResourceGroupService_DeleteMiddlewareCluster(t)
+	TestResourceGroupService_Marshal(t)
+	TestResourceGroupService_MarshalWithFields(t)
 }
 
 func TestResourceGroupService_GetAll(t *testing.T) {
@@ -250,4 +252,34 @@ func TestResourceGroupService_DeleteMiddlewareCluster(t *testing.T) {
 	asst.Nil(err, common.CombineMessageWithError("test DeleteMiddlewareCluster() failed", err))
 	err = testResourceGroupService.AddMiddlewareCluster(testResourceGroupID, testMiddlewareClusterClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test DeleteMiddlewareCluster() failed", err))
+}
+
+func TestResourceGroupService_Marshal(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testResourceGroupService.GetByID(testResourceGroupID)
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
+	jsonBytes, err := testResourceGroupService.Marshal()
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
+	t.Log(string(jsonBytes))
+}
+
+func TestResourceGroupService_MarshalWithFields(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testResourceGroupService.GetByID(testResourceGroupID)
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
+	jsonBytes, err := testResourceGroupService.MarshalWithFields(resourceGroupGroupNameStruct)
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
+	t.Log(string(jsonBytes))
+}
+
+func TestMarshalWithFields(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testResourceGroupService.GetMiddlewareServersByID(testResourceGroupID)
+	asst.Nil(err, common.CombineMessageWithError("test Marshal() failed", err))
+	jsonBytes, err := testResourceGroupService.MarshalWithFields(resourceGroupMiddlewareServersStruct)
+	asst.Nil(err, common.CombineMessageWithError("test MarshalWithFields() failed", err))
+	t.Log(string(jsonBytes))
 }

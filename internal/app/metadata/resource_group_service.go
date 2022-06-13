@@ -9,18 +9,26 @@ import (
 	"github.com/romberli/go-util/constant"
 )
 
-const resourceGroupResourceGroupsStruct = "MySQLClusters"
+const (
+	resourceGroupResourceGroupsStruct     = "ResourceGroups"
+	resourceGroupMySQLClustersStruct      = "MySQLClusters"
+	resourceGroupMySQLServersStruct       = "MySQLServers"
+	resourceGroupMiddlewareClustersStruct = "MiddlewareClusters"
+	resourceGroupMiddlewareServersStruct  = "MiddlewareServers"
+	resourceGroupResourceRolesStruct      = "ResourceRoles"
+	resourceGroupUsersStruct              = "Users"
+)
 
 var _ metadata.ResourceGroupService = (*ResourceGroupService)(nil)
 
 type ResourceGroupService struct {
 	ResourceGroupRepo  metadata.ResourceGroupRepo
 	ResourceGroups     []metadata.ResourceGroup     `json:"resource_groups"`
+	ResourceRoles      []metadata.ResourceRole      `json:"resource_roles"`
 	MySQLClusters      []metadata.MySQLCluster      `json:"mysql_clusters"`
 	MySQLServers       []metadata.MySQLServer       `json:"mysql_servers"`
 	MiddlewareClusters []metadata.MiddlewareCluster `json:"middleware_clusters"`
 	MiddlewareServers  []metadata.MiddlewareServer  `json:"middleware_servers"`
-	ResourceRoles      []metadata.ResourceRole      `json:"resource_roles"`
 	Users              []metadata.User              `json:"users"`
 }
 
@@ -29,11 +37,11 @@ func NewResourceGroupService(repo metadata.ResourceGroupRepo) *ResourceGroupServ
 	return &ResourceGroupService{
 		repo,
 		[]metadata.ResourceGroup{},
+		[]metadata.ResourceRole{},
 		[]metadata.MySQLCluster{},
 		[]metadata.MySQLServer{},
 		[]metadata.MiddlewareCluster{},
 		[]metadata.MiddlewareServer{},
-		[]metadata.ResourceRole{},
 		[]metadata.User{},
 	}
 }
