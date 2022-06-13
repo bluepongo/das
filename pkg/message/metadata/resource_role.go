@@ -15,41 +15,41 @@ func init() {
 // Message code
 const (
 	// debug
-	DebugMetadataGetResourceRoleAll               = 101601
-	DebugMetadataGetResourceRoleByID              = 101602
-	DebugMetadataGetResourceRoleByUUID            = 101603
-	DebugMetadataGetResourceGroupByResourceRoleID = 101604
-	DebugMetadataGetUsersByResourceRoleID         = 101605
-	DebugMetadataGetUsersByResourceRoleUUID       = 101606
-	DebugMetadataResourceRoleAddUser              = 101607
-	DebugMetadataResourceRoleDeleteUser           = 101608
-	DebugMetadataAddResourceRole                  = 101609
-	DebugMetadataUpdateResourceRole               = 101610
-	DebugMetadataDeleteResourceRole               = 101611
+	DebugMetadataGetResourceRoleAll               = 102201
+	DebugMetadataGetResourceRoleByID              = 102202
+	DebugMetadataGetResourceRoleByUUID            = 102203
+	DebugMetadataGetResourceGroupByResourceRoleID = 102204
+	DebugMetadataGetUsersByResourceRoleID         = 102205
+	DebugMetadataGetUsersByResourceRoleUUID       = 102206
+	DebugMetadataResourceRoleAddUser              = 102207
+	DebugMetadataResourceRoleDeleteUser           = 102208
+	DebugMetadataAddResourceRole                  = 102209
+	DebugMetadataUpdateResourceRole               = 102210
+	DebugMetadataDeleteResourceRole               = 102211
 	// info
-	InfoMetadataGetResourceRoleAll               = 201601
-	InfoMetadataGetResourceRoleByID              = 201602
-	InfoMetadataGetResourceRoleByUUID            = 201603
-	InfoMetadataGetResourceGroupByResourceRoleID = 201604
-	InfoMetadataGetUsersByResourceRoleID         = 201605
-	InfoMetadataGetUsersByResourceRoleUUID       = 201606
-	InfoMetadataResourceRoleAddUser              = 201607
-	InfoMetadataResourceRoleDeleteUser           = 201608
-	InfoMetadataAddResourceRole                  = 201609
-	InfoMetadataUpdateResourceRole               = 201610
-	InfoMetadataDeleteResourceRole               = 201611
+	InfoMetadataGetResourceRoleAll               = 202201
+	InfoMetadataGetResourceRoleByID              = 202202
+	InfoMetadataGetResourceRoleByUUID            = 202203
+	InfoMetadataGetResourceGroupByResourceRoleID = 202204
+	InfoMetadataGetUsersByResourceRoleID         = 202205
+	InfoMetadataGetUsersByResourceRoleUUID       = 202206
+	InfoMetadataResourceRoleAddUser              = 202207
+	InfoMetadataResourceRoleDeleteUser           = 202208
+	InfoMetadataAddResourceRole                  = 202209
+	InfoMetadataUpdateResourceRole               = 202210
+	InfoMetadataDeleteResourceRole               = 202211
 	// error
-	ErrMetadataGetResourceRoleAll               = 401601
-	ErrMetadataGetResourceRoleByID              = 401602
-	ErrMetadataGetResourceRoleByUUID            = 401603
-	ErrMetadataGetResourceGroupByResourceRoleID = 401604
-	ErrMetadataGetUsersByResourceRoleID         = 401605
-	ErrMetadataGetUsersByResourceRoleUUID       = 401606
-	ErrMetadataResourceRoleAddUser              = 401607
-	ErrMetadataResourceRoleDeleteUser           = 401608
-	ErrMetadataAddResourceRole                  = 401609
-	ErrMetadataUpdateResourceRole               = 401610
-	ErrMetadataDeleteResourceRole               = 401611
+	ErrMetadataGetResourceRoleAll               = 402201
+	ErrMetadataGetResourceRoleByID              = 402202
+	ErrMetadataGetResourceRoleByUUID            = 402203
+	ErrMetadataGetResourceGroupByResourceRoleID = 402204
+	ErrMetadataGetUsersByResourceRoleID         = 402205
+	ErrMetadataGetUsersByResourceRoleUUID       = 402206
+	ErrMetadataResourceRoleAddUser              = 402207
+	ErrMetadataResourceRoleDeleteUser           = 402208
+	ErrMetadataAddResourceRole                  = 402209
+	ErrMetadataUpdateResourceRole               = 402210
+	ErrMetadataDeleteResourceRole               = 402211
 )
 
 func initDebugResourceRoleMessage() {
