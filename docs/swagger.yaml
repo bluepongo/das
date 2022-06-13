@@ -1552,7 +1552,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: middleware_servers":[{"last_update_time":"2021-11-18T15:54:10.599097+08:00","cluster_id":1,"server_name":"middleware-server-1","port_num":33061,"del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00","id":1,"middleware_role":1,"host_ip":"192.168.10.219"}]}
+          description: '{"middleware_servers":[{"last_update_time":"2021-11-18T15:54:10.599097+08:00","cluster_id":1,"server_name":"middleware-server-1","port_num":33061,"del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00","id":1,"middleware_role":1,"host_ip":"192.168.10.219"}]}'
           schema:
             type: string
       summary: get all middleware servers
@@ -1602,7 +1602,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: middleware_servers":[{"host_ip":"192.168.10.219","del_flag":0,"create_time":"2022-03-02T10:18:28.021994+08:00","last_update_time":"2022-03-02T10:18:28.021994+08:00","cluster_id":1,"server_name":"new_middleware_server","middleware_role":1,"id":42,"port_num":33062}]}
+          description: '{"middleware_servers":[{"host_ip":"192.168.10.219","del_flag":0,"create_time":"2022-03-02T10:18:28.021994+08:00","last_update_time":"2022-03-02T10:18:28.021994+08:00","cluster_id":1,"server_name":"new_middleware_server","middleware_role":1,"id":42,"port_num":33062}]}'
           schema:
             type: string
       summary: add a new middleware server
@@ -1629,7 +1629,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: middleware_servers":[{"id":1,"cluster_id":1,"server_name":"middleware-server-1","host_ip":"192.168.10.219","port_num":33061,"del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","middleware_role":1}]}
+          description: '{"middleware_servers":[{"id":1,"cluster_id":1,"server_name":"middleware-server-1","host_ip":"192.168.10.219","port_num":33061,"del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","middleware_role":1}]}'
           schema:
             type: string
       summary: get middleware servers by cluster id
@@ -1656,7 +1656,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: middleware_servers":[{"server_name":"new_middleware_server","host_ip":"192.168.10.219","port_num":33062,"create_time":"2022-03-02T10:18:28.021994+08:00","last_update_time":"2022-03-02T10:18:28.021994+08:00","id":42,"cluster_id":1,"middleware_role":1,"del_flag":0}]}
+          description: '{"middleware_servers":[{"server_name":"new_middleware_server","host_ip":"192.168.10.219","port_num":33062,"create_time":"2022-03-02T10:18:28.021994+08:00","last_update_time":"2022-03-02T10:18:28.021994+08:00","id":42,"cluster_id":1,"middleware_role":1,"del_flag":0}]}'
           schema:
             type: string
       summary: delete middleware server by id
@@ -1683,7 +1683,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: middleware_servers":[{"last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"server_name":"middleware-server-1","middleware_role":1,"port_num":33061,"cluster_id":1,"host_ip":"192.168.10.219","del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00"}]}
+          description: '{"middleware_servers":[{"last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"server_name":"middleware-server-1","middleware_role":1,"port_num":33061,"cluster_id":1,"host_ip":"192.168.10.219","del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00"}]}'
           schema:
             type: string
       summary: get middleware server by id
@@ -1716,7 +1716,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: middleware_servers":[{"middleware_role":1,"host_ip":"192.168.10.219","del_flag":0,"last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"server_name":"middleware-server-1","cluster_id":1,"port_num":33061,"create_time":"2021-11-17T14:47:10.521279+08:00"}]}
+          description: '{"middleware_servers":[{"middleware_role":1,"host_ip":"192.168.10.219","del_flag":0,"last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"server_name":"middleware-server-1","cluster_id":1,"port_num":33061,"create_time":"2021-11-17T14:47:10.521279+08:00"}]}'
           schema:
             type: string
       summary: get middleware server by host info
@@ -1773,7 +1773,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: middleware_servers":[{"del_flag":0,"server_name":"update_middleware_server","host_ip":"192.168.10.219","port_num":33061,"middleware_role":1,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"cluster_id":1}]}
+          description: '{"middleware_servers":[{"del_flag":0,"server_name":"update_middleware_server","host_ip":"192.168.10.219","port_num":33061,"middleware_role":1,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"cluster_id":1}]}'
           schema:
             type: string
       summary: update middleware server by id
@@ -2760,6 +2760,917 @@ paths:
       summary: get mysql cluster by id
       tags:
       - mysql server
+  /api/v1/metadata/resource-group:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}'
+          schema:
+            type: string
+      summary: get all resource groups
+      tags:
+      - resource group
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group uuid
+        in: body
+        name: group_uuid
+        required: true
+        schema:
+          type: string
+      - description: resource group name
+        in: body
+        name: group_name
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}'
+          schema:
+            type: string
+      summary: add a new resource group
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/add-middleware-cluster:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      - description: middleware cluster id
+        in: body
+        name: middleware_cluster_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"middleware_clusters":[{"id":1,"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00"}]}'
+          schema:
+            type: string
+      summary: add middleware cluster map
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/add-mysql-cluster:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      - description: mysql cluster id
+        in: body
+        name: mysql_cluster_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"mysql_clusters":[{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"}]}'
+          schema:
+            type: string
+      summary: add mysql cluster map
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/delete:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}'
+          schema:
+            type: string
+      summary: delete resource group by id
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/delete-middleware-cluster:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      - description: middleware cluster id
+        in: body
+        name: middleware_cluster_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"middleware_clusters":[{"id":1,"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00"}]}'
+          schema:
+            type: string
+      summary: delete middleware cluster map
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/delete-mysql-cluster:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      - description: mysql cluster id
+        in: body
+        name: mysql_cluster_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"mysql_clusters":[{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"}]}'
+          schema:
+            type: string
+      summary: delete mysql cluster map
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/get:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}'
+          schema:
+            type: string
+      summary: get resource group by id
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/group-uuid:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group uuid
+        in: body
+        name: group_uuid
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}'
+          schema:
+            type: string
+      summary: get resource group by resource group uuid
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/middleware-cluster/group-uuid:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group uuid
+        in: body
+        name: group_uuid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"middleware_clusters":[{"id":1,"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00"}]}'
+          schema:
+            type: string
+      summary: get middleware clusters by resource group uuid
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/middleware-cluster/id:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"middleware_clusters":[{"id":1,"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00"}]}'
+          schema:
+            type: string
+      summary: get middleware clusters by id
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/middleware-server/group-uuid:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group uuid
+        in: body
+        name: group_uuid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"middleware_clusters":[{"id":1,"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00"}]}'
+          schema:
+            type: string
+      summary: get middleware servers by resource group uuid
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/middleware-server/id:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"middleware_servers":[{"id":1,"middleware_role":1,"host_ip":"192.168.137.11","port_num":33061,"del_flag":0,"last_update_time":"2022-04-25T14:50:59.847396+08:00","create_time":"2022-04-25T14:32:41.275617+08:00","cluster_id":1,"server_name":"middleware-server-1"}]}'
+          schema:
+            type: string
+      summary: get middleware servers by id
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/mysql-cluster/group-uuid:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group uuid
+        in: body
+        name: group_uuid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"mysql_clusters":[{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"}]}'
+          schema:
+            type: string
+      summary: get mysql clusters by resource group uuid
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/mysql-cluster/id:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"mysql_clusters":[{"middleware_cluster_id":1,"monitor_system_id":1,"env_id":1,"del_flag":0,"create_time":"2021-02-23T20:57:24.603009+08:00","last_update_time":"2021-02-23T20:57:24.603009+08:00","id":1,"cluster_name":"cluster_name_init"}]}'
+          schema:
+            type: string
+      summary: get mysql clusters by id
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/mysql-server/group-uuid:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group uuid
+        in: body
+        name: group_uuid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"mysql_servers":[{"id":1,"server_name":"192-168-137-11","host_ip":"192.168.137.11","deployment_type":1,"version":"8.0.29","del_flag":0,"cluster_id":1,"create_time":"2021-09-02T11:16:06.561525+08:00","service_name":"192-168-137-11-mysql","port_num":3306,"last_update_time":"2022-06-13T16:22:59.178465+08:00"}]}'
+          schema:
+            type: string
+      summary: get mysql servers by resource group uuid
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/mysql-server/id:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"mysql_servers":[{"id":1,"server_name":"192-168-137-11","host_ip":"192.168.137.11","deployment_type":1,"version":"8.0.29","del_flag":0,"cluster_id":1,"create_time":"2021-09-02T11:16:06.561525+08:00","service_name":"192-168-137-11-mysql","port_num":3306,"last_update_time":"2022-06-13T16:22:59.178465+08:00"}]}'
+          schema:
+            type: string
+      summary: get mysql servers by id
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/resource-role/group-uuid:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group uuid
+        in: body
+        name: group_uuid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}'
+          schema:
+            type: string
+      summary: get resource roles by resource group uuid
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/resource-role/id:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_roles":[{"id":2,"role_uuid":"c319e33a-eac3-11ec-8183-001c42d502a6","role_name":"das-admin","resource_group_id":1,"del_flag":0,"create_time":"2022-06-13T10:53:56.439107+08:00","last_update_time":"2022-06-13T17:27:09.037353+08:00"}]}'
+          schema:
+            type: string
+      summary: get resource roles by id
+      tags:
+      - resource group
+  /api/v1/metadata/resource-group/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      - description: resource group uuid
+        in: body
+        name: group_uuid
+        schema:
+          type: string
+      - description: resource group name
+        in: body
+        name: group_name
+        schema:
+          type: string
+      - description: delete flag
+        in: body
+        name: del_flag
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_groups":[{"id":1,"group_uuid":"5c6c6d73-eac2-11ec-8183-001c42d502a6","group_name":"resource-group-01","del_flag":0,"create_time":"2022-06-13T10:42:15.082892+08:00","last_update_time":"2022-06-13T17:26:53.625206+08:00"}]}'
+          schema:
+            type: string
+      summary: update resource group by id
+      tags:
+      - resource group
+  /api/v1/metadata/resource-role:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_roles":[{"del_flag":0,"create_time":"2022-06-12T09:03:23.298572+08:00","last_update_time":"2022-06-12T09:21:36.667854+08:00","id":1,"role_uuid":"test_role_uuid","role_name":"test_role","resource_group_id":1}]}'
+          schema:
+            type: string
+      summary: get all resource roles
+      tags:
+      - resource role
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource role name
+        in: body
+        name: role_name
+        schema:
+          type: string
+      - description: resource role uuid
+        in: body
+        name: role_uuid
+        required: true
+        schema:
+          type: integer
+      - description: resource group id
+        in: body
+        name: resource_group_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_roles":[{"id":2,"role_uuid":"new_test_role_uuid","role_name":"new_test_role","resource_group_id":1,"del_flag":0,"create_time":"2022-06-13T01:08:21.739904+08:00","last_update_time":"2022-06-13T01:08:21.739904+08:00"}]}'
+          schema:
+            type: string
+      summary: add a new resource role
+      tags:
+      - resource role
+  /api/v1/metadata/resource-role/add-user:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource role id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      - description: user id
+        in: body
+        name: user_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"users":[{"account_name":"test","email":"929059501@qq.com","telephone":"","mobile":"","role":3,"id":14,"department_name":"","employee_id":"","del_flag":0,"create_time":"2021-12-06T18:08:03.736262+08:00","last_update_time":"2021-12-06T18:08:03.736262+08:00","user_name":"tester"}]}'
+          schema:
+            type: string
+      summary: add user map
+      tags:
+      - resource role
+  /api/v1/metadata/resource-role/delete:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource role id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_roles":[{"role_name":"update_test_role","resource_group_id":1,"del_flag":0,"create_time":"2022-06-13T01:08:21.739904+08:00","last_update_time":"2022-06-13T01:10:42.472215+08:00","id":2,"role_uuid":"update_test_role_id"}]}'
+          schema:
+            type: string
+      summary: delete resource role by id
+      tags:
+      - resource role
+  /api/v1/metadata/resource-role/delete-user:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource role id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      - description: user id
+        in: body
+        name: user_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"users":[]}'
+          schema:
+            type: string
+      summary: delete user map
+      tags:
+      - resource role
+  /api/v1/metadata/resource-role/get:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource role id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_roles":[{"id":1,"role_uuid":"test_role_uuid","role_name":"test_role","resource_group_id":1,"del_flag":0,"create_time":"2022-06-12T09:03:23.298572+08:00","last_update_time":"2022-06-12T09:21:36.667854+08:00"}]}'
+          schema:
+            type: string
+      summary: get resource role by id
+      tags:
+      - resource role
+  /api/v1/metadata/resource-role/resource-group:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource role id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_group":{"id":1,"group_uuid":"uuid","group_name":"test","del_flag":0,"create_time":"2022-06-12T09:02:39.376944+08:00","last_update_time":"2022-06-12T09:02:39.376944+08:00"}}'
+          schema:
+            type: string
+      summary: get resource group by resource role id
+      tags:
+      - resource role
+  /api/v1/metadata/resource-role/role-uuid:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource role uuid
+        in: body
+        name: role_uuid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_roles":[{"id":1,"role_uuid":"test_role_uuid","role_name":"test_role","resource_group_id":1,"del_flag":0,"create_time":"2022-06-12T09:03:23.298572+08:00","last_update_time":"2022-06-12T09:21:36.667854+08:00"}]}'
+          schema:
+            type: string
+      summary: get resource role by uuid
+      tags:
+      - resource role
+  /api/v1/metadata/resource-role/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource role id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      - description: resource role name
+        in: body
+        name: role_name
+        schema:
+          type: string
+      - description: resource role uuid
+        in: body
+        name: role_uuid
+        schema:
+          type: integer
+      - description: resource group id
+        in: body
+        name: resource_group_id
+        schema:
+          type: integer
+      - description: delete flag
+        in: body
+        name: del_flag
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"resource_roles":[{"resource_group_id":1,"del_flag":0,"create_time":"2022-06-13T01:08:21.739904+08:00","last_update_time":"2022-06-13T01:08:21.739904+08:00","id":2,"role_uuid":"update_test_role_id","role_name":"update_test_role"}]}}'
+          schema:
+            type: string
+      summary: update resource role by id
+      tags:
+      - resource role
+  /api/v1/metadata/resource-role/user:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource role id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"users":[{"id":14,"mobile":"","role":3,"del_flag":0,"user_name":"tester","department_name":"","employee_id":"","account_name":"test","email":"929059501@qq.com","telephone":"","create_time":"2021-12-06T18:08:03.736262+08:00","last_update_time":"2021-12-06T18:08:03.736262+08:00"}]}'
+          schema:
+            type: string
+      summary: get resource role users
+      tags:
+      - resource role
+  /api/v1/metadata/resource-role/user/role-uuid:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource role uuid
+        in: body
+        name: role_uuid
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"users":[{"account_name":"test","email":"929059501@qq.com","telephone":"","mobile":"","role":3,"user_name":"tester","employee_id":"","del_flag":0,"create_time":"2021-12-06T18:08:03.736262+08:00","id":14,"department_name":"","last_update_time":"2021-12-06T18:08:03.736262+08:00"}]}'
+          schema:
+            type: string
+      summary: get resource role users by resource role uuid
+      tags:
+      - resource role
   /api/v1/metadata/table/analyze/db:
     post:
       consumes:
@@ -4091,4 +5002,112 @@ paths:
       summary: get middleware servers by cluster id
       tags:
       - middleware cluster
+  /api/vi/metadata/resource-group/das-admin/group-uuid:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group uuid
+        in: body
+        name: group_uuid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: users":[{"id":1,"email":"allinemailtest@163.com","role":3,"del_flag":0,"last_update_time":"2021-11-22T13:46:20.430926+08:00","create_time":"2021-10-25T09:21:50.364327+08:00","user_name":"zhangsan","department_name":"arch","employee_id":"100001","account_name":"zs001","telephone":"01012345678","mobile":"13012345678"}]}
+          schema:
+            type: string
+      summary: get users by resource group uuid
+      tags:
+      - resource group
+  /api/vi/metadata/resource-group/das-admin/id:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: users":[{"id":1,"email":"allinemailtest@163.com","role":3,"del_flag":0,"last_update_time":"2021-11-22T13:46:20.430926+08:00","create_time":"2021-10-25T09:21:50.364327+08:00","user_name":"zhangsan","department_name":"arch","employee_id":"100001","account_name":"zs001","telephone":"01012345678","mobile":"13012345678"}]}
+          schema:
+            type: string
+      summary: get users by id
+      tags:
+      - resource group
+  /api/vi/metadata/resource-group/user/group-uuid:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group uuid
+        in: body
+        name: group_uuid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: users":[{"id":1,"email":"allinemailtest@163.com","role":3,"del_flag":0,"last_update_time":"2021-11-22T13:46:20.430926+08:00","create_time":"2021-10-25T09:21:50.364327+08:00","user_name":"zhangsan","department_name":"arch","employee_id":"100001","account_name":"zs001","telephone":"01012345678","mobile":"13012345678"}]}
+          schema:
+            type: string
+      summary: get users by resource group uuid
+      tags:
+      - resource group
+  /api/vi/metadata/resource-group/user/id:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: resource group id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: users":[{"id":1,"email":"allinemailtest@163.com","role":3,"del_flag":0,"last_update_time":"2021-11-22T13:46:20.430926+08:00","create_time":"2021-10-25T09:21:50.364327+08:00","user_name":"zhangsan","department_name":"arch","employee_id":"100001","account_name":"zs001","telephone":"01012345678","mobile":"13012345678"}]}
+          schema:
+            type: string
+      summary: get users by id
+      tags:
+      - resource group
 swagger: "2.0"
