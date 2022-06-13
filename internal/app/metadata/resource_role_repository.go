@@ -153,28 +153,31 @@ func (rrr *ResourceRoleRepo) GetByRoleUUID(roleUUID string) (metadata.ResourceRo
 
 // GetResourceGroup gets the resource group which this role belongs to with given resource role id from the middleware
 func (rrr *ResourceRoleRepo) GetResourceGroup(id int) (metadata.ResourceGroup, error) {
-	// TODO: need resource group
-	// sql := `
-	// 	select id, group_uuid, group_name, del_flag, create_time, last_update_time
-	// 	from t_meta_resource_group_info as group
-	// 			 inner join t_meta_resource_role_info as role
-	// 						on group.id = role.resource_group_id
-	// 	where role.id = ?
-	// `
+	sql := `
+		select rgi.id, 
+			   rgi.group_uuid,
+			   rgi.group_name,
+			   rgi.del_flag,
+			   rgi.create_time,
+			   rgi.last_update_time
+		from t_meta_resource_group_info as rgi
+				 inner join t_meta_resource_role_info as rri
+							on rgi.id = rri.resource_group_id
+		where rri.id = ?
+	`
 
-	// log.Debugf("metadata ResourceRoleRepo.GetResourceGroup() select sql: %s", sql)
-	// result, err := rrr.Execute(sql, id)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// resourceGroupInfo := NewEmptyResourceGroupInfoWithGlobal()
-	// err = result.MapToStructByRowIndex(resourceGroupInfo, constant.ZeroInt, constant.DefaultMiddlewareTag)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	log.Debugf("metadata ResourceRoleRepo.GetResourceGroup() select sql: %s", sql)
+	result, err := rrr.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+	resourceGroupInfo := NewEmptyResourceGroupInfoWithGlobal()
+	err = result.MapToStructByRowIndex(resourceGroupInfo, constant.ZeroInt, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
 
-	// return resourceGroupInfo, nil
-	return nil, nil
+	return resourceGroupInfo, nil
 }
 
 // GetUsersByID gets the users of the given id from the middleware

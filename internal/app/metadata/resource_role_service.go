@@ -43,7 +43,7 @@ func (rrs *ResourceRoleService) GetResourceRoles() []metadata.ResourceRole {
 
 // GetResourceGroup returns the resource group of the service
 func (rrs *ResourceRoleService) GetResourceGroup() metadata.ResourceGroup {
-	return nil
+	return rrs.ResourceGroup
 }
 
 // GetUsers returns the users of the service
