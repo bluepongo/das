@@ -166,7 +166,7 @@ func GetResourceGroupByResourceRoleID(c *gin.Context) {
 	// get entity
 	err = s.GetResourceGroupByID(int(id))
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetMySQLServers, id, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetResourceGroupByResourceRoleID, id, err)
 		return
 	}
 	// marshal service
@@ -178,8 +178,8 @@ func GetResourceGroupByResourceRoleID(c *gin.Context) {
 	// response
 	jsonStr := string(jsonBytes)
 
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetMySQLServers, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetMySQLServers, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetResourceGroupByResourceRoleID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetResourceGroupByResourceRoleID, id)
 }
 
 // @Tags	resource role
@@ -207,7 +207,7 @@ func GetUsersByResourceRoleID(c *gin.Context) {
 	// get entity
 	err = s.GetUsersByID(int(id))
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppUsers, id, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUsersByResourceRoleID, id, err)
 		return
 	}
 	// marshal service
@@ -218,8 +218,8 @@ func GetUsersByResourceRoleID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppUsers, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsers, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetUsersByResourceRoleID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetUsersByResourceRoleID, id)
 }
 
 // @Tags	resource role
@@ -247,7 +247,7 @@ func GetUsersByResourceRoleUUID(c *gin.Context) {
 	// get entity
 	err = s.GetUsersByRoleUUID(roleUUID)
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppUsers, err, roleUUID)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUsersByResourceRoleUUID, err, roleUUID)
 		return
 	}
 	// marshal service
@@ -258,8 +258,8 @@ func GetUsersByResourceRoleUUID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppUsers, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsers, roleUUID)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetUsersByResourceRoleUUID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetUsersByResourceRoleUUID, roleUUID)
 }
 
 // @Tags	resource role
