@@ -7,14 +7,16 @@ import (
 type Repository interface {
 	// Execute executes given command and placeholders on the middleware
 	Execute(command string, args ...interface{}) (middleware.Result, error)
-	// GetMySQLServerClusterIDByLoginName gets mysql cluster id list by login name
-	GetMySQLServerClusterIDListByLoginName(loginName string) ([]int, error)
+	// GetMySQLClusterIDListByLoginName gets mysql cluster id list by login name
+	GetMySQLClusterIDListByLoginName(loginName string) ([]int, error)
 	// GetMySQLClusterIDByMySQLServerID gets mysql cluster id by mysql server id
 	GetMySQLClusterIDByMySQLServerID(mysqlServerID int) (int, error)
 	// GetMySQLClusterIDByHostInfo gets mysql cluster id by mysql server host ip and port number
 	GetMySQLClusterIDByHostInfo(hostIP string, portNum int) (int, error)
 	// GetMySQLClusterIDByDBID gets mysql cluster id by db id
 	GetMySQLClusterIDByDBID(dbID int) (int, error)
+	// GetUserRoleByLoginName get user role by login name
+	GetUserRoleByLoginName(loginName string) (int, error)
 }
 
 type Service interface {

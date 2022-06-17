@@ -82,7 +82,6 @@ func TestMySQLClusterRepo_Transaction(t *testing.T) {
 		testMySQLClusterNewClusterName,
 		testMySQLClusterMiddlewareClusterID,
 		testMySQLClusterMonitorSystemID,
-		testMySQLClusterOwnerID,
 		testMySQLClusterEnvID,
 	)
 	asst.Nil(err, common.CombineMessageWithError("test Transaction() failed", err))
@@ -153,7 +152,7 @@ func TestMySQLClusterRepo_GetDBsByID(t *testing.T) {
 
 	dbs, err := testMySQLClusterRepo.GetDBsByID(testMySQLClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test GetDBsByID() failed", err))
-	asst.Equal(2, len(dbs), "test GetDBsByID() failed")
+	asst.Equal(1, len(dbs), "test GetDBsByID() failed")
 }
 
 func TestMySQLClusterRepo_GetUsersByID(t *testing.T) {
@@ -199,7 +198,7 @@ func TestMySQLClusterRepo_GetAppUsers(t *testing.T) {
 
 	users, err := testMySQLClusterRepo.GetAppUsersByID(testMySQLClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAppUsers() failed", err))
-	asst.Equal(15, users[constant.ZeroInt].Identity(), "test GetAppUsers() failed")
+	asst.Equal(1, users[constant.ZeroInt].Identity(), "test GetAppUsers() failed")
 	asst.Equal(1, len(users), "test GetAppUsers() failed")
 }
 
@@ -216,8 +215,8 @@ func TestMySQLClusterRepo_GetAllUsers(t *testing.T) {
 
 	users, err := testMySQLClusterRepo.GetAllUsersByID(testMySQLClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test GetAllUsers() failed", err))
-	asst.Equal(15, users[constant.ZeroInt].Identity(), "test GetAllUsers() failed")
-	asst.Equal(2, len(users), "test GetAllUsers() failed")
+	asst.Equal(1, users[constant.ZeroInt].Identity(), "test GetAllUsers() failed")
+	asst.Equal(1, len(users), "test GetAllUsers() failed")
 }
 
 func TestMySQLClusterRepo_Create(t *testing.T) {

@@ -88,6 +88,7 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.GET("/mysql-cluster/user", metadata.GetUsersByMySQLClusterID)
 		metadataGroup.GET("/mysql-cluster/app-user", metadata.GetAppUsersByMySQLClusterID)
 		metadataGroup.GET("/mysql-cluster/db-user", metadata.GetDBUsersByMySQLClusterID)
+		metadataGroup.GET("/mysql-cluster/resource-group", metadata.GetResourceGroupByMySQLClusterID)
 		metadataGroup.GET("/mysql-cluster/all-user", metadata.GetAllUsersByMySQLClusterID)
 		metadataGroup.POST("/mysql-cluster/add-user", metadata.MySQLClusterAddUser)
 		metadataGroup.POST("/mysql-cluster/delete-user", metadata.MySQLClusterDeleteUser)
@@ -129,7 +130,7 @@ func RegisterMetadata(group *gin.RouterGroup) {
 		metadataGroup.POST("/resource-group/delete-mysql-cluster", metadata.ResourceGroupDeleteMySQLCluster)
 		metadataGroup.POST("/resource-group/add-middleware-cluster", metadata.ResourceGroupAddMiddlewareCluster)
 		metadataGroup.POST("/resource-group/delete-middleware-cluster", metadata.ResourceGroupDeleteMiddlewareCluster)
-    // resource role
+		// resource role
 		metadataGroup.GET("/resource-role", metadata.GetResourceRole)
 		metadataGroup.GET("/resource-role/get", metadata.GetResourceRoleByID)
 		metadataGroup.GET("/resource-role/role-uuid", metadata.GetResourceRoleByUUID)

@@ -1,6 +1,7 @@
 package privilege
 
 import (
+	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/dependency/privilege"
 	"github.com/romberli/das/pkg/message"
 	msgpriv "github.com/romberli/das/pkg/message/privilege"
@@ -91,7 +92,12 @@ func (s *Service) CheckDBByID(dbID int) error {
 }
 
 func (s *Service) checkPrivilege(mysqlClusterID int) (bool, error) {
-	mysqlClusterIDList, err := s.Repository.GetMySQLServerClusterIDListByLoginName(s.GetLoginName())
+	userRole, err := s.Repository.GetUserRoleByLoginName(s.GetLoginName())
+	if userRole == config.MetadataUserDBARole || userRole == config.MetadataUserAdminRole {
+		return true, nil
+	}
+
+	mysqlClusterIDList, err := s.Repository.GetMySQLClusterIDListByLoginName(s.GetLoginName())
 	if err != nil {
 		return false, err
 	}

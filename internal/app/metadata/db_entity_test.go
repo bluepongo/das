@@ -16,8 +16,8 @@ import (
 const (
 	testDBDBID                 = 1
 	testDBDBName               = "db_name"
-	testDBDBName2              = "pmm_test"
-	testDBClusterID            = 2
+	testDBDBName2              = "das"
+	testDBClusterID            = 1
 	testDBClusterType          = 1
 	testDBEnvID                = 1
 	testDBDelFlag              = 0
@@ -28,8 +28,8 @@ const (
 	testDBNewAppID             = 2
 	testDBNewUserID            = 1
 	testDBMySQLClusterID       = 2
-	testDBUserID               = 2
-	testDBHostIP               = "192.168.10.219"
+	testDBUserID               = 1
+	testDBHostIP               = "192.168.137.11"
 	testDBPortNum              = 3306
 )
 

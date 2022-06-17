@@ -14,7 +14,7 @@ import (
 
 const (
 	testMySQLClusterID                   = 1
-	testMySQLClusterClusterName          = "mysql-cluster-pmm2"
+	testMySQLClusterClusterName          = "mysql-cluster-01"
 	testMySQLClusterMiddlewareClusterID  = 0
 	testMySQLClusterMonitorSystemID      = 1
 	testMySQLClusterOwnerID              = 1

@@ -78,9 +78,9 @@ func TestRepository_Execute(t *testing.T) {
 func TestRepository_GetMySQLServerClusterIDListByLoginName(t *testing.T) {
 	asst := assert.New(t)
 
-	mysqlClusterIDList, err := testRepository.GetMySQLServerClusterIDListByLoginName(testLoginName)
-	asst.Nil(err, "test GetMySQLServerClusterIDListByLoginName() failed")
-	asst.Equal(testMySQLClusterID, mysqlClusterIDList[constant.ZeroInt], "test GetMySQLServerClusterIDListByLoginName() failed")
+	mysqlClusterIDList, err := testRepository.GetMySQLClusterIDListByLoginName(testLoginName)
+	asst.Nil(err, "test GetMySQLClusterIDListByLoginName() failed")
+	asst.Equal(testMySQLClusterID, mysqlClusterIDList[constant.ZeroInt], "test GetMySQLClusterIDListByLoginName() failed")
 }
 
 func TestRepository_GetMySQLClusterIDByMySQLServerID(t *testing.T) {

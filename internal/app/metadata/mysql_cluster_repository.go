@@ -59,7 +59,7 @@ func (mcr *MySQLClusterRepo) Transaction() (middleware.Transaction, error) {
 // GetAll returns all available entities
 func (mcr *MySQLClusterRepo) GetAll() ([]metadata.MySQLCluster, error) {
 	sql := `
-		select id, cluster_name, middleware_cluster_id, monitor_system_id, 
+		select id, cluster_name, middleware_cluster_id, monitor_system_id,
 			env_id, del_flag, create_time, last_update_time
 		from t_meta_mysql_cluster_info
 		where del_flag = 0
@@ -93,7 +93,7 @@ func (mcr *MySQLClusterRepo) GetAll() ([]metadata.MySQLCluster, error) {
 // GetByEnv gets mysql clusters of given env id from the middleware
 func (mcr *MySQLClusterRepo) GetByEnv(envID int) ([]metadata.MySQLCluster, error) {
 	sql := `
-		select id, cluster_name, middleware_cluster_id, monitor_system_id, 
+		select id, cluster_name, middleware_cluster_id, monitor_system_id,
 			env_id, del_flag, create_time, last_update_time
 		from t_meta_mysql_cluster_info
 		where del_flag = 0
@@ -122,7 +122,7 @@ func (mcr *MySQLClusterRepo) GetByEnv(envID int) ([]metadata.MySQLCluster, error
 // GetByID Select returns an available entity of the given id
 func (mcr *MySQLClusterRepo) GetByID(id int) (metadata.MySQLCluster, error) {
 	sql := `
-		select id, cluster_name, middleware_cluster_id, monitor_system_id, 
+		select id, cluster_name, middleware_cluster_id, monitor_system_id,
 			env_id, del_flag, create_time, last_update_time
 		from t_meta_mysql_cluster_info
 		where del_flag = 0
@@ -154,7 +154,7 @@ func (mcr *MySQLClusterRepo) GetByID(id int) (metadata.MySQLCluster, error) {
 // GetByName gets a mysql cluster of given cluster name from the middle ware
 func (mcr *MySQLClusterRepo) GetByName(clusterName string) (metadata.MySQLCluster, error) {
 	sql := `
-		select id, cluster_name, middleware_cluster_id, monitor_system_id, 
+		select id, cluster_name, middleware_cluster_id, monitor_system_id,
 			env_id, del_flag, create_time, last_update_time
 		from t_meta_mysql_cluster_info where del_flag = 0 and cluster_name = ?;
 	`
@@ -219,6 +219,12 @@ func (mcr *MySQLClusterRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 	}
 
 	return dbList, nil
+}
+
+// GetResourceGroupByID get the resource group of the given id from the middleware
+func (mcr *MySQLClusterRepo) GetResourceGroupByID(id int) ([]metadata.ResourceGroup, error) {
+	// todo: implement
+	return nil, nil
 }
 
 // GetUsersByID gets the users of the given id from the middleware
@@ -366,7 +372,7 @@ func (mcr *MySQLClusterRepo) GetDBUsersByID(id int) ([]metadata.User, error) {
 						user.del_flag,
 						user.create_time,
 						user.last_update_time
-		from t_meta_user_info as user 
+		from t_meta_user_info as user
 				 inner join t_meta_db_user_map as dum
 							on user.id = dum.user_id
 				 inner join t_meta_db_info as db
@@ -400,80 +406,99 @@ func (mcr *MySQLClusterRepo) GetDBUsersByID(id int) ([]metadata.User, error) {
 // GetAllUsersByID gets both application and db users of the given id from the middleware
 func (mcr *MySQLClusterRepo) GetAllUsersByID(id int) ([]metadata.User, error) {
 	sql := `
-		select user.id,
-			   user.user_name,
-			   user.department_name,
-			   user.employee_id,
-			   user.account_name,
-			   user.email,
-			   user.telephone,
-			   user.mobile,
-			   user.role,
-			   user.del_flag,
-			   user.create_time,
-			   user.last_update_time
-		from t_meta_user_info as user
-				 inner join t_meta_app_user_map as aum
-							on user.id = aum.user_id
-				 inner join t_meta_app_db_map as map
-							on aum.app_id = map.app_id
-				 inner join t_meta_db_info as db
-							on db.id = map.db_id
-		where user.del_flag = 0
+		select ui.id,
+			   ui.user_name,
+			   ui.department_name,
+			   ui.employee_id,
+			   ui.account_name,
+			   ui.email,
+			   ui.telephone,
+			   ui.mobile,
+			   ui.role,
+			   ui.del_flag,
+			   ui.create_time,
+			   ui.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_app_user_map aum on ui.id = aum.user_id
+			inner join t_meta_app_db_map adm on aum.app_id = adm.app_id
+			inner join t_meta_db_info di on di.id = adm.db_id
+		where ui.del_flag = 0
 		  and aum.del_flag = 0
-		  and db.del_flag = 0
-		  and map.del_flag = 0
-		  and db.cluster_id = ?
-		  and db.cluster_type = ?
+		  and di.del_flag = 0
+		  and adm.del_flag = 0
+		  and di.cluster_id = ?
+		  and di.cluster_type = ?
 		union
-		select user.id,
-			   user.user_name,
-			   user.department_name,
-			   user.employee_id,
-			   user.account_name,
-			   user.email,
-			   user.telephone,
-			   user.mobile,
-			   user.role,
-			   user.del_flag,
-			   user.create_time,
-			   user.last_update_time
-		from t_meta_user_info as user 
-				 inner join t_meta_db_user_map as dum
-							on user.id = dum.user_id
-				 inner join t_meta_db_info as db
-							on dum.db_id = db.id
-		where user.del_flag = 0
+		select ui.id,
+			   ui.user_name,
+			   ui.department_name,
+			   ui.employee_id,
+			   ui.account_name,
+			   ui.email,
+			   ui.telephone,
+			   ui.mobile,
+			   ui.role,
+			   ui.del_flag,
+			   ui.create_time,
+			   ui.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_db_user_map dum on ui.id = dum.user_id
+			inner join t_meta_db_info di on dum.db_id = di.id
+		where ui.del_flag = 0
 		  and dum.del_flag = 0
-		  and db.del_flag = 0
-		  and db.cluster_id = ?
-		  and db.cluster_type = ?
+		  and di.del_flag = 0
+		  and di.cluster_id = ?
+		  and di.cluster_type = ?
 		union
-		select distinct user.id,
-			   user.user_name,
-			   user.department_name,
-			   user.employee_id,
-			   user.account_name,
-			   user.email,
-			   user.telephone,
-			   user.mobile,
-			   user.role,
-			   user.del_flag,
-			   user.create_time,
-			   user.last_update_time
-		from t_meta_user_info as user
-				 inner join t_meta_mysql_cluster_user_map as cum
-							on user.id = cum.user_id
-				 inner join t_meta_mysql_cluster_info as cluster
-							on cluster.id = cum.mysql_cluster_id
-		where user.del_flag = 0
-		  and cum.del_flag = 0
-		  and cluster.del_flag = 0
-		  and cluster.id = ?;
+		select distinct ui.id,
+						ui.user_name,
+						ui.department_name,
+						ui.employee_id,
+						ui.account_name,
+						ui.email,
+						ui.telephone,
+						ui.mobile,
+						ui.role,
+						ui.del_flag,
+						ui.create_time,
+						ui.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_mysql_cluster_user_map mcum on ui.id = mcum.user_id
+			inner join t_meta_mysql_cluster_info mci on mci.id = mcum.mysql_cluster_id
+		where ui.del_flag = 0
+		  and mcum.del_flag = 0
+		  and mci.del_flag = 0
+		  and mci.id = ?
+		union
+		select ui.id,
+			   ui.user_name,
+			   ui.department_name,
+			   ui.employee_id,
+			   ui.account_name,
+			   ui.email,
+			   ui.telephone,
+			   ui.mobile,
+			   ui.role,
+			   ui.del_flag,
+			   ui.create_time,
+			   ui.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_resource_role_user_map rrum on ui.id = rrum.user_id
+			inner join t_meta_resource_role_info rri on rrum.resource_role_id = rri.id
+			inner join t_meta_resource_group_info rgi on rri.resource_group_id = rgi.id
+			inner join t_meta_mysql_cluster_resource_group_map mcrgm on rgi.id = mcrgm.mysql_cluster_id
+			inner join t_meta_mysql_cluster_info mci on mcrgm.mysql_cluster_id = mci.id
+		where ui.del_flag = 0
+		  and rrum.del_flag = 0
+		  and rri.del_flag = 0
+		  and rgi.del_flag = 0
+		  and mcrgm.del_flag = 0
+		  and mci.del_flag = 0
+		  and mci.id = ?;
 	`
-	log.Debugf("metadata MySQLClusterRepo.GetAppUsersByID() sql: \n%s\nplaceholders: %d, %d, %d, %d", sql, id, ClusterTypeSingle, id, ClusterTypeSingle)
+	log.Debugf("metadata MySQLClusterRepo.GetAppUsersByID() sql: \n%s\nplaceholders: %d, %d, %d, %d, %d, %d", sql, id, ClusterTypeSingle, id, ClusterTypeSingle, id, id)
 
-	result, err := mcr.Execute(sql, id, ClusterTypeSingle, id, ClusterTypeSingle, id)
+	result, err := mcr.Execute(sql, id, ClusterTypeSingle, id, ClusterTypeSingle, id, id)
 	if err != nil {
 		return nil, err
 	}
@@ -495,7 +520,7 @@ func (mcr *MySQLClusterRepo) GetAllUsersByID(id int) ([]metadata.User, error) {
 func (mcr *MySQLClusterRepo) Create(mysqlCluster metadata.MySQLCluster) (metadata.MySQLCluster, error) {
 	sql := `
 		insert into t_meta_mysql_cluster_info(cluster_name,middleware_cluster_id,
-			 monitor_system_id, env_id) 
+			 monitor_system_id, env_id)
 		values(?,?,?,?);`
 	log.Debugf("metadata MySQLClusterRepo.Create() insert sql: %s", sql)
 	// execute
@@ -520,8 +545,8 @@ func (mcr *MySQLClusterRepo) Create(mysqlCluster metadata.MySQLCluster) (metadat
 // Update updates data with given entity in the middleware
 func (mcr *MySQLClusterRepo) Update(entity metadata.MySQLCluster) error {
 	sql := `
-		update t_meta_mysql_cluster_info set cluster_name = ?, middleware_cluster_id = ?, 
-			monitor_system_id = ?, env_id = ?, del_flag = ? 
+		update t_meta_mysql_cluster_info set cluster_name = ?, middleware_cluster_id = ?,
+			monitor_system_id = ?, env_id = ?, del_flag = ?
 		where id = ?;`
 	log.Debugf("metadata MySQLClusterRepo.Update() update sql: %s", sql)
 	mysqlClusterInfo := entity.(*MySQLClusterInfo)

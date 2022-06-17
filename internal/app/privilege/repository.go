@@ -45,45 +45,60 @@ func (r *Repository) Execute(command string, args ...interface{}) (middleware.Re
 	return conn.Execute(command, args...)
 }
 
-// GetMySQLServerClusterIDByLoginName gets mysql cluster id list by login name
-func (r *Repository) GetMySQLServerClusterIDListByLoginName(loginName string) ([]int, error) {
+// GetMySQLClusterIDListByLoginName gets mysql cluster id list by login name
+func (r *Repository) GetMySQLClusterIDListByLoginName(loginName string) ([]int, error) {
+	// todo: remove this in the future
+	// sql := `
+	// 	select mci.id
+	// 	from t_meta_user_info ui
+	// 		inner join t_meta_mysql_cluster_user_map mcum on ui.id = mcum.user_id
+	// 		inner join t_meta_mysql_cluster_info mci on mcum.mysql_cluster_id = mci.id
+	// 	where ui.del_flag = 0
+	// 		and mcum.del_flag = 0
+	// 		and mci.del_flag = 0
+	// 		and (ui.account_name = ? or ui.employee_id = ?)
+	// 	union
+	// 	select mci.id
+	// 	from t_meta_user_info ui
+	// 		inner join t_meta_db_user_map dum on ui.id = dum.user_id
+	// 		inner join t_meta_db_info di on dum.db_id = di.id
+	// 		inner join t_meta_mysql_cluster_info mci on di.cluster_id = mci.id and di.cluster_type = 1
+	// 	where ui.del_flag = 0
+	// 		and dum.del_flag = 0
+	// 		and di.del_flag = 0
+	// 		and (ui.account_name = ? or ui.employee_id = ?)
+	// 	union
+	// 	select mci.id
+	// 	from t_meta_user_info ui
+	// 		inner join t_meta_app_user_map aum on ui.id = aum.user_id
+	// 		inner join t_meta_app_db_map adm on aum.app_id = adm.app_id
+	// 		inner join t_meta_db_info di on adm.db_id = di.id
+	// 		inner join t_meta_mysql_cluster_info mci on di.cluster_id = mci.id and di.cluster_type = 1
+	// 	where ui.del_flag = 0
+	// 		and aum.del_flag = 0
+	// 		and adm.del_flag = 0
+	// 		and di.del_flag = 0
+	// 		and mci.del_flag = 0
+	// 		and (ui.account_name = ? or ui.employee_id = ?)
+	// 	union
+	// `
 	sql := `
 		select mci.id
-		from t_meta_user_info ui
-			inner join t_meta_mysql_cluster_user_map mcum on ui.id = mcum.user_id
-			inner join t_meta_mysql_cluster_info mci on mcum.mysql_cluster_id = mci.id
-		where ui.del_flag = 0
-			and mcum.del_flag = 0
-			and mci.del_flag = 0
-			and ui.account_name = ?
-			or ui.employee_id = ?
-		union
-		select mci.id
-		from t_meta_user_info ui
-			inner join t_meta_db_user_map dum on ui.id = dum.user_id
-			inner join t_meta_db_info di on dum.db_id = di.id
-			inner join t_meta_mysql_cluster_info mci on di.cluster_id = mci.id and di.cluster_type = 1
-		where ui.del_flag = 0
-			and dum.del_flag = 0
-			and di.del_flag = 0
-			and ui.account_name = ?
-			or ui.employee_id = ?
-		union
-		select mci.id
-		from t_meta_user_info ui
-			inner join t_meta_app_user_map aum on ui.id = aum.user_id
-			inner join t_meta_app_db_map adm on aum.app_id = adm.app_id
-			inner join t_meta_db_info di on adm.db_id = di.id
-			inner join t_meta_mysql_cluster_info mci on di.cluster_id = mci.id and di.cluster_type = 1
-		where ui.del_flag = 0
-			and aum.del_flag = 0
-			and adm.del_flag = 0
-			and di.del_flag = 0
-			and mci.del_flag = 0
-			and ui.account_name = ?
-			or ui.employee_id = ?
+		from t_meta_mysql_cluster_info mci
+			inner join t_meta_mysql_cluster_resource_group_map mcrgm on mci.id = mcrgm.mysql_cluster_id
+			inner join t_meta_resource_group_info rgi on mcrgm.resource_group_id = rgi.id
+			inner join t_meta_resource_role_info rri on rgi.id = rri.resource_group_id
+			inner join t_meta_resource_role_user_map rrum on rri.id = rrum.resource_role_id
+			inner join t_meta_user_info ui on rrum.user_id = ui.id
+		where mci.del_flag = 0
+		  and mcrgm.del_flag = 0
+		  and rgi.del_flag = 0
+		  and rri.del_flag = 0
+		  and rrum.del_flag = 0
+		  and ui.del_flag = 0
+		  and (ui.account_name = ? or ui.employee_id = ?)
 	`
-	log.Debugf("privilege Repository.GetMySQLServerClusterIDListByLoginName() sql: \n%s\nplaceholders: %s", sql, loginName)
+	log.Debugf("privilege Repository.GetMySQLClusterIDListByLoginName() sql: \n%s\nplaceholders: %s", sql, loginName)
 
 	result, err := r.Execute(sql, loginName, loginName, loginName, loginName, loginName, loginName)
 	if err != nil {
@@ -156,6 +171,19 @@ func (r *Repository) GetMySQLClusterIDByDBID(dbID int) (int, error) {
 	log.Debugf("privilege Repository.GetMySQLClusterIDByMySQLServerID() sql: \n%s\nplaceholders: %d", sql, dbID)
 
 	result, err := r.Execute(sql, dbID)
+	if err != nil {
+		return constant.ZeroInt, err
+	}
+
+	return result.GetInt(constant.ZeroInt, constant.ZeroInt)
+}
+
+// GetUserRoleByLoginName get user role by login name
+func (r *Repository) GetUserRoleByLoginName(loginName string) (int, error) {
+	sql := `select role from t_meta_user_info where del_flag = 0 and (account_name = ? or employee_id = ?)`
+	log.Debugf("privilege Repository.GetUserRoleByLoginName() sql: \n%s\nplaceholders: %s", sql, loginName)
+
+	result, err := r.Execute(sql, loginName)
 	if err != nil {
 		return constant.ZeroInt, err
 	}

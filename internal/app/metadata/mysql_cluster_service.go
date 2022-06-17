@@ -131,6 +131,12 @@ func (mcs *MySQLClusterService) GetDBsByID(id int) error {
 	return err
 }
 
+// GetResourceGroupByID get the resource group of the given id from the middleware
+func (mcs *MySQLClusterService) GetResourceGroupByID(id int) ([]metadata.ResourceGroup, error) {
+	// todo: implement
+	return nil, nil
+}
+
 // GetUsersByID gets the users of the given id
 func (mcs *MySQLClusterService) GetUsersByID(id int) error {
 	var err error

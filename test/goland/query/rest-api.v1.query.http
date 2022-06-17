@@ -21,7 +21,8 @@ Content-Type: application/json
     "start_time": "{{startTime}}",
     "end_time": "{{endTime}}",
     "limit": {{limit}},
-    "offset": {{offset}}
+    "offset": {{offset}},
+    "login_name": "ddd"
 }
 
 ### query.GetByHostInfo

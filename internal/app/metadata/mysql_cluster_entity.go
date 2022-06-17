@@ -189,6 +189,12 @@ func (mci *MySQLClusterInfo) GetDBs() ([]metadata.DB, error) {
 	return mci.MySQLClusterRepo.GetDBsByID(mci.Identity())
 }
 
+// GetResourceGroupByID get the resource group of the given id from the middleware
+func (mci *MySQLClusterInfo) GetResourceGroup() ([]metadata.ResourceGroup, error) {
+	// todo: implement
+	return nil, nil
+}
+
 // GetUsers gets the users of this cluster
 func (mci *MySQLClusterInfo) GetUsers() ([]metadata.User, error) {
 	return mci.MySQLClusterRepo.GetUsersByID(mci.Identity())

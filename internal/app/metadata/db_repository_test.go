@@ -12,7 +12,7 @@ import (
 const (
 	testDBNewDBName       = "test_new_db_name"
 	testDBUpdateDBName    = "test_update_db_name"
-	testDBAllDBNum        = 7
+	testDBAllDBNum        = 1
 	testDBDBNumByHostInfo = 1
 )
 

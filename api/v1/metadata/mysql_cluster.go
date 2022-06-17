@@ -307,6 +307,18 @@ func GetDBsByMySQLClusterID(c *gin.Context) {
 }
 
 // @Tags	mysql cluster
+// @Summary	get resource group by id
+// @Accept	application/json
+// @Param	token	body string	true "token"
+// @Param	id		body int	true "mysql cluster id"
+// @Produce	application/json
+// @Success	200 {string} string ""
+// @Router	/api/v1/metadata/mysql-cluster/resource-group [get]
+func GetResourceGroupByMySQLClusterID(c *gin.Context) {
+	// todo: implement
+}
+
+// @Tags	mysql cluster
 // @Summary	get mysql cluster users
 // @Accept	application/json
 // @Param	token	body string	true "token"

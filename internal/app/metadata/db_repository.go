@@ -414,31 +414,105 @@ func (dr *DBRepo) GetUsersByDBID(id int) ([]metadata.User, error) {
 // GetAllUsersByDBID gets both application and db users of the given id from the middleware
 func (dr *DBRepo) GetAllUsersByDBID(id int) ([]metadata.User, error) {
 	sql := `
-		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name
-			, user.email, user.telephone, user.mobile, user.role, user.del_flag
-			, user.create_time, user.last_update_time 
-		from t_meta_user_info as user 
-			inner join t_meta_app_user_map as aum on user.id = aum.user_id
-			inner join t_meta_app_db_map as adm on aum.app_id = adm.app_id
+		select ui.id,
+			   ui.user_name,
+			   ui.department_name,
+			   ui.employee_id,
+			   ui.account_name,
+			   ui.email,
+			   ui.telephone,
+			   ui.mobile,
+			   ui.role,
+			   ui.del_flag,
+			   ui.create_time,
+			   ui.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_app_user_map aum on ui.id = aum.user_id
+			inner join t_meta_app_db_map adm on aum.app_id = adm.app_id
 			inner join t_meta_db_info as db on db.id = adm.db_id
-		where user.del_flag = 0 
-			and aum.del_flag = 0 
-			and db.del_flag = 0 
-			and adm.del_flag = 0
-			and db.id = ? 
+		where ui.del_flag = 0
+		  and aum.del_flag = 0
+		  and db.del_flag = 0
+		  and adm.del_flag = 0
+		  and db.cluster_id = ?
+		  and db.cluster_type = ?
 		union
-		select user.id, user.user_name, user.department_name, user.employee_id, user.account_name
-			, user.email, user.telephone, user.mobile, user.role, user.del_flag
-			, user.create_time, user.last_update_time 
-		from t_meta_user_info as user 
-			inner join t_meta_db_user_map as dum on user.id = dum.user_id
-		where user.del_flag = 0 
-			and dum.del_flag = 0
-			and dum.db_id = ?;
+		select ui.id,
+			   ui.user_name,
+			   ui.department_name,
+			   ui.employee_id,
+			   ui.account_name,
+			   ui.email,
+			   ui.telephone,
+			   ui.mobile,
+			   ui.role,
+			   ui.del_flag,
+			   ui.create_time,
+			   ui.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_db_user_map dum on ui.id = dum.user_id
+			inner join t_meta_db_info di on dum.db_id = di.id
+		where ui.del_flag = 0
+		  and dum.del_flag = 0
+		  and di.del_flag = 0
+		  and di.cluster_id = ?
+		  and di.cluster_type = ?
+		union
+		select distinct ui.id,
+						ui.user_name,
+						ui.department_name,
+						ui.employee_id,
+						ui.account_name,
+						ui.email,
+						ui.telephone,
+						ui.mobile,
+						ui.role,
+						ui.del_flag,
+						ui.create_time,
+						ui.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_mysql_cluster_user_map mcum on ui.id = mcum.user_id
+			inner join t_meta_mysql_cluster_info mci on mci.id = mcum.mysql_cluster_id
+			inner join t_meta_db_info di on mci.id = di.cluster_id
+		where ui.del_flag = 0
+		  and mcum.del_flag = 0
+		  and mci.del_flag = 0
+		  and di.del_flag = 0
+		  and di.cluster_id = ?
+		  and di.cluster_type = ?
+		union
+		select ui.id,
+			   ui.user_name,
+			   ui.department_name,
+			   ui.employee_id,
+			   ui.account_name,
+			   ui.email,
+			   ui.telephone,
+			   ui.mobile,
+			   ui.role,
+			   ui.del_flag,
+			   ui.create_time,
+			   ui.last_update_time
+		from t_meta_user_info ui
+			inner join t_meta_resource_role_user_map rrum on ui.id = rrum.user_id
+			inner join t_meta_resource_role_info rri on rrum.resource_role_id = rri.id
+			inner join t_meta_resource_group_info rgi on rri.resource_group_id = rgi.id
+			inner join t_meta_mysql_cluster_resource_group_map mcrgm on rgi.id = mcrgm.mysql_cluster_id
+			inner join t_meta_mysql_cluster_info mci on mcrgm.mysql_cluster_id = mci.id
+			inner join t_meta_db_info di on mci.id = di.cluster_id
+		where ui.del_flag = 0
+		  and rrum.del_flag = 0
+		  and rri.del_flag = 0
+		  and rgi.del_flag = 0
+		  and mcrgm.del_flag = 0
+		  and mci.del_flag = 0
+		  and di.del_flag = 0
+		  and di.cluster_id = ?
+		  and di.cluster_type = ?;
 	`
 	log.Debugf("metadata DBRepo.GetAllUsersByDBID() sql: \n%s\nplaceholders: %d, %d", sql, id, id)
 
-	result, err := dr.Execute(sql, id, id)
+	result, err := dr.Execute(sql, id, ClusterTypeSingle, id, ClusterTypeSingle, id, ClusterTypeSingle, id, ClusterTypeSingle)
 	if err != nil {
 		return nil, err
 	}
