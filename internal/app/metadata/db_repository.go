@@ -286,7 +286,7 @@ func (dr *DBRepo) GetMySQLClusterByID(id int) (metadata.MySQLCluster, error) {
 	}
 }
 
-// GetAppsByDBID gets an apps that uses this db
+// GetAppsByDBID gets an apps that use this db
 func (dr *DBRepo) GetAppsByDBID(dbID int) ([]metadata.App, error) {
 	sql := `
 		select app.id, app.app_name, app.level, app.del_flag
@@ -309,7 +309,7 @@ func (dr *DBRepo) GetAppsByDBID(dbID int) ([]metadata.App, error) {
 	resultNum := result.RowNumber()
 	appList := make([]metadata.App, resultNum)
 
-	for row := 0; row < resultNum; row++ {
+	for row := constant.ZeroInt; row < resultNum; row++ {
 		appList[row] = NewEmptyAppInfoWithGlobal()
 	}
 	// map to struct

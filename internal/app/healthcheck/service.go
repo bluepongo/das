@@ -148,7 +148,6 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 	if err != nil {
 		return constant.ZeroInt, err
 	}
-	user := userService.GetUsers()[constant.ZeroInt]
 	// check privilege
 	privilegeService := privilege.NewServiceWithDefault(loginName)
 	err = privilegeService.CheckMySQLServerByID(mysqlServerID)
@@ -163,7 +162,7 @@ func (s *Service) check(mysqlServerID int, startTime, endTime time.Time, step ti
 	}
 	mysqlServer := mysqlServerService.GetMySQLServers()[constant.ZeroInt]
 	// init
-	operationID, err := s.init(user, mysqlServer, startTime, endTime, step)
+	operationID, err := s.init(userService.GetUsers()[constant.ZeroInt], mysqlServer, startTime, endTime, step)
 	if err != nil {
 		updateErr := s.GetDASRepo().UpdateOperationStatus(operationID, defaultFailedStatus, err.Error())
 		if updateErr != nil {

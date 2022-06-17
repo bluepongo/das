@@ -8,12 +8,10 @@ import (
 	"time"
 
 	"github.com/pingcap/errors"
-	"github.com/romberli/das/config"
 	"github.com/romberli/das/internal/app/alert"
 	"github.com/romberli/das/internal/app/metadata"
 	"github.com/romberli/das/internal/app/sqladvisor"
 	"github.com/romberli/das/internal/dependency/healthcheck"
-	depmeta "github.com/romberli/das/internal/dependency/metadata"
 	depquery "github.com/romberli/das/internal/dependency/query"
 	"github.com/romberli/das/pkg/message"
 	msghc "github.com/romberli/das/pkg/message/healthcheck"
@@ -24,7 +22,6 @@ import (
 	"github.com/romberli/go-util/linux"
 	"github.com/romberli/go-util/middleware/sql/statement"
 	"github.com/romberli/log"
-	"github.com/spf13/viper"
 )
 
 const (
@@ -918,13 +915,14 @@ func (de *DefaultEngine) parsePrometheusDatas(item string, datas []healthcheck.P
 }
 
 func (de *DefaultEngine) sendEmail() error {
-	toAddrs, err := de.getToAddrs()
-	if err != nil {
-		return err
-	}
-	if len(toAddrs) == constant.ZeroInt {
-		return fmt.Errorf("send email toAddrs can't be null")
-	}
+	// todo: remove the commented code below
+	// toAddrs, err := de.getToAddrs()
+	// if err != nil {
+	// 	return err
+	// }
+	// if len(toAddrs) == constant.ZeroInt {
+	// 	return fmt.Errorf("send email toAddrs can't be null")
+	// }
 
 	result, err := de.getDASRepo().GetResultByOperationID(de.GetOperationInfo().GetOperationID())
 	if err != nil {
@@ -939,46 +937,47 @@ func (de *DefaultEngine) sendEmail() error {
 	alertService := alert.NewServiceWithDefault(cfg)
 
 	return alertService.SendEmail(
-		toAddrs,
+		de.GetOperationInfo().GetUser().GetEmail(),
 		constant.EmptyString,
 		fmt.Sprintf(defaultAlertSubjectTemplate, de.GetOperationInfo().GetAppName()),
 		result.String(),
 	)
 }
 
-// getToAddrs gets to addrs that will send email to
-func (de *DefaultEngine) getToAddrs() (string, error) {
-	mysqlCluster, err := de.GetOperationInfo().GetMySQLServer().GetMySQLCluster()
-	if err != nil {
-		return constant.EmptyString, err
-	}
-
-	var (
-		owners  []depmeta.User
-		toAddrs string
-	)
-	switch viper.GetString(config.HealthcheckAlertOwnerTypeKey) {
-	case config.HealthcheckAlertOwnerTypeApp:
-		owners, err = mysqlCluster.GetAppUsers()
-	case config.HealthcheckAlertOwnerTypeDB:
-		owners, err = mysqlCluster.GetDBUsers()
-	case config.HealthcheckAlertOwnerTypeAll:
-		owners, err = mysqlCluster.GetAllUsers()
-	}
-	if err != nil {
-		return constant.EmptyString, err
-	}
-
-	smtpEnabled := viper.GetBool(config.AlertSMTPEnabledKey)
-	httpEnabled := viper.GetBool(config.AlertHTTPEnabledKey)
-	for _, owner := range owners {
-		if smtpEnabled {
-			toAddrs += owner.GetEmail() + constant.CommaString
-		}
-		if !smtpEnabled && httpEnabled {
-			toAddrs += fmt.Sprintf("%s(%s),", owner.GetUserName(), owner.GetAccountName())
-		}
-	}
-
-	return strings.Trim(toAddrs, constant.CommaString), nil
-}
+// todo: remove this function, and remove the healthcheck.alert.ownerType parameter
+// // getToAddrs gets to addrs that will send email to
+// func (de *DefaultEngine) getToAddrs() (string, error) {
+// 	mysqlCluster, err := de.GetOperationInfo().GetMySQLServer().GetMySQLCluster()
+// 	if err != nil {
+// 		return constant.EmptyString, err
+// 	}
+//
+// 	var (
+// 		owners  []depmeta.User
+// 		toAddrs string
+// 	)
+// 	switch viper.GetString(config.HealthcheckAlertOwnerTypeKey) {
+// 	case config.HealthcheckAlertOwnerTypeApp:
+// 		owners, err = mysqlCluster.GetAppUsers()
+// 	case config.HealthcheckAlertOwnerTypeDB:
+// 		owners, err = mysqlCluster.GetDBUsers()
+// 	case config.HealthcheckAlertOwnerTypeAll:
+// 		owners, err = mysqlCluster.GetAllUsers()
+// 	}
+// 	if err != nil {
+// 		return constant.EmptyString, err
+// 	}
+//
+// 	smtpEnabled := viper.GetBool(config.AlertSMTPEnabledKey)
+// 	httpEnabled := viper.GetBool(config.AlertHTTPEnabledKey)
+// 	for _, owner := range owners {
+// 		if smtpEnabled {
+// 			toAddrs += owner.GetEmail() + constant.CommaString
+// 		}
+// 		if !smtpEnabled && httpEnabled {
+// 			toAddrs += fmt.Sprintf("%s(%s),", owner.GetUserName(), owner.GetAccountName())
+// 		}
+// 	}
+//
+// 	return strings.Trim(toAddrs, constant.CommaString), nil
+// }
