@@ -31,7 +31,7 @@ type MySQLCluster interface {
 	// GetDBs gets the databases of this cluster
 	GetDBs() ([]DB, error)
 	// GetResourceGroupByID get the resource group of the given id from the middleware
-	GetResourceGroup() ([]ResourceGroup, error)
+	GetResourceGroups() ([]ResourceGroup, error)
 	// GetUsers gets the users that own the cluster
 	GetUsers() ([]User, error)
 	// AddUser add a map of the mysql cluster and user in the middleware
@@ -72,8 +72,8 @@ type MySQLClusterRepo interface {
 	GetID(clusterName string) (int, error)
 	// GetDBsByID gets the databases of the given id from the middleware
 	GetDBsByID(id int) ([]DB, error)
-	// GetResourceGroupByID get the resource group of the given id from the middleware
-	GetResourceGroupByID(id int) ([]ResourceGroup, error)
+	// GetResourceGroupsByID get the resource group of the given id from the middleware
+	GetResourceGroupsByID(id int) ([]ResourceGroup, error)
 	// GetUsersByID gets the users that the mysql cluster uses
 	GetUsersByID(id int) ([]User, error)
 	// AddUser add a new map of mysql cluster and user in the middleware
@@ -116,8 +116,8 @@ type MySQLClusterService interface {
 	GetMasterServersByID(id int) error
 	// GetDBsByID gets the databases of the given id
 	GetDBsByID(id int) error
-	// GetResourceGroupByID get the resource group of the given id from the middleware
-	GetResourceGroupByID(id int) ([]ResourceGroup, error)
+	// GetResourceGroupsByID get the resource group of the given id from the middleware
+	GetResourceGroupsByID(id int) error
 	// GetUsersByID gets the user that own the mysql cluster
 	GetUsersByID(id int) error
 	// AddUser add a new map of mysql cluster and user in the middleware

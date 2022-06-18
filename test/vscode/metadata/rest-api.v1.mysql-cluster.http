@@ -67,6 +67,15 @@ Content-Type: application/json
     "id": {{mysql_cluster_id}}
 }
 
+### get get resource group by id
+GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/resource-group
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{mysql_cluster_id}}
+}
+
 ### get mysql cluster users
 GET http://{{baseURL}}/api/v1/metadata/mysql-cluster/user
 Content-Type: application/json

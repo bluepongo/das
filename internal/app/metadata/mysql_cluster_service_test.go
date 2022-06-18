@@ -23,6 +23,7 @@ func TestMySQLClusterServiceAll(t *testing.T) {
 	TestMySQLClusterService_GetMySQLServersByID(t)
 	TestMySQLClusterService_GetMasterServersByID(t)
 	TestMySQLClusterService_GetDBsByID(t)
+	TestMySQLClusterService_GetResourceGroupsByID(t)
 	TestMySQLClusterService_AddUser(t)
 	TestMySQLClusterService_DeleteUser(t)
 	TestMySQLClusterService_GetAppUsersByID(t)
@@ -89,6 +90,14 @@ func TestMySQLClusterService_GetDBsByID(t *testing.T) {
 	err := testMySQLClusterService.GetDBsByID(testMySQLClusterID)
 	asst.Nil(err, common.CombineMessageWithError("test GetDBsByID() failed", err))
 	asst.Equal(2, len(testMySQLClusterService.GetDBs()), "test GetDBsByID() failed")
+}
+
+func TestMySQLClusterService_GetResourceGroupsByID(t *testing.T) {
+	asst := assert.New(t)
+
+	err := testMySQLClusterService.GetResourceGroupsByID(testMySQLClusterID)
+	asst.Nil(err, common.CombineMessageWithError("test GetResourceGroupsByID() failed", err))
+	asst.Equal(1, len(testMySQLClusterService.GetResourceGroups()), "test GetResourceGroupsByID() failed")
 }
 
 func TestMySQLClusterService_GetUsersByID(t *testing.T) {

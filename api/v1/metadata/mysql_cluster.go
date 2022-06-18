@@ -31,9 +31,10 @@ const (
 	mysqlClusterMonitorSystemIDStruct     = "MonitorSystemID"
 	mysqlClusterEnvIDStruct               = "EnvID"
 
-	mysqlClusterMySQLServersStruct = "MySQLServers"
-	mysqlClusterDBsStruct          = "DBs"
-	mysqlClusterUsersStruct        = "Users"
+	mysqlClusterMySQLServersStruct   = "MySQLServers"
+	mysqlClusterDBsStruct            = "DBs"
+	mysqlClusterUsersStruct          = "Users"
+	mysqlClusterResourceGroupsStruct = "ResourceGroups"
 )
 
 // @Tags mysql cluster
@@ -316,6 +317,35 @@ func GetDBsByMySQLClusterID(c *gin.Context) {
 // @Router	/api/v1/metadata/mysql-cluster/resource-group [get]
 func GetResourceGroupByMySQLClusterID(c *gin.Context) {
 	// todo: implement
+	// get data
+	data, err := c.GetRawData()
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrGetRawData, errors.Trace(err))
+		return
+	}
+	id, err := jsonparser.GetInt(data, mysqlClusterIDJSON)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrFieldNotExistsOrWrongType, errors.Trace(err), mysqlClusterIDJSON)
+		return
+	}
+	// init service
+	s := metadata.NewMySQLClusterServiceWithDefault()
+	// get entity
+	err = s.GetResourceGroupsByID(int(id))
+	if err != nil {
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetResourceGroupByMySQLClusterID, id, err)
+		return
+	}
+	// marshal service
+	jsonBytes, err := s.MarshalWithFields(mysqlClusterResourceGroupsStruct)
+	if err != nil {
+		resp.ResponseNOK(c, message.ErrMarshalData, err)
+		return
+	}
+	// response
+	jsonStr := string(jsonBytes)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetResourceGroupByMySQLClusterID, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetResourceGroupByMySQLClusterID, id)
 }
 
 // @Tags	mysql cluster
@@ -343,7 +373,7 @@ func GetUsersByMySQLClusterID(c *gin.Context) {
 	// get entity
 	err = s.GetUsersByID(int(id))
 	if err != nil {
-		resp.ResponseNOK(c, msgmeta.ErrMetadataGetAppUsers, id, err)
+		resp.ResponseNOK(c, msgmeta.ErrMetadataGetUsers, id, err)
 		return
 	}
 	// marshal service
@@ -354,8 +384,8 @@ func GetUsersByMySQLClusterID(c *gin.Context) {
 	}
 	// response
 	jsonStr := string(jsonBytes)
-	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetAppUsers, jsonStr).Error())
-	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetAppUsers, id)
+	log.Debug(message.NewMessage(msgmeta.DebugMetadataGetUsers, jsonStr).Error())
+	resp.ResponseOK(c, jsonStr, msgmeta.InfoMetadataGetUsers, id)
 }
 
 // @Tags	mysql cluster

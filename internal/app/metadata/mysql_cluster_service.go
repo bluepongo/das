@@ -16,10 +16,11 @@ var _ metadata.MySQLClusterService = (*MySQLClusterService)(nil)
 // MySQLClusterService implements Service interface
 type MySQLClusterService struct {
 	MySQLClusterRepo metadata.MySQLClusterRepo
-	MySQLClusters    []metadata.MySQLCluster `json:"mysql_clusters"`
-	MySQLServers     []metadata.MySQLServer  `json:"mysql_servers"`
-	DBs              []metadata.DB           `json:"dbs"`
-	Users            []metadata.User         `json:"users"`
+	MySQLClusters    []metadata.MySQLCluster  `json:"mysql_clusters"`
+	MySQLServers     []metadata.MySQLServer   `json:"mysql_servers"`
+	DBs              []metadata.DB            `json:"dbs"`
+	Users            []metadata.User          `json:"users"`
+	ResourceGroups   []metadata.ResourceGroup `json:"resource_group"`
 }
 
 // NewMySQLClusterService returns a new *MySQLClusterService
@@ -30,6 +31,7 @@ func NewMySQLClusterService(repo metadata.MySQLClusterRepo) *MySQLClusterService
 		[]metadata.MySQLServer{},
 		[]metadata.DB{},
 		[]metadata.User{},
+		[]metadata.ResourceGroup{},
 	}
 }
 
@@ -51,6 +53,11 @@ func (mcs *MySQLClusterService) GetMySQLServers() []metadata.MySQLServer {
 // GetDBs returns the dbs of the service
 func (mcs *MySQLClusterService) GetDBs() []metadata.DB {
 	return mcs.DBs
+}
+
+// GetResourceGroups returns the dbs of the service
+func (mcs *MySQLClusterService) GetResourceGroups() []metadata.ResourceGroup {
+	return mcs.ResourceGroups
 }
 
 // GetUsers returns the users of the service
@@ -131,10 +138,13 @@ func (mcs *MySQLClusterService) GetDBsByID(id int) error {
 	return err
 }
 
-// GetResourceGroupByID get the resource group of the given id from the middleware
-func (mcs *MySQLClusterService) GetResourceGroupByID(id int) ([]metadata.ResourceGroup, error) {
-	// todo: implement
-	return nil, nil
+// GetResourceGroupsByID get the resource group of the given id from the middleware
+func (mcs *MySQLClusterService) GetResourceGroupsByID(id int) error {
+	var err error
+
+	mcs.ResourceGroups, err = mcs.MySQLClusterRepo.GetResourceGroupsByID(id)
+
+	return err
 }
 
 // GetUsersByID gets the users of the given id

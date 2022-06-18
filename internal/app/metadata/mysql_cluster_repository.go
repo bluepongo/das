@@ -221,10 +221,43 @@ func (mcr *MySQLClusterRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 	return dbList, nil
 }
 
-// GetResourceGroupByID get the resource group of the given id from the middleware
-func (mcr *MySQLClusterRepo) GetResourceGroupByID(id int) ([]metadata.ResourceGroup, error) {
-	// todo: implement
-	return nil, nil
+// GetResourceGroupsByID get the resource group of the given id from the middleware
+func (mcr *MySQLClusterRepo) GetResourceGroupsByID(id int) ([]metadata.ResourceGroup, error) {
+	sql := `
+		select distinct rgi.id,
+						rgi.group_uuid,
+						rgi.group_name,
+						rgi.del_flag,
+						rgi.create_time,
+						rgi.last_update_time
+		from t_meta_resource_group_info as rgi
+				 inner join t_meta_mysql_cluster_resource_group_map as cgm
+				 			on rgi.id = cgm.resource_group_id
+				 inner join t_meta_mysql_cluster_info as cluster
+							on cluster.id = cgm.mysql_cluster_id
+		where rgi.del_flag = 0
+		  and cgm.del_flag = 0
+		  and cluster.del_flag = 0
+		  and cluster.id = ?;
+	`
+	log.Debugf("metadata MySQLClusterRepo.GetResourceGroupsByID() sql: \n%s\nplaceholders: %d", sql, id)
+
+	result, err := mcr.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	resourceGroupList := make([]metadata.ResourceGroup, result.RowNumber())
+	for row := range resourceGroupList {
+		resourceGroupList[row] = NewEmptyResourceGroupInfoWithGlobal()
+	}
+	// map to struct
+	err = result.MapToStructSlice(resourceGroupList, constant.DefaultMiddlewareTag)
+	if err != nil {
+		return nil, err
+	}
+
+	return resourceGroupList, nil
 }
 
 // GetUsersByID gets the users of the given id from the middleware
