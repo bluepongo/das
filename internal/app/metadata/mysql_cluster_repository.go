@@ -221,8 +221,8 @@ func (mcr *MySQLClusterRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 	return dbList, nil
 }
 
-// GetResourceGroupsByID get the resource group of the given id from the middleware
-func (mcr *MySQLClusterRepo) GetResourceGroupsByID(id int) ([]metadata.ResourceGroup, error) {
+// GetResourceGroupByID get the resource group of the given id from the middleware
+func (mcr *MySQLClusterRepo) GetResourceGroupByID(id int) (metadata.ResourceGroup, error) {
 	sql := `
 		select distinct rgi.id,
 						rgi.group_uuid,
@@ -247,17 +247,20 @@ func (mcr *MySQLClusterRepo) GetResourceGroupsByID(id int) ([]metadata.ResourceG
 		return nil, err
 	}
 
-	resourceGroupList := make([]metadata.ResourceGroup, result.RowNumber())
-	for row := range resourceGroupList {
-		resourceGroupList[row] = NewEmptyResourceGroupInfoWithGlobal()
+	switch result.RowNumber() {
+	case 0:
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterRepo.GetResourceGroupByID(): data does not exists, id: %d", id))
+	case 1:
+		resourceGroupInfo := NewEmptyResourceGroupInfoWithGlobal()
+		// map to struct
+		err = result.MapToStructByRowIndex(resourceGroupInfo, constant.ZeroInt, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return nil, err
+		}
+		return resourceGroupInfo, nil
+	default:
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterRepo.GetResourceGroupByID(): duplicate key exists, id: %d", id))
 	}
-	// map to struct
-	err = result.MapToStructSlice(resourceGroupList, constant.DefaultMiddlewareTag)
-	if err != nil {
-		return nil, err
-	}
-
-	return resourceGroupList, nil
 }
 
 // GetUsersByID gets the users of the given id from the middleware

@@ -31,10 +31,10 @@ const (
 	mysqlClusterMonitorSystemIDStruct     = "MonitorSystemID"
 	mysqlClusterEnvIDStruct               = "EnvID"
 
-	mysqlClusterMySQLServersStruct   = "MySQLServers"
-	mysqlClusterDBsStruct            = "DBs"
-	mysqlClusterUsersStruct          = "Users"
-	mysqlClusterResourceGroupsStruct = "ResourceGroups"
+	mysqlClusterMySQLServersStruct  = "MySQLServers"
+	mysqlClusterDBsStruct           = "DBs"
+	mysqlClusterUsersStruct         = "Users"
+	mysqlClusterResourceGroupStruct = "ResourceGroup"
 )
 
 // @Tags mysql cluster
@@ -331,13 +331,13 @@ func GetResourceGroupByMySQLClusterID(c *gin.Context) {
 	// init service
 	s := metadata.NewMySQLClusterServiceWithDefault()
 	// get entity
-	err = s.GetResourceGroupsByID(int(id))
+	err = s.GetResourceGroupByID(int(id))
 	if err != nil {
 		resp.ResponseNOK(c, msgmeta.ErrMetadataGetResourceGroupByMySQLClusterID, id, err)
 		return
 	}
 	// marshal service
-	jsonBytes, err := s.MarshalWithFields(mysqlClusterResourceGroupsStruct)
+	jsonBytes, err := s.MarshalWithFields(mysqlClusterResourceGroupStruct)
 	if err != nil {
 		resp.ResponseNOK(c, message.ErrMarshalData, err)
 		return

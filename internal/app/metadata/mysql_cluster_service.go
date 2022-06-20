@@ -16,11 +16,11 @@ var _ metadata.MySQLClusterService = (*MySQLClusterService)(nil)
 // MySQLClusterService implements Service interface
 type MySQLClusterService struct {
 	MySQLClusterRepo metadata.MySQLClusterRepo
-	MySQLClusters    []metadata.MySQLCluster  `json:"mysql_clusters"`
-	MySQLServers     []metadata.MySQLServer   `json:"mysql_servers"`
-	DBs              []metadata.DB            `json:"dbs"`
-	Users            []metadata.User          `json:"users"`
-	ResourceGroups   []metadata.ResourceGroup `json:"resource_group"`
+	MySQLClusters    []metadata.MySQLCluster `json:"mysql_clusters"`
+	MySQLServers     []metadata.MySQLServer  `json:"mysql_servers"`
+	DBs              []metadata.DB           `json:"dbs"`
+	Users            []metadata.User         `json:"users"`
+	ResourceGroup    metadata.ResourceGroup  `json:"resource_group"`
 }
 
 // NewMySQLClusterService returns a new *MySQLClusterService
@@ -31,7 +31,7 @@ func NewMySQLClusterService(repo metadata.MySQLClusterRepo) *MySQLClusterService
 		[]metadata.MySQLServer{},
 		[]metadata.DB{},
 		[]metadata.User{},
-		[]metadata.ResourceGroup{},
+		nil,
 	}
 }
 
@@ -55,9 +55,9 @@ func (mcs *MySQLClusterService) GetDBs() []metadata.DB {
 	return mcs.DBs
 }
 
-// GetResourceGroups returns the dbs of the service
-func (mcs *MySQLClusterService) GetResourceGroups() []metadata.ResourceGroup {
-	return mcs.ResourceGroups
+// GetResourceGroup returns the dbs of the service
+func (mcs *MySQLClusterService) GetResourceGroup() metadata.ResourceGroup {
+	return mcs.ResourceGroup
 }
 
 // GetUsers returns the users of the service
@@ -138,11 +138,11 @@ func (mcs *MySQLClusterService) GetDBsByID(id int) error {
 	return err
 }
 
-// GetResourceGroupsByID get the resource group of the given id from the middleware
-func (mcs *MySQLClusterService) GetResourceGroupsByID(id int) error {
+// GetResourceGroupByID get the resource group of the given id from the middleware
+func (mcs *MySQLClusterService) GetResourceGroupByID(id int) error {
 	var err error
 
-	mcs.ResourceGroups, err = mcs.MySQLClusterRepo.GetResourceGroupsByID(id)
+	mcs.ResourceGroup, err = mcs.MySQLClusterRepo.GetResourceGroupByID(id)
 
 	return err
 }

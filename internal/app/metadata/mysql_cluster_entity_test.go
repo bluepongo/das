@@ -64,7 +64,7 @@ func TestMySQLClusterEntityAll(t *testing.T) {
 	TestMySQLClusterInfo_GetMySQLServers(t)
 	TestMySQLClusterInfo_GetMasterServer(t)
 	TestMySQLClusterInfo_GetDBs(t)
-	TestMySQLClusterInfo_GetResourceGroups(t)
+	TestMySQLClusterInfo_GetResourceGroup(t)
 	TestMySQLClusterInfo_GetUsers(t)
 	TestMySQLClusterInfo_AddMySQLClusterUser(t)
 	TestMySQLClusterInfo_DeleteMySQLClusterUser(t)
@@ -121,12 +121,12 @@ func TestMySQLClusterInfo_GetDBs(t *testing.T) {
 	asst.Equal(2, len(dbs), "test GetDBs() failed", err)
 }
 
-func TestMySQLClusterInfo_GetResourceGroups(t *testing.T) {
+func TestMySQLClusterInfo_GetResourceGroup(t *testing.T) {
 	asst := assert.New(t)
 
-	resourceGroups, err := testMySQLClusterInfo.GetResourceGroups()
-	asst.Nil(err, common.CombineMessageWithError("test GetResourceGroups() failed", err))
-	asst.Equal(1, len(resourceGroups), "test GetResourceGroups() failed", err)
+	resourceGroup, err := testMySQLClusterInfo.GetResourceGroup()
+	asst.Nil(err, common.CombineMessageWithError("test GetResourceGroup() failed", err))
+	asst.Equal(1, resourceGroup.Identity(), "test GetResourceGroup() failed", err)
 }
 
 func TestMySQLClusterInfo_GetUsers(t *testing.T) {
