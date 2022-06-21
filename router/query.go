@@ -9,10 +9,10 @@ import (
 func RegisterQuery(group *gin.RouterGroup) {
 	queryGroup := group.Group("/query")
 	{
-		queryGroup.GET("/cluster", query.GetByMySQLClusterID)
-		queryGroup.GET("/server", query.GetByMySQLServerID)
-		queryGroup.GET("/host-info", query.GetByHostInfo)
-		queryGroup.GET("/db", query.GetByDBID)
-		queryGroup.GET("/sql", query.GetBySQLID)
+		queryGroup.POST("/cluster", query.GetByMySQLClusterID)
+		queryGroup.POST("/server", query.GetByMySQLServerID)
+		queryGroup.POST("/host-info", query.GetByHostInfo)
+		queryGroup.POST("/db", query.GetByDBID)
+		queryGroup.POST("/sql", query.GetBySQLID)
 	}
 }

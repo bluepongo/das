@@ -8,8 +8,8 @@ import (
 func RegisterSQLAdvisor(group *gin.RouterGroup) {
 	sqladvisorGroup := group.Group("/sqladvisor")
 	{
-		sqladvisorGroup.GET("/fingerprint", sqladvisor.GetFingerprint)
-		sqladvisorGroup.GET("/sql-id", sqladvisor.GetSQLID)
+		sqladvisorGroup.POST("/fingerprint", sqladvisor.GetFingerprint)
+		sqladvisorGroup.POST("/sql-id", sqladvisor.GetSQLID)
 		sqladvisorGroup.POST("/advise", sqladvisor.Advise)
 	}
 }

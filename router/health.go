@@ -9,6 +9,6 @@ import (
 func RegisterHealth(group *gin.RouterGroup) {
 	healthGroup := group.Group("/health")
 	{
-		healthGroup.GET("/ping", health.Ping)
+		healthGroup.POST("/ping", health.Ping)
 	}
 }
