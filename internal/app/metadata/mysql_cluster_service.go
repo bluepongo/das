@@ -20,6 +20,7 @@ type MySQLClusterService struct {
 	MySQLServers     []metadata.MySQLServer  `json:"mysql_servers"`
 	DBs              []metadata.DB           `json:"dbs"`
 	Users            []metadata.User         `json:"users"`
+	ResourceGroup    metadata.ResourceGroup  `json:"resource_group"`
 }
 
 // NewMySQLClusterService returns a new *MySQLClusterService
@@ -30,6 +31,7 @@ func NewMySQLClusterService(repo metadata.MySQLClusterRepo) *MySQLClusterService
 		[]metadata.MySQLServer{},
 		[]metadata.DB{},
 		[]metadata.User{},
+		nil,
 	}
 }
 
@@ -51,6 +53,11 @@ func (mcs *MySQLClusterService) GetMySQLServers() []metadata.MySQLServer {
 // GetDBs returns the dbs of the service
 func (mcs *MySQLClusterService) GetDBs() []metadata.DB {
 	return mcs.DBs
+}
+
+// GetResourceGroup returns the dbs of the service
+func (mcs *MySQLClusterService) GetResourceGroup() metadata.ResourceGroup {
+	return mcs.ResourceGroup
 }
 
 // GetUsers returns the users of the service
@@ -132,9 +139,12 @@ func (mcs *MySQLClusterService) GetDBsByID(id int) error {
 }
 
 // GetResourceGroupByID get the resource group of the given id from the middleware
-func (mcs *MySQLClusterService) GetResourceGroupByID(id int) ([]metadata.ResourceGroup, error) {
-	// todo: implement
-	return nil, nil
+func (mcs *MySQLClusterService) GetResourceGroupByID(id int) error {
+	var err error
+
+	mcs.ResourceGroup, err = mcs.MySQLClusterRepo.GetResourceGroupByID(id)
+
+	return err
 }
 
 // GetUsersByID gets the users of the given id

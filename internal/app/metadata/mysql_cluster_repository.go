@@ -222,9 +222,45 @@ func (mcr *MySQLClusterRepo) GetDBsByID(id int) ([]metadata.DB, error) {
 }
 
 // GetResourceGroupByID get the resource group of the given id from the middleware
-func (mcr *MySQLClusterRepo) GetResourceGroupByID(id int) ([]metadata.ResourceGroup, error) {
-	// todo: implement
-	return nil, nil
+func (mcr *MySQLClusterRepo) GetResourceGroupByID(id int) (metadata.ResourceGroup, error) {
+	sql := `
+		select distinct rgi.id,
+						rgi.group_uuid,
+						rgi.group_name,
+						rgi.del_flag,
+						rgi.create_time,
+						rgi.last_update_time
+		from t_meta_resource_group_info as rgi
+				 inner join t_meta_mysql_cluster_resource_group_map as cgm
+				 			on rgi.id = cgm.resource_group_id
+				 inner join t_meta_mysql_cluster_info as cluster
+							on cluster.id = cgm.mysql_cluster_id
+		where rgi.del_flag = 0
+		  and cgm.del_flag = 0
+		  and cluster.del_flag = 0
+		  and cluster.id = ?;
+	`
+	log.Debugf("metadata MySQLClusterRepo.GetResourceGroupsByID() sql: \n%s\nplaceholders: %d", sql, id)
+
+	result, err := mcr.Execute(sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	switch result.RowNumber() {
+	case 0:
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterRepo.GetResourceGroupByID(): data does not exists, id: %d", id))
+	case 1:
+		resourceGroupInfo := NewEmptyResourceGroupInfoWithGlobal()
+		// map to struct
+		err = result.MapToStructByRowIndex(resourceGroupInfo, constant.ZeroInt, constant.DefaultMiddlewareTag)
+		if err != nil {
+			return nil, err
+		}
+		return resourceGroupInfo, nil
+	default:
+		return nil, errors.Trace(fmt.Errorf("metadata MySQLClusterRepo.GetResourceGroupByID(): duplicate key exists, id: %d", id))
+	}
 }
 
 // GetUsersByID gets the users of the given id from the middleware

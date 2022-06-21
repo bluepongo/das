@@ -15,56 +15,59 @@ func init() {
 // Message code
 const (
 	// debug
-	DebugMetadataGetMySQLClusterAll     = 101601
-	DebugMetadataGetMySQLClusterByEnv   = 101602
-	DebugMetadataGetMySQLClusterByID    = 101603
-	DebugMetadataGetMySQLClusterByName  = 101604
-	DebugMetadataGetMySQLServers        = 101605
-	DebugMetadataGetMasterServers       = 101606
-	DebugMetadataGetDBs                 = 101607
-	DebugMetadataGetUsers               = 101608
-	DebugMetadataMySQLClusterAddUser    = 101609
-	DebugMetadataMySQLClusterDeleteUser = 101610
-	DebugMetadataGetAppUsers            = 101611
-	DebugMetadataGetDBUsers             = 101612
-	DebugMetadataGetAllUsers            = 101613
-	DebugMetadataAddMySQLCluster        = 101614
-	DebugMetadataUpdateMySQLCluster     = 101615
-	DebugMetadataDeleteMySQLCluster     = 101616
+	DebugMetadataGetMySQLClusterAll               = 101601
+	DebugMetadataGetMySQLClusterByEnv             = 101602
+	DebugMetadataGetMySQLClusterByID              = 101603
+	DebugMetadataGetMySQLClusterByName            = 101604
+	DebugMetadataGetMySQLServers                  = 101605
+	DebugMetadataGetMasterServers                 = 101606
+	DebugMetadataGetDBs                           = 101607
+	DebugMetadataGetUsers                         = 101608
+	DebugMetadataMySQLClusterAddUser              = 101609
+	DebugMetadataMySQLClusterDeleteUser           = 101610
+	DebugMetadataGetAppUsers                      = 101611
+	DebugMetadataGetDBUsers                       = 101612
+	DebugMetadataGetAllUsers                      = 101613
+	DebugMetadataAddMySQLCluster                  = 101614
+	DebugMetadataUpdateMySQLCluster               = 101615
+	DebugMetadataDeleteMySQLCluster               = 101616
+	DebugMetadataGetResourceGroupByMySQLClusterID = 101617
 	// debug
-	InfoMetadataGetMySQLClusterAll     = 201601
-	InfoMetadataGetMySQLClusterByEnv   = 201602
-	InfoMetadataGetMySQLClusterByID    = 201603
-	InfoMetadataGetMySQLClusterByName  = 201604
-	InfoMetadataGetMySQLServers        = 201605
-	InfoMetadataGetMasterServers       = 201606
-	InfoMetadataGetDBs                 = 201607
-	InfoMetadataGetUsers               = 201608
-	InfoMetadataGetAppUsers            = 201609
-	InfoMetadataMySQLClusterAddUser    = 101610
-	InfoMetadataMySQLClusterDeleteUser = 101611
-	InfoMetadataGetDBUsers             = 201612
-	InfoMetadataGetAllUsers            = 201613
-	InfoMetadataAddMySQLCluster        = 201614
-	InfoMetadataUpdateMySQLCluster     = 201615
-	InfoMetadataDeleteMySQLCluster     = 201616
+	InfoMetadataGetMySQLClusterAll               = 201601
+	InfoMetadataGetMySQLClusterByEnv             = 201602
+	InfoMetadataGetMySQLClusterByID              = 201603
+	InfoMetadataGetMySQLClusterByName            = 201604
+	InfoMetadataGetMySQLServers                  = 201605
+	InfoMetadataGetMasterServers                 = 201606
+	InfoMetadataGetDBs                           = 201607
+	InfoMetadataGetUsers                         = 201608
+	InfoMetadataGetAppUsers                      = 201609
+	InfoMetadataMySQLClusterAddUser              = 101610
+	InfoMetadataMySQLClusterDeleteUser           = 101611
+	InfoMetadataGetDBUsers                       = 201612
+	InfoMetadataGetAllUsers                      = 201613
+	InfoMetadataAddMySQLCluster                  = 201614
+	InfoMetadataUpdateMySQLCluster               = 201615
+	InfoMetadataDeleteMySQLCluster               = 201616
+	InfoMetadataGetResourceGroupByMySQLClusterID = 201617
 	// error
-	ErrMetadataGetMySQLClusterAll     = 401601
-	ErrMetadataGetMySQLClusterByEnv   = 401602
-	ErrMetadataGetMySQLClusterByID    = 401603
-	ErrMetadataGetMySQLClusterByName  = 401604
-	ErrMetadataGetMySQLServers        = 401605
-	ErrMetadataGetMasterServers       = 401606
-	ErrMetadataGetDBs                 = 401607
-	ErrMetadataGetUsers               = 401608
-	ErrMetadataMySQLClusterAddUser    = 101609
-	ErrMetadataMySQLClusterDeleteUser = 101610
-	ErrMetadataGetAppUsers            = 401611
-	ErrMetadataGetDBUsers             = 401612
-	ErrMetadataGetAllUsers            = 401613
-	ErrMetadataAddMySQLCluster        = 401614
-	ErrMetadataUpdateMySQLCluster     = 401615
-	ErrMetadataDeleteMySQLCluster     = 401616
+	ErrMetadataGetMySQLClusterAll               = 401601
+	ErrMetadataGetMySQLClusterByEnv             = 401602
+	ErrMetadataGetMySQLClusterByID              = 401603
+	ErrMetadataGetMySQLClusterByName            = 401604
+	ErrMetadataGetMySQLServers                  = 401605
+	ErrMetadataGetMasterServers                 = 401606
+	ErrMetadataGetDBs                           = 401607
+	ErrMetadataGetUsers                         = 401608
+	ErrMetadataMySQLClusterAddUser              = 101609
+	ErrMetadataMySQLClusterDeleteUser           = 101610
+	ErrMetadataGetAppUsers                      = 401611
+	ErrMetadataGetDBUsers                       = 401612
+	ErrMetadataGetAllUsers                      = 401613
+	ErrMetadataAddMySQLCluster                  = 401614
+	ErrMetadataUpdateMySQLCluster               = 401615
+	ErrMetadataDeleteMySQLCluster               = 401616
+	ErrMetadataGetResourceGroupByMySQLClusterID = 401617
 )
 
 func initDebugMySQLClusterMessage() {
@@ -136,6 +139,10 @@ func initDebugMySQLClusterMessage() {
 		message.DefaultMessageHeader,
 		DebugMetadataDeleteMySQLCluster,
 		"metadata: delete mysql cluster. message: %s")
+	message.Messages[DebugMetadataGetResourceGroupByMySQLClusterID] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		DebugMetadataGetUsers,
+		"metadata: get resource group from mysql cluster. message: %s")
 }
 
 func initInfoMySQLClusterMessage() {
@@ -203,6 +210,10 @@ func initInfoMySQLClusterMessage() {
 		message.DefaultMessageHeader,
 		InfoMetadataDeleteMySQLCluster,
 		"metadata: delete mysql cluster completed. id: %d")
+	message.Messages[InfoMetadataGetResourceGroupByMySQLClusterID] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		InfoMetadataGetDBs,
+		"metadata: get resource group from mysql cluster completed. id: %d")
 }
 
 func initErrorMySQLClusterMessage() {
@@ -270,4 +281,8 @@ func initErrorMySQLClusterMessage() {
 		message.DefaultMessageHeader,
 		ErrMetadataDeleteMySQLCluster,
 		"metadata: delete mysql cluster failed. id: %d")
+	message.Messages[ErrMetadataGetResourceGroupByMySQLClusterID] = config.NewErrMessage(
+		message.DefaultMessageHeader,
+		ErrMetadataGetDBs,
+		"metadata: get resource group from mysql cluster failed. id: %d")
 }
