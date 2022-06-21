@@ -214,7 +214,7 @@ func (msr *MySQLServerRepo) IsMaster(hostIP string, portNum int) (bool, error) {
 
 	// check mysql replication
 	sql := `show slave status;`
-	log.Debugf("metadata MySQLServerRepo.IsMaster() sql: %s", sql)
+	log.Debugf("metadata MySQLServerRepo.IsMaster() show slave status sql: %s", sql)
 
 	result, err := conn.Execute(sql)
 	if err != nil {
@@ -226,7 +226,7 @@ func (msr *MySQLServerRepo) IsMaster(hostIP string, portNum int) (bool, error) {
 
 	// check if mgr primary
 	sql = `select member_role from performance_schema.replication_group_members where member_host = ? and member_port = ? and member_role = 'SECONDARY';`
-	log.Debugf("metadata MySQLServerRepo.IsMaster() sql: %s, placeholders: %s, %d", sql, hostIP, portNum)
+	log.Debugf("metadata MySQLServerRepo.IsMaster() group replication sql: %s, placeholders: %s, %d", sql, hostIP, portNum)
 
 	result, err = conn.Execute(sql, hostIP, portNum)
 	if err != nil {
