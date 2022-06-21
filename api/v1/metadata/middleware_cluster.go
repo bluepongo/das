@@ -36,7 +36,7 @@ const (
 // @Param	token body string true "token"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_clusters":[{"id":1,"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00"}]}
-// @Router	/api/v1/metadata/middleware-cluster [get]
+// @Router	/api/v1/metadata/middleware-cluster/all [post]
 func GetMiddlewareCluster(c *gin.Context) {
 	// init service
 	s := metadata.NewMiddlewareClusterServiceWithDefault()
@@ -65,7 +65,7 @@ func GetMiddlewareCluster(c *gin.Context) {
 // @Param	env_id	body	int		true	"env id"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_clusters":[{"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00","id":1,"cluster_name":"middleware-cluster-1","env_id":1}]}
-// @Router	/api/v1/metadata/middleware-cluster/env [get]
+// @Router	/api/v1/metadata/middleware-cluster/env [post]
 func GetMiddlewareClusterByEnv(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -105,7 +105,7 @@ func GetMiddlewareClusterByEnv(c *gin.Context) {
 // @Param	id		body	int		true	"middleware cluster id"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_clusters":[{"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00","id":1,"cluster_name":"middleware-cluster-1","env_id":1}]}
-// @Router	/api/v1/metadata/middleware-cluster/get [get]
+// @Router	/api/v1/metadata/middleware-cluster/id [post]
 func GetMiddlewareClusterByID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -145,7 +145,7 @@ func GetMiddlewareClusterByID(c *gin.Context) {
 // @Param	cluster_name	body	string	true	"middleware cluster name"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_clusters":[{"cluster_name":"middleware-cluster-1","env_id":1,"del_flag":0,"create_time":"2021-11-09T18:06:57.917596+08:00","last_update_time":"2021-11-18T15:39:52.927116+08:00","id":1}]}
-// @Router	/api/v1/metadata/middleware-cluster/cluster-name [get]
+// @Router	/api/v1/metadata/middleware-cluster/cluster-name [post]
 func GetMiddlewareClusterByName(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -185,7 +185,7 @@ func GetMiddlewareClusterByName(c *gin.Context) {
 // @Param	id		body	int		true	"middleware cluster id"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_servers":[{"id":1,"cluster_id":1,"server_name":"update_middeware_server","middleware_role":1,"port_num":33061,"del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2022-03-02T10:18:52.564191+08:00","host_ip":"192.168.10.219"}]}
-// @Router	/api/vi/metadata/middleware-server [get]
+// @Router	/api/vi/metadata/middleware-cluster/middleware-server [post]
 func GetMiddlewareServers(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -226,7 +226,7 @@ func GetMiddlewareServers(c *gin.Context) {
 // @Param	id		body	int		true	"middleware cluster id"
 // @Produce	application/json
 // @Success	200 {string} string {"users":[{"id":1,"email":"allinemailtest@163.com","role":3,"del_flag":0,"last_update_time":"2021-11-22T13:46:20.430926+08:00","create_time":"2021-10-25T09:21:50.364327+08:00","user_name":"zhangsan","department_name":"arch","employee_id":"100001","account_name":"zs001","telephone":"01012345678","mobile":"13012345678"}]}
-// @Router	/api/vi/metadata/middleware-cluster/users [get]
+// @Router	/api/vi/metadata/middleware-cluster/user [post]
 func GetUsersByMiddlewareClusterID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -268,7 +268,7 @@ func GetUsersByMiddlewareClusterID(c *gin.Context) {
 // @Param	env_id			body	int    	true 	"env id"
 // @Produce	application/json
 // @Success	200 {string} string {"middleware_clusters":[{"id":65,"cluster_name":"new_middleware_cluster","env_id":1,"del_flag":0,"create_time":"2022-03-02T10:39:06.206145+08:00","last_update_time":"2022-03-02T10:39:06.206145+08:00"}]}
-// @Router	/api/v1/metadata/middleware-cluster [post]
+// @Router	/api/v1/metadata/middleware-cluster/add [post]
 func AddMiddlewareCluster(c *gin.Context) {
 	var fields map[string]interface{}
 

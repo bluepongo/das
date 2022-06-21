@@ -38,7 +38,7 @@ const (
 // @Param	token body string true "token"
 // @Produce	application/json
 // @Success	200 {string} string "{"middleware_servers":[{"last_update_time":"2021-11-18T15:54:10.599097+08:00","cluster_id":1,"server_name":"middleware-server-1","port_num":33061,"del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00","id":1,"middleware_role":1,"host_ip":"192.168.10.219"}]}"
-// @Router	/api/v1/metadata/middleware-server [get]
+// @Router	/api/v1/metadata/middleware-server/all [post]
 func GetMiddlewareServer(c *gin.Context) {
 	// init service
 	s := metadata.NewMiddlewareServerServiceWithDefault()
@@ -67,7 +67,7 @@ func GetMiddlewareServer(c *gin.Context) {
 // @Param	cluster_id	body	int		true	"middleware cluster id"
 // @Produce	application/json
 // @Success 200 {string} string "{"middleware_servers":[{"id":1,"cluster_id":1,"server_name":"middleware-server-1","host_ip":"192.168.10.219","port_num":33061,"del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00","last_update_time":"2021-11-18T15:54:10.599097+08:00","middleware_role":1}]}"
-// @Router	/api/v1/metadata/middleware-server/cluster-id [get]
+// @Router	/api/v1/metadata/middleware-server/cluster-id [post]
 func GetMiddlewareServerByClusterID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -107,7 +107,7 @@ func GetMiddlewareServerByClusterID(c *gin.Context) {
 // @Param	id		body	int		true	"middleware server id"
 // @Produce	application/json
 // @Success	200 {string} string "{"middleware_servers":[{"last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"server_name":"middleware-server-1","middleware_role":1,"port_num":33061,"cluster_id":1,"host_ip":"192.168.10.219","del_flag":0,"create_time":"2021-11-17T14:47:10.521279+08:00"}]}"
-// @Router	/api/v1/metadata/middleware-server/get [get]
+// @Router	/api/v1/metadata/middleware-server/id [post]
 func GetMiddlewareServerByID(c *gin.Context) {
 	// get data
 	data, err := c.GetRawData()
@@ -148,7 +148,7 @@ func GetMiddlewareServerByID(c *gin.Context) {
 // @Param	port_num	body	int		true	"port number"
 // @Produce	application/json
 // @Success	200 {string} string "{"middleware_servers":[{"middleware_role":1,"host_ip":"192.168.10.219","del_flag":0,"last_update_time":"2021-11-18T15:54:10.599097+08:00","id":1,"server_name":"middleware-server-1","cluster_id":1,"port_num":33061,"create_time":"2021-11-17T14:47:10.521279+08:00"}]}"
-// @Router	/api/v1/metadata/middleware-server/host-info [get]
+// @Router	/api/v1/metadata/middleware-server/host-info [post]
 func GetMiddlewareServerByHostInfo(c *gin.Context) {
 	var rd *utilmeta.HostInfo
 	// bind json
@@ -188,7 +188,7 @@ func GetMiddlewareServerByHostInfo(c *gin.Context) {
 // @Param	port_num		body	int		true	"port number"
 // @Produce	application/json
 // @Success	200 {string} string "{"middleware_servers":[{"host_ip":"192.168.10.219","del_flag":0,"create_time":"2022-03-02T10:18:28.021994+08:00","last_update_time":"2022-03-02T10:18:28.021994+08:00","cluster_id":1,"server_name":"new_middleware_server","middleware_role":1,"id":42,"port_num":33062}]}"
-// @Router	/api/v1/metadata/middleware-server [post]
+// @Router	/api/v1/metadata/middleware-server/add [post]
 func AddMiddlewareServer(c *gin.Context) {
 	var fields map[string]interface{}
 
