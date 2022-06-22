@@ -1,34 +1,77 @@
 @baseURL = 127.0.0.1:6090
+@token = f3171bd9-beec-11ec-acc0-000c291d6734
+@middleware_cluster_id = 1
+@middleware_server_id = 1
+@middleware_host_ip = 192.168.10.219
+@middleware_port_num = 33061
+@new_middleware_server_id = 1
+
+
 
 ### get all middleware server
-GET http://{{baseURL}}/api/v1/metadata/middleware-server
-Accept: application/json
+POST http://{{baseURL}}/api/v1/metadata/middleware-server/all
+Content-Type: application/json
+
+{
+    "token": "{{token}}"
+}
 
 ### get middleware server by cluster id
-GET http://{{baseURL}}/api/v1/metadata/middleware-server/cluster-id/13
-Accept: application/json
+POST http://{{baseURL}}/api/v1/metadata/middleware-server/cluster-id
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "cluster_id": {{middleware_cluster_id}}
+}
 
 ### get middleware server by id
-GET http://{{baseURL}}/api/v1/metadata/middleware-server/get/1
-Accept: application/json
+POST http://{{baseURL}}/api/v1/metadata/middleware-server/id
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{middleware_server_id}}
+}
 
 ### get middleware server by host info
-GET http://{{baseURL}}/api/v1/metadata/middleware-server/host-info?host_ip=3&port_num=1
-Accept: application/json
+POST http://{{baseURL}}/api/v1/metadata/middleware-server/host-info
+Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "host_ip": "{{middleware_host_ip}}",
+    "port_num": {{middleware_port_num}}
+}
 
 ### add new middleware server
-POST http://{{baseURL}}/api/v1/metadata/middleware-server
+POST http://{{baseURL}}/api/v1/metadata/middleware-server/add
 Content-Type: application/json
 
-{"cluster_id": 13, "server_name": "test003", "middleware_role": 1, "host_ip": "123.123.123.1", "port_num": 12}
+{
+    "token": "{{token}}",
+    "cluster_id": 1,
+    "server_name": "new_middleware_server",
+    "middleware_role": 1,
+    "host_ip": "192.168.137.11",
+    "port_num": 33062
+}
 
 ### update middleware-server by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-server/update/31
+POST http://{{baseURL}}/api/v1/metadata/middleware-server/update
 Content-Type: application/json
 
-{"server_name": "newTest", "del_flag": 1}
-
+{
+    "token": "{{token}}",
+    "id": {{new_middleware_server_id}},
+    "server_name": "update_middeware_server"
+}
 
 ### delete middleware-server by id
-POST http://{{baseURL}}/api/v1/metadata/middleware-server/delete/31
+POST http://{{baseURL}}/api/v1/metadata/middleware-server/delete
 Content-Type: application/json
+
+{
+    "token": "{{token}}",
+    "id": {{new_middleware_server_id}}
+}
